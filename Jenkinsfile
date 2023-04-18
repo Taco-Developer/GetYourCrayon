@@ -33,7 +33,6 @@ pipeline {
                 docker build -t cold_crayon/my-spring .
                 '''
             }
-
         }
 
         stage('DEPLOY')
