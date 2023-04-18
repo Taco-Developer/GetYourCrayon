@@ -39,8 +39,7 @@ pipeline {
         {
             steps
             {
-            sh
-            '''
+            sh '''
             docker run --name my-spring -d -p 8080:8080 cold_crayon/my-spring
             echo 'Success'
             '''
