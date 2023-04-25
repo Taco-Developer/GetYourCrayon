@@ -24,11 +24,6 @@ pipeline {
             steps
             {
                 sh '''
-                docker stop my-spring
-                docker rm my-spring
-                echo 'Remove if my-spring exist'
-                cd /var/jenkins_home/workspace/cold_crayon_spring-back-end/back
-                docker rmi cold_crayon/my-spring
                 docker build -t cold_crayon/my-spring .
                 '''
             }
