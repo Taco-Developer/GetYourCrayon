@@ -23,9 +23,7 @@ pipeline {
         {
             steps
             {
-                sh '''
-                docker build -t cold_crayon/my-spring .
-                '''
+                sh "docker build -t gmkim716/crayon-spring-container ."
             }
         }
 
@@ -34,7 +32,7 @@ pipeline {
             steps
             {
             sh '''
-            docker run --name my-spring -d -p 8080:8080 cold_crayon/my-spring
+            docker run -d -p 8080:8080 --name crayon-spring-container gmkim716/crayon-spring-container
             echo 'Success'
             '''
             }
