@@ -14,7 +14,6 @@ pipeline {
             steps
             {
                 sh '''
-                cd back
                 chmod +x gradlew
                 ./gradlew clean build
                 '''
