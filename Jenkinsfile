@@ -25,6 +25,8 @@ pipeline {
         stage('DEPLOY') {
             steps {
             sh '''
+            docker stop crayon-spring-container
+            docker rm crayon-spring-container
             docker run -d -p 8080:8080 --name crayon-spring-container gmkim716/crayon-spring-container
             echo 'Success'
             '''
