@@ -1,57 +1,44 @@
 package com.sevenight.coldcrayon.board.entity;
 
-import java.time.LocalDateTime;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-
+import com.sevenight.coldcrayon.user.entity.User;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import com.sevenight.coldcrayon.user.entity.User;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
-@Getter @Setter
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @ToString
 public class Board {
 
-	// PK (AUTO_INCREMENT)
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="board_id")
-	private int boardId;
+    // PK (AUTO_INCREMENT)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "board_id")
+    private int boardId;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@Column(name = "user_idx")
-	private User userIdx;
+    @ManyToOne(fetch = FetchType.LAZY)
+//	@Column(name = "user_idx")
+    private User userIdx;
 
-	@Column(name="board_title")
-	private String boardTitle;
+    @Column(name = "board_title")
+    private String boardTitle;
 
-	@Column(name = "board_content")
-	private String boardContent;
+    @Column(name = "board_content")
+    private String boardContent;
 
-	// 1
-	 @CreationTimestamp
-	 @Column(name = "board_create_time")
-	 private LocalDateTime boardCreateTime;
+    // 1
+    @CreationTimestamp
+    @Column(name = "board_create_time")
+    private LocalDateTime boardCreateTime;
 
-	 @UpdateTimestamp
-	 @Column(name = "board_update_time")
-	 private LocalDateTime boardUpdateTime;
+    @UpdateTimestamp
+    @Column(name = "board_update_time")
+    private LocalDateTime boardUpdateTime;
 }
