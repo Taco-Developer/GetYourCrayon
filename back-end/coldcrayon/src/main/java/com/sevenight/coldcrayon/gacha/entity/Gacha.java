@@ -1,9 +1,6 @@
 package com.sevenight.coldcrayon.gacha.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 import com.sevenight.coldcrayon.allgacha.entity.Allgacha;
 import com.sevenight.coldcrayon.user.entity.User;
@@ -23,13 +20,17 @@ import lombok.ToString;
 @ToString
 public class Gacha {
 
+	// 이따 지움
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
 	// 외래 키를 식별자로 사용하는 방법 적용해야함.
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="user_idx")
 	private User user;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	private Allgacha allgacha;
 
 	// // 필요한가?

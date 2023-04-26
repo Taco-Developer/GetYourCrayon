@@ -2,11 +2,7 @@ package com.sevenight.coldcrayon.board.entity;
 
 import java.time.LocalDateTime;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -33,25 +29,17 @@ public class Board {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int boardId;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	private User user;
 
 	private String boardTitle;
 
 	private String boardContent;
 
-	// // 1
-	// @CreationTimestamp
-	// private LocalDateTime boardCreateTime;
-	//
-	// @UpdateTimestamp
-	// private LocalDateTime boardUpdateTime;
+	// 1
+	 @CreationTimestamp
+	 private LocalDateTime boardCreateTime;
 
-	// // 2
-	// @CreationTimestamp
-	// private LocalDateTime boardCreateTime;
-
-	// 3
-	private LocalDateTime boardCreateTime;
-
+	 @UpdateTimestamp
+	 private LocalDateTime boardUpdateTime;
 }
