@@ -1,9 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'ubuntu:latest'
-        }
-    }
+    agent any
     stages {
         stage('CLONE')
         {
@@ -21,25 +17,6 @@ pipeline {
                 ./gradlew clean build
                 '''
             }
-        }
-        stage('DOCKER BUILD')
-        {
-            steps
-            {
-                sh "docker build -t gmkim716/crayon-spring-container ."
-            }
-        }
-
-        stage('DEPLOY')
-        {
-            steps
-            {
-            sh '''
-            docker run -d -p 8080:8080 --name crayon-spring-container gmkim716/crayon-spring-container
-            echo 'Success'
-            '''
-            }
-
         }
     }
 }
