@@ -2,26 +2,81 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+/* SUIT Font */
+@font-face {
+  font-family: 'SUIT';
+  font-weight: 100;
+  src: url('../../public/fonts/SUIT-woff2/SUIT-Thin.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'SUIT';
+  font-weight: 200;
+  src: url('../../public/fonts/SUIT-woff2/SUIT-ExtraLight.woff2')
+    format('woff2');
+}
+@font-face {
+  font-family: 'SUIT';
+  font-weight: 300;
+  src: url('../../public/fonts/SUIT-woff2/SUIT-Light.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'SUIT';
+  font-weight: 400;
+  src: url('../../public/fonts/SUIT-woff2/SUIT-Regular.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'SUIT';
+  font-weight: 500;
+  src: url('../../public/fonts/SUIT-woff2/SUIT-Medium.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'SUIT';
+  font-weight: 600;
+  src: url('../../public/fonts/SUIT-woff2/SUIT-SemiBold.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'SUIT';
+  font-weight: 700;
+  src: url('../../public/fonts/SUIT-woff2/SUIT-Bold.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'SUIT';
+  font-weight: 800;
+  src: url('../../public/fonts/SUIT-woff2/SUIT-ExtraBold.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'SUIT';
+  font-weight: 900;
+  src: url('../../public/fonts/SUIT-woff2/SUIT-Heavy.woff2') format('woff2');
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+/* CookieRun Font */
+@font-face {
+  font-family: 'CookieRun';
+  font-weight: 400;
+  src: url('../../public/fonts/CookieRunFont_TTF/CookieRun\ Regular.ttf')
+    format('ttf');
+}
+
+@font-face {
+  font-family: 'CookieRun';
+  font-weight: 700;
+  src: url('../../public/fonts/CookieRunFont_TTF/CookieRun\ Bold.ttf')
+    format('ttf');
+}
+
+@font-face {
+  font-family: 'CookieRun';
+  font-weight: 900;
+  src: url('../../public/fonts/CookieRunFont_TTF/CookieRun\ Black.ttf')
+    format('ttf');
+}
+
+:root {
+  --suit-font: 'SUIT';
+  --cookie-font: 'CookieRun';
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  font-family: var(--cookie-font);
 }
