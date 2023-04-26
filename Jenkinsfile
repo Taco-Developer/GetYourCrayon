@@ -25,6 +25,7 @@ pipeline {
         stage('DEPLOY') {
             steps {
             sh '''
+            echo 'delete previous spring-container'
             docker stop crayon-spring-container
             docker rm crayon-spring-container
             docker run -d -p 8080:8080 --name crayon-spring-container gmkim716/crayon-spring-container
