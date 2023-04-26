@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -50,7 +49,7 @@ public class User {
 	@Column(name = "user_status")
 	private boolean userStatus;
 
-	@MapKeyColumn(name = "user_point")
+	@Column(name = "user_point")
 	private int userPoint;
 
 	// 역 방향

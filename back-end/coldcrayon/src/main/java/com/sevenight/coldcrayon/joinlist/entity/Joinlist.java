@@ -24,7 +24,8 @@ public class Joinlist {
 	// 이따 지움
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+	@Column(name = "user_join_list_idx")
+	private Integer joinlistIdx;
 
 	// 중개 테이블 외래키로 식별하는 방법 적용
 	@ManyToOne(fetch = FetchType.LAZY)

@@ -2,9 +2,11 @@ package com.sevenight.coldcrayon.room.entity;
 
 import java.time.LocalDateTime;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -33,7 +35,6 @@ public class Room {
 	@Column(name="room_idx")
 	private String roomIdx;
 
-	@OneToOne
 	@Column(name = "game")
 	@OneToOne(fetch = FetchType.LAZY)
 	private Game game;

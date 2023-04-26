@@ -23,16 +23,16 @@ public class Gacha {
 	// 이따 지움
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	@Column(name = "gacha_idx")
+	private Long gachaIdx;
 
 	// 외래 키를 식별자로 사용하는 방법 적용해야함.
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="user_idx")
-	private User user;
+	private User userIdx;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	private Allgacha allgacha;
+	@Column(name = "allgacha_idx")
+	private Allgacha allgachaIdx;
 
-	// // 필요한가?
-	// private String gachaImg;
 }
