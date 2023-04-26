@@ -2,6 +2,7 @@ package com.sevenight.coldcrayon.board.entity;
 
 import java.time.LocalDateTime;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -31,13 +32,16 @@ public class Board {
 	// PK (AUTO_INCREMENT)
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name="board_id")
 	private int boardId;
 
 	@ManyToOne
 	private User user;
 
+	@Column(name="board_title")
 	private String boardTitle;
 
+	@Column(name = "board_content")
 	private String boardContent;
 
 	// // 1

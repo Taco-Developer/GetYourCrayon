@@ -1,5 +1,6 @@
 package com.sevenight.coldcrayon.allgacha.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -21,7 +22,9 @@ import lombok.ToString;
 public class Allgacha {
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "allgacha_idx")
 	private int allgachaIdx;
 
+	@Column(name = "allgacha_img")
 	private String allgachaImg;
 }

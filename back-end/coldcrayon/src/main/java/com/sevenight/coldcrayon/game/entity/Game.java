@@ -1,5 +1,6 @@
 package com.sevenight.coldcrayon.game.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -21,10 +22,13 @@ import lombok.ToString;
 public class Game {
 
 	@Id
+	@Column(name="game_idx")
 	private int gameIdx;
 
 	@Enumerated(EnumType.STRING)
+	@Column(name="game_category")
 	private GameCategory gameCategory;
 
+	@Column(name = "game_keyword")
 	private String gameKeyword;
 }

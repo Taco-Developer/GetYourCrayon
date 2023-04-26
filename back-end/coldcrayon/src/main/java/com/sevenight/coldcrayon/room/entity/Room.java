@@ -2,6 +2,7 @@ package com.sevenight.coldcrayon.room.entity;
 
 import java.time.LocalDateTime;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -30,21 +31,28 @@ import lombok.ToString;
 public class Room {
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name="room_idx")
 	private String roomIdx;
 
 	@OneToOne
+	@Column(name = "game")
 	private Game game;
 
+	@Column(name = "room_name")
 	private String roomName;
 
 	@Enumerated(EnumType.STRING)
+	@Column(name = "room_state")
 	private RoomStatus roomStatus;
 
+	@Column(name = "room_max")
 	private int roomMax;
 
+	@Column(name = "room_now")
 	private int roomNow;
 
 	@CreationTimestamp
+	@Column(name = "room_create_time")
 	private LocalDateTime roomCreateTime;
 
 }

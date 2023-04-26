@@ -2,8 +2,8 @@ spring:
   datasource:
     url: jdbc:mariadb://host.docker.internal:3306/crayondb
     driver-class-name: org.mariadb.jdbc.Driver
-    username: root
-    password: root
+    username: dev
+    password: test1234
     hikari:
       pool-name: jpa-hikari-pool
       maximum-pool-size: 5
