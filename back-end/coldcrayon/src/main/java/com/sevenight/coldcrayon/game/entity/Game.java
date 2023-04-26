@@ -1,6 +1,9 @@
 package com.sevenight.coldcrayon.game.entity;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Id;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,4 +19,12 @@ import lombok.ToString;
 @Builder
 @ToString
 public class Game {
+
+	@Id
+	private int gameIdx;
+
+	@Enumerated(EnumType.STRING)
+	private GameCategory gameCategory;
+
+	private String gameKeyword;
 }
