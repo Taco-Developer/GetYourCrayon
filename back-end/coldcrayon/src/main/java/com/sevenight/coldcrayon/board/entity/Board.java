@@ -2,7 +2,6 @@ package com.sevenight.coldcrayon.board.entity;
 
 import java.time.LocalDateTime;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -35,7 +34,7 @@ public class Board {
 	@Column(name="board_id")
 	private int boardId;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	private User user;
 
 	@Column(name="board_title")
@@ -44,18 +43,10 @@ public class Board {
 	@Column(name = "board_content")
 	private String boardContent;
 
-	// // 1
-	// @CreationTimestamp
-	// private LocalDateTime boardCreateTime;
-	//
-	// @UpdateTimestamp
-	// private LocalDateTime boardUpdateTime;
+	// 1
+	 @CreationTimestamp
+	 private LocalDateTime boardCreateTime;
 
-	// // 2
-	// @CreationTimestamp
-	// private LocalDateTime boardCreateTime;
-
-	// 3
-	private LocalDateTime boardCreateTime;
-
+	 @UpdateTimestamp
+	 private LocalDateTime boardUpdateTime;
 }
