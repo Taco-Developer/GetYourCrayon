@@ -4,7 +4,7 @@ pipeline {
         stage('CLONE')
         {
             steps{
-                git branch : 'dev_test', credentialsId : 'crayon_token', url : 'https://lab.ssafy.com/s08-final/S08P31B203.git'
+                git branch: 'dev_test', credentialsId: 'credential_Id', url: 'https://lab.ssafy.com/s08-final/S08P31B203.git'
             }
         }
 
