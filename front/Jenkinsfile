@@ -7,18 +7,23 @@ pipeline {
             }
         }
 
-        stage('BUILD') {
-            steps {
-                sh '''
-                chmod +x gradlew
-                ./gradlew clean build
-                '''
-            }
-        }
         stage('DOCKER BUILD') {
             steps
             {
-                sh "docker build -t gmkim716/crayon-next-container ."
+                sh '''
+                echo 'docker build dir ' ${PWD}
+                cd front
+            
+                docker stop crayon-next-container || true
+                docker rm crayon-next-container || true
+                
+                
+                docker rmi gmkim716/crayon-next-container || true
+                echo 'Remove if gmkim716/crayon-next-container exist'
+                
+                docker build -t gmkim716/crayon-next-container .
+                cd
+                '''
             }
         }
 
