@@ -1,21 +1,14 @@
-# Dockerfile
+# base image
+FROM node:18-alpine AS base
 
-FROM node:alpine as builder
+RUN mkdir -p /usr/app/
+WORKDIR /usr/app
 
-WORKDIR /app
-
-COPY ./package.json ./
-
-RUN npm install
-
+# copy from to
 COPY . .
 
+RUN npm install 
 RUN npm run build
 
-FROM nginx
-
 EXPOSE 3000
-
-COPY ./nginx/default.conf /etc/nginx/conf.d/react.conf
-
-# COPY --from=builder /app/build /usr/share/nginx/html
+CMD ["npm", "start"]
