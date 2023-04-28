@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 
-import Painting from './Painting';
-import Watching from './Watching';
+import Painting from './roles/Painting';
+import Watching from './roles/Watching';
+import Selecting from './roles/Selecting';
 
 export default function Lier() {
   const [role, setRole] = useState<string>('painting');
@@ -16,7 +17,7 @@ export default function Lier() {
     case 'watching':
       return <Watching />;
     case 'selecting':
-      return <div>모두 다 그리고 결정하는 상황</div>;
+      return <Selecting />;
     default:
       return <div>Something wrong!!</div>;
   }
