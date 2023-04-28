@@ -1,3 +1,4 @@
+import Margin from '@/components/ui/Margin';
 import Image from 'next/image';
 import { ReactNode } from 'react';
 
@@ -8,10 +9,17 @@ export default function GameCenter({ children }: { children: ReactNode }) {
     <MainContainer>
       <MainHeader>
         <ImageBox>
-          <Image src="/images/로고.png" alt="브랜드 로고" fill />
+          <Image
+            src="/images/로고.png"
+            alt="브랜드 로고"
+            fill
+            sizes="100%"
+            priority
+          />
         </ImageBox>
         <Category>주제: </Category>
       </MainHeader>
+      <Margin type="height" size={16} />
       {children}
     </MainContainer>
   );

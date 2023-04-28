@@ -2,9 +2,9 @@ import React, { useEffect, useRef } from 'react';
 
 import tw from 'tailwind-styled-components';
 
-import GameCenter from './sides/GameCenter';
-import GameLeftSide from './sides/GameLeftSide';
-import GameRightSide from './sides/GameRightSide';
+import GameCenter from '../sides/GameCenter';
+import GameLeftSide from '../sides/GameLeftSide';
+import GameRightSide from '../sides/GameRightSide';
 import Margin from '@/components/ui/Margin';
 
 export default function Painting() {
@@ -38,7 +38,6 @@ export default function Painting() {
     <>
       <GameLeftSide isPainting={true} />
       <GameCenter>
-        <Margin type="height" size={16} />
         <canvas className="w-full flex-auto bg-white" ref={canvasRef}></canvas>
         <Margin type="height" size={16} />
         <CanvasOptions>
@@ -46,7 +45,7 @@ export default function Painting() {
           <Tools>도구</Tools>
         </CanvasOptions>
       </GameCenter>
-      <GameRightSide />
+      <GameRightSide isPainting={true} />
     </>
   );
 }
