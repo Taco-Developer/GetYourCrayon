@@ -55,14 +55,14 @@
   font-family: 'CookieRun';
   font-weight: 400;
   src: url('/fonts/CookieRunFont_TTF/CookieRun_Regular.ttf')
-    format('ttf');
+    format('truetype');
 }
 
 @font-face {
   font-family: 'CookieRun';
   font-weight: 700;
   src: url('/fonts/CookieRunFont_TTF/CookieRun_Bold.ttf')
-    format('ttf');
+    format('treutype');
 }
 
 @font-face {
@@ -79,4 +79,8 @@
 
 body {
   font-family: var(--cookie-font);
+}
+
+p {
+  font-family: var(--suit-font);
 }
