@@ -18,7 +18,7 @@ export default function Home() {
             sizes="100%"
           />
         </div>
-        <div className="font-serif">기본폰트</div>
+        <p>폰트 굵기가 진짜 다양하다</p>
         <div style={{ fontFamily: 'var(--suit-font)' }}>수트폰트 테스트용</div>
         <div>나는 행복합니다</div>
         <div>203 화이팅</div>
