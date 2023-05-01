@@ -1,0 +1,47 @@
+{
+  "name": "react-s3-typescript",
+  "version": "1.3.7",
+  "description": "A npm package to upload your files into AWS S3 Bucket directly using react",
+  "homepage": "https://github.com/siamahnaf/react-s3-typescript",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rimraf dist && npm run build:esm && npm run build:cjs",
+    "build:esm": "tsc",
+    "build:cjs": "tsc --module CommonJS --outDir dist/cjs"
+  },
+  "author": {
+    "name": "Siam Ahnaf",
+    "email": "mail@siamahnaf.com",
+    "url": "https://www.siamahnaf.com"
+  },
+  "license": "MIT",
+  "keywords": [
+    "reac",
+    "treact-component",
+    "aws",
+    "s3",
+    "upload",
+    "typescript",
+    "file-upload",
+    "file",
+    "react-aws-s3",
+    "react-s3-typescript"
+  ],
+  "repository": {
+    "type": "git",
+    "directory": "https://github.com/siamahnaf/react-s3-typescript",
+    "url": "https://github.com/siamahnaf/react-s3-typescript"
+  },
+  "devDependencies": {
+    "@types/node": "^18.15.11",
+    "typescript": "^5.0.4"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.309.0",
+    "short-uuid": "^4.2.2"
+  }
+}
