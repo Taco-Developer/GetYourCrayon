@@ -69,7 +69,7 @@
   font-family: 'CookieRun';
   font-weight: 900;
   src: url('/fonts/CookieRunFont_TTF/CookieRun_Black.ttf')
-    format('ttf');
+    format('truetype');
 }
 
 :root {
