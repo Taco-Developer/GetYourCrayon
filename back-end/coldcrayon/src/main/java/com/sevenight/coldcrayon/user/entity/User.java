@@ -4,15 +4,15 @@ import com.sevenight.coldcrayon.board.entity.Board;
 import com.sevenight.coldcrayon.gacha.entity.Gacha;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -24,8 +24,11 @@ import java.util.List;
 public class User {
 
     @Id
-    @Column(name = "user_idx")
-    private String userIdx;
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Column(name = "user_idx", updatable = false, nullable = false, columnDefinition = "VARCHAR(36)")
+    @Type(type = "uuid-char")
+    private UUID userIdx;
 
     @Column(name = "user_token")
     private String userToken;

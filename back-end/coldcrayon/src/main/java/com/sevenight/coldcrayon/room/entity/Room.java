@@ -20,9 +20,12 @@ import java.util.List;
 public class Room {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "room_idx")
     private String roomIdx;
+
+    // 랜덤값 생성
+    // setter로 roomIdx에 넣어줌
 
     @JoinColumn(name = "game")
     @OneToOne(fetch = FetchType.LAZY)
