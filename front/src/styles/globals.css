@@ -54,21 +54,21 @@
 @font-face {
   font-family: 'CookieRun';
   font-weight: 400;
-  src: url('../../public/fonts/CookieRunFont_TTF/CookieRun\ Regular.ttf')
+  src: url('../../public/fonts/CookieRunFont_TTF/CookieRun_Regular.ttf')
     format('ttf');
 }
 
 @font-face {
   font-family: 'CookieRun';
   font-weight: 700;
-  src: url('../../public/fonts/CookieRunFont_TTF/CookieRun\ Bold.ttf')
+  src: url('../../public/fonts/CookieRunFont_TTF/CookieRun_Bold.ttf')
     format('ttf');
 }
 
 @font-face {
   font-family: 'CookieRun';
   font-weight: 900;
-  src: url('../../public/fonts/CookieRunFont_TTF/CookieRun\ Black.ttf')
+  src: url('../../public/fonts/CookieRunFont_TTF/CookieRun_Black.ttf')
     format('ttf');
 }
 
