@@ -6,69 +6,69 @@
 @font-face {
   font-family: 'SUIT';
   font-weight: 100;
-  src: url('/fonts/SUIT-woff2/SUIT-Thin.woff2') format('woff2');
+  src: url('../../public/fonts/SUIT-woff2/SUIT-Thin.woff2') format('woff2');
 }
 @font-face {
   font-family: 'SUIT';
   font-weight: 200;
-  src: url('/fonts/SUIT-woff2/SUIT-ExtraLight.woff2')
+  src: url('../../public/fonts/SUIT-woff2/SUIT-ExtraLight.woff2')
     format('woff2');
 }
 @font-face {
   font-family: 'SUIT';
   font-weight: 300;
-  src: url('/fonts/SUIT-woff2/SUIT-Light.woff2') format('woff2');
+  src: url('../../public/fonts/SUIT-woff2/SUIT-Light.woff2') format('woff2');
 }
 @font-face {
   font-family: 'SUIT';
   font-weight: 400;
-  src: url('/fonts/SUIT-woff2/SUIT-Regular.woff2') format('woff2');
+  src: url('../../public/fonts/SUIT-woff2/SUIT-Regular.woff2') format('woff2');
 }
 @font-face {
   font-family: 'SUIT';
   font-weight: 500;
-  src: url('/fonts/SUIT-woff2/SUIT-Medium.woff2') format('woff2');
+  src: url('../../public/fonts/SUIT-woff2/SUIT-Medium.woff2') format('woff2');
 }
 @font-face {
   font-family: 'SUIT';
   font-weight: 600;
-  src: url('/fonts/SUIT-woff2/SUIT-SemiBold.woff2') format('woff2');
+  src: url('../../public/fonts/SUIT-woff2/SUIT-SemiBold.woff2') format('woff2');
 }
 @font-face {
   font-family: 'SUIT';
   font-weight: 700;
-  src: url('/fonts/SUIT-woff2/SUIT-Bold.woff2') format('woff2');
+  src: url('../../public/fonts/SUIT-woff2/SUIT-Bold.woff2') format('woff2');
 }
 @font-face {
   font-family: 'SUIT';
   font-weight: 800;
-  src: url('/fonts/SUIT-woff2/SUIT-ExtraBold.woff2') format('woff2');
+  src: url('../../public/fonts/SUIT-woff2/SUIT-ExtraBold.woff2') format('woff2');
 }
 @font-face {
   font-family: 'SUIT';
   font-weight: 900;
-  src: url('/fonts/SUIT-woff2/SUIT-Heavy.woff2') format('woff2');
+  src: url('../../public/fonts/SUIT-woff2/SUIT-Heavy.woff2') format('woff2');
 }
 
 /* CookieRun Font */
 @font-face {
   font-family: 'CookieRun';
   font-weight: 400;
-  src: url('/fonts/CookieRunFont_TTF/CookieRun_Regular.ttf')
+  src: url('../../public/fonts/CookieRunFont_TTF/CookieRun_Regular.ttf')
     format('truetype');
 }
 
 @font-face {
   font-family: 'CookieRun';
   font-weight: 700;
-  src: url('/fonts/CookieRunFont_TTF/CookieRun_Bold.ttf')
-    format('treutype');
+  src: url('../../public/fonts/CookieRunFont_TTF/CookieRun_Bold.ttf')
+    format('truetype');
 }
 
 @font-face {
   font-family: 'CookieRun';
   font-weight: 900;
-  src: url('/fonts/CookieRunFont_TTF/CookieRun_Black.ttf')
+  src: url('../../public/fonts/CookieRunFont_TTF/CookieRun_Black.ttf')
     format('truetype');
 }
 
