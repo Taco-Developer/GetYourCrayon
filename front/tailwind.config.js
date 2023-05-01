@@ -7,6 +7,10 @@ module.exports = {
   ],
   theme: {
     extend: {
+      colors: {
+        'main-green': '#084227',
+        'main-pink': '#EC8091',
+      },
       backgroundImage: {
         'after-noon': "url('/images/bgafternoon.png')",
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
