@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import loopy from 'C:\Users\SSAFY\Desktop\Project\Gitlab\S08P31B203\front\public\images\loopy.jpg';
+import loopy from '../../public/images/loopy.jpg';
 
 export default function Home() {
   return (
