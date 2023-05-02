@@ -11,17 +11,17 @@ interface NavbarPropsType {
 export default function Navbar({ children }: NavbarPropsType) {
   return (
     <div>
-      <div className="flex gap-4 absolute top-0 left-0 right-0 justify-center items-center">
+      <NavbarDiv>
         <Button
           px={8}
           py={2}
           rounded="lg"
           color="bg-main-green"
-          className=" text-main-pink"
+          className=" text-main-pink text-xs lg:text-xl sm:text-sm"
         >
           게임하기
         </Button>
-        <div className="relative h-24 w-24">
+        <ImageDiv>
           <Image
             src={'/images/logo.png'}
             alt="noimg"
@@ -29,31 +29,57 @@ export default function Navbar({ children }: NavbarPropsType) {
             fill
             sizes="100%"
           />
-        </div>
+        </ImageDiv>
 
         <Button
           px={8}
           py={2}
           rounded="lg"
           color="bg-main-green"
-          className=" text-main-pink"
+          className=" text-main-pink text-xs lg:text-xl sm:text-sm"
         >
           같이하기
         </Button>
-      </div>
-      <div className="absolute flex right-login-custom -top-1 justify-center items-center mt-8 ">
+      </NavbarDiv>
+      <LoginDiv>
         <Button
           px={8}
           py={2}
           rounded="lg"
           color="bg-main-pink"
-          className="animate-bounce text-main-green"
+          className="animate-bounce text-main-green text-xs lg:text-xl sm:text-sm"
         >
           로그인
         </Button>
-      </div>
+      </LoginDiv>
 
       {children}
     </div>
   );
 }
+
+const ImageDiv = tw.div`
+  relative
+  h-24
+  w-24
+`;
+
+const NavbarDiv = tw.div`
+  flex 
+  gap-4 
+  absolute 
+  top-2
+  left-0 
+  right-0 
+  justify-center 
+  items-center
+`;
+
+const LoginDiv = tw.div`
+  absolute 
+  flex 
+  right-login-custom 
+  top-1
+  justify-center 
+  items-center mt-8
+`;
