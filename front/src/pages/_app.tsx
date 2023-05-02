@@ -26,7 +26,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayoutType) {
 
 const Container = tw.div`
   w-screen
-
+  min-h-screen
   h-full
   bg-after-noon
 

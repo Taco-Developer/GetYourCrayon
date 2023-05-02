@@ -38,11 +38,19 @@ export default function Navbar({ children }: NavbarPropsType) {
           color="bg-main-green"
           className=" text-main-pink"
         >
-          마이페이지
+          같이하기
         </Button>
       </div>
-      <div className="absolute flex right-0 top-0 justify-center items-center mt-8 text-2xl">
-        <div>로그인</div>
+      <div className="absolute flex right-login-custom -top-1 justify-center items-center mt-8 ">
+        <Button
+          px={8}
+          py={2}
+          rounded="lg"
+          color="bg-main-pink"
+          className="animate-bounce text-main-green"
+        >
+          로그인
+        </Button>
       </div>
 
       {children}
