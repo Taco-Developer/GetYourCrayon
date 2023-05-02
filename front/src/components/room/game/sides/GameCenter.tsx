@@ -10,7 +10,7 @@ export default function GameCenter({ children }: { children: ReactNode }) {
       <MainHeader>
         <ImageBox>
           <Image
-            src="/images/로고.png"
+            src="/images/logo.png"
             alt="브랜드 로고"
             fill
             sizes="100%"
