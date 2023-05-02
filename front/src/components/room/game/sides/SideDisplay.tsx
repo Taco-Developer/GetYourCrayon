@@ -1,14 +1,18 @@
 import { ReactNode } from 'react';
 import tw from 'tailwind-styled-components';
 
-export default function SideDisplay({ children }: { children: ReactNode }) {
-  return <SideContainer>{children}</SideContainer>;
+export default function SideDisplay({
+  isLeft,
+  children,
+}: {
+  isLeft: boolean;
+  children: ReactNode;
+}) {
+  return <SideContainer data-left={isLeft}>{children}</SideContainer>;
 }
 
-const SideContainer = tw.div`
-  bg-amber-900
-  
-  col-span-2
+const SideContainer = tw.div<{ 'data-left': boolean }>`
+ ${(props) => (props['data-left'] ? 'col-span-2' : 'col-span-3')}
   
   flex
   flex-col
