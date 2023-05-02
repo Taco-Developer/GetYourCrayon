@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { socket } from '@/socket/server';
+import { Socket } from 'socket.io-client';
 
 interface ChatPropsType {
+  socket: Socket;
   userId: string;
   room: string;
 }
 
-export default function Chat({ userId, room }: ChatPropsType) {
+export default function Chat({ socket, userId, room }: ChatPropsType) {
   const [currentMessage, setCurrentMessage] = useState<string>('');
   const [messageList, setMessageList] = useState<[]>([]);
 
@@ -23,7 +24,6 @@ export default function Chat({ userId, room }: ChatPropsType) {
       };
 
       await socket.emit('send_message', messageData);
-      setMessageList((list) => [...list, messageData]);
       setCurrentMessage('');
     }
   };

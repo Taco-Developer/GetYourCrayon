@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { socket } from '@/socket/server';
+import { Socket } from 'socket.io-client';
 
 interface RoomPropsType {
+  socket: Socket;
   userId: string;
   setUserId: React.Dispatch<React.SetStateAction<string>>;
   room: string;
@@ -10,6 +11,7 @@ interface RoomPropsType {
 }
 
 export default function InRoom({
+  socket,
   userId,
   setUserId,
   room,

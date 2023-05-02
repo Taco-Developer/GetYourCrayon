@@ -15,6 +15,7 @@ export default function Room() {
       <h1>Room Page</h1>
       {!showChat ? (
         <InRoom
+          socket={socket}
           userId={userId}
           setUserId={setUserId}
           room={room}
@@ -22,7 +23,7 @@ export default function Room() {
           setShowChat={setShowChat}
         />
       ) : (
-        <Chat userId={userId} room={room} />
+        <Chat socket={socket} userId={userId} room={room} />
       )}
     </div>
   );
