@@ -31,7 +31,7 @@ pipeline {
             steps
             {
             sh '''
-            docker run -d -p 8080:8080 --name crayon-spring-container gmkim716/crayon-spring-container
+            docker run -d -p 3002:3000 --name crayon-next-container gmkim716/crayon-next-container
             echo 'Success'
             '''
             }
