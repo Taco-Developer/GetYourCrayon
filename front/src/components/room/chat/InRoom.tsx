@@ -20,11 +20,8 @@ export default function InRoom({
 }: RoomPropsType) {
   const joinRoom = () => {
     if (userId !== '' && room !== '') {
-      const data = { userId: userId, room: room };
-      socket.emit('join_room', data);
+      socket.emit('join_room', room);
       setShowChat(true);
-      setUserId('');
-      setRoom('');
     }
   };
 

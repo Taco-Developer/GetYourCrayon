@@ -9,7 +9,9 @@ export default function Room() {
   const [room, setRoom] = useState<string>('');
   const [showChat, setShowChat] = useState<boolean>(false);
 
-  // useEffect(() => {}, [socket]);
+  useEffect(() => {
+    socket;
+  }, []);
   return (
     <div>
       <h1>Room Page</h1>
