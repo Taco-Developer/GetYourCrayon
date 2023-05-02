@@ -21,7 +21,7 @@ export default function Home() {
         <div style={{ fontFamily: 'var(--suit-font)' }}>
           수트폰트 테스트용{'><<<'}
         </div>
-        <div>나는 행복합니다</div>
+        <div>나는 행복합니다람쥐</div>
         <div>203 화이팅</div>
         <div>나는 행복합니다{'<<<'}</div>
         <div>203 화이팅</div>
