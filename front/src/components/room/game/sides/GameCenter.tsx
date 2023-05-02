@@ -26,7 +26,7 @@ export default function GameCenter({ children }: { children: ReactNode }) {
 }
 
 const MainContainer = tw.div`
-  col-span-8
+  col-span-7
 
   flex
   flex-col

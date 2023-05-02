@@ -20,6 +20,9 @@ module.exports = {
       spacing: {
         'login-custom': '10%',
       },
+      minHeight: {
+        'container-height': '90vh',
+      },
     },
   },
   plugins: [],
