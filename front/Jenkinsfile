@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('CLONE') {
             steps {
-                git branch: 'build_fe', credentialsId: 'credential_Id', url: 'https://lab.ssafy.com/s08-final/S08P31B203.git'
+                git branch: 'build_fe2', credentialsId: 'credential_Id', url: 'https://lab.ssafy.com/s08-final/S08P31B203.git'
             }
         }
 
