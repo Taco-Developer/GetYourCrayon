@@ -10,7 +10,7 @@ export default function GameCenter({ children }: { children: ReactNode }) {
       <MainHeader>
         <ImageBox>
           <Image
-            src="/images/로고.png"
+            src="/images/logo.png"
             alt="브랜드 로고"
             fill
             sizes="100%"
@@ -26,7 +26,7 @@ export default function GameCenter({ children }: { children: ReactNode }) {
 }
 
 const MainContainer = tw.div`
-  col-span-8
+  col-span-7
 
   flex
   flex-col

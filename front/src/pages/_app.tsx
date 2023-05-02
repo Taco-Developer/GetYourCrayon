@@ -29,7 +29,10 @@ const Container = tw.div`
   min-h-screen
   h-full
   bg-after-noon
-
+  
+  flex
+  justify-center
+  items-center
 
 
 `;
