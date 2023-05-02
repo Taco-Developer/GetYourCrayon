@@ -7,18 +7,23 @@ import InRoom from '@/components/room/chat/InRoom';
 export default function Room() {
   const [userId, setUserId] = useState<string>('');
   const [room, setRoom] = useState<string>('');
+  const [showChat, setShowChat] = useState<boolean>(false);
 
   // useEffect(() => {}, [socket]);
   return (
     <div>
       <h1>Room Page</h1>
-      <InRoom
-        userId={userId}
-        setUserId={setUserId}
-        room={room}
-        setRoom={setRoom}
-      />
-      <Chat />
+      {!showChat ? (
+        <InRoom
+          userId={userId}
+          setUserId={setUserId}
+          room={room}
+          setRoom={setRoom}
+          setShowChat={setShowChat}
+        />
+      ) : (
+        <Chat userId={userId} room={room} />
+      )}
     </div>
   );
 }

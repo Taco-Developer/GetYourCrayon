@@ -6,6 +6,7 @@ interface RoomPropsType {
   setUserId: React.Dispatch<React.SetStateAction<string>>;
   room: string;
   setRoom: React.Dispatch<React.SetStateAction<string>>;
+  setShowChat: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function InRoom({
@@ -13,11 +14,13 @@ export default function InRoom({
   setUserId,
   room,
   setRoom,
+  setShowChat,
 }: RoomPropsType) {
   const joinRoom = () => {
     if (userId !== '' && room !== '') {
       const data = { userId: userId, room: room };
       socket.emit('join_room', data);
+      setShowChat(true);
       setUserId('');
       setRoom('');
     }
