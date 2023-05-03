@@ -6,25 +6,39 @@ import tw from 'tailwind-styled-components';
 import SideDisplay from './SideDisplay';
 import Margin from '@/components/ui/Margin';
 
-export default function GameLeftSide({ isPainting }: { isPainting: boolean }) {
+import { GameRoundType, GameUser } from '../InGameRoom';
+
+interface GameLeftSidePropsType {
+  isPainting: boolean;
+  userList: GameUser[];
+  gameRound: GameRoundType;
+}
+
+export default function GameLeftSide({
+  isPainting,
+  gameRound,
+  userList,
+}: GameLeftSidePropsType) {
   return (
     <SideDisplay isLeft={true}>
-      <h2 className="text-2xl">1 / 5</h2>
-      <Margin type="height" size={16} />
+      <h2 className="text-2xl">
+        {gameRound.now} / {gameRound.total}
+      </h2>
       <Members>
         <h2>참가자 목록</h2>
         <Margin type="height" size={16} />
         <MemberList>
-          {[1, 2, 3, 4, 5, 6].map((id) => {
+          {userList.map((user) => {
             return (
-              <MemberItem key={id}>
+              <MemberItem key={user.id}>
                 <Profile />
-                <Margin type="width" size={8} />
-                {`참가자 ${id}`}
+                <span className="truncate flex-auto">{user.nickname}</span>
                 <MemberStatus>
                   <Image
                     src={
-                      id === 1 ? '/icons/mic_mute.png' : '/icons/sound_mute.png'
+                      user.id === 1
+                        ? '/icons/mic_mute.png'
+                        : '/icons/sound_mute.png'
                     }
                     alt="mic mute"
                     width={16}
@@ -43,7 +57,6 @@ export default function GameLeftSide({ isPainting }: { isPainting: boolean }) {
           <Margin type="height" size={16} />
         </>
       )}
-      <Margin type="height" size={16} />
       <SoundSetting>
         <div className="bg-white p-2 rounded-full">
           <Image
@@ -71,7 +84,7 @@ const Members = tw.div`
   bg-[#88CDFF]
   rounded-lg
 
-  p-4
+  p-2
 
   flex
   flex-col
@@ -85,29 +98,31 @@ const MemberList = tw.div`
   rounded-lg
   text-sm
 
-  px-4
-  py-4
+  p-2
 
   flex
   flex-col
-  gap-2
+  gap-4
 `;
 
 const MemberItem = tw.div`
   flex
+  justify-between
+  gap-2
   items-center
 `;
 
 const Profile = tw.div`
-  w-4
-  h-4
+  w-5
+  h-5
   rounded-full
 
+  flex-none
   bg-white
 `;
 
 const MemberStatus = tw.div`
-  flex-auto
+  flex-none
 
   flex
   justify-end
