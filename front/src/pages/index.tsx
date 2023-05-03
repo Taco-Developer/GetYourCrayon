@@ -7,8 +7,8 @@ import MainCarousel from '@/components/main/MainCarousel';
 export default function Home() {
   return (
     <MainContainer>
-      <Margin type="height" size={100} />
-      <div className="flex flex-col items-center">
+      <Margin type="height" size={150} />
+      <div className="">
         <MainCarousel />
       </div>
     </MainContainer>
@@ -24,4 +24,6 @@ const MainContainer = tw.div`
   xl:w-10/12
   min-h-container-height
   h-full
+  
+  scrollbar-ssibal
 `;
