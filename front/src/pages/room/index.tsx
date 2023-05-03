@@ -1,8 +1,8 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { socket } from '@/socket/server';
-import Chat from '@/components/room/chat/Chat';
-import InRoom from '@/components/room/chat/InRoom';
+import Chat from '@/components/room/ready/Chat';
+import InRoom from '@/components/room/ready/InRoom';
 
 export default function Room() {
   const [userId, setUserId] = useState<string>('');
