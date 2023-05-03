@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class GachaController {
 
-    private final UserService userService;
     private final GachaService gachaService;
 
     @GetMapping("/gacha/{userIdx}")
@@ -32,9 +31,9 @@ public class GachaController {
         return new ResponseEntity<ResponseDto>(responseDto, HttpStatus.OK);
     }
     @PostMapping("/gacha/{userIdx}/tence")
-    public ResponseEntity<ResponseDto> gachaTence(@PathVariable Long userIdx) {
+    public ResponseEntity<ResponseDto> gachaTenth(@PathVariable Long userIdx) {
         log.info("갓챠 열 번 뽑기 GET: /{}", userIdx);
-        ResponseDto responseDto = gachaService.gachaTence(userIdx);
+        ResponseDto responseDto = gachaService.gachaTenth(userIdx);
         return new ResponseEntity<ResponseDto>(responseDto, HttpStatus.OK);
     }
 }

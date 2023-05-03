@@ -66,7 +66,7 @@ public class GachaService {
         return responseDto;
     }
 
-    public ResponseDto gachaTence(Long userIdx) {
+    public ResponseDto gachaTenth(Long userIdx) {
         Map<String, Object> result = new HashMap<>();
         ResponseDto responseDto = new ResponseDto();
 
