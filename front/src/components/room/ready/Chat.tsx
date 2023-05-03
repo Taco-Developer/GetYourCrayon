@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Socket } from 'socket.io-client';
 import tw from 'tailwind-styled-components';
-import './Chat.module.css';
 
 interface ChatPropsType {
   socket: Socket;
@@ -83,7 +82,7 @@ export default function Chat({ socket, userId, room }: ChatPropsType) {
         <input
           type="text"
           value={currentMessage}
-          placeholder="Hey..."
+          placeholder="메시지..."
           onChange={(event) => {
             setCurrentMessage(event.target.value);
           }}
