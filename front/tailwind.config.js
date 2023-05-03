@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+const plugin = require('tailwindcss/plugin');
 module.exports = {
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
@@ -10,6 +11,7 @@ module.exports = {
       colors: {
         'main-green': '#084227',
         'main-pink': '#EC8091',
+        'custom-gray': 'rgba(158, 155, 155, 0.87)',
       },
       backgroundImage: {
         'after-noon': "url('/images/bgafternoon.png')",
@@ -22,8 +24,27 @@ module.exports = {
       },
       minHeight: {
         'container-height': '90vh',
+        'container-height2': '80vh',
+      },
+      backgroundColor: {
+        'board-color': 'rgba(255, 255, 255, 0.73)',
+      },
+      borderColor: {
+        'custom-gray': 'rgba(158, 155, 155, 0.37)',
       },
     },
   },
-  plugins: [],
+  plugins: [
+    plugin(function ({ addUtilities }) {
+      addUtilities({
+        '.scrollbar-ssibal': {
+          '-ms-overflow-style': 'none',
+          'scrollbar-width': 'none',
+          '&::-webkit-scrollbar': {
+            display: 'none',
+          },
+        },
+      });
+    }),
+  ],
 };
