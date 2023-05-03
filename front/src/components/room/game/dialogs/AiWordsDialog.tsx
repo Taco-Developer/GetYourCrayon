@@ -1,16 +1,44 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Dialog } from '@mui/material';
 import Margin from '@/components/ui/Margin';
 
+const INIT_KEY_WORDS = [
+  '사과',
+  '복숭아',
+  '토마토',
+  '키위',
+  '파인애플',
+  '망고',
+  '두리안',
+  '배',
+  '귤',
+];
+
 export default function AiWordsDialog({
   isOpened,
+  keywordList,
+  addKeyword,
+  deleteKeyword,
   onClose,
 }: {
   isOpened: boolean;
+  keywordList: string[];
+  addKeyword: (keyword: string) => void;
+  deleteKeyword: (keyword: string) => void;
   onClose: () => void;
 }) {
-  const onDialogClose = () => {
+  const onDialogClose = (_: object, reason: string) => {
+    if (reason === 'backdropClick') return;
     onClose();
+  };
+
+  const cardClickHandler = (keyword: string) => {
+    const isSlected = keywordList.indexOf(keyword) !== -1 ? true : false;
+    if (isSlected) {
+      deleteKeyword(keyword);
+      return;
+    }
+    addKeyword(keyword);
   };
 
   return (
@@ -23,20 +51,30 @@ export default function AiWordsDialog({
         </header>
         <Margin type="height" size={16} />
         <main className="w-full grid grid-rows-3 grid-cols-3 gap-2">
-          {Array(9)
-            .fill(1)
-            .map((_, index) => (
-              <div
-                key={index}
-                className="flex justify-center items-center bg-orange-400"
-              >
-                Card
-              </div>
-            ))}
+          {INIT_KEY_WORDS.map((word, index) => (
+            <div
+              key={index}
+              className={`flex justify-center items-center py-2 ${
+                keywordList.indexOf(word) !== -1
+                  ? 'bg-green-600'
+                  : 'bg-orange-400'
+              }`}
+              onClick={() => {
+                cardClickHandler(word);
+              }}
+            >
+              {word}
+            </div>
+          ))}
         </main>
         <Margin type="height" size={16} />
         <footer>
-          <button className="block mx-auto text-lg px-6 py-2 bg-amber-500 rounded-lg">
+          <button
+            className={`block mx-auto text-lg px-6 py-2 rounded-lg ${
+              keywordList.length === 3 ? 'bg-amber-400' : 'bg-gray-300'
+            }`}
+            onClick={onClose}
+          >
             확인
           </button>
         </footer>
