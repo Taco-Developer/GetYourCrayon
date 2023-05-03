@@ -22,7 +22,7 @@ CREATE TABLE `board` (
 CREATE TABLE `allgacha` (
                             `allgacha_idx` Integer NOT NULL,
                             `allgacha_img` VARCHAR(255) DEFAULT NULL,
-                            `allgacha_class` ENUM('EVENT', 'SUPERREAR', 'REAR', 'NORMAL'),
+                            `allgacha_class` ENUM('EVENT', 'SUPERRARE', 'RARE', 'NORMAL'),
                             PRIMARY KEY (`allgacha_idx`)
 );
 CREATE TABLE `gacha` (

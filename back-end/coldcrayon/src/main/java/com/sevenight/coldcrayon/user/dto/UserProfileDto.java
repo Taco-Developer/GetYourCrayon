@@ -11,5 +11,6 @@ public class UserProfileDto {
     private Long userIdx;
     private String userNickname;
     private String userProfile;
+    private int userPoint;
 
 }
