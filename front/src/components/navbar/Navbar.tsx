@@ -1,6 +1,8 @@
 import tw from 'tailwind-styled-components';
 import { Button } from '../ui/Button';
+import Login from '../login/Login';
 import Image from 'next/image';
+import Link from 'next/link';
 
 import { ReactNode } from 'react';
 
@@ -12,45 +14,31 @@ export default function Navbar({ children }: NavbarPropsType) {
   return (
     <div>
       <NavbarDiv>
-        <Button
-          px={8}
-          py={2}
-          rounded="lg"
-          color="bg-main-green"
-          className=" text-main-pink text-xs lg:text-xl sm:text-sm"
-        >
-          게임하기
-        </Button>
-        <ImageDiv>
-          <Image
-            src={'/images/logo.png'}
-            alt="noimg"
-            priority
-            fill
-            sizes="100%"
-          />
-        </ImageDiv>
-
-        <Button
-          px={8}
-          py={2}
-          rounded="lg"
-          color="bg-main-green"
-          className=" text-main-pink text-xs lg:text-xl sm:text-sm"
-        >
-          같이하기
-        </Button>
+        <Link href={'/room'} className="px-8 py-2 rounded-lg bg-main-green">
+          <div className="text-main-pink text-xs lg:text-xl sm:text-sm">
+            게임하기
+          </div>
+        </Link>
+        <Link href={'/'}>
+          <ImageDiv>
+            {' '}
+            <Image
+              src={'/images/logo.png'}
+              alt="noimg"
+              priority
+              fill
+              sizes="100%"
+            />
+          </ImageDiv>
+        </Link>
+        <Link href={'/board'} className="px-8 py-2 rounded-lg bg-main-green">
+          <div className="text-main-pink text-xs lg:text-xl sm:text-sm">
+            같이하기
+          </div>
+        </Link>
       </NavbarDiv>
       <LoginDiv>
-        <Button
-          px={8}
-          py={2}
-          rounded="lg"
-          color="bg-main-pink"
-          className="animate-bounce text-main-green text-xs lg:text-xl sm:text-sm"
-        >
-          로그인
-        </Button>
+        <Login />
       </LoginDiv>
 
       {children}
@@ -67,8 +55,8 @@ const ImageDiv = tw.div`
 const NavbarDiv = tw.div`
   flex 
   gap-4 
-  absolute 
-  top-2
+  absolute
+  top-6
   left-0 
   right-0 
   justify-center 
@@ -79,7 +67,7 @@ const LoginDiv = tw.div`
   absolute 
   flex 
   right-login-custom 
-  top-1
+  top-5
   justify-center 
   items-center mt-8
 `;
