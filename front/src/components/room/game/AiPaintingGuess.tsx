@@ -27,18 +27,11 @@ export default function AiPaintingGuess({
   const [isEndRoundOpened, setIsEndRoundOpened] = useState(false);
 
   // 키워드
-  const [keywordList, setKeywordList] = useState<string[]>([]);
-  const addKeyword = (keyword: string) => {
-    setKeywordList((prev) => {
-      if (prev.length >= 3) return prev;
-      return [...prev, keyword];
-    });
-  };
-  const deleteKeyword = (keyword: string) => {
-    setKeywordList((prev) => {
-      const idx = prev.indexOf(keyword);
-      prev.splice(idx, 1);
-      return prev;
+  const [selectedKeyword, setSelectedKeyword] = useState<string>('');
+  const onKeywordSelectHandler = (clickedKeyword: string) => {
+    setSelectedKeyword((prev) => {
+      if (prev === clickedKeyword) return '';
+      return clickedKeyword;
     });
   };
 
@@ -68,8 +61,12 @@ export default function AiPaintingGuess({
 
   useEffect(() => {
     if (leftTime === 0) {
+      // 라운드 종료 모달 오픈
       setIsEndRoundOpened(true);
+      // 게임 진행 상태 초기화
       setIsGameStarted(false);
+      // 선택 키워드 리셋
+      setSelectedKeyword('');
     }
   }, [leftTime]);
 
@@ -77,11 +74,10 @@ export default function AiPaintingGuess({
     <>
       <AiWordsDialog
         isOpened={isWordOpened}
-        keywordList={keywordList}
-        addKeyword={addKeyword}
-        deleteKeyword={deleteKeyword}
+        selectedKeyword={selectedKeyword}
+        onKeywordSelectHandler={onKeywordSelectHandler}
         onClose={() => {
-          if (keywordList.length < 3) return;
+          if (selectedKeyword === '') return;
           setIsWordsModalOpened(false);
           setIsGameStarted(true);
         }}
