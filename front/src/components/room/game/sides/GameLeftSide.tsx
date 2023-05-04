@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 
 import tw from 'tailwind-styled-components';
 
 import SideDisplay from './SideDisplay';
 import Margin from '@/components/ui/Margin';
-
 import { GameRoundType, GameUser } from '../InGameRoom';
+import Mic from '@/components/ui/icons/Mic';
+import SoundVolume from '@/components/ui/icons/SoundVolume';
 
 interface GameLeftSidePropsType {
   isPainting: boolean;
@@ -19,6 +20,17 @@ export default function GameLeftSide({
   gameRound,
   userList,
 }: GameLeftSidePropsType) {
+  const [isMicMuted, setIsMicMuted] = useState(false);
+  const [isVolumeMuted, setIsVolumeMuted] = useState(false);
+
+  const micOptionClickHandler = () => {
+    setIsMicMuted((prev) => !prev);
+  };
+
+  const volumeOptionClickHandler = () => {
+    setIsVolumeMuted((prev) => !prev);
+  };
+
   return (
     <SideDisplay isLeft={true}>
       <h2 className="text-2xl">
@@ -34,16 +46,21 @@ export default function GameLeftSide({
                 <Profile />
                 <span className="truncate flex-auto">{user.nickname}</span>
                 <MemberStatus>
-                  <Image
-                    src={
-                      user.id === 1
-                        ? '/icons/mic_mute.png'
-                        : '/icons/sound_mute.png'
-                    }
-                    alt="mic mute"
-                    width={16}
-                    height={16}
-                  />
+                  {user.id % 2 === 0 ? (
+                    <div className="text-base">
+                      <Mic
+                        isMuted={user.id === 2 ? false : true}
+                        isMyStatus={false}
+                      />
+                    </div>
+                  ) : (
+                    <div className="text-base">
+                      <SoundVolume
+                        isMuted={user.id === 3 ? false : true}
+                        isMyStatus={false}
+                      />
+                    </div>
+                  )}
                 </MemberStatus>
               </MemberItem>
             );
@@ -58,21 +75,17 @@ export default function GameLeftSide({
         </>
       )}
       <SoundSetting>
-        <div className="bg-white p-2 rounded-full">
-          <Image
-            src="/icons/mic_mute.png"
-            alt="mic mute"
-            width={16}
-            height={16}
-          />
+        <div
+          className="bg-white rounded-full w-10 h-10 flex justify-center items-center"
+          onClick={micOptionClickHandler}
+        >
+          <Mic isMuted={isMicMuted} isMyStatus={true} />
         </div>
-        <div className="bg-white p-2 rounded-full">
-          <Image
-            src="/icons/sound_mute.png"
-            alt="sound mute"
-            width={16}
-            height={16}
-          />
+        <div
+          className="bg-white rounded-full w-10 h-10 flex justify-center items-center"
+          onClick={volumeOptionClickHandler}
+        >
+          <SoundVolume isMuted={isVolumeMuted} isMyStatus={true} />
         </div>
       </SoundSetting>
     </SideDisplay>
