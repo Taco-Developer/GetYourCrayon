@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 
 import tw from 'tailwind-styled-components';
 
@@ -8,7 +8,8 @@ import AiPaintingGuess from '@/components/room/game/AiPaintingGuess';
 import RelayPainting from '@/components/room/game/RelayPainting';
 import CatchMinde from '@/components/room/game/CatchMinde';
 
-const INIT_SECOND = 5;
+const INIT_SECOND = 60;
+
 const INIT_USERS = [
   { id: 1, nickname: '아프리카청춘이다' },
   { id: 2, nickname: '벼랑위의당뇨' },
@@ -40,6 +41,8 @@ export interface RoomEssentialDataType {
   userList: GameUser[];
   leftTime: number;
   chatList: ChatType[];
+  score: number;
+  changeScoreHandler: (num: number) => void;
   nextRound: () => void;
   countDown: () => void;
   onChatInput: (chatInput: ChatType) => void;
@@ -47,6 +50,12 @@ export interface RoomEssentialDataType {
 }
 
 export default function InGameRoom() {
+  // 점수
+  const [score, setScore] = useState(0);
+  const changeScoreHandler = useCallback((num: number) => {
+    setScore((prev) => prev + num);
+  }, []);
+
   // 라운드
   const [gameRound, setGameRound] = useState(INIT_ROUND);
   // 다음 라운드
@@ -86,6 +95,8 @@ export default function InGameRoom() {
           gameRound={gameRound}
           userList={userList}
           chatList={chatList}
+          score={score}
+          changeScoreHandler={changeScoreHandler}
           countDown={countDown}
           nextRound={nextRound}
           onChatInput={onChatInput}
