@@ -1,5 +1,6 @@
 package com.sevenight.coldcrayon.gacha.service;
 
+import com.sevenight.coldcrayon.allgacha.repository.AllgachaRepository;
 import com.sevenight.coldcrayon.user.dto.ResponseDto;
 import com.sevenight.coldcrayon.user.dto.UserProfileDto;
 import com.sevenight.coldcrayon.user.entity.User;
@@ -8,9 +9,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import javax.sound.midi.SysexMessage;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -18,6 +18,36 @@ import java.util.Optional;
 public class GachaService {
 
     private final UserRepository userRepository;
+    private final AllgachaRepository allgachaRepository;
+
+    private static int allGachaCntMin = 1;
+    private static int allGachaCntMax = 20;
+
+    public Object N_Gacha(Long userIdx, int N, int price) {
+        Optional<User> byUserIdx = userRepository.findByUserIdx(userIdx);
+        if (byUserIdx.isEmpty()) {
+            log.debug("N_gacha에서 유저 정보를 찾을 수 없음");
+            return "유저 정보를 찾을 수 없음";
+
+        } else {
+            if (byUserIdx.get().getUserPoint() >= price) {
+                Random random = new Random();
+                Map<Integer, Object> gachaMap = new HashMap<>();
+                for (Long i = 1L; i<=N; i++) {
+                    int gachaNumber = random.nextInt(allGachaCntMax) + allGachaCntMin;
+
+                    List<Object> gachaInfoList = new ArrayList<>();
+                    gachaInfoList.add(allgachaRepository.findByAllgachaIdx(i).get().getAllgachaImg());
+                    gachaInfoList.add(allgachaRepository.findByAllgachaIdx(i).get().getAllgachaClass());
+                    gachaMap.put(gachaNumber, gachaInfoList);
+                }
+                return gachaMap;
+
+            } else {
+                return "포인트가 부족합니다";
+            }
+        }
+    }
 
     public ResponseDto gachaMain(Long userIdx) {
         Map<String, Object> result = new HashMap<>();
@@ -56,6 +86,11 @@ public class GachaService {
             int userPoint = byUserIdx.get().getUserPoint();
             if (userPoint >= 10) {
                 // 뽑기 메서드 실행(for 한 개)
+                Object nGacha = N_Gacha(byUserIdx.get().getUserIdx(), 1, 10);
+                log.info("nGachas 결과: {}", nGacha);
+
+                result.put("nGachasIdx", nGacha);
+                responseDto.setBody(result);
                 responseDto.setMessage("1회 뽑기 실행");
                 responseDto.setStatusCode(200);
             } else {
@@ -78,10 +113,16 @@ public class GachaService {
             int userPoint = byUserIdx.get().getUserPoint();
             if (userPoint >= 10) {
                 // 뽑기 메서드 실행(for 열 개)
+                Object nGacha = N_Gacha(byUserIdx.get().getUserIdx(), 10, 100);
+                log.info("nGachas 결과: {}", nGacha);
+                result.put("nGacha", nGacha);
+
+                responseDto.setBody(result);
                 responseDto.setMessage("10회 뽑기 실행");
                 responseDto.setStatusCode(200);
+
             } else {
-                responseDto.setMessage("1회 뽑기 포인트 부족");
+                responseDto.setMessage("10회 뽑기 포인트 부족");
                 responseDto.setStatusCode(600);     // 유저 오류: 600번대
             }
         }
