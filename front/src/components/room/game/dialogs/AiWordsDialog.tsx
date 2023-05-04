@@ -16,15 +16,13 @@ const INIT_KEY_WORDS = [
 
 export default function AiWordsDialog({
   isOpened,
-  keywordList,
-  addKeyword,
-  deleteKeyword,
+  selectedKeyword,
+  onKeywordSelectHandler,
   onClose,
 }: {
   isOpened: boolean;
-  keywordList: string[];
-  addKeyword: (keyword: string) => void;
-  deleteKeyword: (keyword: string) => void;
+  selectedKeyword: string;
+  onKeywordSelectHandler: (keyword: string) => void;
   onClose: () => void;
 }) {
   const onDialogClose = (_: object, reason: string) => {
@@ -33,12 +31,7 @@ export default function AiWordsDialog({
   };
 
   const cardClickHandler = (keyword: string) => {
-    const isSlected = keywordList.indexOf(keyword) !== -1 ? true : false;
-    if (isSlected) {
-      deleteKeyword(keyword);
-      return;
-    }
-    addKeyword(keyword);
+    onKeywordSelectHandler(keyword);
   };
 
   return (
@@ -55,9 +48,7 @@ export default function AiWordsDialog({
             <div
               key={index}
               className={`flex justify-center items-center py-2 ${
-                keywordList.indexOf(word) !== -1
-                  ? 'bg-green-600'
-                  : 'bg-orange-400'
+                selectedKeyword === word ? 'bg-green-600' : 'bg-orange-400'
               }`}
               onClick={() => {
                 cardClickHandler(word);
@@ -71,7 +62,7 @@ export default function AiWordsDialog({
         <footer>
           <button
             className={`block mx-auto text-lg px-6 py-2 rounded-lg ${
-              keywordList.length === 3 ? 'bg-amber-400' : 'bg-gray-300'
+              selectedKeyword !== '' ? 'bg-amber-400' : 'bg-gray-300'
             }`}
             onClick={onClose}
           >
