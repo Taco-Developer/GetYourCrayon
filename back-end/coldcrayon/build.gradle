@@ -48,9 +48,11 @@ dependencies {
 	// swager 관련 설정
 	implementation 'io.springfox:springfox-boot-starter:3.0.0'
 	implementation 'io.springfox:springfox-swagger-ui:3.0.0'
-	//querydsl 추가
+	// querydsl 추가
 	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
 	annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}"
+
+	implementation "com.amazonaws:aws-java-sdk-s3:1.12.281"
 }
 
 tasks.named('test') {
