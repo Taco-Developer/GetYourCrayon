@@ -43,7 +43,7 @@ pipeline {
             docker stop node-socket-container
             docker rm node-socket-container
             docker run -d -p 3003:3000 --name node-socket-container gmkim716/node-socket-container
-            ech 'Success: socket'
+            echo 'Success: socket'
             '''
             }
         }
