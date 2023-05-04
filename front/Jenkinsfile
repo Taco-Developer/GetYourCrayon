@@ -22,7 +22,10 @@ pipeline {
                 echo 'Remove if gmkim716/crayon-next-container exist'
                 
                 docker build -t gmkim716/crayon-next-container .
-                cd
+                
+                cd ..
+                cd node-server
+                docker build . -t gmkim716/node-socket-container
                 '''
             }
         }
@@ -34,7 +37,10 @@ pipeline {
             # docker stop crayon-next-container
             # docker rm crayon-next-container
             docker run -d -p 3002:3000 --name crayon-next-container gmkim716/crayon-next-container
-            echo 'Success'
+            echo 'Success: next'
+
+            docker run -d -p 3003:3000 --name node-socket-container gmkim716/node-socket-container
+            ech 'Success: socket'
             '''
             }
         }
