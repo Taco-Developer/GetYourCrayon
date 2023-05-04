@@ -13,9 +13,12 @@ export default function SideDisplay({
 
 const SideContainer = tw.div<{ 'data-left': boolean }>`
  ${(props) => (props['data-left'] ? 'col-span-2' : 'col-span-3')}
-  
+  h-full
+
   flex
   flex-col
   items-center
   justify-between
+  
+  overflow-hidden
 `;
