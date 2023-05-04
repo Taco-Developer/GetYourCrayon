@@ -39,6 +39,9 @@ pipeline {
             docker run -d -p 3002:3000 --name crayon-next-container gmkim716/crayon-next-container
             echo 'Success: next'
 
+            echo 'delete previous node-socket-container'
+            docker stop node-socket-container
+            docker rm node-socket-container
             docker run -d -p 3003:3000 --name node-socket-container gmkim716/node-socket-container
             ech 'Success: socket'
             '''
