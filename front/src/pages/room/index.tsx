@@ -7,19 +7,25 @@ import tw from 'tailwind-styled-components';
 export default function Room() {
   const [userId, setUserId] = useState<string>('');
   const [room, setRoom] = useState<string>('');
+  const [status, setStatus] = useState<string>('ready');
 
   useEffect(() => {
     socket;
   }, []);
-  return (
-    <div>
-      <Ready
-        socket={socket}
-        userId={userId}
-        setUserId={setUserId}
-        room={room}
-        setRoom={setRoom}
-      />
-    </div>
-  );
+
+  switch (status) {
+    case 'ready':
+      return (
+        <Ready
+          socket={socket}
+          userId={userId}
+          setUserId={setUserId}
+          room={room}
+          setRoom={setRoom}
+          setStatus={setStatus}
+        />
+      );
+      break;
+  }
 }
+// socket={socket} userId={userId} setUserId={setUserId} room={room} setRoom={setRoom}

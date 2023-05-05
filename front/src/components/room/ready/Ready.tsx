@@ -12,6 +12,7 @@ interface RoomPropsType {
   setUserId: React.Dispatch<React.SetStateAction<string>>;
   room: string;
   setRoom: React.Dispatch<React.SetStateAction<string>>;
+  setStatus: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export default function Ready({
@@ -20,6 +21,7 @@ export default function Ready({
   setUserId,
   room,
   setRoom,
+  setStatus,
 }: RoomPropsType) {
   const [showChat, setShowChat] = useState<string>('ready');
   switch (showChat) {
