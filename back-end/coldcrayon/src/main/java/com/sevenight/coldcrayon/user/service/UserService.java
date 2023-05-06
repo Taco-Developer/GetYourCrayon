@@ -83,8 +83,12 @@ public class UserService {
             responseDto.setStatusCode(400);
         } else {
             User user = byUserNickname.get();
+            String prevUserNickname = user.getUserNickname();
             user.setUserNickname(changeNickname);
             userRepository.save(user);
+
+            String newUserNickname = user.getUserNickname();
+            responseDto.setBody("기존 닉네임: " + prevUserNickname + ", 변경된 닉네임: " + newUserNickname);
             responseDto.setMessage("유저 인덱스 번호: " + userIdx + "번 유저의 닉네임을 " + changeNickname + "으로 변경");
             responseDto.setStatusCode(200);
         }
@@ -99,8 +103,12 @@ public class UserService {
             responseDto.setStatusCode(400);
         } else {
             User user = byUserNickname.get();
+            String prevUserProfile = user.getUserProfile();
             user.setUserProfile(newProfileImg);
             userRepository.save(user);
+
+            String newUserProfile = user.getUserProfile();
+            responseDto.setBody("기존 이미지: " + prevUserProfile + ", 변경된 이미지: " + newUserProfile);
             responseDto.setMessage("유저 인덱스 번호: " + userIdx + "번 유저의 프로필 사진을 " + newProfileImg + "으로 변경");
             responseDto.setStatusCode(200);
         }
