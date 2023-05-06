@@ -20,7 +20,7 @@ export default function InRoom({
 }: RoomPropsType) {
   const joinRoom = () => {
     if (userId !== '' && room !== '') {
-      socket.emit('join_room', room);
+      socket.emit('join_room', userId, room);
       setShowChat(true);
     }
   };
