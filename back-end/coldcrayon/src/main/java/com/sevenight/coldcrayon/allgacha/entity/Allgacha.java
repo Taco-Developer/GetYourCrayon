@@ -3,6 +3,7 @@ package com.sevenight.coldcrayon.allgacha.entity;
 import com.sevenight.coldcrayon.gacha.entity.Gacha;
 import com.sun.istack.NotNull;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import java.util.ArrayList;

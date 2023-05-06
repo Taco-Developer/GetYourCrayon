@@ -2,6 +2,8 @@ package com.sevenight.coldcrayon.gacha.service;
 
 import com.sevenight.coldcrayon.allgacha.entity.Allgacha;
 import com.sevenight.coldcrayon.allgacha.repository.AllgachaRepository;
+import com.sevenight.coldcrayon.gacha.entity.Gacha;
+import com.sevenight.coldcrayon.gacha.repository.GachaRepository;
 import com.sevenight.coldcrayon.user.dto.ResponseDto;
 import com.sevenight.coldcrayon.user.dto.UserProfileDto;
 import com.sevenight.coldcrayon.user.entity.User;
@@ -17,8 +19,8 @@ import java.util.*;
 @Slf4j
 @RequiredArgsConstructor
 public class GachaService {
-    private final EntityManager em;
     private final UserRepository userRepository;
+    private final GachaRepository gachaRepository;
     private final AllgachaRepository allgachaRepository;
 
     private static int allGachaCntMin = 1;
@@ -31,24 +33,35 @@ public class GachaService {
             return "유저 정보를 찾을 수 없음";
 
         } else {
+            Map<Long, List<Object>> gachaMap = null;
             if (byUserIdx.get().getUserPoint() >= price) {
                 Random random = new Random();
-                Map<Long, List<Object>> gachaMap = new HashMap<>();
-                User user = userRepository.findByUserIdx(userIdx).get();
+                gachaMap = new HashMap<>();
+
+                User user = byUserIdx.get();
                 int userPoint = user.getUserPoint();
-                user.setUserPoint(userPoint - price);
+                byUserIdx.get().setUserPoint(userPoint - price);
                 userRepository.save(user);
 
-                for (Long i = 1L; i<cnt+1; i++) {
-                    int gachaNumber = random.nextInt(allGachaCntMax) + allGachaCntMin;
+                for (Long i = 1L; i < cnt + 1; i++) {
+                    long gachaNumber = random.nextInt(allGachaCntMax) + allGachaCntMin;
 
                     List<Object> gachaInfoList = new ArrayList<>();
-                    Allgacha allgacha = allgachaRepository.findByAllgachaIdx((long) gachaNumber).get();
+                    Optional<Allgacha> allgacha = allgachaRepository.findByAllgachaIdx(gachaNumber);
 
-                    gachaInfoList.add(i+"번째로 뽑힌 값");
-                    gachaInfoList.add(allgacha.getAllgachaImg());
-                    gachaInfoList.add(allgacha.getAllgachaClass());
-                    gachaMap.put(i, gachaInfoList);
+                    if (allgacha.isEmpty()) {
+                        return "allgacha 정보를 찾을 수 없음";
+                    } else {
+                        Gacha gacha = new Gacha();
+                        gacha.setAllgachaIdx(allgacha.get());
+                        gacha.setUserIdx(user);
+                        gachaRepository.save(gacha);
+
+                        gachaInfoList.add(i + "번째로 뽑힌 값");
+                        gachaInfoList.add(allgacha.get().getAllgachaImg());
+                        gachaInfoList.add(allgacha.get().getAllgachaClass());
+                        gachaMap.put(i, gachaInfoList);
+                    }
                 }
                 return gachaMap;
 

@@ -26,7 +26,7 @@ CREATE TABLE `allgacha` (
                             PRIMARY KEY (`allgacha_idx`)
 );
 CREATE TABLE `gacha` (
-                         `gacha_idx` Integer NOT NULL,
+                         `gacha_idx` INTEGER NOT NULL AUTO_INCREMENT,
                          `user_idx` varchar(36) NOT NULL,
                          `allgacha_idx` Integer DEFAULT NULL,
                          PRIMARY KEY (`gacha_idx`),
