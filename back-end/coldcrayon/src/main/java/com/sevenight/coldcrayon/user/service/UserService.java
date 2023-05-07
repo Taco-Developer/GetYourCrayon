@@ -34,8 +34,8 @@ public class UserService {
 
         Optional<User> byUserIdx = userRepository.findByUserIdx(userIdx);
         if (byUserIdx.isEmpty()) {
-            responseDto.setMessage("유저 Idx를 찾을 수 없음");
-            responseDto.setStatusCode(400);
+            responseDto.setMessage("마이 페이지로 이동할 수 없습니다: 유저 Idx를 찾을 수 없음");
+            responseDto.setStatusCode(500);
         } else {
             UserProfileDto userProfileDto = UserProfileDto.builder()
                     .userIdx(byUserIdx.get().getUserIdx())
@@ -65,7 +65,7 @@ public class UserService {
             }
 
             result.put("profile", userProfileDto);
-            result.put("collections", collectionsInfo);
+            result.put("gacha", collectionsInfo);
             responseDto.setMessage("유저 프로필 정보");
             responseDto.setStatusCode(200);
             responseDto.setBody(result);
