@@ -6,6 +6,8 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+import com.sevenight.coldcrayon.room.entity.RoomHash;
+
 @Getter @Setter
 @NoArgsConstructor
 public class RoomDto {
@@ -23,5 +25,15 @@ public class RoomDto {
     private LocalDateTime roomCreateTime;
 
     // 방장 유저의 식별자
-    private String userIdx;
+    private String adminUserIdx;
+
+    static public RoomDto of(RoomHash room){
+        RoomDto roomDto = new RoomDto();
+        roomDto.roomIdx = room.getRoomIdx();
+        roomDto.roomMax = room.getRoomMax();
+        roomDto.roomNow = room.getRoomNow();
+        roomDto.roomCreateTime = room.getRoomCreateTime();
+        roomDto.adminUserIdx = room.getAdminUserIdx();
+        return roomDto;
+    }
 }

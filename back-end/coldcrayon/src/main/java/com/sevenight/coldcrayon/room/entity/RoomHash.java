@@ -20,7 +20,7 @@ public class RoomHash {
 
     private String gameIdx;
 
-    private String adminIdx;
+    private String adminUserIdx;
 
     private RoomStatus roomStatus;
 

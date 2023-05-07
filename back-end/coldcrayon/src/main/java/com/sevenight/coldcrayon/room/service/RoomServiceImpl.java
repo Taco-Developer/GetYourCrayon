@@ -1,6 +1,7 @@
 package com.sevenight.coldcrayon.room.service;
 
 import com.sevenight.coldcrayon.config.RedisMethods;
+import com.sevenight.coldcrayon.room.dto.RoomDto;
 import com.sevenight.coldcrayon.room.entity.Room;
 import com.sevenight.coldcrayon.room.entity.RoomHash;
 import com.sevenight.coldcrayon.room.entity.RoomStatus;
@@ -29,37 +30,46 @@ public class RoomServiceImpl implements RoomService{
         return Optional.ofNullable(redisMethods.getHash("user", userIdx)) ;
     }
 
-    // 2. 유저가 참여하고 있는 방에서 유저를 제거한다.
-    // 2.1 방장이 아닌 경우
-    // 2.2 방장인 경우
+
     public String removeUser(String roomIdx, String userIdx){
         // 방 정보 가지고 오기
-        RoomHash room = roomRepository.findById(roomIdx).get();
+        Optional<RoomHash> optionalRoom = roomRepository.findById(roomIdx);
 
+        if(optionalRoom.isPresent()){
+            RoomHash room = optionalRoom.get();
 
-        if(room.getRoomNow() == 1) {    // 방에 1명이면 방 없애기
-            roomRepository.deleteById(roomIdx);
-            redisMethods.removeList(roomIdx);
-        } else {
-            // 이전에 입장한 방의 현재 인원 수를 줄이고, 방에서 유저 삭제하기
-            room.setRoomNow(room.getRoomNow()-1);
-
-
-            if(room.getAdminIdx().equals(userIdx)){ // 방장이면 다른 사람한테 위임하기
+            if(room.getRoomNow() == 1){
+                roomRepository.deleteById(roomIdx); // 방 삭제
+                redisMethods.removeList(roomIdx);   // 방에 참여 인원 List 삭제
+            } else {
+                // 방장 위임
+                if(room.getAdminUserIdx().equals(userIdx)){
+                    List<String> userList = redisMethods.getList(roomIdx);
+                    int i=0;
+                    while(userList.get(i).equals(userIdx)){
+                        i++;
+                    }
+                    changeAdminUser(roomIdx, userIdx, userList.get(i));
+                }
+                room.setRoomNow(room.getRoomNow()-1); // 방 현재 인원 -1
+                redisMethods.removeElement(room.getRoomIdx(), userIdx); //  방에 참여 인원 List에서 유저 삭제
+                redisMethods.removeHash("user", userIdx);
             }
 
+            return roomIdx;
+
+        } else{
+
+            return "Error를 던져주자";
+
         }
-        return roomIdx;
-    }
-
-    // 3. 새로운 방 idx를 만든다.
-    public String createRoomIdx(){
-        return UUID.randomUUID().toString().replaceAll("-", "");
     }
 
 
-    // 4. Redis에 방 정보와 userjoinlist, user, 방 정보를 저장한다.
-    public String saveRoom(String roomIdx, String userIdx){
+    // 3. Redis에 방 정보와 userjoinlist, user, 방 정보를 저장한다.
+    public RoomDto saveRoom(String userIdx){
+        String roomIdx = UUID.randomUUID().toString().replaceAll("-", "");
+
         redisMethods.setHash("user", userIdx, roomIdx);
         redisMethods.setList(roomIdx, userIdx);
 
@@ -72,7 +82,49 @@ public class RoomServiceImpl implements RoomService{
                 .roomCreateTime(LocalDateTime.now())
                 .build();
         roomRepository.save(room);
-        return roomIdx;
+
+
+        return RoomDto.of(room);
     }
 
+    // 4. 방장 위임
+    public RoomDto changeAdminUser(String roomIdx, String fromUserIdx, String toUserIdx){
+
+        Optional<RoomHash> optionalRoom = roomRepository.findById(roomIdx);
+
+        if(optionalRoom.isPresent()){
+            RoomHash room = optionalRoom.get();
+            List<String> userList = redisMethods.getList(roomIdx);
+            if (userList.contains(toUserIdx)){ // 방장을 위임하는 유저가 있는 경우
+                room.setAdminUserIdx(toUserIdx);
+                roomRepository.save(room);
+                return RoomDto.of(room);
+            } else {
+                // 위임하려는 유저가 없는 경우 exception 발생
+                return null;
+            }
+
+        } else {
+
+            // 없으면 에러 던져야한다.
+            return null;
+
+        }
+    }
+
+    // 5. 방 정보 가지고 오기
+    public RoomDto checkRoom(String roomIdx){
+        Optional<RoomHash> optionalRoom = roomRepository.findById(roomIdx);
+        if(optionalRoom.isPresent()){
+            RoomHash room = optionalRoom.get();
+            List<String> userList = redisMethods.getList(roomIdx);
+
+            return RoomDto.of(room);
+
+        } else {
+            // 없으면 에러 던져야한다.
+            return null;
+        }
+
+    }
 }

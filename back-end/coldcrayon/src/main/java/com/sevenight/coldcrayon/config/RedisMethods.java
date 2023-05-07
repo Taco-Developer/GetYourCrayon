@@ -12,7 +12,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RedisMethods {
 
-    final RedisTemplate redisTemplate;
+    final RedisTemplate<String, Object> redisTemplate;
 
     // <roomIdx, userJoinList>
     public <T> List<T> getList(String key) {
@@ -42,6 +42,10 @@ public class RedisMethods {
         return (String) redisTemplate.opsForHash().get(key, hashKey);
     }
 
+    public String removeHash(String key, String hashKey){
+        redisTemplate.opsForHash().delete(key, hashKey);
+        return key;
+    }
 
 
 }
