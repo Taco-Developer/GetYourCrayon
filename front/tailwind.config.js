@@ -40,6 +40,9 @@ module.exports = {
       borderColor: {
         'custom-gray': 'rgba(158, 155, 155, 0.37)',
       },
+      borderRadius: {
+        'profile-img': '70%',
+      },
     },
   },
   plugins: [
