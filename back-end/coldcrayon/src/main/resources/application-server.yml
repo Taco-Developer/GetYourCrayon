@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mariadb://mariadb:3306/crayon
+    url: jdbc:mariadb://mariadb:3307/crayon
     driver-class-name: org.mariadb.jdbc.Driver
     username: dev
     password: se7enngiths
