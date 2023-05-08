@@ -19,10 +19,10 @@ pipeline {
         stage('DOCKER BUILD') {
             steps
             {
-                sh "
+                sh '''
                 cd ./back-end/
                 pwd ls -al
-                "
+                '''
                 sh "docker build -t gmkim716/crayon-spring-container ."
             }
         }
