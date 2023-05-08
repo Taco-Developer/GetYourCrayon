@@ -9,7 +9,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: "http://k8b203.p.ssafy.io:3002",
     methods: ["GET", "POST"],
   },
 });
@@ -60,4 +60,4 @@ io.on("connection", (socket) => {
   });
 });
 
-server.listen(3001, () => console.log("SERVER RUNNING"));
+server.listen(3003, () => console.log("SERVER RUNNING"));
