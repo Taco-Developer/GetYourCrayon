@@ -27,7 +27,7 @@ public class Gacha {
     private User userIdx;
 
     @ManyToOne(fetch = FetchType.LAZY)
-//	@Column(name = "allgacha_idx")
+    @JoinColumn(name = "allgacha_idx")
     private Allgacha allgachaIdx;
 
 }

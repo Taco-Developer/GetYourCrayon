@@ -16,7 +16,6 @@ import java.time.LocalDateTime;
 @Builder
 @ToString
 public class Board {
-
     // PK (AUTO_INCREMENT)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,7 +23,7 @@ public class Board {
     private int boardId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-//	@Column(name = "user_idx")
+    @JoinColumn(name = "user_idx")
     private User userIdx;
 
     @Column(name = "board_title")
