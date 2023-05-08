@@ -2,6 +2,8 @@ import '@/styles/globals.css';
 import type { AppProps } from 'next/app';
 import type { ReactElement, ReactNode } from 'react';
 import type { NextPage } from 'next';
+import wrapper from '@/store';
+import { Provider } from 'react-redux';
 import tw from 'tailwind-styled-components';
 
 /** 기본 Nextpage 타입에 추가로 getLayout 타입지정 */
@@ -14,15 +16,23 @@ type AppPropsWithLayoutType = AppProps & {
   Component: NextPageWithLayout;
 };
 
-export default function App({ Component, pageProps }: AppPropsWithLayoutType) {
+function App({ Component, pageProps }: AppPropsWithLayoutType) {
+  const { store, props } = wrapper.useWrappedStore(pageProps);
   /** getLayout이 falsy값이면 대체 함수로 page매개변수를 받는다. */
   const getLayout = Component.getLayout ?? ((page) => page);
-  return getLayout(
-    <Container>
-      <Component {...pageProps} />
-    </Container>,
+
+  return (
+    <Provider store={store}>
+      {getLayout(
+        <Container>
+          <Component {...props.pageProps} />
+        </Container>,
+      )}
+    </Provider>
   );
 }
+
+export default App;
 
 const Container = tw.div`
   w-screen
