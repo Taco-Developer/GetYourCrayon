@@ -9,6 +9,7 @@ import {
 } from '@reduxjs/toolkit';
 import { HYDRATE, createWrapper } from 'next-redux-wrapper';
 import navbarSlice, { NavbarStateType } from './slice/navbarSlice';
+import inGameSliceReducer, { InGameStateType } from './slice/inGameSlice';
 // import { persistReducer, persistStore } from 'redux-persist';
 // import {
 //   FLUSH,
@@ -22,6 +23,7 @@ import navbarSlice, { NavbarStateType } from './slice/navbarSlice';
 
 export interface ReducerStates {
   navbarPath: NavbarStateType;
+  inGame: InGameStateType;
 }
 
 //HYDRATE 액션을 정의 -> 슬라이스 통함
@@ -35,6 +37,7 @@ const rootReducer = (
     default: {
       const combinedReducer = combineReducers({
         navbarPath: navbarSlice.reducer,
+        inGame: inGameSliceReducer,
       });
       return combinedReducer(state, action);
     }

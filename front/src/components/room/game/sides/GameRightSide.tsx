@@ -5,31 +5,26 @@ import tw from 'tailwind-styled-components';
 import SideDisplay from './SideDisplay';
 import { Button } from '@/components/ui/Button';
 import Margin from '@/components/ui/Margin';
-import { ChatType } from '../InGameRoom';
+
+import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
+import { ChatType, addChat, countDown } from '@/store/slice/inGameSlice';
 
 interface GameRightSidePropsType {
   isPainting: boolean;
-  isGameStarted: boolean;
-  leftTime: number;
-  countDown: () => void;
-  chatList: ChatType[];
-  onChatInput: (chatInput: ChatType) => void;
 }
 
-export default function GameRightSide({
-  isPainting,
-  isGameStarted,
-  leftTime,
-  countDown,
-  chatList,
-  onChatInput,
-}: GameRightSidePropsType) {
-  // 채팅 관련 상태
+export default function GameRightSide({ isPainting }: GameRightSidePropsType) {
+  const { chatList, leftTime, isGameStarted } = useAppSelector(
+    (state) => state.inGame,
+  );
+  const dispatch = useAppDispatch();
+
+  // 채팅 입력값
   const [inputValue, setInputValue] = useState<string>('');
-
-  // 타이머 관련 상태
-  const [timerId, setTimerId] = useState<NodeJS.Timer>();
-
+  // 채팅 입력
+  const onChattingChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(event.target.value);
+  };
   // 채팅 전송
   const onChattingSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -40,15 +35,12 @@ export default function GameRightSide({
       status: 'chatting',
       content: chatContent,
     };
-    onChatInput(chatInput);
+    dispatch(addChat(chatInput));
     setInputValue('');
   };
 
-  // 채팅 타이핑
-  const onChattingChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(event.target.value);
-  };
-
+  // 타이머 관련 상태
+  const [timerId, setTimerId] = useState<NodeJS.Timer>();
   // 카운트 종료
   if (leftTime <= 0) {
     clearInterval(timerId);
@@ -58,14 +50,14 @@ export default function GameRightSide({
     if (!isGameStarted) return;
     // 카운트 다운
     const timer = setInterval(() => {
-      countDown();
+      dispatch(countDown());
     }, 1000);
     setTimerId(timer);
 
     return () => {
       clearInterval(timer);
     };
-  }, [countDown, isGameStarted]);
+  }, [isGameStarted, dispatch]);
 
   return (
     <SideDisplay isLeft={false}>

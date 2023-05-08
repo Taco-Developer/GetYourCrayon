@@ -1,10 +1,13 @@
 import Margin from '@/components/ui/Margin';
+import { useAppSelector } from '@/store/thunkhook';
 import Image from 'next/image';
 import { ReactNode } from 'react';
 
 import tw from 'tailwind-styled-components';
 
 export default function GameCenter({ children }: { children: ReactNode }) {
+  const { category } = useAppSelector((state) => state.inGame);
+
   return (
     <MainContainer>
       <MainHeader>
@@ -17,7 +20,7 @@ export default function GameCenter({ children }: { children: ReactNode }) {
             priority
           />
         </ImageBox>
-        <Category>주제: </Category>
+        <Category>주제: {category}</Category>
       </MainHeader>
       <Margin type="height" size={16} />
       {children}
@@ -41,8 +44,8 @@ const MainHeader = tw.header`
 `;
 
 const ImageBox = tw.div`
-  w-20
-  h-20
+  w-[120px]
+  h-[120px]
 
   mx-auto
 
