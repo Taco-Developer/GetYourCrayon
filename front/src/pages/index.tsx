@@ -5,6 +5,7 @@ import tw from 'tailwind-styled-components';
 import MainCarousel from '@/components/main/MainCarousel';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
+//
 
 export default function Home() {
   return (
