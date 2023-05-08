@@ -7,12 +7,19 @@ app.use(cors());
 
 const server = http.createServer(app);
 
-const io = new Server(server, {
+const io = new Server("http://k8b203.p.ssafy.io:3003", {
   cors: {
-    origin: "http://localhost:3000",
+    origin: "http://k8b203.p.ssafy.io:3002",
     methods: ["GET", "POST"],
   },
 });
+// const io = new Server(server, {
+  
+//   cors: {
+//     origin: "http://k8b203.p.ssafy.io:3002",
+//     methods: ["GET", "POST"],
+//   },
+// });
 
 // 방에 유저 숫자
 const countRoom = (roomName) => {
