@@ -19,8 +19,9 @@ pipeline {
         stage('DOCKER BUILD') {
             steps
             {
-                sh "cd back-end/coldcrayon"
+                sh "cd ./back-end/coldcrayon"
                 sh "pwd"
+                sh "ls -al"
                 sh "docker build -t gmkim716/crayon-spring-container ."
             }
         }
