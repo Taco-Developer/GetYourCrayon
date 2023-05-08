@@ -1,25 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { Dialog } from '@mui/material';
+
 import Margin from '@/components/ui/Margin';
+import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
+import {
+  changeCategory,
+  changeKeyword,
+  startRound,
+} from '@/store/slice/inGameSlice';
 
 // 더미 파일
 const INIT_KEYWORDS = require('../../../../../public/dummy/dummy_ai_keyword.json');
 
-export default function AiWordsDialog({
-  isOpened,
-  selectedKeyword,
-  category,
-  changeCategory,
-  onKeywordSelectHandler,
-  onClose,
-}: {
-  isOpened: boolean;
-  selectedKeyword: string;
-  category: string;
-  changeCategory: (category: string) => void;
-  onKeywordSelectHandler: (keyword: string) => void;
-  onClose: () => void;
-}) {
+export default function AiWordsDialog() {
+  const { category, isRoundStartModalOpened, selectedKeyword } = useAppSelector(
+    (state) => state.inGame,
+  );
+  const dispatch = useAppDispatch();
+
   // 키워드 리스트
   const [randomKeywords, setRandomKeywords] = useState<string[]>([]);
   // 키워드 불러오는 함수
@@ -29,22 +27,31 @@ export default function AiWordsDialog({
 
   useEffect(() => {
     loadRandomKeywords();
-    changeCategory('과일');
-  }, [changeCategory]);
+    dispatch(changeCategory('과일'));
+  }, [dispatch]);
 
-  // 다디얼로그 닫기 함수
+  // 다이얼로그 닫기 함수
   const onDialogClose = (_: object, reason: string) => {
     if (reason === 'backdropClick') return;
-    onClose();
+    dispatch(startRound());
+  };
+
+  const onStartButtonClick = () => {
+    if (selectedKeyword) dispatch(startRound());
   };
 
   // 카드 클릭 함수
   const cardClickHandler = (keyword: string) => {
-    onKeywordSelectHandler(keyword);
+    dispatch(changeKeyword(keyword));
   };
 
   return (
-    <Dialog open={isOpened} onClose={onDialogClose} maxWidth="md" fullWidth>
+    <Dialog
+      open={isRoundStartModalOpened}
+      onClose={onDialogClose}
+      maxWidth="md"
+      fullWidth
+    >
       <div className="p-8">
         <header className="text-center">
           <h2 className=" text-3xl">제시어</h2>
@@ -73,7 +80,7 @@ export default function AiWordsDialog({
             className={`block mx-auto text-lg px-6 py-2 rounded-lg ${
               selectedKeyword !== '' ? 'bg-amber-400' : 'bg-gray-300'
             }`}
-            onClick={onClose}
+            onClick={onStartButtonClick}
           >
             확인
           </button>

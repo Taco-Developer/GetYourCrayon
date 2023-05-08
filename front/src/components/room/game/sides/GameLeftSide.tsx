@@ -1,25 +1,16 @@
 import React, { useState } from 'react';
-import Image from 'next/image';
 
 import tw from 'tailwind-styled-components';
 
 import SideDisplay from './SideDisplay';
 import Margin from '@/components/ui/Margin';
-import { GameRoundType, GameUser } from '../InGameRoom';
 import Mic from '@/components/ui/icons/Mic';
 import SoundVolume from '@/components/ui/icons/SoundVolume';
+import { useAppSelector } from '@/store/thunkhook';
 
-interface GameLeftSidePropsType {
-  isPainting: boolean;
-  userList: GameUser[];
-  gameRound: GameRoundType;
-}
+export default function GameLeftSide({ isPainting }: { isPainting: boolean }) {
+  const { gameRound, userList } = useAppSelector((state) => state.inGame);
 
-export default function GameLeftSide({
-  isPainting,
-  gameRound,
-  userList,
-}: GameLeftSidePropsType) {
   const [isMicMuted, setIsMicMuted] = useState(false);
   const [isVolumeMuted, setIsVolumeMuted] = useState(false);
 
@@ -76,13 +67,13 @@ export default function GameLeftSide({
       )}
       <SoundSetting>
         <div
-          className="bg-white rounded-full w-10 h-10 flex justify-center items-center"
+          className="bg-white rounded-full w-[32px] h-[32px] flex justify-center items-center"
           onClick={micOptionClickHandler}
         >
           <Mic isMuted={isMicMuted} isMyStatus={true} />
         </div>
         <div
-          className="bg-white rounded-full w-10 h-10 flex justify-center items-center"
+          className="bg-white rounded-full w-[32px] h-[32px] flex justify-center items-center"
           onClick={volumeOptionClickHandler}
         >
           <SoundVolume isMuted={isVolumeMuted} isMyStatus={true} />
