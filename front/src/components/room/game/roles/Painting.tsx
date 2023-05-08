@@ -2,16 +2,44 @@ import React, { useEffect, useRef, useState } from 'react';
 
 import tw from 'tailwind-styled-components';
 
+import { Slider } from '@mui/material';
+
 import GameCenter from '../sides/GameCenter';
 import GameLeftSide from '../sides/GameLeftSide';
 import GameRightSide from '../sides/GameRightSide';
 import Margin from '@/components/ui/Margin';
 
 export default function Painting() {
+  const [paletteColor, setPaletteColor] = useState<string>('#000000');
+  const [brushWidth, setBrushWidth] = useState<number>(4);
+  const [opacityStyle, SetOpacityStyle] = useState<number>(1);
+
+  const brushWidthList = [
+    [4, 'bg-black rounded-full w-[4px] h-[4px]'],
+    [6, 'bg-black rounded-full w-[6px] h-[6px]'],
+    [8, 'bg-black rounded-full w-[8px] h-[8px]'],
+    [10, 'bg-black rounded-full w-[10px] h-[10px]'],
+    [12, 'bg-black rounded-full w-[12px] h-[12px]'],
+  ];
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const [ctx, setCtx] = useState<CanvasRenderingContext2D | null>();
   const [isPainting, setIsPainting] = useState<boolean>();
+
+  useEffect(() => {
+    if (ctx) {
+      const rgba = [];
+      for (let i = 1; i < paletteColor.length; i += 2) {
+        const tmp = paletteColor[i] + paletteColor[i + 1];
+        rgba.push(parseInt(tmp, 16));
+      }
+      ctx.strokeStyle = `rgba(${rgba[0]}, ${rgba[1]}, ${rgba[2]}, ${opacityStyle})`;
+      ctx.fillStyle = `rgba(${rgba[0]}, ${rgba[1]}, ${rgba[2]}, ${opacityStyle})`;
+      // ctx.strokeStyle = paletteColor;
+      // ctx.fillStyle = paletteColor;
+      ctx.lineWidth = brushWidth;
+    }
+  }, [paletteColor, brushWidth, ctx, opacityStyle]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -45,6 +73,7 @@ export default function Painting() {
   const cancelPainting = () => {
     setIsPainting(false);
     ctx?.closePath();
+    ctx?.save();
   };
 
   // 캔버스 내에서 마우스 이동
@@ -61,7 +90,13 @@ export default function Painting() {
 
   return (
     <>
-      <GameLeftSide isPainting={true} />
+      <GameLeftSide
+        isPainting={true}
+        paletteColor={paletteColor}
+        changeColor={(color) => {
+          setPaletteColor(color);
+        }}
+      />
       <GameCenter>
         <canvas
           className="w-full flex-auto bg-white"
@@ -73,7 +108,36 @@ export default function Painting() {
         ></canvas>
         <Margin type="height" size={16} />
         <CanvasOptions>
-          <Option>옵션</Option>
+          <Option>
+            <BrushWidthList>
+              {brushWidthList.map((brush) => (
+                <BrushWidthItem
+                  key={brush[0]}
+                  onClick={() => {
+                    setBrushWidth(brush[0] as number);
+                  }}
+                >
+                  <div className={brush[1] as string} />
+                </BrushWidthItem>
+              ))}
+            </BrushWidthList>
+            <div className="p-2 outline outline-1 rounded-lg flex justify-between items-center gap-4">
+              <div className="w-[14px] h-[14px] rounded-full bg-gray-300" />
+              <Slider
+                min={0}
+                step={0.01}
+                max={1}
+                value={opacityStyle}
+                onChange={(_, value) => {
+                  SetOpacityStyle(value as number);
+                }}
+                defaultValue={1}
+                valueLabelDisplay="auto"
+                className="w-full"
+              />
+              <div className="w-[14px] h-[14px] rounded-full bg-black" />
+            </div>
+          </Option>
           <Tools>도구</Tools>
         </CanvasOptions>
       </GameCenter>
@@ -84,19 +148,54 @@ export default function Painting() {
 
 const CanvasOptions = tw.div`
   w-full
-  h-20
 
-  py-4
-  px-8
+  bg-[#88CDFF]
+  rounded-lg
+
+  p-4
 
   flex
   justify-between
-
-  bg-amber-200
 `;
 
 const Option = tw.div`
-  w-20
+  min-w-[240px]
+  h-full
+
+  w-2/5
+  bg-white
+  rounded-lg
+
+  p-2
+
+  flex
+  flex-col
+  justify-between
+  gap-4
+`;
+
+const BrushWidthList = tw.div`
+  p-2
+
+  outline
+  outline-1
+  rounded-lg
+
+  flex
+  justify-between
+  items-center
+`;
+
+const BrushWidthItem = tw.div`
+  w-[32px]
+  h-[32px]
+
+  bg-gray-300
+  rounded-full
+
+  flex
+  justify-center
+  items-center
 `;
 
 const Tools = tw.div`
