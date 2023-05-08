@@ -113,7 +113,14 @@ body {
   }    
 }
 
-/* @/components/room/ready/Chat */
+.swiper {
+  width : 77%
+}
+
+.swiper .swiper-pagination-bullet {
+  background-color: #000;
+  margin: 0 10px !important;
+}
 
 .chat-window {
   width: 300px;

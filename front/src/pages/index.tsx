@@ -3,6 +3,8 @@ import { ReactElement } from 'react';
 import Navbar from '@/components/navbar/Navbar';
 import tw from 'tailwind-styled-components';
 import MainCarousel from '@/components/main/MainCarousel';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
 
 export default function Home() {
   return (
@@ -25,5 +27,4 @@ const MainContainer = tw.div`
   min-h-container-height
   h-full
   
-  scrollbar-ssibal
 `;
