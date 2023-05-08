@@ -3,6 +3,8 @@ import { Button } from '../ui/Button';
 import Login from '../login/Login';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
 
 import { ReactNode } from 'react';
 
@@ -14,34 +16,37 @@ export default function Navbar({ children }: NavbarPropsType) {
   return (
     <div>
       <NavbarDiv>
-        <Link
-          href={'/room'}
-          className="px-8 py-2 rounded-lg bg-main-green text-main-pink text-xs lg:text-xl sm:text-sm hover:bg-main-pink hover:text-main-green"
-        >
-          게임하기
-        </Link>
-        <Link href={'/'}>
-          <ImageDiv>
-            {' '}
-            <Image
-              src={'/images/logo.png'}
-              alt="noimg"
-              priority
-              fill
-              sizes="100%"
-            />
-          </ImageDiv>
-        </Link>
-        <Link
-          href={'/board'}
-          className="px-8 py-2 rounded-lg bg-main-green text-main-pink text-xs lg:text-xl sm:text-sm hover:bg-main-pink hover:text-main-green"
-        >
-          같이하기
-        </Link>
+        <LogoDiv>
+          <Link
+            href={'/room'}
+            className="px-8 py-2 rounded-lg bg-main-green text-main-pink text-xs lg:text-xl sm:text-sm hover:bg-main-pink hover:text-main-green"
+          >
+            게임하기
+          </Link>
+          <Link href={'/'}>
+            <ImageDiv>
+              {' '}
+              <Image
+                src={'/images/logo.png'}
+                alt="noimg"
+                priority
+                fill
+                sizes="100%"
+              />
+            </ImageDiv>
+          </Link>
+          <Link
+            href={'/board'}
+            className="px-8 py-2 rounded-lg bg-main-green text-main-pink text-xs lg:text-xl sm:text-sm hover:bg-main-pink hover:text-main-green"
+          >
+            같이하기
+          </Link>
+        </LogoDiv>
+
+        <LoginDiv>
+          <Login />
+        </LoginDiv>
       </NavbarDiv>
-      <LoginDiv>
-        <Login />
-      </LoginDiv>
 
       {children}
     </div>
@@ -55,21 +60,26 @@ const ImageDiv = tw.div`
 `;
 
 const NavbarDiv = tw.div`
-  flex 
-  gap-4 
+  flex
   absolute
-  top-6
-  left-0 
-  right-0 
-  justify-center 
   items-center
+  w-screen
+  justify-between
+  mt-5
 `;
 
 const LoginDiv = tw.div`
-  absolute 
+  absolute
+  right-10
+`;
+
+const LogoDiv = tw.div`
   flex 
-  right-login-custom 
-  top-5
+  gap-4 
+  top-6
+  left-0  
+  right-0 
   justify-center 
-  items-center mt-8
+  items-center
+  flex-grow
 `;

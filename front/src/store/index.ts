@@ -40,3 +40,27 @@ const rootReducer = (
     }
   }
 };
+
+const makeStore = () => {
+  const store = configureStore({
+    reducer: rootReducer as Reducer<ReducerStates, AnyAction>,
+    devTools: process.env.NODE_ENV === 'development',
+  });
+  return store;
+};
+
+export type AppStore = ReturnType<typeof makeStore>;
+export type RootState = ReturnType<typeof rootReducer>;
+export type AppDispatch = AppStore['dispatch'];
+export type AppThunk<ReturnType = void> = ThunkAction<
+  ReturnType,
+  RootState,
+  unknown,
+  Action
+>;
+
+const wrapper = createWrapper<AppStore>(makeStore, {
+  debug: process.env.NODE_ENV === 'development',
+});
+
+export default wrapper;

@@ -32,7 +32,7 @@ export default function MainCarousel() {
       >
         <SwiperSlide>
           <div className="flex items-center justify-center">
-            <div className="relative h-96 w-1/2">
+            <div className="relative h-96 w-full">
               <Image
                 src="/images/loopy.jpg"
                 alt="no_img"

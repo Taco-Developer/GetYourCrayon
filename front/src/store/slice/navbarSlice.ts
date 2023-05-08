@@ -11,7 +11,7 @@ export interface NavbarStateType {
 }
 
 const initialState: NavbarStateType = {
-  path: '',
+  path: 'dfoakoekaovzkvokaoekfao',
 };
 
 const navbarSlice = createSlice({
