@@ -20,7 +20,7 @@ pipeline {
             steps
             {
                 sh "pwd"
-                cd back-end/cold/crayon
+                cd ./back-end/cold/crayon
                 sh "pwd"
                 sh "docker build -t gmkim716/crayon-spring-container ."
             }
