@@ -1,30 +1,35 @@
 package com.sevenight.coldcrayon.allgacha.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import com.sevenight.coldcrayon.gacha.entity.Gacha;
+import com.sun.istack.NotNull;
+import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Getter @Setter
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @ToString
 public class Allgacha {
 
-	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "allgacha_idx")
-	private int allgachaIdx;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "allgacha_idx")
+    private Long allgachaIdx;
 
-	@Column(name = "allgacha_img")
-	private String allgachaImg;
+    @Column(name = "allgacha_img")
+    private String allgachaImg;
+
+    @OneToMany(mappedBy = "allgachaIdx")
+    private List<Gacha> gachas = new ArrayList<>();
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private GachaClass allgachaClass;
 }
