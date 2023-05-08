@@ -138,7 +138,16 @@ export default function Painting() {
               <div className="w-[14px] h-[14px] rounded-full bg-black" />
             </div>
           </Option>
-          <Tools>도구</Tools>
+          <Tools>
+            <div>아이콘</div>
+            <div>아이콘</div>
+            <div>아이콘</div>
+            <div>아이콘</div>
+            <div>아이콘</div>
+            <div>아이콘</div>
+            <div>아이콘</div>
+            <div>아이콘</div>
+          </Tools>
         </CanvasOptions>
       </GameCenter>
       <GameRightSide isPainting={true} />
@@ -160,9 +169,9 @@ const CanvasOptions = tw.div`
 
 const Option = tw.div`
   min-w-[240px]
+  w-2/5
   h-full
 
-  w-2/5
   bg-white
   rounded-lg
 
@@ -171,7 +180,7 @@ const Option = tw.div`
   flex
   flex-col
   justify-between
-  gap-4
+  gap-2
 `;
 
 const BrushWidthList = tw.div`
@@ -199,5 +208,17 @@ const BrushWidthItem = tw.div`
 `;
 
 const Tools = tw.div`
-  w-20
+  min-w-[240px]
+  w-2/5
+  h-full
+
+  bg-white
+  rounded-lg
+
+  p-2
+
+  grid
+  grid-rows-2
+  grid-cols-4
+  gap-2
 `;
