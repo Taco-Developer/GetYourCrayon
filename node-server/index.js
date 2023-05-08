@@ -14,6 +14,11 @@ const io = new Server(server, {
   },
 });
 
+// 방에 유저 숫자
+const countRoom = (roomName) => {
+  return io.sockets.adapter.rooms.get(roomName)?.size;
+};
+
 // 소켓 연결
 io.on("connection", (socket) => {
   console.log(`User Connected: ${socket.id}`);
@@ -28,7 +33,11 @@ io.on("connection", (socket) => {
       author: "",
       message: `${userId}님이 입장하셨습니다.`,
     });
-    console.log(`User with ID: ${socket.id} joined room: ${room}`);
+    console.log(
+      `User with ID: ${
+        socket.id
+      } joined room: ${room} member count: ${countRoom(room)}`
+    );
   });
 
   // 메시지 보내기
@@ -37,12 +46,16 @@ io.on("connection", (socket) => {
     socket.to(socket.userroom).emit("receive_message", data);
   });
 
-  // 연결 종료
-  socket.on("disconnect", () => {
+  // 연결 종료되기전 메시지 보내기
+  socket.on("disconnecting", () => {
     socket.to(socket.userroom).emit("receive_message", {
       author: "",
       message: `${socket.username}님이 퇴장하셨습니다.`,
     });
+    console.log("ing");
+  });
+  // 연결 종료
+  socket.on("disconnect", () => {
     console.log(`User Disconnected: ${socket.id}`);
   });
 });

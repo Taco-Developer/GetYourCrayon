@@ -1,32 +1,31 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { socket } from '@/socket/server';
-import Chat from '@/components/room/ready/Chat';
-import InRoom from '@/components/room/ready/InRoom';
+import Ready from '@/components/room/ready/Ready';
+import tw from 'tailwind-styled-components';
 
 export default function Room() {
   const [userId, setUserId] = useState<string>('');
   const [room, setRoom] = useState<string>('');
-  const [showChat, setShowChat] = useState<boolean>(false);
+  const [status, setStatus] = useState<string>('ready');
 
   useEffect(() => {
     socket;
   }, []);
-  return (
-    <div>
-      <h1>Room Page</h1>
-      {!showChat ? (
-        <InRoom
+
+  switch (status) {
+    case 'ready':
+      return (
+        <Ready
           socket={socket}
           userId={userId}
           setUserId={setUserId}
           room={room}
           setRoom={setRoom}
-          setShowChat={setShowChat}
+          setStatus={setStatus}
         />
-      ) : (
-        <Chat socket={socket} userId={userId} room={room} />
-      )}
-    </div>
-  );
+      );
+      break;
+  }
 }
+// socket={socket} userId={userId} setUserId={setUserId} room={room} setRoom={setRoom}
