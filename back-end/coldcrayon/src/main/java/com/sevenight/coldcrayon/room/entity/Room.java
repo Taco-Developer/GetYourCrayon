@@ -1,11 +1,14 @@
 package com.sevenight.coldcrayon.room.entity;
 
 import com.sevenight.coldcrayon.game.entity.Game;
+import com.sevenight.coldcrayon.joinlist.entity.Joinlist;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -17,11 +20,14 @@ import java.time.LocalDateTime;
 public class Room {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "room_idx")
     private String roomIdx;
 
-    //	@Column(name = "game")
+    // 랜덤값 생성
+    // setter로 roomIdx에 넣어줌
+
+    @JoinColumn(name = "game")
     @OneToOne(fetch = FetchType.LAZY)
     private Game game;
 
@@ -41,5 +47,8 @@ public class Room {
     @CreationTimestamp
     @Column(name = "room_create_time")
     private LocalDateTime roomCreateTime;
+
+    @OneToMany(mappedBy = "room", fetch = FetchType.LAZY)
+    private List<Joinlist> joinlists = new ArrayList<>();
 
 }
