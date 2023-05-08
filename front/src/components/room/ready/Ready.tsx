@@ -52,7 +52,8 @@ export default function Ready({
           </AnyDiv>
         </RoomBody>
       );
-      break;
+      default:
+        return <div>Something wrong!!!!</div>
   }
 }
 
