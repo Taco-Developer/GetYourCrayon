@@ -67,3 +67,5 @@ const wrapper = createWrapper<AppStore>(makeStore, {
 });
 
 export default wrapper;
+
+export const { setNavbarPath } = navbarSlice.actions;
