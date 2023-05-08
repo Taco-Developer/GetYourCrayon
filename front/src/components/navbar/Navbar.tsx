@@ -1,12 +1,13 @@
+'use client';
 import tw from 'tailwind-styled-components';
 import { Button } from '../ui/Button';
 import Login from '../login/Login';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/store';
-import type { NavbarStateType } from '@/store/slice/navbarSlice';
-
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState, AppDispatch, setNavbarPath } from '@/store';
+import { useEffect } from 'react';
+import { useRouter } from 'next/router';
 import { ReactNode } from 'react';
 
 interface NavbarPropsType {
@@ -14,21 +15,30 @@ interface NavbarPropsType {
 }
 
 export default function Navbar({ children }: NavbarPropsType) {
+  const router = useRouter();
   const navbarPath = useSelector((state: RootState) => state.navbarPath);
-  console.log(navbarPath);
+  const dispatch = useDispatch<AppDispatch>();
+  useEffect(() => {
+    dispatch(setNavbarPath(router.pathname));
+    console.log(navbarPath.path.indexOf('board'));
+  }, [dispatch, router]);
+
   return (
     <div>
       <NavbarDiv>
         <LogoDiv>
           <Link
             href={'/room'}
-            className="px-8 py-2 rounded-lg bg-main-green text-main-pink text-xs lg:text-xl sm:text-sm hover:bg-main-pink hover:text-main-green"
+            className={`${
+              navbarPath.path.indexOf('room') !== -1
+                ? 'bg-main-pink text-main-green'
+                : 'bg-main-green text-main-pink '
+            } px-8 py-2 rounded-lg  text-xs lg:text-xl sm:text-sm hover:bg-main-pink hover:text-main-green `}
           >
             게임하기
           </Link>
           <Link href={'/'}>
             <ImageDiv>
-              {' '}
               <Image
                 src={'/images/logo.png'}
                 alt="noimg"
@@ -40,7 +50,11 @@ export default function Navbar({ children }: NavbarPropsType) {
           </Link>
           <Link
             href={'/board'}
-            className="px-8 py-2 rounded-lg bg-main-green text-main-pink text-xs lg:text-xl sm:text-sm hover:bg-main-pink hover:text-main-green"
+            className={`${
+              navbarPath.path.indexOf('board') !== -1
+                ? 'bg-main-pink text-main-green'
+                : 'bg-main-green text-main-pink '
+            } px-8 py-2 rounded-lg  text-xs lg:text-xl sm:text-sm hover:bg-main-pink hover:text-main-green `}
           >
             같이하기
           </Link>
