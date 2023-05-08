@@ -10,6 +10,8 @@ pipeline {
         stage('BUILD') {
             steps {
                 sh '''
+                cd coldcrayon
+                chmod +x gradlew
                 ./gradlew clean build
                 '''
             }
