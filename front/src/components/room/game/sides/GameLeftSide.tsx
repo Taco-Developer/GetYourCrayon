@@ -8,8 +8,29 @@ import Mic from '@/components/ui/icons/Mic';
 import SoundVolume from '@/components/ui/icons/SoundVolume';
 import { useAppSelector } from '@/store/thunkhook';
 
-export default function GameLeftSide({ isPainting }: { isPainting: boolean }) {
+export default function GameLeftSide({
+  isPainting,
+  paletteColor,
+  changeColor,
+}: {
+  isPainting: boolean;
+  paletteColor?: string;
+  changeColor?: (color: string) => void;
+}) {
   const { gameRound, userList } = useAppSelector((state) => state.inGame);
+
+  const colors = [
+    ['#000000', 'bg-[#000000]'],
+    ['#D21312', 'bg-[#D21312]'],
+    ['#562B08', 'bg-[#562B08]'],
+    ['#D89216', 'bg-[#D89216]'],
+    ['#F9D276', 'bg-[#F9D276]'],
+    ['#A7D129', 'bg-[#A7D129]'],
+    ['#EA0599', 'bg-[#EA0599]'],
+    ['#00FFF5', 'bg-[#00FFF5]'],
+    ['#0C134F', 'bg-[#0C134F]'],
+    ['#AA77FF', 'bg-[#AA77FF]'],
+  ];
 
   const [isMicMuted, setIsMicMuted] = useState(false);
   const [isVolumeMuted, setIsVolumeMuted] = useState(false);
@@ -27,6 +48,28 @@ export default function GameLeftSide({ isPainting }: { isPainting: boolean }) {
       <h2 className="text-2xl">
         {gameRound.now} / {gameRound.total}
       </h2>
+      {isPainting && (
+        <ColorPalettes>
+          <input
+            type="color"
+            className="row-span-2 col-span-3 w-full h-full"
+            value={paletteColor}
+            onChange={(event) => {
+              console.log(event.target.value);
+              changeColor!(event.target.value);
+            }}
+          />
+          {colors.map((color) => (
+            <div
+              key={color[0]}
+              className={color[1]}
+              onClick={() => {
+                changeColor!(color[0]);
+              }}
+            />
+          ))}
+        </ColorPalettes>
+      )}
       <Members>
         <h2>참가자 목록</h2>
         <Margin type="height" size={16} />
@@ -58,13 +101,6 @@ export default function GameLeftSide({ isPainting }: { isPainting: boolean }) {
           })}
         </MemberList>
       </Members>
-      {isPainting && (
-        <>
-          <Margin type="height" size={16} />
-          <div>색 수정</div>
-          <Margin type="height" size={16} />
-        </>
-      )}
       <SoundSetting>
         <div
           className="bg-white rounded-full w-[32px] h-[32px] flex justify-center items-center"
@@ -137,9 +173,24 @@ const SoundSetting = tw.div`
   bg-[#88CDFF]
   rounded-lg
 
-  p-4
+  p-2
 
   flex
   justify-around
   items-center
+`;
+
+const ColorPalettes = tw.div`
+  flex-auto  
+  w-full
+
+  p-4
+
+  bg-white
+  rounded-lg
+
+  grid
+  grid-rows-5
+  grid-cols-3
+  gap-2
 `;

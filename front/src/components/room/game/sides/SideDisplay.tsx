@@ -19,6 +19,7 @@ const SideContainer = tw.div<{ 'data-left': boolean }>`
   flex-col
   items-center
   justify-between
+  gap-4
   
   overflow-hidden
 `;
