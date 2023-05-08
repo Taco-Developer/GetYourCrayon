@@ -26,13 +26,13 @@ public class GachaController {
 
     @PostMapping("/gacha/{userIdx}/once")
     public ResponseEntity<ResponseDto> gachaOnce(@PathVariable Long userIdx) {
-        log.info("갓챠 한 번 뽑기 GET: /{}", userIdx);
+        log.info("갓챠 한 번 뽑기 POST: /{}", userIdx);
         ResponseDto responseDto = gachaService.gachaOnce(userIdx);
         return new ResponseEntity<ResponseDto>(responseDto, HttpStatus.OK);
     }
-    @PostMapping("/gacha/{userIdx}/tence")
+    @PostMapping("/gacha/{userIdx}/tenth")
     public ResponseEntity<ResponseDto> gachaTenth(@PathVariable Long userIdx) {
-        log.info("갓챠 열 번 뽑기 GET: /{}", userIdx);
+        log.info("갓챠 열 번 뽑기 POST: /{}", userIdx);
         ResponseDto responseDto = gachaService.gachaTenth(userIdx);
         return new ResponseEntity<ResponseDto>(responseDto, HttpStatus.OK);
     }

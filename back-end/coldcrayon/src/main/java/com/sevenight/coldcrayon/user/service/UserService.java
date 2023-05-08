@@ -34,8 +34,8 @@ public class UserService {
 
         Optional<User> byUserIdx = userRepository.findByUserIdx(userIdx);
         if (byUserIdx.isEmpty()) {
-            responseDto.setMessage("유저 Idx를 찾을 수 없음");
-            responseDto.setStatusCode(400);
+            responseDto.setMessage("마이 페이지로 이동할 수 없습니다: 유저 Idx를 찾을 수 없음");
+            responseDto.setStatusCode(500);
         } else {
             UserProfileDto userProfileDto = UserProfileDto.builder()
                     .userIdx(byUserIdx.get().getUserIdx())
@@ -65,7 +65,7 @@ public class UserService {
             }
 
             result.put("profile", userProfileDto);
-            result.put("collections", collectionsInfo);
+            result.put("gacha", collectionsInfo);
             responseDto.setMessage("유저 프로필 정보");
             responseDto.setStatusCode(200);
             responseDto.setBody(result);
@@ -83,8 +83,12 @@ public class UserService {
             responseDto.setStatusCode(400);
         } else {
             User user = byUserNickname.get();
+            String prevUserNickname = user.getUserNickname();
             user.setUserNickname(changeNickname);
             userRepository.save(user);
+
+            String newUserNickname = user.getUserNickname();
+            responseDto.setBody("기존 닉네임: " + prevUserNickname + ", 변경된 닉네임: " + newUserNickname);
             responseDto.setMessage("유저 인덱스 번호: " + userIdx + "번 유저의 닉네임을 " + changeNickname + "으로 변경");
             responseDto.setStatusCode(200);
         }
@@ -99,8 +103,12 @@ public class UserService {
             responseDto.setStatusCode(400);
         } else {
             User user = byUserNickname.get();
+            String prevUserProfile = user.getUserProfile();
             user.setUserProfile(newProfileImg);
             userRepository.save(user);
+
+            String newUserProfile = user.getUserProfile();
+            responseDto.setBody("기존 이미지: " + prevUserProfile + ", 변경된 이미지: " + newUserProfile);
             responseDto.setMessage("유저 인덱스 번호: " + userIdx + "번 유저의 프로필 사진을 " + newProfileImg + "으로 변경");
             responseDto.setStatusCode(200);
         }
