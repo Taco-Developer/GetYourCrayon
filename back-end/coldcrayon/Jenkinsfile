@@ -20,10 +20,10 @@ pipeline {
             steps
             {
                 sh '''
-                cd ./back-end/
-                pwd ls -al
+                cd ./back-end/coldcrayon
+                pwd
+                docker build -t gmkim716/crayon-spring-container .
                 '''
-                sh "docker build -t gmkim716/crayon-spring-container ."
             }
         }
 
