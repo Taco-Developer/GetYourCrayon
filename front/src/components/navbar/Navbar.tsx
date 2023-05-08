@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
+import type { NavbarStateType } from '@/store/slice/navbarSlice';
 
 import { ReactNode } from 'react';
 
@@ -13,6 +14,8 @@ interface NavbarPropsType {
 }
 
 export default function Navbar({ children }: NavbarPropsType) {
+  const navbarPath = useSelector((state: RootState) => state.navbarPath);
+  console.log(navbarPath);
   return (
     <div>
       <NavbarDiv>

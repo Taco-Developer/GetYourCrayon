@@ -16,16 +16,19 @@ type AppPropsWithLayoutType = AppProps & {
   Component: NextPageWithLayout;
 };
 
-function App({ Component, pageProps, ...rest }: AppPropsWithLayoutType) {
-  const { store, props } = wrapper.useWrappedStore(rest);
+function App({ Component, pageProps }: AppPropsWithLayoutType) {
+  const { store, props } = wrapper.useWrappedStore(pageProps);
   /** getLayout이 falsy값이면 대체 함수로 page매개변수를 받는다. */
   const getLayout = Component.getLayout ?? ((page) => page);
-  return getLayout(
+
+  return (
     <Provider store={store}>
-      <Container>
-        <Component {...pageProps} />
-      </Container>
-    </Provider>,
+      {getLayout(
+        <Container>
+          <Component {...props.pageProps} />
+        </Container>,
+      )}
+    </Provider>
   );
 }
 
