@@ -27,6 +27,7 @@ public class Allgacha {
     private String allgachaImg;
 
     @OneToMany(mappedBy = "allgachaIdx")
+    @Builder.Default
     private List<Gacha> gachas = new ArrayList<>();
 
     @NotNull

@@ -49,6 +49,7 @@ public class Room {
     private LocalDateTime roomCreateTime;
 
     @OneToMany(mappedBy = "room", fetch = FetchType.LAZY)
+    @Builder.Default
     private List<Joinlist> joinlists = new ArrayList<>();
 
 }
