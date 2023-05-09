@@ -38,7 +38,7 @@ spring:
         max-idle: 10
         min-idle: 2
     port: 6379
-    host: redis
+    host: 13.124.200.139
     password: "1q2w3e4r"
 
 
@@ -48,9 +48,9 @@ spring:
       registration:
         naver:
           # 애플리케이션 정보 - Client ID
-          clientId: 'LajRrDsgucSB36TJBijt'
+          clientId: ${clientId}
           # 애플리케이션 정보 - Client Secret
-          clientSecret: 'LPHxkBJ3S3'
+          clientSecret: ${clientSecret}
           clientAuthenticationMethod: post
           authorizationGrantType: authorization_code
           redirectUri: "{baseUrl}/{action}/oauth2/code/{registrationId}"
@@ -99,4 +99,4 @@ logging:
       hibernate: info
 
 redirect:
-  url: http://localhost:3000/
+  url: http://13.124.200.139:3000/
