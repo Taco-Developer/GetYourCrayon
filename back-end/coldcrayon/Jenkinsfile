@@ -10,10 +10,13 @@ pipeline {
         stage('BUILD') {
             steps {
                 script {
-                withCredentials([string(credentialsId: 'clientId', variable: 'clientId'), 					string(credentialsId: 'clientSecret', variable: 'clientSecret')]) {
+                withCredentials([string(credentialsId: 'clientId', variable: 'clientId'), string(credentialsId: 'clientSecret', variable: 'clientSecret')]) {
                         sh '''
                         cd back-end/coldcrayon/src/main/resources/
+                        echo '${clientId}'
+                        echo '$clientId'
                         echo '$clientId:$clientSecret > application-server.yml'
+                        cat application-server.yml
                         '''
                     }
                 }
