@@ -87,7 +87,8 @@ const NavbarDiv = tw.div`
 
 const LoginDiv = tw.div`
   absolute
-  right-10
+  md:right-10
+  right-2
 `;
 
 const LogoDiv = tw.div`
