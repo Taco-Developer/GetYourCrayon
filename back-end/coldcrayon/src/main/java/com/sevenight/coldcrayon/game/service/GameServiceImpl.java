@@ -17,7 +17,7 @@ public class GameServiceImpl implements GameService{
 
     RoomRepository roomRepository;
 
-    public ThemeCategory[] startGame(String roomIdx, String userIdx){
+    public ThemeCategory[] startGame(String roomIdx, String userIdx, GameCategory gameCategory){
 
         Optional<RoomHash> optionalRoomHash = roomRepository.findById(roomIdx);
         if(optionalRoomHash.isEmpty()){
@@ -37,6 +37,7 @@ public class GameServiceImpl implements GameService{
         //
 
         room.setRoomStatus(RoomStatus.Playing);
+        // 어딘가에 게임 테마랑 방 정보를 저장해둬야 한다.
 
         return ThemeCategory.values();
     }
@@ -44,7 +45,6 @@ public class GameServiceImpl implements GameService{
     public String getThemeKeyword(ThemeCategory theme){
 
         // JPA로 "keyword 중에서 theme과 일치하는 data를 들고오기"
-        // 받아온 키워드 던져주기
 
         return null;
     }
