@@ -53,21 +53,21 @@ export default function InRoom({
     }
   };
 
-  useEffect(() => {
-    const getVoice = async () => {
-      try {
-        const voice = await navigator.mediaDevices.getUserMedia({
-          audio: true,
-        });
-        const audio = voice.getAudioTracks();
-        console.log(audio);
-        setMyVoice(audio);
-      } catch (e) {
-        console.log(e);
-      }
-    };
-    getVoice();
-  }, []);
+  // useEffect(() => {
+  //   const getVoice = async () => {
+  //     try {
+  //       const voice = await navigator.mediaDevices.getUserMedia({
+  //         audio: true,
+  //       });
+  //       const audio = voice.getAudioTracks();
+  //       console.log(audio);
+  //       setMyVoice(audio);
+  //     } catch (e) {
+  //       console.log(e);
+  //     }
+  //   };
+  //   getVoice();
+  // }, []);
 
   return (
     <div>
