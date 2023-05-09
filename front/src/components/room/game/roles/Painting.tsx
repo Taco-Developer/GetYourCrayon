@@ -225,7 +225,7 @@ export default function Painting() {
         canvas.width = width * dpr;
         canvas.height = height * dpr;
 
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
         ctx?.scale(dpr, dpr);
 
         return ctx;
