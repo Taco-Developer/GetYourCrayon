@@ -7,12 +7,14 @@ app.use(cors());
 
 const server = http.createServer(app);
 
-const io = new Server("http://k8b203.p.ssafy.io:3003", {
+const io = new Server(server, {
+  
   cors: {
-    origin: "http://k8b203.p.ssafy.io:3002",
+    origin: "*",
     methods: ["GET", "POST"],
   },
 });
+
 // const io = new Server(server, {
   
 //   cors: {
