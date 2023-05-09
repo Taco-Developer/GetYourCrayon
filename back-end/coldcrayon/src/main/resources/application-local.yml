@@ -1,10 +1,10 @@
 spring:
   datasource:
-#    url: jdbc:mariadb://host.docker.internal:3306/crayondb
-    url: jdbc:mariadb://localhost:3307/crayondb?allowPublicKeyRetrieval=true&useSSL=false
+    #    url: jdbc:mariadb://host.docker.internal:3306/crayondb
+    url: jdbc:mariadb://localhost:3307/crayon
     driver-class-name: org.mariadb.jdbc.Driver
     username: dev
-    password: test1234
+    password: "se7enngiths"
     hikari:
       pool-name: jpa-hikari-pool
       maximum-pool-size: 5
@@ -29,9 +29,10 @@ spring:
       host: localhost
       port: 27018
       authentication-database: admin
-      database: crayondb
+      database: crayon
       username: root
-      password: '1q2w3e4r'
+      password: "se7enngiths"
+
   redis:
     lettuce:
       pool:
@@ -40,11 +41,49 @@ spring:
         min-idle: 2
     port: 6363
     host: localhost
-    password: '1q2w3e4r'
+    password: "1q2w3e4r"
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
-
+  # Security OAuth
+  security:
+    oauth2.client:
+      registration:
+        naver:
+          # 애플리케이션 정보 - Client ID
+          clientId: 'LajRrDsgucSB36TJBijt'
+          # 애플리케이션 정보 - Client Secret
+          clientSecret: 'LPHxkBJ3S3'
+          clientAuthenticationMethod: post
+          authorizationGrantType: authorization_code
+          redirectUri: "{baseUrl}/{action}/oauth2/code/{registrationId}"
+          scope:
+            - email
+          clientName: Naver
+        kakao:
+          # REST API 키
+          clientId: ${clientId}
+          # 보안 -> secret key
+          clientSecret: ${clientSecret}
+          clientAuthenticationMethod: POST
+          authorizationGrantType: authorization_code
+          redirectUri: http://localhost:8080/login/oauth2/code/kakao
+          scope:
+            - account_email
+            - profile_nickname
+          clientName: Kakao
+      # Provider 설정
+      provider:
+        naver:
+          authorizationUri: https://nid.naver.com/oauth2.0/authorize
+          tokenUri: https://nid.naver.com/oauth2.0/token
+          userInfoUri: https://openapi.naver.com/v1/nid/me
+          userNameAttribute: response
+        kakao:
+          authorizationUri: https://kauth.kakao.com/oauth/authorize
+          tokenUri: https://kauth.kakao.com/oauth/token
+          userInfoUri: https://kapi.kakao.com/v2/user/me
+          userNameAttribute: id
 # cors 설정
 cors:
   allowed-origins: 'http://localhost:3000'
@@ -57,3 +96,6 @@ logging:
     root: info
     org:
       hibernate: info
+
+redirect:
+  url: http://localhost:3000/
