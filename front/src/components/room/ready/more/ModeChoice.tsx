@@ -38,5 +38,5 @@ export default function ModeChoice() {
   );
 }
 
-const OutDiv = tw.div`w-full h-70 m-3  flex flex-row items-center justify-between`;
-const CardBtn = tw.div`h-full w-20 bg-white bg-opacity-50 rounded-2xl m-1 flex items-center justify-center`;
+const OutDiv = tw.div`w-full h-60 m-3  flex flex-row items-center justify-between`;
+const CardBtn = tw.div`w-20 h-full bg-white bg-opacity-50 rounded-2xl m-1 flex items-center justify-center`;
