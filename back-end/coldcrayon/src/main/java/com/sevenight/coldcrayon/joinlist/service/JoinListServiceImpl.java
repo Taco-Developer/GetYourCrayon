@@ -1,6 +1,6 @@
 package com.sevenight.coldcrayon.joinlist.service;
 
-import com.sevenight.coldcrayon.config.RedisUtil;
+import com.sevenight.coldcrayon.config.RedisMethods;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,22 +12,22 @@ import java.util.List;
 @RequiredArgsConstructor
 public class JoinListServiceImpl implements JoinListService{
 
-    final RedisUtil redisUtil;
+    final RedisMethods redisMethods;
     final String key = "joinlist";
 
     public void createJoinList(String roomIdx, String userIdx){
-        redisUtil.setList(roomIdx, userIdx);
+        redisMethods.setList(roomIdx, userIdx);
     }
 
     public List<String> getJoinList(String roomIdx){
-        return redisUtil.getList(roomIdx);
+        return redisMethods.getList(roomIdx);
     }
 
     public String removeUser(String roomIdx, String userIdx){
-        return redisUtil.removeElement(roomIdx, userIdx);
+        return redisMethods.removeElement(roomIdx, userIdx);
     }
 
     public String deleteJoinList(String roomIdx){
-        return redisUtil.removeList(roomIdx);
+        return redisMethods.removeList(roomIdx);
     };
 }

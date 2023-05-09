@@ -1,6 +1,6 @@
 package com.sevenight.coldcrayon.room.service;
 
-import com.sevenight.coldcrayon.config.RedisUtil;
+import com.sevenight.coldcrayon.config.RedisMethods;
 import com.sevenight.coldcrayon.room.dto.RoomDto;
 import com.sevenight.coldcrayon.room.entity.RoomHash;
 import com.sevenight.coldcrayon.room.entity.RoomStatus;
@@ -18,7 +18,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class RoomServiceImpl implements RoomService{
 
-    final RedisUtil redisUtil;
+    final RedisMethods redisMethods;
     final RoomRepository roomRepository;
 
     // C : 방 저장하기
@@ -26,8 +26,8 @@ public class RoomServiceImpl implements RoomService{
 
         String roomIdx = UUID.randomUUID().toString().replaceAll("-", "");
 
-        redisUtil.setHash("user", userIdx, roomIdx);
-        redisUtil.setList(roomIdx, userIdx);
+        redisMethods.setHash("user", userIdx, roomIdx);
+        redisMethods.setList(roomIdx, userIdx);
 
         RoomHash room = RoomHash.builder()
                 .roomIdx(roomIdx)
@@ -55,7 +55,7 @@ public class RoomServiceImpl implements RoomService{
 
     //  R : 유저 정보를 가지고 현재 참여하고 있는 방 식별자를 반환한다.
     public Optional<String> checkUserRoom(String userIdx){
-        return Optional.ofNullable((String) redisUtil.getHash("user", userIdx)) ;
+        return Optional.ofNullable((String) redisMethods.getHash("user", userIdx)) ;
     }
 
     // U : 방의 최대 인원 수 변경하기
@@ -82,7 +82,7 @@ public class RoomServiceImpl implements RoomService{
 
         if(optionalRoom.isPresent()){
             RoomHash room = optionalRoom.get();
-            List<String> userList = redisUtil.getList(roomIdx);
+            List<String> userList = redisMethods.getList(roomIdx);
             if (userList.contains(toUserIdx)){ // 방장을 위임하는 유저가 있는 경우
                 room.setAdminUserIdx(toUserIdx);
                 roomRepository.save(room);
@@ -106,9 +106,9 @@ public class RoomServiceImpl implements RoomService{
         if(optionalRoom.isPresent()){
             RoomHash room = optionalRoom.get();
             if(room.getAdminUserIdx().equals(adminUserIdx)){
-                if(redisUtil.getList(roomIdx).contains(banUserIdx)){
-                    redisUtil.removeElement("user", banUserIdx);
-                    redisUtil.setList("kick"+roomIdx, banUserIdx);
+                if(redisMethods.getList(roomIdx).contains(banUserIdx)){
+                    redisMethods.removeElement("user", banUserIdx);
+                    redisMethods.setList("kick"+roomIdx, banUserIdx);
                 }
                 else {
                     // 유저가 없습니다
@@ -132,11 +132,11 @@ public class RoomServiceImpl implements RoomService{
 
             if(room.getRoomNow() == 1){
                 roomRepository.deleteById(roomIdx); // 방 삭제
-                redisUtil.removeList(roomIdx);   // 방에 참여 인원 List 삭제
+                redisMethods.removeList(roomIdx);   // 방에 참여 인원 List 삭제
             } else {
                 // 방장 위임
                 if(room.getAdminUserIdx().equals(userIdx)){
-                    List<String> userList = redisUtil.getList(roomIdx);
+                    List<String> userList = redisMethods.getList(roomIdx);
                     int i=0;
                     while(userList.get(i).equals(userIdx)){
                         i++;
@@ -145,8 +145,8 @@ public class RoomServiceImpl implements RoomService{
                     return newRoomDto.getRoomIdx();
                 }
                 room.setRoomNow(room.getRoomNow()-1); // 방 현재 인원 -1
-                redisUtil.removeElement(room.getRoomIdx(), userIdx); //  방에 참여 인원 List에서 유저 삭제
-                redisUtil.removeHash("user", userIdx);
+                redisMethods.removeElement(room.getRoomIdx(), userIdx); //  방에 참여 인원 List에서 유저 삭제
+                redisMethods.removeHash("user", userIdx);
             }
             return roomIdx;
         } else{

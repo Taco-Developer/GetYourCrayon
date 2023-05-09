@@ -57,3 +57,17 @@ CREATE TABLE `user_join_list` (
                                   CONSTRAINT `fk_join_room_idx` FOREIGN KEY (`room_idx`) REFERENCES `room` (`room_idx`) ON DELETE CASCADE ON UPDATE CASCADE,
                                   CONSTRAINT `fk_join_user_idx` FOREIGN KEY (`user_idx`) REFERENCES `user` (`user_idx`) ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+CREATE TABLE `theme` (
+    `theme_idx` Integer NOT NULL,
+    `theme_category` VARCHAR(10),
+    `theme_keyword;` VARCHAR(255)
+);
+
+CREATE TABLE `sentence` (
+    `sentence_idx` Integer NOT NULL,
+    `theme_category` VARCHAR(10),
+    `prefix` VARCHAR(15),
+    `suffix` VARCHAR(15)
+)
+
