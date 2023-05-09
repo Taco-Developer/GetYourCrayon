@@ -60,9 +60,9 @@ spring:
           clientName: Naver
         kakao:
           # REST API 키
-          clientId: ${clientId}
+          clientId: ${env.clientId}
           # 보안 -> secret key
-          clientSecret: ${clientSecret}
+          clientSecret: ${env.clientSecret}
           clientAuthenticationMethod: POST
           authorizationGrantType: authorization_code
           redirectUri: http://localhost:8080/login/oauth2/code/kakao
