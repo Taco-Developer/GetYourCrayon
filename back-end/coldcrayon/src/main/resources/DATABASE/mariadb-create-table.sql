@@ -22,10 +22,11 @@ CREATE TABLE `board` (
 CREATE TABLE `allgacha` (
                             `allgacha_idx` Integer NOT NULL,
                             `allgacha_img` VARCHAR(255) DEFAULT NULL,
+                            `allgacha_class` ENUM('EVENT', 'SUPERRARE', 'RARE', 'NORMAL'),
                             PRIMARY KEY (`allgacha_idx`)
 );
 CREATE TABLE `gacha` (
-                         `gacha_idx` Integer NOT NULL,
+                         `gacha_idx` INTEGER NOT NULL AUTO_INCREMENT,
                          `user_idx` varchar(36) NOT NULL,
                          `allgacha_idx` Integer DEFAULT NULL,
                          PRIMARY KEY (`gacha_idx`),

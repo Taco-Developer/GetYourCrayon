@@ -1,5 +1,6 @@
 package com.sevenight.coldcrayon.user.entity;
 
+import com.sevenight.coldcrayon.auth.entity.Role;
 import com.sevenight.coldcrayon.board.entity.Board;
 import com.sevenight.coldcrayon.gacha.entity.Gacha;
 import lombok.*;
@@ -24,34 +25,29 @@ import java.util.UUID;
 public class User {
 
     @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @Column(name = "user_idx", updatable = false, nullable = false, columnDefinition = "VARCHAR(36)")
-    @Type(type = "uuid-char")
-    private UUID userIdx;
-
-    @Column(name = "user_token")
-    private String userToken;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_idx")
+    private Long userIdx;
+    @Column(name = "user_email", length = 512)
+    private String userEmail;
 
     @Column(name = "user_nickname")
     private String userNickname;
-
     @Column(name = "user_profile")
     private String userProfile;
-
-    @UpdateTimestamp
-    @Column(name = "user_last_login")
-    private LocalDateTime userLastLogin;
-
+    @Column(name = "user_status")
+    private boolean userStatus;
+    @Column(name = "user_point")
+    private Integer userPoint = 0;
+    @Column(name = "user_provider", nullable = false)
+//    @Enumerated(EnumType.STRING)
+    private String userProvider;
+    @Column(name = "user_role", length = 20)
+    @Enumerated(EnumType.STRING)
+    private Role role;
     @CreationTimestamp
     @Column(name = "user_create_time")
     private LocalDateTime userCreateTime;
-
-    @Column(name = "user_status")
-    private boolean userStatus;
-
-    @Column(name = "user_point")
-    private int userPoint;
 
     // 역 방향
     @OneToMany(mappedBy = "userIdx")
