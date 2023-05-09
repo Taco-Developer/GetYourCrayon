@@ -11,7 +11,7 @@ pipeline {
             steps {
                 withCredentials([file(credentialsId: 'server', variable: 'yml')]) {
                     script {
-                        sh 'cp $yml back-end/coldcrayon/src/main/resources/application-server2.yml'
+                        sh 'cp $yml back-end/coldcrayon/src/main/resources/application-server.yml'
                         sh '''
                         cd back-end/coldcrayon/src/main/resources
                         ls -al
