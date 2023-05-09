@@ -69,4 +69,5 @@ io.on("connection", (socket) => {
   });
 });
 
-server.listen(3001, () => console.log("SERVER RUNNING"));
+// server.listen(3001, () => console.log("SERVER RUNNING"));
+server.listen(3003, "http://k8b230.p.ssafy.io", () => console.log("SERVER RUNNING"));
