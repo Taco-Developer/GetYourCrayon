@@ -14,8 +14,9 @@ CREATE TABLE `board` (
                          `board_idx` Integer NOT NULL AUTO_INCREMENT,
                          `user_idx` varchar(36) DEFAULT NULL,
                          `board_title` VARCHAR(255) DEFAULT NULL,
-                         `board_content` TIMESTAMP DEFAULT NULL,
+                         `board_content` VARCHAR(5000) DEFAULT NULL,
                          `board_create_time` TIMESTAMP DEFAULT NULL,
+                         `board_update_time` TIMESTAMP DEFAULT NULL,
                          PRIMARY KEY (`board_idx`),
                          CONSTRAINT `fk_board_user_idx` FOREIGN KEY (`user_idx`) REFERENCES `user` (`user_idx`) ON DELETE CASCADE ON UPDATE CASCADE
 );
