@@ -20,11 +20,21 @@ function App({ Component, pageProps }: AppPropsWithLayoutType) {
   const { store, props } = wrapper.useWrappedStore(pageProps);
   /** getLayout이 falsy값이면 대체 함수로 page매개변수를 받는다. */
   const getLayout = Component.getLayout ?? ((page) => page);
+  const now = new Date();
+  const nowHour = now.getHours();
 
   return (
     <Provider store={store}>
       {getLayout(
-        <Container>
+        <Container
+          className={`${
+            nowHour >= 6 && nowHour <= 15
+              ? 'bg-after-nooon'
+              : nowHour >= 16 && nowHour <= 20
+              ? 'bg-even-ing'
+              : 'bg-night-ing'
+          }`}
+        >
           <Component {...props.pageProps} />
         </Container>,
       )}
@@ -38,7 +48,6 @@ const Container = tw.div`
   w-screen
   min-h-screen
   h-full
-  bg-after-noon
   
   flex
   justify-center

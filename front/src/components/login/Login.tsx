@@ -46,9 +46,8 @@ const CustomDialogTitle = (props: any) => {
 };
 
 export default function Login() {
-  const a = process.env.NEXT_PUBLIC_API_URL;
-  console.log(a);
   const [open, setOpen] = useState(false);
+  const KAKAO_URL = process.env.NEXT_PUBLIC_KAKAO;
   const ClickOpen = () => {
     setOpen(true);
   };
@@ -88,7 +87,14 @@ export default function Login() {
         <DialogContent>
           <LoginDiv id="neon">
             프로젝트 완성 하고 싶어요
-            <ImageDiv>
+            <ImageDiv
+              onClick={() => {
+                if (!KAKAO_URL) {
+                  throw new Error('카카오 URL이 잘못되있습니다.');
+                }
+                window.location.href = KAKAO_URL;
+              }}
+            >
               <Image src="/images/kakao.png" alt="no_img" fill sizes="100%" />
             </ImageDiv>
           </LoginDiv>

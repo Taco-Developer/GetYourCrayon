@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
 
 export default function Home() {
+  // console.log(process.env.NEXT_PUBLIC_KAKAO);
   return (
     <MainContainer>
       <Margin type="height" size={150} />
