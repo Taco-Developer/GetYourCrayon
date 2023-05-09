@@ -51,6 +51,15 @@ dependencies {
 	// querydsl 추가
 	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
 	annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}"
+	// JWT Dependency
+	implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
+	// Configuring the Annotation Processor
+	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+	// OAuth2
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+	// Security
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	testImplementation 'org.springframework.security:spring-security-test'
 
 	implementation "com.amazonaws:aws-java-sdk-s3:1.12.281"
 }
