@@ -8,18 +8,15 @@ pipeline {
         }
 
         stage('BUILD') {
-		steps {
-			withCredentials([string(credentialsId: 'clientId', variable: 'clientId'), 					string(credentialsId: 'clientSecret', variable: 'clientSecret')]) {
-    					sh '''
-					cd back-end/coldcrayon/src/main/resources/
-					echo $clientId:$clientSecret > application-server.yml
-					'''
-
-			}
-			
-			
-		}
             steps {
+                script {
+                withCredentials([string(credentialsId: 'clientId', variable: 'clientId'), 					string(credentialsId: 'clientSecret', variable: 'clientSecret')]) {
+                        sh '''
+                        cd back-end/coldcrayon/src/main/resources/
+                        echo '$clientId:$clientSecret > application-server.yml'
+                        '''
+                    }
+                }
                 sh '''
                 cd back-end/coldcrayon
                 chmod +x gradlew
