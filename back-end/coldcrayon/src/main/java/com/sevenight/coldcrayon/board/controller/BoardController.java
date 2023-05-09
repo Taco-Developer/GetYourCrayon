@@ -38,7 +38,7 @@ public class BoardController {
         }
 
         try {
-            User finduser = userRepository.findById(UUID.fromString("123e4567-e89b-12d3-a456-556642440000")).get();
+            User finduser = userRepository.findById(1L).get();
             Board board = new Board();
             board.setBoardTitle(request.getTitle());
             board.setBoardContent(request.getContent());
@@ -61,7 +61,7 @@ public class BoardController {
     public ResponseEntity<?> updateArticle(@RequestParam(name = "boardId") int boardId) {
 
         try {
-            User finduser = userRepository.findById(UUID.fromString("123e4567-e89b-12d3-a456-556642440000")).get();
+            User finduser = userRepository.findById(1L).get();
             Board board = boardService.findById(boardId).get();
 
             // 해당 게시글을 작성한 유저와 현재 로그인한 유저가 다른 경우, 업데이트 불가능
