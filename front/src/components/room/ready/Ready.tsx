@@ -85,39 +85,41 @@ export default function Ready({
             {/* <Voice socket={socket} /> */}
           </UserDiv>
           <MoreDiv>
-            <PickMenu>
-              <SetBtn
-                className={choice === 1 ? 'h-full text-4xl mr-2' : ''}
-                onClick={() => {
-                  setChoice(1);
-                }}
-              >
-                모드
-              </SetBtn>
-              <SetBtn
-                className={choice === 2 ? 'h-full text-4xl ml-2' : ''}
-                onClick={() => {
-                  setChoice(2);
-                }}
-              >
-                채팅
-              </SetBtn>
-            </PickMenu>
-            <PickContent>
-              {choice === 1 ? (
-                <SettingDiv>
-                  <ModeChoice />
-                  <Setting />
-                </SettingDiv>
-              ) : (
-                <Chat
-                  client={client}
-                  userId={userId}
-                  room={room}
-                  messageList={messageList}
-                />
-              )}
-            </PickContent>
+            <PickDiv>
+              <PickMenu>
+                <SetBtn
+                  className={choice === 1 ? 'h-full text-4xl mr-2' : ''}
+                  onClick={() => {
+                    setChoice(1);
+                  }}
+                >
+                  모드
+                </SetBtn>
+                <SetBtn
+                  className={choice === 2 ? 'h-full text-4xl ml-2' : ''}
+                  onClick={() => {
+                    setChoice(2);
+                  }}
+                >
+                  채팅
+                </SetBtn>
+              </PickMenu>
+              <PickContent>
+                {choice === 1 ? (
+                  <SettingDiv>
+                    <ModeChoice />
+                    <Setting />
+                  </SettingDiv>
+                ) : (
+                  <Chat
+                    client={client}
+                    userId={userId}
+                    room={room}
+                    messageList={messageList}
+                  />
+                )}
+              </PickContent>
+            </PickDiv>
             <BtnDiv>
               <ReadyBtn />
             </BtnDiv>
@@ -131,9 +133,10 @@ export default function Ready({
 
 const RoomBody = tw.div`w-screen h-screen flex items-center justify-center`;
 const UserDiv = tw.div`w-1/4 xl:w-1/4 h-4/5 ml-5 xl:mx-0 rounded-l-2xl flex items-center justify-center`;
-const MoreDiv = tw.div`w-3/4 xl:w-2/4 h-4/5 mr-5 xl:mx-0 rounded-r-2xl  flex flex-col items-center justify-center`;
-const PickMenu = tw.div`h-14 w-90 flex flex-row `;
+const MoreDiv = tw.div`w-3/4 xl:w-2/4 h-4/5 mr-5 xl:mx-0 rounded-r-2xl  flex flex-col items-center justify-between`;
+const PickDiv = tw.div`h-80 w-90`;
+const PickMenu = tw.div`h-10 flex flex-row `;
+const PickContent = tw.div`h-full bg-white bg-opacity-50 rounded-b-xl flex items-center justify-center`;
 const SettingDiv = tw.div`h-full w-full flex flex-col items-center justify-center p-4`;
 const SetBtn = tw.div`h-90 w-50 text-2xl rounded-t-2xl text-white flex items-center justify-center bg-white bg-opacity-50`;
-const PickContent = tw.div`h-70 w-90 bg-white bg-opacity-50 rounded-b-xl flex items-center justify-center`;
 const BtnDiv = tw.div`h-10 w-90 flex items-center justify-center`;

@@ -1,4 +1,4 @@
-import { useState, forwardRef } from 'react';
+import { useState, forwardRef, useEffect } from 'react';
 import tw from 'tailwind-styled-components';
 import { TextField } from '@mui/material';
 import { Button } from '../ui/Button';
@@ -48,11 +48,30 @@ const CustomDialogTitle = (props: any) => {
 
 export default function ChangeName() {
   const [open, setOpen] = useState(false);
+  const [text, setText] = useState('');
   const ClickOpen = () => {
     setOpen(true);
   };
   const ClickClose = () => {
     setOpen(false);
+  };
+  const ChangeText = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setText(e.target.value);
+  };
+  const Validation = () => {
+    let check_spe =
+      /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩαβγδεζηθικλμνξοπρστυφχψω½⅓⅔¼¾⅛⅜⅝⅞¹²³⁴ⁿ₁₂₃₄ⅰⅱⅲⅳⅴⅵⅶⅷⅸⅹⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ─│┌┐┘└├┬┤┴┼━┃┏┓┛┗┣┳┫┻╋┠┯┨┷┿┝┰┥┸╂┒┑┚┙┖┕┎┍┞┟┡┢┦┧┩┪┭┮┱┲┵┶┹┺┽┾╀╁╃╄╅╆╇╈╉╊＄％￦Ｆ′″℃Å￠￡￥¤℉‰?㎕㎖㎗ℓ㎘㏄㎣㎤㎥㎦㎙㎚㎛㎜㎝㎞㎟㎠㎡㎙㏊㎍㎎㎏㏏㎈㎉㏈㎧㎨㎰㎱㎲㎳㎴㎵㎶㎷㎸㎹㎀㎁㎂㎃㎄㎺㎻㎼㎽㎾㎿㎐㎑㎒㎓㎔Ω㏀㏁㎊㎋㎌㏖㏅㎭㎮㎯㏛㎩㎪㎫㎬㏝㏐㏓㏃㏉㏜㏆＋－＜＝＞±×÷≠≤≥∞∴♂♀∠⊥⌒∂∇≡≒≪≫√∽∝∵∫∬∈∋⊆⊇⊂⊃∪∩∧∨￢⇒⇔∀∃∮∑∏＂（）［］｛｝‘’“”〔〕〈〉《》「」『』【】！＇，．￣：；‥…¨〃­―∥＼∼´～ˇ˘˝˚˙¸˛¡¿ː＃＆＊＠§※☆★○●◎◇◆□■△▲▽▼→←↑↓↔〓◁◀▷▶♤♠♡♥♧♣⊙◈▣◐◑▒▤▥▨▧▦▩♨☏☎☜☞¶†‡↕↗↙↖↘♭♩♪♬㉿㈜№㏇™㏂㏘℡?ªⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝⓞⓖⓠⓡⓢⓣⓤⓥⓦⓧⓨⓩ①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⒜⒝⒞⒟⒠⒡⒢⒣⒤⒥⒦⒧⒨⒩⒪⒫⒬⒭⒮⒯㉠㉡㉢㉣㉭㉥㉦㉧㉨㉩㉪㉫㉬㉭㉮㉯㉰㉱㉲㉳㉴㉵㉶㉷㉸㉹㉺㉻㈀㈁㈂㈃㈄㈅㈆㈇㈈㈉㈊㈋㈌㈍㈎㈏㈐㈑㈒㈓㈔㈕㈖㈗㈘㈙㈚㈛⒜⒝⒞⒟⒠⒡⒢⒣⒤⒥⒦⒧⒨⒩⒪⒫⒬⒭⒮⒯⒰⒱⒲⒳⒴⒵⑴⑵⑶⑷⑸⑹⑺⑻⑼⑽⑾⑿⒀⒁⒂%&\\\=\(\'\"]/gi; // 특수문자 제거
+    let check_str = /[ㄱ-ㅎㅏ-ㅣ]/gi; // 자음, 모음 제거
+    let space = /\s/g; // 공백 제거
+    if (check_spe.test(text) === true) {
+      return '특수문자는 사용할 수 없습니다.';
+    } else if (check_str.test(text) === true) {
+      return '자음 혹은 모음만 사용할 수 없습니다';
+    } else if (space.test(text) === true) {
+      return '공백은 사용할 수 없습니다.';
+    } else if (text.length > 8) {
+      return '글자수가 초과되었습니다.';
+    }
   };
 
   return (
@@ -77,7 +96,7 @@ export default function ChangeName() {
         PaperProps={{
           style: {
             width: '30vw',
-            height: '35vh',
+            height: '40vh',
             backgroundColor: 'rgba(255, 255, 255)',
           },
         }}
@@ -86,7 +105,32 @@ export default function ChangeName() {
         <DialogContent>
           <ChangeDiv>
             <div>바꿀 닉네임을 입력해주세요</div>
-            <TextField placeholder="입력" variant="standard" />
+            <div className="flex flex-row gap-4 w-4/5 items-center">
+              <TextField
+                placeholder="닉네임을 입력해주세요"
+                variant="standard"
+                sx={{ width: '90%' }}
+                onChange={ChangeText}
+                value={text}
+                error={Validation() ? true : false}
+                helperText={Validation() ? Validation() : ''}
+                inputProps={{
+                  maxLength: 12,
+                  style: { fontFamily: 'CookieRun' },
+                }}
+              />
+              <div
+                className={`${
+                  text.length > 10 ? 'text-apple-red' : 'text-apple-green '
+                } text-base`}
+              >
+                {text.length}/10
+              </div>
+            </div>
+
+            <Button px={6} py={2} rounded="lg" color="bg-main-green">
+              변경하기
+            </Button>
           </ChangeDiv>
         </DialogContent>
       </Dialog>
