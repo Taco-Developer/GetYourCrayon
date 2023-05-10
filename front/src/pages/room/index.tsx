@@ -1,8 +1,7 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ReactElement } from 'react';
 import { socket } from '@/socket/server';
 import Ready from '@/components/room/ready/Ready';
-import tw from 'tailwind-styled-components';
 
 export default function Room() {
   const [userId, setUserId] = useState<string>('');

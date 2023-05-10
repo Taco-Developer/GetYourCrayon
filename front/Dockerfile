@@ -17,8 +17,6 @@ RUN npm run build
 # 환경 변수 설정
 ENV NODE_ENV production
 ENV PORT 3000
-ENV NEXT_PUBLIC_API_URL http://k8b203.p.ssafy.io:8080
-ENV NEXT_PUBLIC_KAKAO http://k8b203.p.ssafy.io:8080/oauth2/authorization/kakao
 
 # 컨테이너 포트 오픈
 EXPOSE 3000
