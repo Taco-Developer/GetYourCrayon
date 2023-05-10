@@ -3,8 +3,10 @@ import Navbar from '@/components/navbar/Navbar';
 import Margin from '@/components/ui/Margin';
 import Link from 'next/link';
 import tw from 'tailwind-styled-components';
+import { boardAPI } from '@/api/api';
 
-export default function Board() {
+export default function Board({ res }: any) {
+  console.log(res);
   return (
     <Container>
       <div className="text-xl md:text-2xl lg:text-3xl text-center mb-4 ">
@@ -71,6 +73,22 @@ export default function Board() {
 Board.getLayout = function getLayout(page: ReactElement) {
   return <Navbar>{page}</Navbar>;
 };
+
+export async function getServerSideProps() {
+  try {
+    let res = {};
+    await boardAPI
+      .getBoard(1)
+      .then((request) => {
+        res = request.data;
+      })
+      .catch((e) => console.log(e));
+    return { props: { res } };
+  } catch (e) {
+    console.log(e);
+    return { props: {} };
+  }
+}
 
 const Container = tw.div`
   w-screen
