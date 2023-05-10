@@ -20,6 +20,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.UUID;
 
 @Slf4j
 @Component
@@ -109,6 +110,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                 .role(Role.MEMBER)
                 .userProvider(oAuth2User.getAttribute("provider"))
                 .userPoint(0)
+                .userNickname("익명이" + UUID.randomUUID().toString().substring(0, 7))
                 .build());
     }
 
