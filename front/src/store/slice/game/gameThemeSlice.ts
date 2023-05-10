@@ -1,19 +1,37 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-const INIT_THEME = '과일';
+export interface GameThemeType {
+  themeList: string[];
+  selectedTheme: string;
+}
 
-const initialState: string = 'INIT_THEME';
+const INIT_AI_GAME_DATAS: GameThemeType = {
+  themeList: [],
+  selectedTheme: '',
+};
+
+const initialState = INIT_AI_GAME_DATAS;
 
 const gameThemeSlice = createSlice({
   name: 'gameTheme',
   initialState,
   reducers: {
-    /** 테마 변경 */
-    changeTheme(state, action: PayloadAction<string>) {
-      state = action.payload;
+    /** 테마 목록 추가 */
+    addThemeList(state, action: PayloadAction<string[]>) {
+      state.themeList = action.payload;
+    },
+
+    /** 선택된 테마 저장 */
+    saveSelectedTheme(state, action: PayloadAction<string>) {
+      state.selectedTheme = action.payload;
+    },
+
+    /** 테마 초기화 */
+    resetTheme(state) {
+      return initialState;
     },
   },
 });
 
-export const { changeTheme } = gameThemeSlice.actions;
+export const { addThemeList, saveSelectedTheme } = gameThemeSlice.actions;
 export default gameThemeSlice.reducer;

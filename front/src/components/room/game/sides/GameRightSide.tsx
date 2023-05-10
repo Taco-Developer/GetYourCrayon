@@ -15,11 +15,9 @@ interface GameRightSidePropsType {
 }
 
 export default function GameRightSide({ isPainting }: GameRightSidePropsType) {
-  const {
-    leftTime,
-    chatDatas,
-    aiGameDatas: { isGameStarted },
-  } = useAppSelector((state) => state);
+  const { leftTime, chatDatas, isGameStarted } = useAppSelector(
+    (state) => state,
+  );
   const dispatch = useAppDispatch();
 
   // 채팅 입력값

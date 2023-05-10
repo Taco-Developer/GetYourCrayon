@@ -8,12 +8,12 @@ const scoreSlice = createSlice({
   reducers: {
     /** 점수 증가 */
     increase(state, action: PayloadAction<number>) {
-      state += action.payload;
+      return (state += action.payload);
     },
 
     /** 점수 감소 */
     decrease(state, action: PayloadAction<number>) {
-      state -= action.payload;
+      return (state -= action.payload);
     },
   },
 });

@@ -1,25 +1,19 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export interface AiGameDatasType {
-  themeList: string[];
-  selectedTheme: string;
   randomAnswers: string[];
   inputedAnswers: string[];
   aiImages: string[];
   isSelectThemeModalOpened: boolean;
   isScoreCheckModalOpened: boolean;
-  isGameStarted: boolean;
 }
 
 const INIT_AI_GAME_DATAS: AiGameDatasType = {
-  themeList: [],
   aiImages: [],
   randomAnswers: [],
   inputedAnswers: [],
-  selectedTheme: '',
   isScoreCheckModalOpened: false,
   isSelectThemeModalOpened: false,
-  isGameStarted: false,
 };
 
 const initialState = INIT_AI_GAME_DATAS;
@@ -46,25 +40,6 @@ const aiGameDatasSlice = createSlice({
       state.isScoreCheckModalOpened = false;
     },
 
-    /** 게임 시작 */
-    startGame(state) {
-      state.isGameStarted = true;
-    },
-    /** 게임 종료 */
-    endGame(state) {
-      state.isGameStarted = false;
-    },
-
-    /** 테마 목록 추가 */
-    addThemeList(state, action: PayloadAction<string[]>) {
-      state.themeList = action.payload;
-    },
-
-    /** 선택된 테마 저장 */
-    saveSelectedTheme(state, action: PayloadAction<string>) {
-      state.selectedTheme = action.payload;
-    },
-
     /** AI 이미지 추가 */
     addAiImages(state, action: PayloadAction<string[]>) {
       state.aiImages = action.payload;
@@ -79,6 +54,12 @@ const aiGameDatasSlice = createSlice({
     addInputedAnswers(state, action: PayloadAction<string>) {
       state.inputedAnswers.push(action.payload);
     },
+
+    /** 정답 초기화 */
+    resetAnserwer(state) {
+      state.randomAnswers = [];
+      state.inputedAnswers = [];
+    },
   },
 });
 
@@ -86,13 +67,10 @@ export const {
   addAiImages,
   addInputedAnswers,
   addRandomAnswers,
-  addThemeList,
   closeIsScoreCheckModalOpened,
   closeIsSelectThemeModalOpened,
   openIsScoreCheckModalOpened,
   openIsSelectThemeModalOpened,
-  saveSelectedTheme,
-  endGame,
-  startGame,
+  resetAnserwer,
 } = aiGameDatasSlice.actions;
 export default aiGameDatasSlice.reducer;

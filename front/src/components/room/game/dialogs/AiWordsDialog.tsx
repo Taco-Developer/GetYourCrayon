@@ -3,12 +3,13 @@ import { Dialog } from '@mui/material';
 
 import Margin, { MarginType } from '@/components/ui/Margin';
 import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
+import { closeIsSelectThemeModalOpened } from '@/store/slice/game/aiGameDatasSlice';
+import { resetTime } from '@/store/slice/game/leftTimeSlice';
+import { startGame } from '@/store/slice/game/isGameStartedSlice';
 import {
   addThemeList,
-  closeIsSelectThemeModalOpened,
-  startGame,
-} from '@/store/slice/game/aiGameDatasSlice';
-import { resetTime } from '@/store/slice/game/leftTimeSlice';
+  saveSelectedTheme,
+} from '@/store/slice/game/gameThemeSlice';
 
 // 더미 파일
 const INIT_THEME_LIST = [
@@ -24,9 +25,10 @@ const INIT_THEME_LIST = [
 ];
 
 export default function AiWordsDialog() {
-  const { isSelectThemeModalOpened, themeList, selectedTheme } = useAppSelector(
-    (state) => state.aiGameDatas,
-  );
+  const {
+    gameTheme: { themeList },
+    aiGameDatas: { isSelectThemeModalOpened },
+  } = useAppSelector((state) => state);
   const dispatch = useAppDispatch();
 
   const [savedTheme, setSavedTheme] = useState<string>('');
@@ -43,6 +45,7 @@ export default function AiWordsDialog() {
   const startClickHandler = () => {
     if (savedTheme) {
       setSavedTheme('');
+      dispatch(saveSelectedTheme(savedTheme));
       dispatch(closeIsSelectThemeModalOpened());
       dispatch(startGame());
       dispatch(resetTime());

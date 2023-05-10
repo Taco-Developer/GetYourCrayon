@@ -16,11 +16,11 @@ import {
   addAiImages,
   addInputedAnswers,
   addRandomAnswers,
-  endGame,
   openIsScoreCheckModalOpened,
   openIsSelectThemeModalOpened,
 } from '@/store/slice/game/aiGameDatasSlice';
 import { ChatType, addChat } from '@/store/slice/game/chatDatasSlice';
+import { endGame } from '@/store/slice/game/isGameStartedSlice';
 
 const INIT_AI_IMAGES = [
   'https://img.freepik.com/free-photo/assorted-mixed-fruits_74190-6961.jpg?w=996&t=st=1683175100~exp=1683175700~hmac=7dbf59f1e64cbe127e46cf31a1890e413d83644d58d24fe0872d7c4f3f9f7943',
@@ -32,15 +32,9 @@ const INIT_AI_IMAGES = [
 export default function AiPaintingGuess() {
   const {
     leftTime,
-    gameTheme,
     aiGameDatas: { aiImages, randomAnswers, inputedAnswers },
   } = useAppSelector((state) => state);
   const dispatch = useAppDispatch();
-
-  // 정답 가져오기
-  const loadAnswers = (answers: string[]) => {
-    dispatch(addRandomAnswers(answers));
-  };
 
   // 정답 input 값
   const [answerInputValue, setAnswerInputValue] = useState('');
@@ -69,6 +63,7 @@ export default function AiPaintingGuess() {
     dispatch(addInputedAnswers(answer));
   };
 
+  // 처음 테마 선택 모달 열기
   useEffect(() => {
     dispatch(openIsSelectThemeModalOpened());
   }, [dispatch]);
@@ -80,12 +75,18 @@ export default function AiPaintingGuess() {
     }
   }, [aiImages, dispatch]);
 
+  // 정답 불러오기
+  useEffect(() => {
+    if (randomAnswers.length === 0) {
+      dispatch(addRandomAnswers(['사과', '바나나', '배']));
+    }
+  }, [randomAnswers, dispatch]);
+
   // 정답 비교
   useEffect(() => {
     if (
-      (randomAnswers &&
-        randomAnswers ===
-          randomAnswers.filter((answer) => inputedAnswers.includes(answer))) ||
+      (randomAnswers.length > 0 &&
+        randomAnswers.length === inputedAnswers.length) ||
       leftTime === 0
     ) {
       dispatch(endGame());
@@ -118,7 +119,9 @@ export default function AiPaintingGuess() {
                 </span>
               ))}
             </p>
-            <p>{inputedAnswers.length} / 3</p>
+            <p>
+              {inputedAnswers.length} / {randomAnswers.length}
+            </p>
           </AnswerInfo>
           <Margin type={MarginType.height} size={24} />
           <AnswerInputSection>
