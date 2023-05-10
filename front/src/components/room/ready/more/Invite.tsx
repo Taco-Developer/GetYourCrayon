@@ -43,7 +43,11 @@ const CustomDialogTitle = (props: any) => {
   );
 };
 
-export default function Invite() {
+interface ReadyProps {
+  copyAction: (code: string) => void;
+}
+
+export default function Invite({ copyAction }: ReadyProps) {
   const [open, setOpen] = useState(false);
   const ClickOpen = () => {
     setOpen(true);
@@ -66,20 +70,27 @@ export default function Invite() {
         open={open}
         TransitionComponent={Transition}
         keepMounted
+        PaperProps={{
+          style: {
+            width: '100vw',
+          },
+        }}
       >
         <CustomDialogTitle onClose={ClickClose} />
         <DialogContent>
           <ModalDiv>
             <TopDiv>
-              https://getyourcrayon.co.kr/wopaef7890aw8f923rjkhawer98ty124
+              <TitleInput placeholder="같이할사람 여기여기 붙어라 :)" />
             </TopDiv>
-            <MidDiv>
-              <input placeholder="제목을 작성해 주세요" className="w-full" />
-              <SendBtn>게시글작성</SendBtn>
-            </MidDiv>
             <UnderDiv>
-              <ModalBtn>닫기</ModalBtn>
-              <ModalBtn>링크복사</ModalBtn>
+              <ModalBtn
+                onClick={() => {
+                  copyAction('code');
+                }}
+              >
+                초대링크 복사
+              </ModalBtn>
+              <ModalBtn>게시글 작성</ModalBtn>
             </UnderDiv>
           </ModalDiv>
         </DialogContent>
@@ -91,8 +102,7 @@ export default function Invite() {
 const OutDiv = tw.div`h-full w-full`;
 const GoBtn = tw.button`h-full w-full rounded-xl bg-main-green hover:bg-main-pink text-white text-3xl`;
 const ModalDiv = tw.div`flex flex-col items-center justify-center`;
-const TopDiv = tw.div`w-full flex items-center justify-center`;
-const MidDiv = tw.div`w-full h-11 my-5 flex items-center justify-center`;
+const TopDiv = tw.div`w-full flex text-2xl mt-1 mb-5 items-center justify-center`;
+const TitleInput = tw.input`placeholder:italic placeholder:text-slate-400 block bg-white w-full border border-slate-300 rounded-xl py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-2`;
 const UnderDiv = tw.div`w-full flex items-center justify-between`;
-const SendBtn = tw.button`h-full w-40 bg-main-green hover:bg-main-pink text-white rounded-xl text-xl`;
 const ModalBtn = tw.button`h-16 w-40 bg-main-green hover:bg-main-pink text-white rounded-xl text-3xl`;
