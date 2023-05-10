@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class AuthService {
     private final UserRepository userRepository;
     private final TokenService tokenservice;
@@ -30,15 +32,28 @@ public class AuthService {
         return UserDto.of(userRepository.findByUserEmail(email));
     }
 
-    @Modifying
-    public UserDto updateNickname(UserDto userDto) {
-        User getUser = userRepository.findByUserEmail(userDto.getUserEmail());
-        System.out.println("getUser = " + getUser);
-        getUser.setUserNickname(userDto.getUserNickname());
-        System.out.println("______________________________________________");
-        System.out.println("getUser = " + getUser);
-        System.out.println("______________________________________________");
+//    @Modifying
+//    public UserDto updateNickname(UserDto userDto) {
+//        User getUser = userRepository.findByUserEmail(userDto.getUserEmail());
+//        log.info("getUser = {}",getUser);
+//
+//        getUser.setUserNickname(userDto.getUserNickname());
+//
+//        log.info("______________________________________________");
+//        log.info("getUser = {}",getUser);
+//        log.info("______________________________________________");
+//        return UserDto.of(userRepository.saveAndFlush(getUser));
+//    }
 
+    @Transactional
+    public UserDto changeNickname(UserDto userDto, String nickname) {
+        System.out.println("userDto = " + userDto);
+        System.out.println("nickname = " + nickname);
+        log.info("nickname = {}", nickname);
+        log.info("userDto = {}", userDto);
+        // 유저 엔티티를 가져옴
+        User getUser = userRepository.findByUserEmail(userDto.getUserEmail());
+        getUser.setUserNickname(nickname);
         log.debug("getUser = {}", getUser);
         return UserDto.of(userRepository.saveAndFlush(getUser));
     }
