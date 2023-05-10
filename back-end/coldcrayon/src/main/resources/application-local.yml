@@ -31,6 +31,7 @@ spring:
       authentication-database: admin
       database: crayon
       username: root
+
       password: "se7enngiths"
 
   redis:
