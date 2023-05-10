@@ -38,7 +38,7 @@ export default function Ready({
   useEffect(() => {
     if (finalroom !== '') {
       const newClient = new W3CWebSocket(
-        `wss://https://getyourcrayon.co.kr/api/chat/${finalroom}`,
+        `wss://getyourcrayon.co.kr/api/chat/${finalroom}`,
       );
       setClient(newClient);
     }
