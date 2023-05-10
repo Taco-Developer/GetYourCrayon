@@ -1,4 +1,4 @@
-import Margin from '@/components/ui/Margin';
+import Margin, { MarginType } from '@/components/ui/Margin';
 import { GameUser } from '@/store/slice/inGameSlice';
 import { useAppSelector } from '@/store/thunkhook';
 import { Dialog } from '@mui/material';
@@ -41,10 +41,10 @@ export default function LierSelectDialog({
       <div className="p-8">
         <header className="text-center">
           <h2 className="text-3xl">라이어 선택</h2>
-          <Margin type="height" size={8} />
+          <Margin type={MarginType.height} size={8} />
           <p className="text-gray-400">의심되는 유저를 선택하세요.</p>
         </header>
-        <Margin type="height" size={24} />
+        <Margin type={MarginType.height} size={24} />
         <main className="w-full">
           <ul className="flex flex-col gap-4">
             {userList.map((user) => (
@@ -66,7 +66,7 @@ export default function LierSelectDialog({
             ))}
           </ul>
         </main>
-        <Margin type="height" size={16} />
+        <Margin type={MarginType.height} size={16} />
         <footer className="flex justify-center items-center">
           <button
             className={
