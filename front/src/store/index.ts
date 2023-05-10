@@ -10,6 +10,20 @@ import {
 import { HYDRATE, createWrapper } from 'next-redux-wrapper';
 import navbarSlice, { NavbarStateType } from './slice/navbarSlice';
 import inGameSliceReducer, { InGameStateType } from './slice/inGameSlice';
+import scoreSliceReducer from './slice/game/score';
+import chatDatasSliceReducer, { ChatType } from './slice/game/chatDatasSlice';
+import gameModalSliceReducer, {
+  GameModalStatusType,
+} from './slice/game/gameModalSlice';
+import gameRoundSliceReducer, {
+  GameRoundType,
+} from './slice/game/gameRoundSlice';
+import gameThemeSliceReducer from './slice/game/gameThemeSlice';
+import gameUsersSliceReducer, { GameUser } from './slice/game/gameUsersSlice';
+import leftTimeSliceReducer from './slice/game/leftTimeSlice';
+import aiGameDatasSliceReducer, {
+  AiGameDatasType,
+} from './slice/game/aiGameDatasSlice';
 // import { persistReducer, persistStore } from 'redux-persist';
 // import {
 //   FLUSH,
@@ -24,6 +38,14 @@ import inGameSliceReducer, { InGameStateType } from './slice/inGameSlice';
 export interface ReducerStates {
   navbarPath: NavbarStateType;
   inGame: InGameStateType;
+  score: number;
+  leftTime: number;
+  gameUsers: GameUser[];
+  gameTheme: string;
+  gameRound: GameRoundType;
+  gameModalStatus: GameModalStatusType;
+  chatDatas: ChatType[];
+  aiGameDatas: AiGameDatasType;
 }
 
 //HYDRATE 액션을 정의 -> 슬라이스 통함
@@ -37,7 +59,15 @@ const rootReducer = (
     default: {
       const combinedReducer = combineReducers({
         navbarPath: navbarSlice.reducer,
+        aiGameDatas: aiGameDatasSliceReducer,
         inGame: inGameSliceReducer,
+        score: scoreSliceReducer,
+        leftTime: leftTimeSliceReducer,
+        gameUsers: gameUsersSliceReducer,
+        gameTheme: gameThemeSliceReducer,
+        gameRound: gameRoundSliceReducer,
+        gameModalStatus: gameModalSliceReducer,
+        chatDatas: chatDatasSliceReducer,
       });
       return combinedReducer(state, action);
     }
