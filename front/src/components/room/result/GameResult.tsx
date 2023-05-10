@@ -39,7 +39,7 @@ const INIT_RESULTS = [
 ];
 
 export default function GameResult({}: {}) {
-  const { userList } = useAppSelector((state) => state.inGame);
+  const { gameUsers } = useAppSelector((state) => state);
 
   return (
     <Container>
@@ -52,7 +52,7 @@ export default function GameResult({}: {}) {
           </div>
           <Margin type={MarginType.height} size={40} />
           <UserList>
-            {userList.map((user) => (
+            {gameUsers.map((user) => (
               <UserItem key={user.id}>
                 <UserProfile />
                 <span className="text-ellipsis">{user.nickname}</span>
