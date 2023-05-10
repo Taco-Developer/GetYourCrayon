@@ -91,6 +91,7 @@ export default function Login() {
               onClick={() => {
                 if (!KAKAO_URL) {
                   throw new Error('카카오 URL이 잘못되있습니다.');
+                  console.log(KAKAO_URL);
                 }
                 window.location.href = KAKAO_URL;
               }}
