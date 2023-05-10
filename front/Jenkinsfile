@@ -12,6 +12,7 @@ pipeline {
             {
                 withCredentials([file(credentialsId: 'frontEnv', variable: 'env')]) {
                     script {
+                        sh 'chmod 755 front/.env'
                         sh 'cp $env front/.env'
                         sh '''
                         cd  front/
