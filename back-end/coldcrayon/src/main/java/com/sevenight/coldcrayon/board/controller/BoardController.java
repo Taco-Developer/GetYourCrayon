@@ -103,7 +103,7 @@ public class BoardController {
     }
 
     //게시글 페이징
-    @GetMapping("api/board/")
+    @GetMapping("api/board")
     public ResponseEntity<?> getArticles(
             @RequestParam(name = "page", defaultValue = "0") int pageNum,
             @RequestParam(name = "size", defaultValue = "5") int pageSize
@@ -117,16 +117,6 @@ public class BoardController {
     }
 
 
-    //게시글 전체조회
-    @GetMapping("/api/board")
-    public Result articles() {
-        List<Board> findArticles = boardService.findArticles();
-        List<ArticleDto> collect = findArticles.stream()
-                .map(m -> new ArticleDto(m.getBoardId(), m.getBoardTitle(), m.getBoardContent(), m.getBoardCreateTime(), m.getBoardUpdateTime())
-                ).collect(Collectors.toList());
 
-        return new Result(collect.size(), collect);
-
-    }
 
 }
