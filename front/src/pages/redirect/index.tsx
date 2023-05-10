@@ -1,5 +1,21 @@
 import React from 'react';
+import Link from 'next/link';
+import { useEffect } from 'react';
+import { useRouter } from 'next/router';
 
 export default function Redirect() {
-  return <div>Redirect Page</div>;
+  const router = useRouter();
+  useEffect(() => {
+    const getToken = async () => {
+      try {
+        const accessToken = router.query.accesstoken;
+        localStorage.setItem('accesstoken', 'Bearer ' + accessToken);
+        router.push('/');
+      } catch (e) {
+        console.log(e);
+      }
+    };
+    getToken();
+  }, [router]);
+  return <div></div>;
 }
