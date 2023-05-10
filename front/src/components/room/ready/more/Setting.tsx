@@ -70,4 +70,4 @@ export default function Setting() {
 
 const OutDiv = tw.div`h-30 w-full flex flex-col items-center justify-center`;
 const SelectDiv = tw.div`h-40 w-full text-3xl border-white border-2 rounded-xl flex flex-row items-center justify-between my-1 px-5`;
-const DropDiv = tw.div`h-70 w-40`;
+const DropDiv = tw.div`h-70 w-40 border-white border-2 rounded-xl`;

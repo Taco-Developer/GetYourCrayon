@@ -32,7 +32,7 @@ export default function UserDrop({ setUserCnt }: UserListProps) {
   return (
     <OutDiv>
       <Dropdown
-        base={cntOptions[1]}
+        base={cntOptions[3]}
         options={cntOptions}
         onChange={cntOptionChange}
         Option={cntOption}
@@ -41,4 +41,4 @@ export default function UserDrop({ setUserCnt }: UserListProps) {
   );
 }
 
-const OutDiv = tw.div`w-80 h-10 font-bold text-xl xl:text-3xl flex items-center justify-start border-black border-2 rounded-lg`;
+const OutDiv = tw.div`w-80 h-10 font-bold text-xl xl:text-3xl flex items-center justify-start border-white border-2 rounded-xl`;
