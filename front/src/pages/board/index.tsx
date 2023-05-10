@@ -86,7 +86,8 @@ export async function getServerSideProps() {
     return { props: { res } };
   } catch (e) {
     console.log(e);
-    return { props: {} };
+    let res = { aa: '바보' };
+    return { props: { res } };
   }
 }
 
