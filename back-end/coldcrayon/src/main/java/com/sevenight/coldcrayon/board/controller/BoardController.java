@@ -56,6 +56,7 @@ public class BoardController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message","User not found."));
         } catch (Exception e) {
             // 3. 그 외 예외 발생시
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message","Server error."));
         }
 
@@ -93,6 +94,7 @@ public class BoardController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Article not found."));
         } catch (Exception e) {
             // 3. 그 외 예외 발생시
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "Server error."));
         }
 

@@ -70,7 +70,10 @@ public class SecurityConfig{
                             "/",
                             "/member/nickname",
                             "/member/nicknamecheck",
-                            "/info/news");
+                            "/info/news",
+                            "/api/board",
+                            "/api/board/"
+                    );
         };
     }
 }
