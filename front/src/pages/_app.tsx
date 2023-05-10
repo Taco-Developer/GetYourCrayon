@@ -28,7 +28,7 @@ function App({ Component, pageProps }: AppPropsWithLayoutType) {
       : nowHour >= 16 && nowHour <= 20
       ? 'bg-even-ing'
       : 'bg-night-ing';
-  console.log(nowHour);
+  console.log(bgTheme);
   return (
     <Provider store={store}>
       {getLayout(
