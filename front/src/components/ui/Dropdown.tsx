@@ -62,5 +62,5 @@ export default function Dropdown({
 const DropdownContainer = tw.div`relative h-full w-full text-3xl`;
 const DropDiv = tw.div`h-full w-full border-white border-2 rounded-xl flex flex-row items-center justify-between px-5`;
 const DropdownButton = tw.div`cursor-pointer`;
-const DropdownList = tw.ul`h-auto w-full text-2xl absolute bg-slate-400 list-disc z-50`;
-const DropdownItem = tw.div`cursor-pointer hover:bg-slate-700 flex items-center justify-center p-2`;
+const DropdownList = tw.ul`h-auto w-full text-2xl absolute bg-slate-400 rounded-xl list-disc z-50`;
+const DropdownItem = tw.div`cursor-pointer hover:bg-slate-700 rounded-xl flex items-center justify-center p-1`;

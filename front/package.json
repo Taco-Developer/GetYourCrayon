@@ -31,10 +31,12 @@
     "socket.io-client": "^4.6.1",
     "swiper": "^8.4.7",
     "tailwindcss": "3.3.2",
-    "typescript": "5.0.4"
+    "typescript": "5.0.4",
+    "websocket": "^1.0.34"
   },
   "devDependencies": {
     "@svgr/webpack": "^7.0.0",
+    "@types/websocket": "^1.0.5",
     "eslint-config-prettier": "^8.8.0",
     "prettier": "^2.8.8",
     "tailwind-styled-components": "^2.2.0"

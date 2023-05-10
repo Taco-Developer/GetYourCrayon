@@ -22,6 +22,7 @@ interface RoomPropsType {
   room: string;
   setRoom: React.Dispatch<React.SetStateAction<string>>;
   setShowChat: React.Dispatch<React.SetStateAction<string>>;
+  setFinalRoom: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export default function InRoom({
@@ -31,6 +32,7 @@ export default function InRoom({
   room,
   setRoom,
   setShowChat,
+  setFinalRoom,
 }: RoomPropsType) {
   const [myVoice, setMyVoice] = useState<{}>({
     contentHint: '',
@@ -48,26 +50,27 @@ export default function InRoom({
 
   const joinRoom = () => {
     if (userId !== '' && room !== '') {
-      socket.emit('join_room', userId, room);
+      // socket.emit('join_room', userId, room);
       setShowChat('readyRoom');
+      setFinalRoom(room);
     }
   };
 
-  // useEffect(() => {
-  //   const getVoice = async () => {
-  //     try {
-  //       const voice = await navigator.mediaDevices.getUserMedia({
-  //         audio: true,
-  //       });
-  //       const audio = voice.getAudioTracks();
-  //       console.log(audio);
-  //       setMyVoice(audio);
-  //     } catch (e) {
-  //       console.log(e);
-  //     }
-  //   };
-  //   getVoice();
-  // }, []);
+  useEffect(() => {
+    const getVoice = async () => {
+      try {
+        const voice = await navigator.mediaDevices.getUserMedia({
+          audio: true,
+        });
+        const audio = voice.getAudioTracks();
+        console.log(audio);
+        setMyVoice(audio);
+      } catch (e) {
+        console.log(e);
+      }
+    };
+    getVoice();
+  }, []);
 
   return (
     <div>
