@@ -17,7 +17,7 @@ export default function GameLeftSide({
   paletteColor?: string;
   changeColor?: (color: string) => void;
 }) {
-  const { gameRound, userList } = useAppSelector((state) => state.inGame);
+  const { gameRound, gameUsers } = useAppSelector((state) => state);
 
   const colors = [
     ['#000000', 'bg-[#000000]'],
@@ -74,7 +74,7 @@ export default function GameLeftSide({
         <h2>참가자 목록</h2>
         <Margin type={MarginType.height} size={16} />
         <MemberList>
-          {userList.map((user) => {
+          {gameUsers.map((user) => {
             return (
               <MemberItem key={user.id}>
                 <Profile />
