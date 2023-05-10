@@ -38,7 +38,7 @@ export default function Ready({
   useEffect(() => {
     if (finalroom !== '') {
       const newClient = new W3CWebSocket(
-        `ws://localhost:8080/chat/${finalroom}`,
+        `ws://k8b203.p.ssafy.io:8080/chat/${finalroom}`,
       );
       setClient(newClient);
     }
