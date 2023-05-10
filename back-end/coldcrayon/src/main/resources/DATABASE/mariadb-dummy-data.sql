@@ -21,22 +21,6 @@ VALUES
     (19, 'image19.jpg', 'NORMAL'),
     (20, 'image20.jpg', 'NORMAL');
 
-INSERT INTO user (user_idx, user_token, user_nickname, user_profile, user_last_login, user_create_time, user_status, user_point)
-VALUES
-    ('1', 'abcdefg', 'Alice', 'https://example.com/alice.jpg', '2022-05-01 12:00:00', '2022-04-01 12:00:00', true, 100),
-    ('2', 'hijklmn', 'Bob', 'https://example.com/bob.jpg', '2022-05-02 12:00:00', '2022-04-02 12:00:00', true, 200),
-    ('3', 'opqrstu', 'Charlie', 'https://example.com/charlie.jpg', '2022-05-03 12:00:00', '2022-04-03 12:00:00', true, 300),
-    ('4', 'vwxyzab', 'David', 'https://example.com/david.jpg', '2022-05-04 12:00:00', '2022-04-04 12:00:00', false, 400),
-    ('5', '1234567', 'Emma', 'https://example.com/emma.jpg', '2022-05-05 12:00:00', '2022-04-05 12:00:00', true, 500),
-    ('6', '8910111', 'Frank', 'https://example.com/frank.jpg', '2022-05-06 12:00:00', '2022-04-06 12:00:00', true, 600),
-    ('7', '1213141', 'Grace', 'https://example.com/grace.jpg', '2022-05-07 12:00:00', '2022-04-07 12:00:00', false, 700),
-    ('8', '5161718', 'Henry', 'https://example.com/henry.jpg', '2022-05-08 12:00:00', '2022-04-08 12:00:00', true, 800),
-    ('9', '1920212', 'Ivy', 'https://example.com/ivy.jpg', '2022-05-09 12:00:00', '2022-04-09 12:00:00', false, 900),
-    ('10', '2232425', 'Jack', 'https://example.com/jack.jpg', '2022-05-10 12:00:00', '2022-04-10 12:00:00', true, 1000),
-    ('11', '2627282', 'Karen', 'https://example.com/karen.jpg', '2022-05-11 12:00:00', '2022-04-11 12:00:00', true, 1100),
-    ('12', '2930313', 'Leo', 'https://example.com/leo.jpg', '2022-05-12 12:00:00', '2022-04-12 12:00:00', false, 1200),
-    ('13', '3233343', 'Maggie', 'https://example.com/maggie.jpg', '2022-05-13 12:00:00', '2022-04-13 12:00:00', true, 1300);
-
 INSERT INTO gacha (user_idx, allgacha_idx)
 VALUES
     ('1', 1),
@@ -60,3 +44,36 @@ VALUES
     ('7', 19),
     ('7', 20)
 ;
+
+INSERT INTO board (board_idx, user_idx, board_title, board_content, board_create_time, board_update_time)
+VALUES
+    (1, 1, 'Travel Stories', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', '2022-04-15 14:35:12','2022-04-15 14:35:12'),
+    (2, 1, 'Travel Stories', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', '2022-04-15 14:35:12','2022-04-15 14:35:12'),
+    (3, 1, 'Travel Stories', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', '2022-04-15 14:35:12','2022-04-15 14:35:12'),
+    (4, 1, 'Travel Stories', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', '2022-04-15 14:35:12','2022-04-15 14:35:12'),
+    (5, 1, 'Travel Stories', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', '2022-04-15 14:35:12','2022-04-15 14:35:12'),
+    (6, 1, 'Travel Stories', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', '2022-04-15 14:35:12','2022-04-15 14:35:12'),
+    (7, 1, 'Travel Stories', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', '2022-04-15 14:35:12','2022-04-15 14:35:12'),
+    (8, 1, 'Travel Stories', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', '2022-04-15 14:35:12','2022-04-15 14:35:12'),
+    (9, 1, 'Travel Stories', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', '2022-04-15 14:35:12','2022-04-15 14:35:12'),
+    (10, 1, 'Travel Stories', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', '2022-04-15 14:35:12','2022-04-15 14:35:12'),
+    (11, 1, 'Travel Stories', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', '2022-04-15 14:35:12','2022-04-15 14:35:12'),
+    (12, 1, 'Travel Stories', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', '2022-04-15 14:35:12','2022-04-15 14:35:12'),
+    (13, 1, 'Travel Stories', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', '2022-04-15 14:35:12','2022-04-15 14:35:12'),
+    (14, 1, 'Travel Stories', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', '2022-04-15 14:35:12','2022-04-15 14:35:12'),
+    (15, 1, 'Travel Stories', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', '2022-04-15 14:35:12','2022-04-15 14:35:12'),
+    (16, 1, 'Travel Stories', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', '2022-04-15 14:35:12','2022-04-15 14:35:12'),
+    (17, 1, 'Travel Stories', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', '2022-04-15 14:35:12','2022-04-15 14:35:12'),
+    (18, 1, 'Travel Stories', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', '2022-04-15 14:35:12','2022-04-15 14:35:12'),
+    (19, 1, 'Travel Stories', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', '2022-04-15 14:35:12','2022-04-15 14:35:12'),
+    (20, 1, 'Travel Stories', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', '2022-04-15 14:35:12','2022-04-15 14:35:12'),
+    (21, 1, 'Travel Stories', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', '2022-04-15 14:35:12','2022-04-15 14:35:12'),
+    (22, 1, 'Travel Stories', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', '2022-04-15 14:35:12','2022-04-15 14:35:12'),
+    (23, 1, 'Travel Stories', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', '2022-04-15 14:35:12','2022-04-15 14:35:12'),
+    (24, 1, 'Travel Stories', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', '2022-04-15 14:35:12','2022-04-15 14:35:12'),
+    (25, 1, 'Travel Stories', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', '2022-04-15 14:35:12','2022-04-15 14:35:12'),
+    (26, 1, 'Travel Stories', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', '2022-04-15 14:35:12','2022-04-15 14:35:12'),
+    (27, 1, 'Travel Stories', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', '2022-04-15 14:35:12','2022-04-15 14:35:12'),
+    (28, 1, 'Travel Stories', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', '2022-04-15 14:35:12','2022-04-15 14:35:12'),
+    (29, 1, 'Travel Stories', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', '2022-04-15 14:35:12','2022-04-15 14:35:12'),
+    (30, 1, 'Travel Stories', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', '2022-04-15 14:35:12','2022-04-15 14:35:12');
