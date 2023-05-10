@@ -1,5 +1,5 @@
 package com.sevenight.coldcrayon.board.controller;
-
+import com.sevenight.coldcrayon.auth.service.TokenService;
 import com.sevenight.coldcrayon.board.dto.ArticleDto;
 import com.sevenight.coldcrayon.board.dto.CreateArticleRequest;
 import com.sevenight.coldcrayon.board.dto.CreateArticleResponse;
@@ -8,6 +8,7 @@ import com.sevenight.coldcrayon.board.entity.Board;
 import com.sevenight.coldcrayon.board.service.BoardService;
 import com.sevenight.coldcrayon.user.entity.User;
 import com.sevenight.coldcrayon.user.repository.UserRepository;
+import com.sevenight.coldcrayon.util.HeaderUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -28,17 +29,21 @@ public class BoardController {
 
     private final BoardService boardService;
     private final UserRepository userRepository;
+    private final TokenService tokenservice;
 
     //게시글 작성
     @PostMapping("/api/board/create")
-    public ResponseEntity<?> saveArticle(@RequestBody CreateArticleRequest request) {
+    public ResponseEntity<?> saveArticle(@RequestHeader String Authorization, @RequestBody CreateArticleRequest request) {
         // 1. 요청 바디가 비어있는 경우
         if (request == null || request.getTitle() == null || request.getContent() == null) {
             return ResponseEntity.badRequest().body(Map.of("message", "title, content 를 넣어주세요"));
         }
 
         try {
-            User finduser = userRepository.findById(1L).get();
+//            User finduser = userRepository.findById(1L).get();
+            String token = HeaderUtil.getAccessTokenString(Authorization);
+            String email = tokenservice.getEmail(token);
+            User finduser = userRepository.findByUserEmail(email);
             Board board = new Board();
             board.setBoardTitle(request.getTitle());
             board.setBoardContent(request.getContent());
@@ -58,10 +63,13 @@ public class BoardController {
 
     //게시글 업데이트
     @PutMapping("/api/board/update/")
-    public ResponseEntity<?> updateArticle(@RequestParam(name = "boardId") int boardId) {
+    public ResponseEntity<?> updateArticle(@RequestHeader String Authorization, @RequestParam(name = "boardId") int boardId) {
 
         try {
-            User finduser = userRepository.findById(1L).get();
+            String token = HeaderUtil.getAccessTokenString(Authorization);
+            String email = tokenservice.getEmail(token);
+            User finduser = userRepository.findByUserEmail(email);
+
             Board board = boardService.findById(boardId).get();
 
             // 해당 게시글을 작성한 유저와 현재 로그인한 유저가 다른 경우, 업데이트 불가능

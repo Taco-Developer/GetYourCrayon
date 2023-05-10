@@ -67,9 +67,11 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         if (nickname == null) {
             // 닉네임 설정 화면으로
             log.debug("닉네임 설정 화면으로");
-            getRedirectStrategy().sendRedirect(request, response, UriComponentsBuilder.fromUriString(redirectUrl + "/login/nickname")
-                    .queryParam("email", (String) oAuth2User.getAttribute("email"))
+            getRedirectStrategy().sendRedirect(request, response, UriComponentsBuilder.fromUriString(redirectUrl + "/redirect")
                     .build().toUriString());
+//            getRedirectStrategy().sendRedirect(request, response, UriComponentsBuilder.fromUriString(redirectUrl + "/login/nickname")
+//                    .queryParam("email", (String) oAuth2User.getAttribute("email"))
+//                    .build().toUriString());
         } else {
             // 만약 해당 이메일로 리프레쉬 토큰이 존재한다면 삭제
             if (redisUtil.getData((String) oAuth2User.getAttribute("email")) != null) {
