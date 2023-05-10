@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import tw from 'tailwind-styled-components';
 
 type Option = {
@@ -7,12 +7,18 @@ type Option = {
 };
 
 type DropdownProps = {
+  base: Option;
   options: Option[];
   onChange: (option: Option) => void;
   Option?: Option;
 };
 
-export default function Dropdown({ options, onChange, Option }: DropdownProps) {
+export default function Dropdown({
+  base,
+  options,
+  onChange,
+  Option,
+}: DropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleDropdown = () => {
@@ -31,7 +37,7 @@ export default function Dropdown({ options, onChange, Option }: DropdownProps) {
   return (
     <DropdownContainer onMouseLeave={closeDropdown}>
       <DropDiv>
-        {Option ? Option.label : 'Select an option'}
+        {Option ? Option.label : base.label}
         <DropdownButton onClick={toggleDropdown}>{'<'}</DropdownButton>
       </DropDiv>
       {isOpen && (
@@ -53,7 +59,7 @@ export default function Dropdown({ options, onChange, Option }: DropdownProps) {
   );
 }
 
-const DropdownContainer = tw.div`relative h-70 w-40 text-3xl`;
+const DropdownContainer = tw.div`relative h-full w-full text-3xl`;
 const DropDiv = tw.div`h-full w-full border-white border-2 rounded-xl flex flex-row items-center justify-between px-5`;
 const DropdownButton = tw.div`cursor-pointer`;
 const DropdownList = tw.ul`h-auto w-full text-2xl absolute bg-slate-400 list-disc z-50`;

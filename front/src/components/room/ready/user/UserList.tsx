@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import tw from 'tailwind-styled-components';
 import Image from 'next/image';
+import UserDrop from './UserDrop';
 
 export default function UserList() {
+  const [userCnt, setUserCnt] = useState<number>(6);
   const [player, setPlayer] = useState<string[]>([
     'A도겸',
     'B수민',
@@ -14,14 +16,14 @@ export default function UserList() {
 
   return (
     <UserBody>
-      <TitleDiv>플레이어 1/6</TitleDiv>
-      <CntDiv>asdf</CntDiv>
+      <TitleDiv>플레이어 1/{userCnt}</TitleDiv>
+      <UserDrop setUserCnt={setUserCnt} />
       <ListDiv>
         {player.map((user, i) => (
           <UserDiv key={i}>
             <Profile>
               <Image
-                src="/profile/004.png"
+                src="/profile/002.png"
                 alt="poket"
                 width={512}
                 height={512}
