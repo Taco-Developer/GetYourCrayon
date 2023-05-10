@@ -20,17 +20,33 @@ public class AuthController {
     private final UserRepository userRepository;
 
     //    @PostMapping("/nickname")
+//    @PutMapping("/nickname")
+////    public ResponseEntity<?> updateMember(@RequestBody String userEmail, String userNickname) {
+//    public ResponseEntity<?> updateMember(@RequestBody UserDto userDto) {
+//        System.out.println("user = " + userDto);
+//        log.info("회원 : {}", userDto);
+//        UserDto res = authService.updateNickname(userDto);
+//        if (res == null) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("회원정보 없음");
+//        }
+//        return ResponseEntity.status(HttpStatus.OK).body(res);
+//    }
+
     @PutMapping("/nickname")
-//    public ResponseEntity<?> updateMember(@RequestBody String userEmail, String userNickname) {
-    public ResponseEntity<?> updateMember(@RequestBody UserDto userDto) {
-        System.out.println("user = " + userDto);
-        log.info("회원 : {}", userDto);
-        UserDto res = authService.updateNickname(userDto);
-        if (res == null) {
+    public ResponseEntity<?> chageNickname(@RequestHeader String Authorization, @RequestBody UserDto userDto) {
+//        log.info("들어오는 닉네임 체크 = {}",nickname);
+        UserDto realUser = authService.selectOneMember(HeaderUtil.getAccessTokenString(Authorization));
+        String nickname = userDto.getUserNickname();
+        log.info("nickname : {}", nickname);
+        if (realUser == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("회원정보 없음");
         }
+        // 서비스에 유저 정보, 닉네임 정보 던져줌
+        UserDto res = authService.changeNickname(realUser, nickname);
         return ResponseEntity.status(HttpStatus.OK).body(res);
     }
+
+
 
 //    @PostMapping("/test")
 //    public ResponseEntity<?> test(@RequestHeader String Authorization) {
