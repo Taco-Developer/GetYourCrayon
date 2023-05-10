@@ -90,9 +90,11 @@ export default function Login() {
             <ImageDiv
               onClick={() => {
                 if (!KAKAO_URL) {
+                  console.log(KAKAO_URL);
                   throw new Error('카카오 URL이 잘못되있습니다.');
                 }
-                window.location.href = KAKAO_URL;
+                console.log(KAKAO_URL);
+                location.href = KAKAO_URL;
               }}
             >
               <Image src="/images/kakao.png" alt="no_img" fill sizes="100%" />
