@@ -1,6 +1,5 @@
 import { list } from 'postcss';
 import React, { useState, useEffect, useRef } from 'react';
-import { Socket } from 'socket.io-client';
 import tw from 'tailwind-styled-components';
 import { w3cwebsocket as W3CWebSocket } from 'websocket';
 
