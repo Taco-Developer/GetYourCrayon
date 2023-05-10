@@ -39,26 +39,40 @@ export default function Chat({
     }
   };
 
+  const me = 'justify-end';
+  const meMeta = 'justify-end mr-3';
+  const meContent = 'justify-end bg-blue-500';
+  const you = 'justify-start';
+  const youMeta = 'justify-start ml-3';
+  const youContent = 'justify-start bg-yellow-500';
+  // id={userId === messageContent.author ? 'you' : 'other'}
   return (
     <OutDiv>
       <ChatDiv>
         <ChatBody>
           {messageList.map((messageContent, i) => {
             return (
-              <div
+              <Message
                 key={i}
-                className="message"
-                id={userId === messageContent.author ? 'you' : 'other'}
+                className={userId === messageContent.author ? me : you}
               >
                 <div>
-                  <div className="message-meta">
-                    <p id="author">{messageContent.author}</p>
+                  <div
+                    className={
+                      userId === messageContent.author ? meMeta : youMeta
+                    }
+                  >
+                    <YouMeMeta>{messageContent.author}</YouMeMeta>
                   </div>
-                  <div className="message-content">
+                  <MessageContent
+                    className={
+                      userId === messageContent.author ? meContent : youContent
+                    }
+                  >
                     <p>{messageContent.message}</p>
-                  </div>
+                  </MessageContent>
                 </div>
-              </div>
+              </Message>
             );
           })}
         </ChatBody>
@@ -85,12 +99,14 @@ const OutDiv = tw.div`h-90 w-90 bg-white bg-opacity-50 rounded-xl flex flex-col 
 const ChatDiv = tw.div`h-90 w-full flex items-center justify-center relative px-3`;
 const ChatBody = tw.div`h-full w-full overflow-y-scroll overflow-x-hidden scrollbar-ssibal`;
 const Message = tw.div`h-auto flex`;
-const MessageContent = tw.div`h-auto w-auto bg-green-500 rounded-xl text-white flex items-center m-5 break-words`;
-const YouMe = tw.div``;
+const MessageContent = tw.div`h-auto w-auto bg-green-500 rounded-xl text-white font-bold flex items-center m-5 break-words`;
+const YouMeMeta = tw.p`ml-5`;
+
 const InputDiv = tw.div`h-10 w-full flex items-center justify-around`;
 const ChatInput = tw.input`h-full w-70 bg-white rounded-xl flex items-center justify-center`;
 const ChatBtn = tw.button`h-full w-20 bg-main-green hover:bg-main-pink rounded-xl flex items-center justify-center`;
 
+// 수정후 지울 예정
 // return (
 //   <div className="chat-window">
 //     <div className="chat-header">
