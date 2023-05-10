@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { Socket } from 'socket.io-client';
 import InRoom from './InRoom';
 import UserList from './user/UserList';
-import ModeChoice from './mode/ModeChoice';
-import Setting from './mode/Setting';
-import Chat from './mode/Chat';
+import ModeChoice from './more/ModeChoice';
+import Setting from './more/Setting';
+import Chat from './more/Chat';
 // import Voice from './Voice';
 import tw from 'tailwind-styled-components';
 
@@ -53,7 +53,7 @@ export default function Ready({
           <MoreDiv>
             <PickMenu>
               <SetBtn
-                className={choice === 1 ? 'h-full w-40 text-4xl' : ''}
+                className={choice === 1 ? 'h-full text-4xl' : ''}
                 onClick={() => {
                   setChoice(1);
                 }}
@@ -61,17 +61,9 @@ export default function Ready({
                 모드
               </SetBtn>
               <SetBtn
-                className={choice === 2 ? 'h-full w-40 text-4xl' : ''}
+                className={choice === 2 ? 'h-full text-4xl' : ''}
                 onClick={() => {
                   setChoice(2);
-                }}
-              >
-                설정
-              </SetBtn>
-              <SetBtn
-                className={choice === 3 ? 'h-full w-40 text-4xl' : ''}
-                onClick={() => {
-                  setChoice(3);
                 }}
               >
                 채팅
@@ -79,9 +71,10 @@ export default function Ready({
             </PickMenu>
             <PickContent>
               {choice === 1 ? (
-                <ModeChoice />
-              ) : choice === 2 ? (
-                <Setting />
+                <SettingDiv>
+                  <ModeChoice />
+                  <Setting />
+                </SettingDiv>
               ) : (
                 <Chat socket={socket} userId={userId} room={room} />
               )}
@@ -97,5 +90,6 @@ const RoomBody = tw.div`w-screen h-screen flex items-center justify-center`;
 const UserDiv = tw.div`w-1/4 xl:w-1/4 h-4/5 ml-5 xl:mx-0 rounded-l-2xl bg-white bg-opacity-50 flex items-center justify-center`;
 const MoreDiv = tw.div`w-3/4 xl:w-2/4 h-4/5 mr-5 xl:mx-0 rounded-r-2xl bg-white bg-opacity-50 flex flex-col items-center justify-center`;
 const PickMenu = tw.div`h-14 w-90 flex flex-row`;
-const SetBtn = tw.div`h-90 w-30 text-2xl rounded-t-2xl text-white flex items-center justify-center bg-main-green mx-1`;
+const SettingDiv = tw.div`h-full w-full flex flex-col items-center justify-center p-4`;
+const SetBtn = tw.div`h-90 w-50 text-2xl rounded-t-2xl text-white flex items-center justify-center bg-main-green mx-1`;
 const PickContent = tw.div`h-80 w-90 border-black border-2 flex items-center justify-center`;
