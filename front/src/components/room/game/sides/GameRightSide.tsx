@@ -7,16 +7,19 @@ import { Button } from '@/components/ui/Button';
 import Margin, { MarginType } from '@/components/ui/Margin';
 
 import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
-import { ChatType, addChat, countDown } from '@/store/slice/inGameSlice';
+import { ChatType, addChat } from '@/store/slice/game/chatDatasSlice';
+import { countDown } from '@/store/slice/game/leftTimeSlice';
 
 interface GameRightSidePropsType {
   isPainting: boolean;
 }
 
 export default function GameRightSide({ isPainting }: GameRightSidePropsType) {
-  const { chatList, leftTime, isGameStarted } = useAppSelector(
-    (state) => state.inGame,
-  );
+  const {
+    leftTime,
+    chatDatas,
+    aiGameDatas: { isGameStarted },
+  } = useAppSelector((state) => state);
   const dispatch = useAppDispatch();
 
   // 채팅 입력값
@@ -26,14 +29,14 @@ export default function GameRightSide({ isPainting }: GameRightSidePropsType) {
     setInputValue(event.target.value);
   };
   // 채팅 전송
-  const onChattingSubmit = (event: React.FormEvent) => {
+  const chatSubmitHandler = (event: React.FormEvent) => {
     event.preventDefault();
-    const chatContent = inputValue.trim();
-    if (!chatContent) return;
+    const chat = inputValue.trim();
+    if (!chat) return;
     const chatInput: ChatType = {
       user: '아프리카청춘이다',
       status: 'chatting',
-      content: chatContent,
+      content: chat,
     };
     dispatch(addChat(chatInput));
     setInputValue('');
@@ -66,14 +69,14 @@ export default function GameRightSide({ isPainting }: GameRightSidePropsType) {
       <InGameChat>
         채팅
         <ChatView>
-          {chatList.map((chat, idx) => (
+          {chatDatas.map((chat, idx) => (
             <li
               key={idx}
               className={chat.status === 'answer' ? 'bg-amber-300' : ''}
             >{`${chat.user} : ${chat.content}`}</li>
           ))}
         </ChatView>
-        <ChatForm onSubmit={onChattingSubmit}>
+        <ChatForm onSubmit={chatSubmitHandler}>
           <input
             type="text"
             name=""
