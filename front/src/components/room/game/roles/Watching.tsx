@@ -5,7 +5,7 @@ import tw from 'tailwind-styled-components';
 import GameLeftSide from '../sides/GameLeftSide';
 import GameRightSide from '../sides/GameRightSide';
 import GameCenter from '../sides/GameCenter';
-import Margin from '@/components/ui/Margin';
+import Margin, { MarginType } from '@/components/ui/Margin';
 
 export default function Watching() {
   return (
@@ -13,7 +13,7 @@ export default function Watching() {
       <GameLeftSide isPainting={false} />
       <GameCenter>
         <NoticePerson>그리는 사람</NoticePerson>
-        <Margin type="height" size={32} />
+        <Margin type={MarginType.height} size={32} />
         <Canvas>그림 그리는 화면</Canvas>
       </GameCenter>
       <GameRightSide isPainting={false} />

@@ -6,7 +6,7 @@ import tw from 'tailwind-styled-components';
 import GameLeftSide from './sides/GameLeftSide';
 import GameRightSide from './sides/GameRightSide';
 import GameCenter from './sides/GameCenter';
-import Margin from '@/components/ui/Margin';
+import Margin, { MarginType } from '@/components/ui/Margin';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import AiWordsDialog from './dialogs/AiWordsDialog';
@@ -105,21 +105,21 @@ export default function AiPaintingGuess() {
             />
           </ImageBox>
         </PaintingView>
-        <Margin type="height" size={16} />
+        <Margin type={MarginType.height} size={16} />
         <AnswerForm onSubmit={answerSubmitHandler}>
           <AnswerInfo>
             <p>
               정답 :
               {answerList.map((answer, idx) => (
                 <span key={idx}>
-                  <Margin type="width" size={4} />
+                  <Margin type={MarginType.width} size={4} />
                   <span>{answer}</span>
                 </span>
               ))}
             </p>
             <p>{answerList.length} / 3</p>
           </AnswerInfo>
-          <Margin type="height" size={24} />
+          <Margin type={MarginType.height} size={24} />
           <AnswerInputSection>
             <Input
               type="text"
@@ -127,7 +127,7 @@ export default function AiPaintingGuess() {
               value={answerInputValue}
               onChange={answerChangeHandler}
             />
-            <Margin type="width" size={16} />
+            <Margin type={MarginType.width} size={16} />
             <Button px={4} py={2} rounded="lg" color="bg-blue-300">
               입력
             </Button>
