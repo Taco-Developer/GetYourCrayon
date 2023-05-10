@@ -92,7 +92,6 @@ export default function Login() {
                 if (!KAKAO_URL) {
                   console.log(KAKAO_URL);
                   throw new Error('카카오 URL이 잘못되있습니다.');
-                  console.log(KAKAO_URL);
                 }
                 console.log(KAKAO_URL);
                 location.href = KAKAO_URL;
