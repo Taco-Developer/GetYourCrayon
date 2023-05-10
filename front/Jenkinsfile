@@ -10,6 +10,16 @@ pipeline {
         stage('DOCKER BUILD') {
             steps
             {
+                withCredentials([file(credentialsId: 'frontEnv', variable: 'env')]) {
+                    script {
+                        sh 'cp $env front/.env'
+                        sh '''
+                        cd  front/
+                        cat .env
+                        ls -al
+                        '''
+                    }
+
                 sh '''
                 echo 'docker build dir ' ${PWD}
                 cd front

@@ -47,7 +47,7 @@ const CustomDialogTitle = (props: any) => {
 
 export default function Login() {
   const [open, setOpen] = useState(false);
-  const KAKAO_URL = process.env.KAKAO;
+  const KAKAO_URL = process.env.NEXT_PUBLIC_KAKAO;
   const ClickOpen = () => {
     setOpen(true);
   };
