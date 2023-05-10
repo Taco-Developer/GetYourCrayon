@@ -19,6 +19,7 @@ pipeline {
                         ls -al
                         '''
                     }
+                }
 
                 sh '''
                 echo 'docker build dir ' ${PWD}
