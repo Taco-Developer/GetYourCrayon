@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 
 import tw from 'tailwind-styled-components';
 
-import Margin from '@/components/ui/Margin';
+import Margin, { MarginType } from '@/components/ui/Margin';
 import { useAppSelector } from '@/store/thunkhook';
 
 export default function GameCenter({ children }: { children: ReactNode }) {
@@ -13,7 +13,7 @@ export default function GameCenter({ children }: { children: ReactNode }) {
       <MainHeader>
         <Category>주제: {category}</Category>
       </MainHeader>
-      <Margin type="height" size={16} />
+      <Margin type={MarginType.height} size={16} />
       {children}
     </MainContainer>
   );

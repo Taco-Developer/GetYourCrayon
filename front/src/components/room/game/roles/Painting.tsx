@@ -7,7 +7,7 @@ import { Slider } from '@mui/material';
 import GameCenter from '../sides/GameCenter';
 import GameLeftSide from '../sides/GameLeftSide';
 import GameRightSide from '../sides/GameRightSide';
-import Margin from '@/components/ui/Margin';
+import Margin, { MarginType } from '@/components/ui/Margin';
 
 // Icons
 import BrushIcon from '../../../../../public/icons/brush.svg';
@@ -260,7 +260,7 @@ export default function Painting() {
           onMouseMove={onMoveHandler}
           onMouseLeave={cancelPainting}
         ></canvas>
-        <Margin type="height" size={16} />
+        <Margin type={MarginType.height} size={16} />
         <CanvasOptions>
           <Option>
             <BrushWidthList>

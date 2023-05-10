@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import tw from 'tailwind-styled-components';
 
 import SideDisplay from './SideDisplay';
-import Margin from '@/components/ui/Margin';
+import Margin, { MarginType } from '@/components/ui/Margin';
 import Mic from '@/components/ui/icons/Mic';
 import SoundVolume from '@/components/ui/icons/SoundVolume';
 import { useAppSelector } from '@/store/thunkhook';
@@ -72,7 +72,7 @@ export default function GameLeftSide({
       )}
       <Members>
         <h2>참가자 목록</h2>
-        <Margin type="height" size={16} />
+        <Margin type={MarginType.height} size={16} />
         <MemberList>
           {userList.map((user) => {
             return (

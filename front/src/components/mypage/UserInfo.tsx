@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import ChangeName from './ChangeName';
 import { Button } from '@/components/ui/Button';
 import React from 'react';
 import tw from 'tailwind-styled-components';
@@ -17,15 +18,7 @@ export default function UserInfo() {
           <div>제발도와주세요제발</div>
         </NicknameDiv>
         <InfoChangeDiv>
-          <Button
-            px={8}
-            py={6}
-            rounded="lg"
-            color="bg-main-pink"
-            className="text-main-green"
-          >
-            닉네임 변경
-          </Button>
+          <ChangeName />
         </InfoChangeDiv>
       </InfoBottomDiv>
     </UserInfoDiv>
