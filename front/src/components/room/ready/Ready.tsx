@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Socket } from 'socket.io-client';
 import InRoom from './InRoom';
 import UserList from './user/UserList';
 import ModeChoice from './more/ModeChoice';
@@ -11,7 +10,6 @@ import tw from 'tailwind-styled-components';
 import { w3cwebsocket as W3CWebSocket } from 'websocket';
 
 interface RoomPropsType {
-  socket: Socket;
   userId: string;
   setUserId: React.Dispatch<React.SetStateAction<string>>;
   room: string;
@@ -25,7 +23,6 @@ interface MessageType {
 }
 
 export default function Ready({
-  socket,
   userId,
   setUserId,
   room,
@@ -70,7 +67,6 @@ export default function Ready({
         <div>
           <h1>닉네임, 방번호 입력 페이지(임시)</h1>
           <InRoom
-            socket={socket}
             userId={userId}
             setUserId={setUserId}
             room={room}
