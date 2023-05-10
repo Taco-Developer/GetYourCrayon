@@ -54,7 +54,7 @@ export default function AiWordsDialog() {
     >
       <div className="p-8">
         <header className="text-center">
-          <h2 className=" text-3xl">제시어</h2>
+          <h2 className="text-3xl">제시어</h2>
           <Margin type="height" size={16} />
           <p className="text-xl">주제 : {category}</p>
         </header>

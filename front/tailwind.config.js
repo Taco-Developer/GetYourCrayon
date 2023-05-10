@@ -11,13 +11,17 @@ module.exports = {
       colors: {
         'main-green': '#084227',
         'main-pink': '#EC8091',
+        'main-purple': '#614F89',
         'custom-gray': 'rgba(158, 155, 155, 0.87)',
+        'apple-green': '#2FC454',
+        'apple-yellow': '#F3BD4D',
+        'apple-red': '#EC685D',
       },
       backgroundImage: {
         'after-noon': "url('/images/bgafternoon.png')",
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'gradient-conic':
-          'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+        'even-ing': "url('/images/bgevening.png')",
+        'night-ing': "url('/images/bgnight.png')",
+        'after-nooon': "url('/images/bgafternoon.gif')",
       },
       spacing: {
         10: '10%',
@@ -32,13 +36,23 @@ module.exports = {
       },
       minHeight: {
         'container-height': '90vh',
-        'container-height2': '80vh',
+        'container-height2': '73vh',
       },
       backgroundColor: {
         'board-color': 'rgba(255, 255, 255, 0.73)',
       },
       borderColor: {
         'custom-gray': 'rgba(158, 155, 155, 0.37)',
+      },
+      borderRadius: {
+        'profile-img': '70%',
+      },
+      height: {
+        'profile-img': '17vw',
+        'profile-menu': '7vh',
+      },
+      width: {
+        'profile-img': '17vw',
       },
     },
   },

@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useState } from 'react';
 
 import tw from 'tailwind-styled-components';
 
@@ -7,10 +7,28 @@ import GameCenter from '../sides/GameCenter';
 import GameRightSide from '../sides/GameRightSide';
 import Margin from '@/components/ui/Margin';
 import { Button } from '@/components/ui/Button';
+import LierSelectDialog from '../dialogs/LierSelectDialog';
 
 export default function Selecting() {
+  const [isSelectDialogOpened, setIsSelectDialogOpened] =
+    useState<boolean>(false);
+
+  const openSelectDialog = () => {
+    setIsSelectDialogOpened(true);
+  };
+
+  const closeSelectDialog = () => {
+    setIsSelectDialogOpened(false);
+  };
+
   return (
     <>
+      <LierSelectDialog
+        isOpened={isSelectDialogOpened}
+        onDialogClose={() => {
+          closeSelectDialog();
+        }}
+      />
       <GameLeftSide isPainting={false} />
       <GameCenter>
         <PaingView>메인</PaingView>
@@ -22,7 +40,13 @@ export default function Selecting() {
         <Margin type="height" size={16} />
         <Option>
           <div>
-            <Button px={4} py={2} rounded="lg" color="bg-amber-300">
+            <Button
+              px={4}
+              py={2}
+              rounded="lg"
+              color="bg-amber-300"
+              onClick={openSelectDialog}
+            >
               라이어 선택
             </Button>
             <Margin type="width" size={8} />

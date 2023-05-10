@@ -47,6 +47,7 @@ const CustomDialogTitle = (props: any) => {
 
 export default function Login() {
   const [open, setOpen] = useState(false);
+  const KAKAO_URL = process.env.NEXT_PUBLIC_KAKAO;
   const ClickOpen = () => {
     setOpen(true);
   };
@@ -84,23 +85,35 @@ export default function Login() {
       >
         <CustomDialogTitle onClose={ClickClose} />
         <DialogContent>
-          <LoginDiv id="neon">프로젝트 완성 하고 싶어요</LoginDiv>
+          <LoginDiv id="neon">
+            프로젝트 완성 하고 싶어요
+            <ImageDiv
+              onClick={() => {
+                if (!KAKAO_URL) {
+                  throw new Error('카카오 URL이 잘못되있습니다.');
+                }
+                window.location.href = KAKAO_URL;
+              }}
+            >
+              <Image src="/images/kakao.png" alt="no_img" fill sizes="100%" />
+            </ImageDiv>
+          </LoginDiv>
         </DialogContent>
       </Dialog>
     </div>
   );
 }
 const LoginDiv = tw.div`
-  flex 
-  justify-center
-  text-4xl 
-  top-0
-  right-0
-  left-0
-  bottom-0
+  flex
+  flex-col
+  justify-between
+  items-center
+  text-4xl
+  w-full
+  h-full
   `;
 const ImageDiv = tw.div`
-  h-96
-  w-96
+  h-16
+  w-72
   relative
 `;
