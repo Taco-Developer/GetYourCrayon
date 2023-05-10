@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { Socket } from 'socket.io-client';
 
 interface MediaDeviceInfo {
   contentHint: string;
@@ -16,21 +15,21 @@ interface MediaDeviceInfo {
 }
 
 interface RoomPropsType {
-  socket: Socket;
   userId: string;
   setUserId: React.Dispatch<React.SetStateAction<string>>;
   room: string;
   setRoom: React.Dispatch<React.SetStateAction<string>>;
   setShowChat: React.Dispatch<React.SetStateAction<string>>;
+  setFinalRoom: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export default function InRoom({
-  socket,
   userId,
   setUserId,
   room,
   setRoom,
   setShowChat,
+  setFinalRoom,
 }: RoomPropsType) {
   const [myVoice, setMyVoice] = useState<{}>({
     contentHint: '',
@@ -48,8 +47,9 @@ export default function InRoom({
 
   const joinRoom = () => {
     if (userId !== '' && room !== '') {
-      socket.emit('join_room', userId, room);
+      // socket.emit('join_room', userId, room);
       setShowChat('readyRoom');
+      setFinalRoom(room);
     }
   };
 
