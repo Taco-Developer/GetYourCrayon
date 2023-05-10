@@ -22,6 +22,7 @@ function App({ Component, pageProps }: AppPropsWithLayoutType) {
   const getLayout = Component.getLayout ?? ((page) => page);
   const now = new Date();
   const nowHour = now.getHours();
+  console.log(nowHour);
   return (
     <Provider store={store}>
       {getLayout(

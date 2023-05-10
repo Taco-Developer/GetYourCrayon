@@ -20,7 +20,6 @@ export default function Navbar({ children }: NavbarPropsType) {
   const dispatch = useDispatch<AppDispatch>();
   useEffect(() => {
     dispatch(setNavbarPath(router.pathname));
-    console.log(navbarPath.path.indexOf('board'));
   }, [dispatch, router]);
 
   return (
