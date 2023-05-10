@@ -22,19 +22,17 @@ function App({ Component, pageProps }: AppPropsWithLayoutType) {
   const getLayout = Component.getLayout ?? ((page) => page);
   const now = new Date();
   const nowHour = now.getHours();
+  const bgTheme =
+    nowHour >= 6 && nowHour <= 15
+      ? 'bg-after-noon'
+      : nowHour >= 16 && nowHour <= 20
+      ? 'bg-even-ing'
+      : 'bg-night-ing';
   console.log(nowHour);
   return (
     <Provider store={store}>
       {getLayout(
-        <Container
-          className={`${
-            nowHour >= 6 && nowHour <= 15
-              ? 'bg-after-noon'
-              : nowHour >= 16 && nowHour <= 20
-              ? 'bg-even-ing'
-              : 'bg-night-ing'
-          }`}
-        >
+        <Container className={bgTheme}>
           <Component {...props.pageProps} />
         </Container>,
       )}
