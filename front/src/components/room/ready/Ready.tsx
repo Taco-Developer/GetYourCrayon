@@ -124,8 +124,8 @@ export default function Ready({
           </MoreDiv>
         </RoomBody>
       );
-      default:
-        return <div>Something wrong!!!!</div>
+    default:
+      return <div>예외입니다.</div>;
   }
 }
 
