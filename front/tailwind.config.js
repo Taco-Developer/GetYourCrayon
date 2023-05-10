@@ -18,10 +18,9 @@ module.exports = {
         'apple-red': '#EC685D',
       },
       backgroundImage: {
-        'after-noon': "url('/images/bgafternoon.png')",
-        'even-ing': "url('/images/bgevening.png')",
-        'night-ing': "url('/images/bgnight.png')",
-        'after-nooon': "url('/images/bgafternoon.gif')",
+        'after-noon': "url('/images/bgafter.gif')",
+        'even-ing': "url('/images/bgevening.gif')",
+        'night-ing': "url('/images/bgnight.gif')",
       },
       spacing: {
         10: '10%',
