@@ -124,7 +124,8 @@ export default function Ready({
           </MoreDiv>
         </RoomBody>
       );
-      break;
+    default:
+      return <div>예외입니다.</div>;
   }
 }
 

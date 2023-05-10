@@ -36,7 +36,7 @@ function App({ Component, pageProps }: AppPropsWithLayoutType) {
   return (
     <Provider store={store}>
       {getLayout(
-        <Container className={bgTheme}></Container>
+        <Container className={bgTheme}>
           <Component {...props.pageProps} />
         </Container>,
       )}
