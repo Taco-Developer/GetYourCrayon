@@ -5,7 +5,7 @@ import tw from 'tailwind-styled-components';
 import GameLeftSide from '../sides/GameLeftSide';
 import GameRightSide from '../sides/GameRightSide';
 import GameCenter from '../sides/GameCenter';
-import Margin from '@/components/ui/Margin';
+import Margin, { MarginType } from '@/components/ui/Margin';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 
@@ -20,13 +20,13 @@ export default function Solving({ isReverseGame }: { isReverseGame: boolean }) {
       {isReverseGame && (
         <GameCenter>
           <PaintingView />
-          <Margin type="height" size={16} />
+          <Margin type={MarginType.height} size={16} />
           <AnswerForm onSubmit={submitHandler}>
             <Input
               type="text"
               placeholder="그림에 해당하는 제시어를 입력해주세요."
             />
-            <Margin type="width" size={16} />
+            <Margin type={MarginType.width} size={16} />
             <Button px={4} py={2} rounded="lg" color="bg-blue-300">
               입력
             </Button>
@@ -38,15 +38,15 @@ export default function Solving({ isReverseGame }: { isReverseGame: boolean }) {
           <PaintingInfo>
             <p>현재 참가자5님이 그리는 중입니다.</p>
           </PaintingInfo>
-          <Margin type="height" size={16} />
+          <Margin type={MarginType.height} size={16} />
           <PaintingView />
-          <Margin type="height" size={16} />
+          <Margin type={MarginType.height} size={16} />
           <AnswerForm onSubmit={submitHandler}>
             <Input
               type="text"
               placeholder="그림에 해당하는 제시어를 입력해주세요."
             />
-            <Margin type="width" size={16} />
+            <Margin type={MarginType.width} size={16} />
             <Button px={4} py={2} rounded="lg" color="bg-blue-300">
               입력
             </Button>
