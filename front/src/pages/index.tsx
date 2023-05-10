@@ -1,4 +1,4 @@
-import Margin from '@/components/ui/Margin';
+import Margin, { MarginType } from '@/components/ui/Margin';
 import { ReactElement } from 'react';
 import Navbar from '@/components/navbar/Navbar';
 import tw from 'tailwind-styled-components';
@@ -10,7 +10,7 @@ export default function Home() {
   // console.log(process.env.NEXT_PUBLIC_KAKAO);
   return (
     <MainContainer>
-      <Margin type="height" size={150} />
+      <Margin type={MarginType.height} size={150} />
       <div className="">
         <MainCarousel />
       </div>

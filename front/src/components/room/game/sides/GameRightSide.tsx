@@ -4,7 +4,7 @@ import tw from 'tailwind-styled-components';
 
 import SideDisplay from './SideDisplay';
 import { Button } from '@/components/ui/Button';
-import Margin from '@/components/ui/Margin';
+import Margin, { MarginType } from '@/components/ui/Margin';
 
 import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
 import { ChatType, addChat, countDown } from '@/store/slice/inGameSlice';
@@ -62,7 +62,7 @@ export default function GameRightSide({ isPainting }: GameRightSidePropsType) {
   return (
     <SideDisplay isLeft={false}>
       <div className="bg-white p-4 rounded-full">{leftTime}s</div>
-      <Margin type="height" size={16} />
+      <Margin type={MarginType.height} size={16} />
       <InGameChat>
         채팅
         <ChatView>
@@ -90,7 +90,7 @@ export default function GameRightSide({ isPainting }: GameRightSidePropsType) {
       </InGameChat>
       {isPainting && (
         <>
-          <Margin type="height" size={16} />
+          <Margin type={MarginType.height} size={16} />
           <Button
             px={4}
             py={2}
