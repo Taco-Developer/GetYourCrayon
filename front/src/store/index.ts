@@ -7,9 +7,24 @@ import {
   CombinedState,
   combineReducers,
 } from '@reduxjs/toolkit';
+
 import { HYDRATE, createWrapper } from 'next-redux-wrapper';
+
 import navbarSlice, { NavbarStateType } from './slice/navbarSlice';
-import inGameSliceReducer, { InGameStateType } from './slice/inGameSlice';
+import scoreSliceReducer from './slice/game/score';
+import chatDatasSliceReducer, { ChatType } from './slice/game/chatDatasSlice';
+import gameRoundSliceReducer, {
+  GameRoundType,
+} from './slice/game/gameRoundSlice';
+import gameUsersSliceReducer, { GameUser } from './slice/game/gameUsersSlice';
+import leftTimeSliceReducer from './slice/game/leftTimeSlice';
+import aiGameDatasSliceReducer, {
+  AiGameDatasType,
+} from './slice/game/aiGameDatasSlice';
+import isGameStartedSliceReducer from './slice/game/isGameStartedSlice';
+import gameThemeSliceReducer, {
+  GameThemeType,
+} from './slice/game/gameThemeSlice';
 // import { persistReducer, persistStore } from 'redux-persist';
 // import {
 //   FLUSH,
@@ -23,7 +38,14 @@ import inGameSliceReducer, { InGameStateType } from './slice/inGameSlice';
 
 export interface ReducerStates {
   navbarPath: NavbarStateType;
-  inGame: InGameStateType;
+  score: number;
+  leftTime: number;
+  gameUsers: GameUser[];
+  gameRound: GameRoundType;
+  chatDatas: ChatType[];
+  aiGameDatas: AiGameDatasType;
+  isGameStarted: boolean;
+  gameTheme: GameThemeType;
 }
 
 //HYDRATE 액션을 정의 -> 슬라이스 통함
@@ -37,7 +59,14 @@ const rootReducer = (
     default: {
       const combinedReducer = combineReducers({
         navbarPath: navbarSlice.reducer,
-        inGame: inGameSliceReducer,
+        aiGameDatas: aiGameDatasSliceReducer,
+        score: scoreSliceReducer,
+        leftTime: leftTimeSliceReducer,
+        gameUsers: gameUsersSliceReducer,
+        gameRound: gameRoundSliceReducer,
+        chatDatas: chatDatasSliceReducer,
+        isGameStarted: isGameStartedSliceReducer,
+        gameTheme: gameThemeSliceReducer,
       });
       return combinedReducer(state, action);
     }
