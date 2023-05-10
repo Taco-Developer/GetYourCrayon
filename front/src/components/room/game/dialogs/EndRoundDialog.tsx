@@ -4,28 +4,33 @@ import { Dialog } from '@mui/material';
 import Margin, { MarginType } from '@/components/ui/Margin';
 import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
 import {
-  closeRoundEndModal,
-  goNextRound,
-  openRoundStartModal,
-} from '@/store/slice/inGameSlice';
+  closeIsScoreCheckModalOpened,
+  openIsSelectThemeModalOpened,
+  resetAnserwer,
+} from '@/store/slice/game/aiGameDatasSlice';
+import { goNextRound } from '@/store/slice/game/gameRoundSlice';
 
 export default function EndRoundDialog() {
-  const { score, isRoundEndModalOpened, leftTime, gameRound } = useAppSelector(
-    (state) => state.inGame,
-  );
+  const {
+    score,
+    leftTime,
+    gameRound,
+    aiGameDatas: { isScoreCheckModalOpened },
+  } = useAppSelector((state) => state);
   const dispatch = useAppDispatch();
 
   const onDialogClose = () => {
-    dispatch(closeRoundEndModal());
+    dispatch(closeIsScoreCheckModalOpened());
     if (gameRound.now < gameRound.total) {
-      dispatch(openRoundStartModal());
       dispatch(goNextRound());
+      dispatch(resetAnserwer());
+      dispatch(openIsSelectThemeModalOpened());
     }
   };
 
   return (
     <Dialog
-      open={isRoundEndModalOpened}
+      open={isScoreCheckModalOpened}
       onClose={onDialogClose}
       maxWidth="xs"
       fullWidth

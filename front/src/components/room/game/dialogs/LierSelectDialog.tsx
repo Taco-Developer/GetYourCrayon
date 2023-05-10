@@ -1,8 +1,10 @@
-import Margin, { MarginType } from '@/components/ui/Margin';
-import { GameUser } from '@/store/slice/inGameSlice';
-import { useAppSelector } from '@/store/thunkhook';
-import { Dialog } from '@mui/material';
 import React, { useState } from 'react';
+
+import { Dialog } from '@mui/material';
+
+import Margin, { MarginType } from '@/components/ui/Margin';
+import { GameUser } from '@/store/slice/game/gameUsersSlice';
+import { useAppSelector } from '@/store/thunkhook';
 
 export default function LierSelectDialog({
   isOpened,
@@ -11,11 +13,11 @@ export default function LierSelectDialog({
   isOpened: boolean;
   onDialogClose: () => void;
 }) {
-  const { userList } = useAppSelector((state) => state.inGame);
+  const { gameUsers } = useAppSelector((state) => state);
 
   const [selectedUser, setSelectedUser] = useState<GameUser | null>(null);
 
-  const onDialogCloseHandler = (_: object, reason: string) => {
+  const dialogCloseHandler = (_: object, reason: string) => {
     if (reason === 'backdropClick') return;
     onDialogClose();
   };
@@ -34,7 +36,7 @@ export default function LierSelectDialog({
   return (
     <Dialog
       open={isOpened}
-      onClose={onDialogCloseHandler}
+      onClose={dialogCloseHandler}
       maxWidth="xs"
       fullWidth
     >
@@ -47,7 +49,7 @@ export default function LierSelectDialog({
         <Margin type={MarginType.height} size={24} />
         <main className="w-full">
           <ul className="flex flex-col gap-4">
-            {userList.map((user) => (
+            {gameUsers.map((user) => (
               <li key={user.id} className="flex justify-between items-center">
                 <span>{user.nickname}</span>
                 <button

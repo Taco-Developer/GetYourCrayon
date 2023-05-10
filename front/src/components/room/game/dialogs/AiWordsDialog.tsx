@@ -3,74 +3,91 @@ import { Dialog } from '@mui/material';
 
 import Margin, { MarginType } from '@/components/ui/Margin';
 import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
+import { closeIsSelectThemeModalOpened } from '@/store/slice/game/aiGameDatasSlice';
+import { resetTime } from '@/store/slice/game/leftTimeSlice';
+import { startGame } from '@/store/slice/game/isGameStartedSlice';
 import {
-  changeCategory,
-  changeKeyword,
-  startRound,
-} from '@/store/slice/inGameSlice';
+  addThemeList,
+  saveSelectedTheme,
+} from '@/store/slice/game/gameThemeSlice';
 
 // 더미 파일
-const INIT_KEYWORDS = require('../../../../../public/dummy/dummy_ai_keyword.json');
+const INIT_THEME_LIST = [
+  '과일',
+  '영화',
+  '드라마',
+  '도시',
+  '국가',
+  '만화',
+  '브랜드',
+  '동물',
+  '모름',
+];
 
 export default function AiWordsDialog() {
-  const { category, isRoundStartModalOpened, selectedKeyword } = useAppSelector(
-    (state) => state.inGame,
-  );
+  const {
+    gameTheme: { themeList },
+    aiGameDatas: { isSelectThemeModalOpened },
+  } = useAppSelector((state) => state);
   const dispatch = useAppDispatch();
 
-  // 키워드 리스트
-  const [randomKeywords, setRandomKeywords] = useState<string[]>([]);
-  // 키워드 불러오는 함수
-  const loadRandomKeywords = async () => {
-    setRandomKeywords(INIT_KEYWORDS);
+  const [savedTheme, setSavedTheme] = useState<string>('');
+
+  /** 카드 클릭 */
+  const themeClickHandler = (clickedTheme: string) => {
+    setSavedTheme((prev) => {
+      if (prev === clickedTheme) return '';
+      return clickedTheme;
+    });
+  };
+
+  /** 선택 완료 후 시작 */
+  const startClickHandler = () => {
+    if (savedTheme) {
+      setSavedTheme('');
+      dispatch(saveSelectedTheme(savedTheme));
+      dispatch(closeIsSelectThemeModalOpened());
+      dispatch(startGame());
+      dispatch(resetTime());
+    }
   };
 
   useEffect(() => {
-    loadRandomKeywords();
-    dispatch(changeCategory('과일'));
+    dispatch(addThemeList(INIT_THEME_LIST));
   }, [dispatch]);
 
   // 다이얼로그 닫기 함수
   const onDialogClose = (_: object, reason: string) => {
     if (reason === 'backdropClick') return;
-    dispatch(startRound());
-  };
-
-  const onStartButtonClick = () => {
-    if (selectedKeyword) dispatch(startRound());
-  };
-
-  // 카드 클릭 함수
-  const cardClickHandler = (keyword: string) => {
-    dispatch(changeKeyword(keyword));
+    dispatch(closeIsSelectThemeModalOpened());
   };
 
   return (
     <Dialog
-      open={isRoundStartModalOpened}
+      open={isSelectThemeModalOpened}
       onClose={onDialogClose}
       maxWidth="md"
       fullWidth
     >
       <div className="p-8">
         <header className="text-center">
-          <h2 className="text-3xl">제시어</h2>
+          <h2 className="text-3xl">주제</h2>
           <Margin type={MarginType.height} size={16} />
-          <p className="text-xl">주제 : {category}</p>
+          <p className="text-xl text-gray-500">원하는 주제를 선택하세요.</p>
         </header>
         <Margin type={MarginType.height} size={16} />
         <main className="w-full grid grid-rows-3 grid-cols-3 gap-2">
-          {randomKeywords.map((word, index) => (
+          {themeList.map((theme, index) => (
             <div
               key={index}
               className={`flex justify-center items-center py-2 ${
-                selectedKeyword === word ? 'bg-green-600' : 'bg-orange-400'
+                theme === savedTheme ? 'bg-green-600' : 'bg-orange-400'
               }`}
               onClick={() => {
-                cardClickHandler(word);
+                themeClickHandler(theme);
               }}
             >
-              {word}
+              {theme}
             </div>
           ))}
         </main>
@@ -78,9 +95,9 @@ export default function AiWordsDialog() {
         <footer>
           <button
             className={`block mx-auto text-lg px-6 py-2 rounded-lg ${
-              selectedKeyword !== '' ? 'bg-amber-400' : 'bg-gray-300'
+              savedTheme ? 'bg-amber-400' : 'bg-gray-300'
             }`}
-            onClick={onStartButtonClick}
+            onClick={startClickHandler}
           >
             확인
           </button>
