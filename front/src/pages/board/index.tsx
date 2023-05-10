@@ -5,8 +5,18 @@ import Link from 'next/link';
 import tw from 'tailwind-styled-components';
 import { boardAPI } from '@/api/api';
 
+export async function getServerSideProps() {
+  try {
+    const res = await boardAPI.getBoard(1);
+
+    return { props: { res } };
+  } catch (e) {
+    let res = { aa: '바보' };
+    return { props: { res } };
+  }
+}
+
 export default function Board({ res }: any) {
-  console.log(res);
   return (
     <Container>
       <div className="text-xl md:text-2xl lg:text-3xl text-center mb-4 ">
@@ -73,23 +83,6 @@ export default function Board({ res }: any) {
 Board.getLayout = function getLayout(page: ReactElement) {
   return <Navbar>{page}</Navbar>;
 };
-
-export async function getServerSideProps() {
-  try {
-    let res = {};
-    await boardAPI
-      .getBoard(1)
-      .then((request) => {
-        res = request.data;
-      })
-      .catch((e) => console.log(e));
-    return { props: { res } };
-  } catch (e) {
-    console.log(e);
-    let res = { aa: '바보' };
-    return { props: { res } };
-  }
-}
 
 const Container = tw.div`
   w-screen
