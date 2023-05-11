@@ -1,4 +1,4 @@
-import { ReactElement } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import Navbar from '@/components/navbar/Navbar';
 import Margin from '@/components/ui/Margin';
 import Link from 'next/link';
@@ -8,16 +8,29 @@ import { boardAPI } from '@/api/api';
 export async function getServerSideProps() {
   try {
     const res = await boardAPI.getBoard(1);
+    const ress = res.data;
+    console.log(ress);
 
-    return { props: { res } };
+    return { props: { ress: ress } };
   } catch (e) {
-    let res = { aa: '바보' };
-    return { props: { res } };
+    return { props: {} };
   }
 }
 
-export default function Board({ res }: any) {
-  console.log(res);
+export default function Board({ ress }: any) {
+  const [boardData, setBoardData] = useState(null);
+  // useEffect(() => {
+  //   const getBoard = async () => {
+  //     await boardAPI
+  //       .getBoard(1)
+  //       .then((request) => console.log(request))
+  //       .catch((e) => console.log(e));
+  //   };
+  //   getBoard()
+  // }, []);
+  if (ress) {
+    console.log(ress);
+  }
   return (
     <Container>
       <div className="text-xl md:text-2xl lg:text-3xl text-center mb-4 ">
