@@ -50,7 +50,7 @@ interface ReadyProps {
 
 export default function Invite({ copyAction, createAction }: ReadyProps) {
   const [open, setOpen] = useState(false);
-  const [title, setTitle] = useState<string>('같이할사람 여기여기 붙어라 :)');
+  const [title, setTitle] = useState<string>('');
   const ClickOpen = () => {
     setOpen(true);
   };
@@ -102,6 +102,7 @@ export default function Invite({ copyAction, createAction }: ReadyProps) {
               <ModalBtn
                 onClick={() => {
                   createAction(title, 'url');
+                  ClickClose();
                 }}
               >
                 게시글 작성

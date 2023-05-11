@@ -15,7 +15,15 @@ export default function ReadyBtn() {
   };
   // (미완) 게시글 작성하는 함수 api 확인되어야 가능
   const creatBaseUrl = async (title: string, url: string) => {
-    await boardAPI.postBoard(title, url);
+    let defaultTitle: string;
+    if (title === '') {
+      defaultTitle = '같이할사람 여기여기 붙어라 :)';
+    } else {
+      defaultTitle = title;
+    }
+    await boardAPI.postBoard(defaultTitle, url).then((request) => {
+      console.log(request);
+    });
   };
 
   return (
