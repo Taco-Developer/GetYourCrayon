@@ -5,7 +5,6 @@ import ModeChoice from './more/ModeChoice';
 import Setting from './more/Setting';
 import Chat from './more/Chat';
 import ReadyBtn from './more/ReadyBtn';
-// import Voice from './Voice';
 import tw from 'tailwind-styled-components';
 import { w3cwebsocket as W3CWebSocket } from 'websocket';
 
@@ -37,9 +36,7 @@ export default function Ready({
 
   useEffect(() => {
     if (finalroom !== '') {
-      const newClient = new W3CWebSocket(
-        `ws://localhost:8080/chat/${finalroom}`,
-      );
+      const newClient = new W3CWebSocket(`ws://localhost:8080/${finalroom}`);
       setClient(newClient);
     }
   }, [finalroom]);
@@ -61,14 +58,17 @@ export default function Ready({
         }
       };
       client.onclose = () => {
-        client.send(
-          JSON.stringify({
-            author: 'admin',
-            message: `${userId}님이 퇴장하셨습니다 :<`,
-          }),
-        );
-        console.log('WebSocket Client Disconnected');
+        client.close();
       };
+      // client.close = () => {
+      //   client.send(
+      //     JSON.stringify({
+      //       author: 'admin',
+      //       message: `${userId}님이 퇴장하셨습니다 :<`,
+      //     }),
+      //   );
+      //   console.log('WebSocket Client Disconnected');
+      // };
     }
   }, [client]);
 
@@ -93,7 +93,6 @@ export default function Ready({
         <RoomBody>
           <UserDiv>
             <UserList />
-            {/* <Voice socket={socket} /> */}
           </UserDiv>
           <MoreDiv>
             <PickDiv>
