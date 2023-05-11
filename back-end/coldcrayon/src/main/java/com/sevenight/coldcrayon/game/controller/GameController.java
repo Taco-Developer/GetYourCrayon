@@ -30,6 +30,20 @@ public class GameController {
         return ResponseEntity.ok().body(gameService.startGame(user, gameRequestDto));
     }
 
+    @PostMapping("startRound/")
+    public ResponseEntity<String> getKeyword(@RequestHeader String Authorization, @RequestBody ThemeCategory theme){
+        //        UserDto user = authService.selectOneMember(HeaderUtil.getAccessTokenString(Authorization));
+        UserDto user = UserDto.builder().userIdx(1L).userEmail("1번@naver.com").userPoint(0).userNickname("바보").build();
+
+        String keyword = gameService.getThemeKeyword(theme);
+
+        // 키워드 받아오고 모드가 ai 모드이면 api로 사진 가지고 오기 키워드는 1개, 사진은 4장
+        // 게임 모드 체크하는 로직 필요
+
+        return ResponseEntity.ok().body(keyword);
+    }
+
+
     @PostMapping("/end-round")
     public ResponseEntity<?> endRound(){
         return null;
@@ -40,15 +54,6 @@ public class GameController {
         return null;
     }
 
-    @PostMapping("getKeyword/")
-    public ResponseEntity<String> getKeyword(@RequestBody ThemeCategory theme){
-        String keyword = gameService.getThemeKeyword(theme);
-
-        // 키워드 받아오고 모드가 ai 모드이면 api로 사진 가지고 오기 키워드는 1개, 사진은 4장
-        // 게임 모드 체크하는 로직 필요
-
-        return ResponseEntity.ok().body(keyword);
-    }
 
     @PostMapping("settle/")
     public ResponseEntity<int[]> settle(@RequestBody String roomIdx){

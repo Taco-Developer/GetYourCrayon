@@ -8,6 +8,7 @@ import com.sevenight.coldcrayon.theme.entity.ThemeCategory;
 public interface GameService {
     ThemeCategory[] startGame(UserDto userDto, GameRequestDto gameRequestDto);
 
+    ThemeCategory randomTheme();
     String getThemeKeyword(ThemeCategory theme);
 
 }

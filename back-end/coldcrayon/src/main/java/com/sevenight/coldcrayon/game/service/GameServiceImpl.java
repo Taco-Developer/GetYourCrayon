@@ -1,5 +1,6 @@
 package com.sevenight.coldcrayon.game.service;
 
+import com.querydsl.jpa.impl.JPAQuery;
 import com.sevenight.coldcrayon.auth.dto.UserDto;
 import com.sevenight.coldcrayon.game.dto.GameRequestDto;
 import com.sevenight.coldcrayon.game.dto.ResponseGameDto;
@@ -10,12 +11,16 @@ import com.sevenight.coldcrayon.room.entity.RoomStatus;
 import com.sevenight.coldcrayon.room.entity.UserHash;
 import com.sevenight.coldcrayon.room.repository.RoomRepository;
 import com.sevenight.coldcrayon.room.repository.UserHashRepository;
+import com.sevenight.coldcrayon.theme.entity.QTheme;
+import com.sevenight.coldcrayon.theme.entity.Theme;
 import com.sevenight.coldcrayon.theme.entity.ThemeCategory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +29,12 @@ public class GameServiceImpl implements GameService{
     private final RoomRepository roomRepository;
     private final JoinListService joinListService;
     private final UserHashRepository userHashRepository;
+    private final EntityManager entityManager;
+//    private final JPAQuery<Theme> query;
+//    private final QTheme qTheme;
+//    private final JPAQuery<Theme> query = new JPAQuery(entityManager);
+
+    private final Random random = new Random();
 
     public ThemeCategory[] startGame(UserDto userDto, GameRequestDto gameRequestDto){
         System.err.println(gameRequestDto);
@@ -81,9 +92,28 @@ public class GameServiceImpl implements GameService{
         return ThemeCategory.values();
     }
 
+    public ThemeCategory randomTheme(){
+        ThemeCategory[] themeCategories = ThemeCategory.values();
+
+        return themeCategories[random.nextInt(themeCategories.length)];
+    }
+
+    public List<Theme> findThemesByCategory(ThemeCategory category) {
+        return entityManager.createQuery("SELECT t FROM Theme t WHERE t.theme = :category", Theme.class)
+                .setParameter("category", category)
+                .getResultList();
+    }
     public String getThemeKeyword(ThemeCategory theme){
 
         // JPA로 "keyword 중에서 theme과 일치하는 data를 들고오기"
+        JPAQuery<Theme> query = new JPAQuery(entityManager);
+        QTheme qTheme = QTheme.theme1;
+
+        List<Theme> themeList = query
+                .from(qTheme)
+                .where(qTheme.theme.eq(theme))
+                .fetch();
+
 
         return null;
     }
