@@ -59,9 +59,6 @@ export default function Ready({
           setMessageList((prevMessages) => [...prevMessages, data]);
         }
       };
-      client.onclose = () => {
-        client.close();
-      };
       // client.close = () => {
       //   client.send(
       //     JSON.stringify({
