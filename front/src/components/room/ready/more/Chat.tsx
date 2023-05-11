@@ -20,10 +20,7 @@ export default function Chat({
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollTo({
-      top: messagesEndRef.current.scrollHeight,
-      behavior: 'smooth',
-    });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   useEffect(() => {
@@ -45,6 +42,9 @@ export default function Chat({
   const you = 'justify-start';
   const youMeta = 'justify-start ml-3';
   const youContent = 'justify-start bg-slate-600';
+  const admin = 'justify-center';
+  const adminMeta = 'hidden';
+  const adminContent = 'justify-start bg-black text-whi';
 
   return (
     <OutDiv>
@@ -54,19 +54,33 @@ export default function Chat({
             return (
               <Message
                 key={i}
-                className={userId === messageContent.author ? me : you}
+                className={
+                  'admin' === messageContent.author
+                    ? admin
+                    : userId === messageContent.author
+                    ? me
+                    : you
+                }
               >
                 <MessageBody>
                   <div
                     className={
-                      userId === messageContent.author ? meMeta : youMeta
+                      'admin' === messageContent.author
+                        ? adminMeta
+                        : userId === messageContent.author
+                        ? meMeta
+                        : youMeta
                     }
                   >
                     <YouMeMeta>{messageContent.author}</YouMeMeta>
                   </div>
                   <MessageContent
                     className={
-                      userId === messageContent.author ? meContent : youContent
+                      'admin' === messageContent.author
+                        ? adminContent
+                        : userId === messageContent.author
+                        ? meContent
+                        : youContent
                     }
                   >
                     <p>{messageContent.message}</p>
