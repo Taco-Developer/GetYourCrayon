@@ -4,20 +4,61 @@ import Margin from '@/components/ui/Margin';
 import Link from 'next/link';
 import tw from 'tailwind-styled-components';
 import { boardAPI } from '@/api/api';
+import ThreadList from '@/components/board/Thread';
 
-export async function getServerSideProps() {
+interface Board {
+  id: number;
+  title: string;
+  content: string;
+  create_time: string;
+  update_time: string;
+}
+
+interface Pageable {
+  sort: {
+    empty: boolean;
+    unsorted: boolean;
+    sorted: boolean;
+  };
+  offset: number;
+  pageNumber: number;
+  pageSize: number;
+  paged: boolean;
+  unpaged: boolean;
+}
+
+export interface BoardPaginationType {
+  content: Board[];
+  pageable: Pageable;
+  last: boolean;
+  totalElements: number;
+  totalPages: number;
+  sort: {
+    empty: boolean;
+    unsorted: boolean;
+    sorted: boolean;
+  };
+  size: number;
+  number: number;
+  numberOfElements: number;
+  first: boolean;
+  empty: boolean;
+}
+
+export async function getServerSideProps(context: any) {
+  const { id } = context.query;
   try {
-    const res = await boardAPI.getBoard(1);
-    const ress = res.data;
-    console.log(ress);
+    const re = await boardAPI.getBoard(id);
+    const res: BoardPaginationType = re.data;
 
-    return { props: { ress: ress } };
+    return { props: { res } };
   } catch (e) {
     return { props: {} };
   }
+  S;
 }
 
-export default function Board({ ress }: any) {
+export default function Board({ res }: { res: BoardPaginationType }) {
   const [boardData, setBoardData] = useState(null);
   // useEffect(() => {
   //   const getBoard = async () => {
@@ -28,64 +69,13 @@ export default function Board({ ress }: any) {
   //   };
   //   getBoard()
   // }, []);
-  if (ress) {
-    console.log(ress);
-  }
+  console.log(res.content);
   return (
     <Container>
       <div className="text-xl md:text-2xl lg:text-3xl text-center mb-4 ">
         링크를 통하여 접속해주세요 !
       </div>
-      <Thread>
-        <Title>같이 리버스 캐치마인드 할사람~~~~~</Title>
-        <Content>접속링크 어쩌고~~~~~~~~~~~~~~ </Content>
-        <Time>방금 전</Time>
-      </Thread>
-      <Thread>
-        <Title>같이 리버스 캐치마인드 할사람~~~~~</Title>
-        <Content>접속링크 어쩌고~~~~~~~~~~~~~~ </Content>
-        <Time>방금 전</Time>
-      </Thread>
-      <Thread>
-        <Title>같이 리버스 캐치마인드 할사람~~~~~</Title>
-        <Content>접속링크 어쩌고~~~~~~~~~~~~~~ </Content>
-        <Time>방금 전</Time>
-      </Thread>
-      <Thread>
-        <Title>같이 리버스 캐치마인드 할사람~~~~~</Title>
-        <Content>접속링크 어쩌고~~~~~~~~~~~~~~ </Content>
-        <Time>방금 전</Time>
-      </Thread>
-      <Thread>
-        <Title>같이 리버스 캐치마인드 할사람~~~~~</Title>
-        <Content>접속링크 어쩌고~~~~~~~~~~~~~~ </Content>
-        <Time>방금 전</Time>
-      </Thread>
-      <Thread>
-        <Title>같이 리버스 캐치마인드 할사람~~~~~</Title>
-        <Content>접속링크 어쩌고~~~~~~~~~~~~~~ </Content>
-        <Time>방금 전</Time>
-      </Thread>
-      <Thread>
-        <Title>같이 리버스 캐치마인드 할사람~~~~~</Title>
-        <Content>접속링크 어쩌고~~~~~~~~~~~~~~ </Content>
-        <Time>방금 전</Time>
-      </Thread>
-      <Thread>
-        <Title>같이 리버스 캐치마인드 할사람~~~~~</Title>
-        <Content>접속링크 어쩌고~~~~~~~~~~~~~~ </Content>
-        <Time>방금 전</Time>
-      </Thread>
-      <Thread>
-        <Title>같이 리버스 캐치마인드 할사람~~~~~</Title>
-        <Content>접속링크 어쩌고~~~~~~~~~~~~~~ </Content>
-        <Time>방금 전</Time>
-      </Thread>
-      <Thread>
-        <Title>같이 리버스 캐치마인드 할사람~~~~~</Title>
-        <Content>접속링크 어쩌고~~~~~~~~~~~~~~ </Content>
-        <Time>방금 전</Time>
-      </Thread>
+
       <ThreadLast>
         <Title>같이 리버스 캐치마인드 할사람~~~~~</Title>
         <Content>접속링크 어쩌고~~~~~~~~~~~~~~ </Content>
