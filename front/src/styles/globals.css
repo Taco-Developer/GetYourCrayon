@@ -121,3 +121,7 @@ body {
   background-color: #000;
   margin: 0 10px !important;
 }
+
+.swal2-container {
+  z-index: 20000 !important;
+}

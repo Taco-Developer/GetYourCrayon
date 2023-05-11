@@ -17,6 +17,7 @@ export async function getServerSideProps() {
 }
 
 export default function Board({ res }: any) {
+  console.log(res);
   return (
     <Container>
       <div className="text-xl md:text-2xl lg:text-3xl text-center mb-4 ">
