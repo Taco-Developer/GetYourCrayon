@@ -24,7 +24,7 @@ export default function Chat({
   };
 
   useEffect(() => {
-    scrollToBottom();
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messageList]);
 
   const sendMessage = () => {
@@ -44,12 +44,12 @@ export default function Chat({
   const youContent = 'justify-start bg-slate-600';
   const admin = 'justify-center';
   const adminMeta = 'hidden';
-  const adminContent = 'justify-start bg-black text-whi';
+  const adminContent = 'justify-start bg-black text-white';
 
   return (
     <OutDiv>
       <ChatDiv>
-        <ChatBody ref={messagesEndRef}>
+        <ChatBody>
           {messageList.map((messageContent, i) => {
             return (
               <Message
@@ -89,6 +89,7 @@ export default function Chat({
               </Message>
             );
           })}
+          <div ref={messagesEndRef} />
         </ChatBody>
       </ChatDiv>
       <InputDiv>
