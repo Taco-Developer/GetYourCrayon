@@ -1,5 +1,4 @@
 import axios from 'axios';
-import https from 'https';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -9,9 +8,6 @@ export const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  httpsAgent: new https.Agent({
-    rejectUnauthorized: false,
-  }),
 });
 
 export const noAuthApi = axios.create({
@@ -19,9 +15,6 @@ export const noAuthApi = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  httpsAgent: new https.Agent({
-    rejectUnauthorized: false,
-  }),
 });
 
 api.interceptors.request.use(function (config) {
