@@ -48,7 +48,7 @@ export default function Navbar({ children }: NavbarPropsType) {
             </ImageDiv>
           </Link>
           <Link
-            href={'/board'}
+            href={'/board/1'}
             className={`${
               navbarPath.path.indexOf('board') !== -1
                 ? 'bg-main-pink text-main-green'
