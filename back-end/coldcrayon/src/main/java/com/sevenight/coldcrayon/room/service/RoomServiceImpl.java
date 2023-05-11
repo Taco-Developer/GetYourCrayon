@@ -52,9 +52,10 @@ public class RoomServiceImpl implements RoomService{
 
         RoomHash room = RoomHash.builder()
                 .roomIdx(roomIdx)
-                .gameTheme(GameCategory.AI)
-                .gameCnt(1)
-                .roundCnt(1)
+                .gameCategory(GameCategory.AI)
+                .gameCnt(0)
+                .nowRound(0)
+                .maxRound(0)
                 .roomStatus(RoomStatus.Ready)
                 .roomMax(6)
                 .roomNow(1)

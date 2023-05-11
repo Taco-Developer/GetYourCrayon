@@ -1,19 +1,20 @@
 package com.sevenight.coldcrayon.game.dto;
 
 import com.sevenight.coldcrayon.game.entity.GameCategory;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @Builder
+@ToString
+@AllArgsConstructor
+@NoArgsConstructor
 public class GameRequestDto {
 
     private String roomIdx;
 
     private GameCategory gameCategory;
+
+    private int maxRound;
 
 }

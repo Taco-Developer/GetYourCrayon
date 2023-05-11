@@ -21,13 +21,23 @@ public class GameController {
     final GameService gameService;
     final AuthService authService;
 
-    @PatchMapping("/start")
+    @PostMapping("/start")
     public ResponseEntity<ThemeCategory[]> gameStart(@RequestHeader String Authorization, @RequestBody GameRequestDto gameRequestDto) {
         // 에러는 못 던진다.....
 //        UserDto user = authService.selectOneMember(HeaderUtil.getAccessTokenString(Authorization));
         UserDto user = UserDto.builder().userIdx(1L).userEmail("1번@naver.com").userPoint(0).userNickname("바보").build();
 
-        return ResponseEntity.ok().body(gameService.startGame(user,gameRequestDto.getRoomIdx(), gameRequestDto.getGameCategory()));
+        return ResponseEntity.ok().body(gameService.startGame(user, gameRequestDto));
+    }
+
+    @PostMapping("/end-round")
+    public ResponseEntity<?> endRound(){
+        return null;
+    }
+
+    @PostMapping("/end-game")
+    public ResponseEntity<?> endGame(){
+        return null;
     }
 
     @PostMapping("getKeyword/")

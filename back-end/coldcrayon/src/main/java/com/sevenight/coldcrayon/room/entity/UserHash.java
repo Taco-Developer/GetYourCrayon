@@ -11,6 +11,7 @@ import org.springframework.data.redis.core.RedisHash;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class UserHash {
 
     @Id
@@ -22,12 +23,15 @@ public class UserHash {
 
     private int userPoint;
 
+    private int userScore;
+
     public static UserHash createUserHash(UserDto userDto, String roomIdx){
        return UserHash.builder()
                .userIdx(userDto.getUserIdx())
                .userNickname(userDto.getUserNickname())
+               .userPoint(userDto.getUserPoint())
+               .userScore(10)
                .roomIdx(roomIdx)
-               .userPoint(0)
                .build();
     }
 }

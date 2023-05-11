@@ -20,11 +20,13 @@ public class RoomHash {
     @Id
     private String roomIdx;
 
-    private GameCategory gameTheme;
+    private GameCategory gameCategory;
 
     private int gameCnt;
 
-    private int roundCnt;
+    private int nowRound;
+
+    private int maxRound;
 
     private Long adminUserIdx;
 
