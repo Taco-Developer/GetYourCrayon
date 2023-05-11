@@ -2,19 +2,20 @@ import React, { useState } from 'react';
 import tw from 'tailwind-styled-components';
 import Link from 'next/link';
 import Invite from './Invite';
+import { boardAPI } from '@/api/api';
 
 export default function ReadyBtn() {
-  const [copyUrl, setCopyUrl] = useState<string>(
+  const [baseUrl, setBaseUrl] = useState<string>(
     'https://getyourcrayon.co.kr/room/',
   );
 
   // url 카피하는 함수
-  const handleCopyClick = (code: string) => {
-    navigator.clipboard.writeText(copyUrl + code);
+  const handleCopyClick = (url: string) => {
+    navigator.clipboard.writeText(baseUrl + url);
   };
   // (미완) 게시글 작성하는 함수 api 확인되어야 가능
-  const creatCopyUrl = (code: string) => {
-    navigator.clipboard.writeText(copyUrl + code);
+  const creatBaseUrl = async (title: string, url: string) => {
+    await boardAPI.postBoard(title, url);
   };
 
   return (
@@ -23,7 +24,7 @@ export default function ReadyBtn() {
         <GoBtn className="w-full">나가기</GoBtn>
       </Link>
       <ModalBtn>
-        <Invite copyAction={handleCopyClick} />
+        <Invite copyAction={handleCopyClick} createAction={creatBaseUrl} />
       </ModalBtn>
       <GoBtn>게임시작</GoBtn>
     </OutDiv>
