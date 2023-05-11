@@ -15,6 +15,7 @@ export type NextPageWithLayout = NextPage & {
 /** AppProps 타입에 Components 속성이 포함된 타입 */
 type AppPropsWithLayoutType = AppProps & {
   Component: NextPageWithLayout;
+  bgTheme: string;
 };
 
 function App({ Component, pageProps }: AppPropsWithLayoutType) {

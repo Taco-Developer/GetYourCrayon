@@ -27,8 +27,6 @@ export default function MainCarousel() {
         fadeEffect={{ crossFade: true }}
         autoplay={{ delay: 2000, disableOnInteraction: false }}
         modules={[Navigation, Pagination, EffectFade, Mousewheel, Autoplay]}
-        onSlideChange={() => console.log('ehlsi?')}
-        onSwiper={(swiper) => console.log(swiper)}
       >
         <SwiperSlide>
           <div className="flex items-center justify-center">
