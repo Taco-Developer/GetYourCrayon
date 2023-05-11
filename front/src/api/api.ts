@@ -1,4 +1,5 @@
 import axios from 'axios';
+import https from 'https';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -8,6 +9,9 @@ export const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  httpsAgent: new https.Agent({
+    rejectUnauthorized: false,
+  }),
 });
 
 export const noAuthApi = axios.create({
@@ -15,6 +19,9 @@ export const noAuthApi = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  httpsAgent: new https.Agent({
+    rejectUnauthorized: false,
+  }),
 });
 
 api.interceptors.request.use(function (config) {
@@ -26,41 +33,38 @@ api.interceptors.request.use(function (config) {
 
 export const gameAPI = {
   /**방 생성 */
-  createRoom: () => api.post(`/api/room/create`),
+  createRoom: () => api.post(`/room/create`),
   /**방 참여 */
-  joinRoom: (roomIdx: string) =>
-    api.post(`/api/room/join`, { roomidx: roomIdx }),
+  joinRoom: (roomIdx: string) => api.post(`/room/join`, { roomidx: roomIdx }),
   /**방 나가기 */
-  outRoom: () => api.post(`/api/room/out`),
+  outRoom: () => api.post(`/room/out`),
   /**AI 이미지가져오기 */
-  getAiImages: () => api.get(`/api/game/reversecatch`),
+  getAiImages: () => api.get(`/game/reversecatch`),
 };
 
 export const memberAPI = {
   /**닉네임 변경 */
   changeName: (name: string) =>
-    api.put(`/api/member/nickname`, { userNickname: name }),
+    api.put(`/member/nickname`, { userNickname: name }),
   /**마이페이지 유저정보 가져오기 */
-  getUserInfo: (userIdx: number) =>
-    api.get(`/api/user/mypage/profile/${userIdx}`),
+  getUserInfo: (userIdx: number) => api.get(`/user/mypage/profile/${userIdx}`),
 };
 
 export const gatchaAPI = {
   /** 1회뽑기 */
-  oneGacha: (userIdx: number) =>
-    api.post(`/api/user/mypage/gacha/${userIdx}/once`),
+  oneGacha: (userIdx: number) => api.post(`/user/mypage/gacha/${userIdx}/once`),
   /** 10회뽑기 */
   tenGacha: (userIdx: number) =>
-    api.post(`/api/user/mypage/gacha/${userIdx}/tenth`),
+    api.post(`/user/mypage/gacha/${userIdx}/tenth`),
 };
 
 export const boardAPI = {
   /**게시글 가져오기 */
   getBoard: (page: number) =>
-    noAuthApi.get(`/api/board`, { params: { page: page } }),
+    noAuthApi.get(`/board`, { params: { page: page } }),
   /**글 작성 */
   postBoard: (title: string, content: string) =>
-    api.post(`/api/board/create`, { title: title, content: content }),
+    api.post(`/board/create`, { title: title, content: content }),
 };
 
 export default api;
