@@ -59,7 +59,7 @@ export const boardAPI = {
   postBoard: (title: string, content: string) =>
     api.post(`/board/create`, { title: title, content: content }),
   /**끌어올리기 */
-  updateBoard: (id: number) => api.put(`board/update?boardId=`, { id }),
+  updateBoard: (id: number) => api.put(`board/update?boardId=${id}}`),
 };
 
 export default api;
