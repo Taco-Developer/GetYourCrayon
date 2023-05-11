@@ -111,8 +111,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
                     s.sendMessage(new TextMessage(json));
                 }
             }
-        } else {
-            log.info("특별 메시지가 아님");
         }
     }
 
