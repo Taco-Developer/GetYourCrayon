@@ -4,5 +4,5 @@ import lombok.Getter;
 
 @Getter
 public enum ThemeCategory {
-    FRUIT, MOVIE, SPORTS
+    FRUIT, ANIMAL, SPORT, FOOD, VEHICLE, HERO
 }
