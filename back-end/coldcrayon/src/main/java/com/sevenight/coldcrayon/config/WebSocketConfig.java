@@ -10,9 +10,9 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 @EnableWebSocket
 @Slf4j
 public class WebSocketConfig implements WebSocketConfigurer {
+
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(new WebSocketHandler(), "/chat/{roomId}").setAllowedOrigins("*");
-        log.debug("registerWebSocketHandler 사용"); 
+        registry.addHandler(new WebSocketHandler(), "/{roomId}").setAllowedOrigins("*");
     }
 }
