@@ -47,7 +47,12 @@ export default function Ready({
   useEffect(() => {
     if (client) {
       client.onopen = () => {
-        console.log('WebSocket Client Connected');
+        client.send(
+          JSON.stringify({
+            author: 'admin',
+            message: `${client}님이 입장하셨습니다 :)`,
+          }),
+        );
       };
       client.onmessage = (message) => {
         if (typeof message.data === 'string') {
@@ -56,6 +61,12 @@ export default function Ready({
         }
       };
       client.onclose = () => {
+        client.send(
+          JSON.stringify({
+            author: 'admin',
+            message: `${client}님이 퇴장하셨습니다 :<`,
+          }),
+        );
         console.log('WebSocket Client Disconnected');
       };
     }
