@@ -19,10 +19,6 @@ export default function Chat({
   const [currentMessage, setCurrentMessage] = useState<string>('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({
       behavior: 'auto',
@@ -31,8 +27,8 @@ export default function Chat({
   }, [messageList]);
 
   const sendMessage = () => {
-    const message = { author: userId, message: currentMessage };
-    if (client !== null) {
+    if (client !== null && currentMessage) {
+      const message = { author: userId, message: currentMessage };
       client.send(JSON.stringify(message));
       setCurrentMessage('');
     }
@@ -86,7 +82,7 @@ export default function Chat({
                         : youContent
                     }
                   >
-                    <p>{messageContent.message}</p>
+                    {messageContent.message}
                   </MessageContent>
                 </MessageBody>
               </Message>
@@ -107,7 +103,13 @@ export default function Chat({
             event.key === 'Enter' && sendMessage();
           }}
         />
-        <ChatBtn>전송</ChatBtn>
+        <ChatBtn
+          onClick={() => {
+            sendMessage();
+          }}
+        >
+          전송
+        </ChatBtn>
       </InputDiv>
     </OutDiv>
   );
@@ -118,7 +120,7 @@ const ChatDiv = tw.div`h-90 w-full flex items-center justify-center relative px-
 const ChatBody = tw.div`h-full w-full overflow-y-scroll overflow-x-hidden scrollbar-ssibal`;
 const MessageBody = tw.div`max-w-xs`;
 const Message = tw.div`h-auto flex`;
-const MessageContent = tw.div`h-auto w-auto rounded-xl bg-white text-white text-xl font-bold flex items-center mb-4 p-2 break-words`;
+const MessageContent = tw.div`h-auto w-auto rounded-xl bg-white text-white text-xl font-bold flex items-center mb-4 p-2 break-all`;
 const YouMeMeta = tw.p`ml-1 mb-1`;
 const InputDiv = tw.div`h-10 w-full flex items-center justify-around`;
 const ChatInput = tw.input`h-full w-70 text-2xl bg-white rounded-xl flex items-center justify-center px-5`;
