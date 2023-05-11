@@ -12,37 +12,104 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class WebSocketHandler extends TextWebSocketHandler {
-    //    private final List<WebSocketSession> sessions = new CopyOnWriteArrayList<>();
     private final Map<String, List<WebSocketSession>> sessionsMap = new ConcurrentHashMap<>();
+    private final Map<String, Map<WebSocketSession, Integer>> userScoreMap = new ConcurrentHashMap<>();
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-//        sessions.add(session);
         String roomId = extractRoomId(session);
-        List<WebSocketSession> sessions = sessionsMap.computeIfAbsent(roomId, key -> new CopyOnWriteArrayList<>());
+        List<WebSocketSession> sessions = sessionsMap.computeIfAbsent(roomId, key -> new CopyOnWriteArrayList<>();
         sessions.add(session);
+
+        Map<WebSocketSession, Integer> scores = userScoreMap.computeIfAbsent(roomId, key -> new ConcurrentHashMap<>());
+        scores.put(session, 0);
     }
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         String roomId = extractRoomId(session);
         List<WebSocketSession> sessions = sessionsMap.getOrDefault(roomId, Collections.emptyList());
+        Map<WebSocketSession, Integer> scores = userScoreMap.getOrDefault(roomId, Collections.emptyMap());
+
+
+        // JSON 파싱을 위한 ObjectMapper 객체 생성
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        // 메시지 내용을 JSON으로 파싱하여 Map 형태로 변환
+        Map<String, String> jsonMessage = objectMapper.readValue(message.getPayload(), new TypeReference<Map<String, String>>() {});
+
+        // JSON에서 author와 message 값을 추출
+        String author = jsonMessage.get("author");
+        String content = jsonMessage.get("message");
+
         for (WebSocketSession s : sessions) {
             if (s.isOpen()) {
                 s.sendMessage(message);
+            }
+        }
+
+        // 메시지 내용을 분석하여 점수를 업데이트하는 작업을 수행합니다.
+
+        if (content.equals("increase")) {
+            // 점수 증가 로직
+            Integer score = scores.get(session);
+            scores.put(session, score + 1);
+        } else if (content.equals("decrease")) {
+            // 점수 감소 로직
+            Integer score = scores.get(session);
+            scores.put(session, score - 1);
+        }
+
+        // 업데이트된 점수를 모든 세션에게 전송합니다.
+        for (WebSocketSession s : sessions) {
+            if (s.isOpen()) {
+                // 업데이트된 점수를 전송
+                Integer score = scores.get(s);
+                String scoreMessage = "Score: " + score;// ObjectMapper 객체 생성
+
+                // 원하는 데이터를 JSON 형식으로 변환
+                Map<String, String> jsonMessage2 = new HashMap<>();
+                jsonMessage2.put("author", "나가는사람");
+                jsonMessage2.put("message", scoreMessage);
+                String json = objectMapper.writeValueAsString(jsonMessage2);
+
+                // WebSocket 메시지로 전송
+                s.sendMessage(new TextMessage(json));
+
+                s.sendMessage(new TextMessage(scoreMessage));
             }
         }
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-//        sessions.remove(session);
-        String roomId = extractRoomId(session);
-        List<WebSocketSession> sessions = sessionsMap.getOrDefault(roomId, Collections.emptyList());
-        sessions.remove(session);
-        if (sessions.isEmpty()) {
-            sessionsMap.remove(roomId);
-        }
+            String roomId = extractRoomId(session);
+            List<WebSocketSession> sessions = sessionsMap.getOrDefault(roomId, Collections.emptyList());
+            sessions.remove(session);
+
+            Map<WebSocketSession, Integer> scores = userScoreMap.getOrDefault(roomId, Collections.emptyMap());
+            scores.remove(session);
+
+            if (sessions.isEmpty()) {
+                sessionsMap.remove(roomId);
+                userScoreMap.remove(roomId);
+            }
+
+            for (WebSocketSession s : sessions) {
+                if (s.isOpen()) {
+                    // ObjectMapper 객체 생성
+                    ObjectMapper objectMapper = new ObjectMapper();
+
+                    // 원하는 데이터를 JSON 형식으로 변환
+                    Map<String, String> jsonMessage = new HashMap<>();
+                    jsonMessage.put("author", "나가는사람");
+                    jsonMessage.put("message", "나 나가요");
+                    String json = objectMapper.writeValueAsString(jsonMessage);
+
+                    // WebSocket 메시지로 전송
+                    s.sendMessage(new TextMessage(json));
+                }
+            }
 
     }
 
