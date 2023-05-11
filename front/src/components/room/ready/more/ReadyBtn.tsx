@@ -35,6 +35,7 @@ export default function ReadyBtn({ boardId, setBoardId }: ReadyProps) {
         .updateBoard(boardId)
         .then((request) => {
           console.log(request);
+          console.log(`${boardId}번글 업데이트`);
         })
         .catch((err) => console.log(err));
     }
