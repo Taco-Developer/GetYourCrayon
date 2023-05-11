@@ -50,7 +50,7 @@ export default function Ready({
         client.send(
           JSON.stringify({
             author: 'admin',
-            message: `${client}님이 입장하셨습니다 :)`,
+            message: `${userId}님이 입장하셨습니다 :)`,
           }),
         );
       };
@@ -64,7 +64,7 @@ export default function Ready({
         client.send(
           JSON.stringify({
             author: 'admin',
-            message: `${client}님이 퇴장하셨습니다 :<`,
+            message: `${userId}님이 퇴장하셨습니다 :<`,
           }),
         );
         console.log('WebSocket Client Disconnected');
