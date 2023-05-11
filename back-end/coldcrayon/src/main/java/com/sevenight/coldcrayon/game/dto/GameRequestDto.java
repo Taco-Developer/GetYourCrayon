@@ -1,5 +1,6 @@
 package com.sevenight.coldcrayon.game.dto;
 
+import com.sevenight.coldcrayon.game.entity.GameCategory;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,5 +10,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @Builder
-public class RequestGameDto {
+public class GameRequestDto {
+
+    private String roomIdx;
+
+    private GameCategory gameCategory;
+
 }

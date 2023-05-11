@@ -15,15 +15,15 @@ public class JoinListServiceImpl implements JoinListService{
     final RedisMethods redisMethods;
     final String key = "joinlist";
 
-    public void createJoinList(String roomIdx, String userIdx){
+    public void createJoinList(String roomIdx, Long userIdx){
         redisMethods.setList(roomIdx, userIdx);
     }
 
-    public List<String> getJoinList(String roomIdx){
+    public List<Object> getJoinList(String roomIdx){
         return redisMethods.getList(roomIdx);
     }
 
-    public String removeUser(String roomIdx, String userIdx){
+    public Long removeUser(String roomIdx, Long userIdx){
         return redisMethods.removeElement(roomIdx, userIdx);
     }
 

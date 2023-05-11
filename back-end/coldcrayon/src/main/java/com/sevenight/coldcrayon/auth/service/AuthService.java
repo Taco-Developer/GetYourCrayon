@@ -43,6 +43,12 @@ public class AuthService {
         return UserDto.of(userRepository.saveAndFlush(getUser));
     }
 
+    public UserDto selectOneMember(String token) {
+        String email = tokenservice.getEmail(token);
+        return UserDto.of(userRepository.findByUserEmail(email));
+    }
+
+
     public UserDto selectOneMemberAllInfo (UserDto userDto){
         String email = userDto.getUserEmail();
         return UserDto.of(userRepository.findByUserEmail(email));

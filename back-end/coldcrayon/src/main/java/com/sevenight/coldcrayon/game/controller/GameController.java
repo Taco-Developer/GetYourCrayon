@@ -1,10 +1,12 @@
 package com.sevenight.coldcrayon.game.controller;
 
-import com.sevenight.coldcrayon.game.dto.RequestGameDto;
-import com.sevenight.coldcrayon.game.dto.ResponseGameDto;
+import com.sevenight.coldcrayon.auth.dto.UserDto;
+import com.sevenight.coldcrayon.auth.service.AuthService;
+import com.sevenight.coldcrayon.game.dto.GameRequestDto;
 import com.sevenight.coldcrayon.game.entity.GameCategory;
 import com.sevenight.coldcrayon.game.service.GameService;
 import com.sevenight.coldcrayon.theme.entity.ThemeCategory;
+import com.sevenight.coldcrayon.util.HeaderUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -16,12 +18,16 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class GameController {
 
-    GameService gameService;
+    final GameService gameService;
+    final AuthService authService;
 
     @PatchMapping("/start")
-    public ResponseEntity<ThemeCategory[]> gameStart(@RequestHeader String userIdx, @RequestBody String roomIdx, @RequestBody GameCategory gameCategory) {
+    public ResponseEntity<ThemeCategory[]> gameStart(@RequestHeader String Authorization, @RequestBody GameRequestDto gameRequestDto) {
         // 에러는 못 던진다.....
-        return ResponseEntity.ok().body(gameService.startGame(roomIdx, userIdx, gameCategory));
+//        UserDto user = authService.selectOneMember(HeaderUtil.getAccessTokenString(Authorization));
+        UserDto user = UserDto.builder().userIdx(1L).userEmail("1번@naver.com").userPoint(0).userNickname("바보").build();
+
+        return ResponseEntity.ok().body(gameService.startGame(user,gameRequestDto.getRoomIdx(), gameRequestDto.getGameCategory()));
     }
 
     @PostMapping("getKeyword/")

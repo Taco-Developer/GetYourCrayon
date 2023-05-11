@@ -25,7 +25,7 @@ public class RoomDto {
     private LocalDateTime roomCreateTime;
 
     // 방장 유저의 식별자
-    private String adminUserIdx;
+    private Long adminUserIdx;
 
     static public RoomDto of(RoomHash room){
         RoomDto roomDto = new RoomDto();
