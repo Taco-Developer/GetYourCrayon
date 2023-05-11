@@ -2,6 +2,7 @@ package com.sevenight.coldcrayon.config;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -14,6 +15,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+@Slf4j
 public class WebSocketHandler extends TextWebSocketHandler {
 
     private final Map<String, List<WebSocketSession>> sessionsMap = new ConcurrentHashMap<>();  // 세션 연결 정보: Map<방id, List<세션>>
@@ -109,6 +111,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
                     s.sendMessage(new TextMessage(json));
                 }
             }
+        } else {
+            log.info("특별 메시지가 아님");
         }
     }
 
