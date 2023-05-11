@@ -10,11 +10,6 @@ interface ChatPropsType {
   messageList: Array<any>;
 }
 
-// interface MessageType {
-//   author: string;
-//   message: string;
-// }
-
 export default function Chat({
   client,
   userId,
@@ -39,24 +34,25 @@ export default function Chat({
     }
   };
 
+  // 채팅 tailwindcss
   const me = 'justify-end';
-  const meMeta = 'justify-end mr-3';
-  const meContent = 'justify-end bg-blue-500';
+  const meMeta = 'hidden';
+  const meContent = 'justify-end bg-sky-400';
   const you = 'justify-start';
   const youMeta = 'justify-start ml-3';
-  const youContent = 'justify-start bg-yellow-500';
-  // id={userId === messageContent.author ? 'you' : 'other'}
+  const youContent = 'justify-start bg-slate-600';
+
   return (
     <OutDiv>
       <ChatDiv>
-        <ChatBody>
+        <ChatBody onScroll={scrollToBottom}>
           {messageList.map((messageContent, i) => {
             return (
               <Message
                 key={i}
                 className={userId === messageContent.author ? me : you}
               >
-                <div>
+                <MessageBody>
                   <div
                     className={
                       userId === messageContent.author ? meMeta : youMeta
@@ -71,7 +67,7 @@ export default function Chat({
                   >
                     <p>{messageContent.message}</p>
                   </MessageContent>
-                </div>
+                </MessageBody>
               </Message>
             );
           })}
@@ -98,59 +94,10 @@ export default function Chat({
 const OutDiv = tw.div`h-90 w-90 bg-white bg-opacity-50 rounded-xl flex flex-col items-center justify-center p-5`;
 const ChatDiv = tw.div`h-90 w-full flex items-center justify-center relative px-3`;
 const ChatBody = tw.div`h-full w-full overflow-y-scroll overflow-x-hidden scrollbar-ssibal`;
+const MessageBody = tw.div`max-w-xs`;
 const Message = tw.div`h-auto flex`;
-const MessageContent = tw.div`h-auto w-auto bg-green-500 rounded-xl text-white font-bold flex items-center m-5 break-words`;
-const YouMeMeta = tw.p`ml-5`;
-
+const MessageContent = tw.div`h-auto w-auto rounded-xl bg-white text-white text-xl font-bold flex items-center mb-4 p-2 break-words`;
+const YouMeMeta = tw.p`ml-1 mb-1`;
 const InputDiv = tw.div`h-10 w-full flex items-center justify-around`;
-const ChatInput = tw.input`h-full w-70 bg-white rounded-xl flex items-center justify-center`;
+const ChatInput = tw.input`h-full w-70 bg-white rounded-xl flex items-center justify-center px-5`;
 const ChatBtn = tw.button`h-full w-20 bg-main-green hover:bg-main-pink rounded-xl flex items-center justify-center`;
-
-// 수정후 지울 예정
-// return (
-//   <div className="chat-window">
-//     <div className="chat-header">
-//       <p>Live Chat</p>
-//     </div>
-
-//     {/*  */}
-//     <div className="chat-body">
-//       <div className="message-container">
-// {messageList.map((messageContent, i) => {
-//   return (
-//     <div
-//       key={i}
-//       className="message"
-//       id={userId === messageContent.author ? 'you' : 'other'}
-//     >
-//       <div>
-//         <div className="message-meta">
-//           <p id="author">{messageContent.author}</p>
-//         </div>
-//         <div className="message-content">
-//           <p>{messageContent.message}</p>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// })}
-//       </div>
-//     </div>
-//     {/*  */}
-
-//     <div className="chat-footer">
-//       <input
-//         type="text"
-//         value={currentMessage}
-//         placeholder="메시지..."
-//         onChange={(event) => {
-//           setCurrentMessage(event.target.value);
-//         }}
-//         onKeyPress={(event) => {
-//           event.key === 'Enter' && sendMessage();
-//         }}
-//       />
-//       <button onClick={sendMessage}>&#9658;</button>
-//     </div>
-//   </div>
-// );
