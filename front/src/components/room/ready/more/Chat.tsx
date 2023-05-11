@@ -26,6 +26,10 @@ export default function Chat({
     });
   };
 
+  useEffect(() => {
+    scrollToBottom();
+  }, [messageList]);
+
   const sendMessage = () => {
     const message = { author: userId, message: currentMessage };
     if (client !== null) {
@@ -45,7 +49,7 @@ export default function Chat({
   return (
     <OutDiv>
       <ChatDiv>
-        <ChatBody onScroll={scrollToBottom}>
+        <ChatBody ref={messagesEndRef}>
           {messageList.map((messageContent, i) => {
             return (
               <Message
@@ -99,5 +103,5 @@ const Message = tw.div`h-auto flex`;
 const MessageContent = tw.div`h-auto w-auto rounded-xl bg-white text-white text-xl font-bold flex items-center mb-4 p-2 break-words`;
 const YouMeMeta = tw.p`ml-1 mb-1`;
 const InputDiv = tw.div`h-10 w-full flex items-center justify-around`;
-const ChatInput = tw.input`h-full w-70 bg-white rounded-xl flex items-center justify-center px-5`;
-const ChatBtn = tw.button`h-full w-20 bg-main-green hover:bg-main-pink rounded-xl flex items-center justify-center`;
+const ChatInput = tw.input`h-full w-70 text-2xl bg-white rounded-xl flex items-center justify-center px-5`;
+const ChatBtn = tw.button`h-full w-20 text-white text-2xl bg-main-green hover:bg-main-pink rounded-xl flex items-center justify-center`;
