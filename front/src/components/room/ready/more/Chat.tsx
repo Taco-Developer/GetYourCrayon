@@ -24,7 +24,10 @@ export default function Chat({
   };
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({
+      behavior: 'auto',
+      block: 'end',
+    });
   }, [messageList]);
 
   const sendMessage = () => {
