@@ -33,6 +33,7 @@ export default function Ready({
   const [messageList, setMessageList] = useState<MessageType[]>([]);
   const [choice, setChoice] = useState<number>(1);
   const [showChat, setShowChat] = useState<string>('ready');
+  const [boardId, setBoardId] = useState<number | null>(null);
 
   useEffect(() => {
     if (finalroom !== '') {
@@ -130,7 +131,7 @@ export default function Ready({
               </PickContent>
             </PickDiv>
             <BtnDiv>
-              <ReadyBtn />
+              <ReadyBtn boardId={boardId} setBoardId={setBoardId} />
             </BtnDiv>
           </MoreDiv>
         </RoomBody>
