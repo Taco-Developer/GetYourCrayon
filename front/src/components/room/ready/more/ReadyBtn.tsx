@@ -4,7 +4,12 @@ import Link from 'next/link';
 import Invite from './Invite';
 import { boardAPI } from '@/api/api';
 
-export default function ReadyBtn() {
+interface ReadyProps {
+  boardId: number | null;
+  setBoardId: React.Dispatch<React.SetStateAction<number | null>>;
+}
+
+export default function ReadyBtn({ boardId, setBoardId }: ReadyProps) {
   const [baseUrl, setBaseUrl] = useState<string>(
     'https://getyourcrayon.co.kr/room/',
   );
@@ -16,14 +21,20 @@ export default function ReadyBtn() {
   // (미완) 게시글 작성하는 함수 api 확인되어야 가능
   const creatBaseUrl = async (title: string, url: string) => {
     let defaultTitle: string;
-    if (title === '') {
-      defaultTitle = '같이할사람 여기여기 붙어라 :)';
+    if (boardId === null) {
+      if (title === '') {
+        defaultTitle = '같이할사람 여기여기 붙어라 :)';
+      } else {
+        defaultTitle = title;
+      }
+      await boardAPI.postBoard(defaultTitle, url).then((request) => {
+        setBoardId(request.data.id);
+      });
     } else {
-      defaultTitle = title;
+      await boardAPI.updateBoard(boardId).then(() => {
+        console.log(`${boardId} 업데이트 완료`);
+      });
     }
-    await boardAPI.postBoard(defaultTitle, url).then((request) => {
-      console.log(request);
-    });
   };
 
   return (
