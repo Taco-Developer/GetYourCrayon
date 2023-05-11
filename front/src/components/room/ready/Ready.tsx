@@ -37,7 +37,7 @@ export default function Ready({
   useEffect(() => {
     if (finalroom !== '') {
       const newClient = new W3CWebSocket(
-        `wss://getyourcrayon.co.kr/api/${finalroom}`,
+        `ws://getyourcrayon.co.kr/api/${finalroom}`,
       );
       setClient(newClient);
     }
@@ -58,9 +58,6 @@ export default function Ready({
           const data = JSON.parse(message.data);
           setMessageList((prevMessages) => [...prevMessages, data]);
         }
-      };
-      client.onclose = () => {
-        client.close();
       };
       // client.close = () => {
       //   client.send(
