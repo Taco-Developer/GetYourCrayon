@@ -31,9 +31,13 @@ export default function ReadyBtn({ boardId, setBoardId }: ReadyProps) {
         setBoardId(request.data.id);
       });
     } else {
-      await boardAPI.updateBoard(boardId).then(() => {
-        console.log(`${boardId} 업데이트 완료`);
-      });
+      await boardAPI
+        .updateBoard(boardId)
+        .then((request) => {
+          console.log(request);
+          console.log(`${boardId}번글 업데이트`);
+        })
+        .catch((err) => console.log(err));
     }
   };
 
