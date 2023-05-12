@@ -58,22 +58,22 @@ public class WebSocketHandler extends TextWebSocketHandler {
         // 메시지 내용을 분석하여 점수를 업데이트하는 작업을 수행합니다.
 
 
-        for (WebSocketSession s : sessions) {
-            if (s.isOpen()) {
-                // 업데이트된 점수를 전송
-                Integer score = scores.get(s);
-                String scoreMessage = "Score: " + score;// ObjectMapper 객체 생성
-
-                // 원하는 데이터를 JSON 형식으로 변환
-                Map<String, String> jsonMessage2 = new HashMap<>();
-                jsonMessage2.put("author", "점수알리미");
-                jsonMessage2.put("message", scoreMessage);
-                String json = objectMapper.writeValueAsString(jsonMessage2);
-
-                // WebSocket 메시지로 전송
-                s.sendMessage(new TextMessage(json));
-            }
-        }
+//        for (WebSocketSession s : sessions) {
+//            if (s.isOpen()) {
+//                // 업데이트된 점수를 전송
+//                Integer score = scores.get(s);
+//                String scoreMessage = "Score: " + score;// ObjectMapper 객체 생성
+//
+//                // 원하는 데이터를 JSON 형식으로 변환
+//                Map<String, String> jsonMessage2 = new HashMap<>();
+//                jsonMessage2.put("author", "점수알리미");
+//                jsonMessage2.put("message", scoreMessage);
+//                String json = objectMapper.writeValueAsString(jsonMessage2);
+//
+//                // WebSocket 메시지로 전송
+//                s.sendMessage(new TextMessage(json));
+//            }
+//        }
 
     }
 
