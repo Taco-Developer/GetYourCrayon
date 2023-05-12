@@ -10,6 +10,7 @@ import { setNavbarPath } from '@/store/slice/navbarSlice';
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { ReactNode } from 'react';
+import { gameAPI } from '@/api/api';
 
 interface NavbarPropsType {
   children: ReactNode;
@@ -19,6 +20,18 @@ export default function Navbar({ children }: NavbarPropsType) {
   const router = useRouter();
   const navbarPath = useSelector((state: RootState) => state.navbarPath);
   const dispatch = useDispatch<AppDispatch>();
+
+  const enterRoom = async () => {
+    await gameAPI
+      .createRoom()
+      .then((request) => {
+        console.log(request.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   useEffect(() => {
     dispatch(setNavbarPath(router.pathname));
   }, [dispatch, router]);
@@ -28,6 +41,7 @@ export default function Navbar({ children }: NavbarPropsType) {
       <NavbarDiv>
         <LogoDiv>
           <Link
+            onClick={enterRoom}
             href={'/room'}
             className={`${
               navbarPath.path.indexOf('room') !== -1
