@@ -66,6 +66,9 @@ export default function Board({
   cookie: string;
 }) {
   const [boardData, setBoardData] = useState(res);
+  let coks = getCookie('accessToken');
+  console.log(coks, 'no.1');
+  console.log(cookie);
   return (
     <Container>
       <div className="text-xl md:text-2xl lg:text-3xl text-center mb-4 ">
