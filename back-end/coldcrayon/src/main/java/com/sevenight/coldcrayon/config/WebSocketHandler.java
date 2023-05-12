@@ -91,8 +91,9 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
                 // 원하는 데이터를 JSON 형식으로 변환
                 Map<String, String> jsonMessage = new HashMap<>();
-                jsonMessage.put("author", i);
-                jsonMessage.put("message", "나 나가요");
+                jsonMessage.put("type", "chat");
+                jsonMessage.put("author", "admin");
+                jsonMessage.put("message", i+ "님이 나갔습니다");
                 String json = objectMapper.writeValueAsString(jsonMessage);
 
                 // WebSocket 메시지로 전송
