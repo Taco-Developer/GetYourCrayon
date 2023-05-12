@@ -72,7 +72,8 @@ public class SecurityConfig{
                             "/member/nicknamecheck",
                             "/info/news",
                             "/board",
-                            "/{roomId}"
+                            "/{roomId}",
+                            "/board/delete/{boardIdx}"
                     );
         };
     }
