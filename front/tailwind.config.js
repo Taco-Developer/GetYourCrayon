@@ -36,6 +36,7 @@ module.exports = {
       minHeight: {
         'container-height': '90vh',
         'container-height2': '73vh',
+        'board-height': '63vh',
       },
       backgroundColor: {
         'board-color': 'rgba(255, 255, 255, 0.73)',
