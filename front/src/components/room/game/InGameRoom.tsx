@@ -1,22 +1,30 @@
 import React from 'react';
 
+import { w3cwebsocket as W3CWebsocket } from 'websocket';
+
 import tw from 'tailwind-styled-components';
 
 import Lier from '@/components/room/game/Lier';
 import ReverseCatchMind from '@/components/room/game/ReverseCatchMind';
 import AiPaintingGuess from '@/components/room/game/AiPaintingGuess';
 import RelayPainting from '@/components/room/game/RelayPainting';
-import CatchMinde from '@/components/room/game/CatchMinde';
+import CatchMind from '@/components/room/game/CatchMind';
 
-export default function InGameRoom({ game }: { game: string }) {
+export default function InGameRoom({
+  game,
+  client,
+}: {
+  game: string;
+  client: W3CWebsocket;
+}) {
   return (
     <>
       <Container>
-        {game === 'Lier' && <Lier />}
-        {game === 'AiPainting' && <AiPaintingGuess />}
-        {game === 'RelayPainting' && <RelayPainting />}
-        {game === 'ReverseCatchMind' && <ReverseCatchMind />}
-        {game === 'CatchMinde' && <CatchMinde />}
+        {game === 'Lier' && <Lier client={client} />}
+        {game === 'AiPainting' && <AiPaintingGuess client={client} />}
+        {game === 'RelayPainting' && <RelayPainting client={client} />}
+        {game === 'ReverseCatchMind' && <ReverseCatchMind client={client} />}
+        {game === 'CatchMind' && <CatchMind client={client} />}
       </Container>
     </>
   );
