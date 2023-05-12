@@ -18,21 +18,15 @@ import NextIcon from '../../../../../public/icons/next.svg';
 import PaintBucketIcon from '../../../../../public/icons/paint-bucket.svg';
 import ReturnIcon from '../../../../../public/icons/return.svg';
 import RecycleBinIcon from '../../../../../public/icons/recycle-bin.svg';
-import CircleIcon from '../../../../../public/icons/circle.svg';
-import SquareIcon from '../../../../../public/icons/square.svg';
 import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
+
 import {
-  addNextArray,
-  addPrevArray,
   changeBgColor,
   changeBrushWidth,
-  changeOpacityStyle,
   changePaletteColor,
-  popNextArray,
-  popPrevArray,
+  changeSelectedTool,
 } from '@/store/slice/game/drawSlice';
 
-const INIT_BG_COLOR = '#FFFFFF';
 const BRUSH_WIDTH_LIST = [
   [4, 'bg-black rounded-full w-[4px] h-[4px]'],
   [8, 'bg-black rounded-full w-[8px] h-[8px]'],
@@ -41,24 +35,38 @@ const BRUSH_WIDTH_LIST = [
   [24, 'bg-black rounded-full w-[24px] h-[24px]'],
 ];
 
-const TYPE = 'draw';
-
 export default function Drawing({ client }: { client: W3CWebSocket }) {
   const {
     brushWidth,
     canvasBgColor,
-    nextArray,
-    opacityStyle,
     paletteColor,
-    prevArray,
+    INIT_BG_COLOR,
+    selectedTool,
   } = useAppSelector((state) => state.draw);
   const dispatch = useAppDispatch();
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [ctx, setCtx] = useState<CanvasRenderingContext2D | null>();
 
+  const [prevArray, setPrevArray] = useState<ImageData[]>([]);
+  const [nextArray, setNextArray] = useState<ImageData[]>([]);
+
   const [isDrawing, setIsDrawing] = useState<boolean>();
-  const [selectedTool, setSelectedTool] = useState<string>('brush');
+
+  // 소켓 통신
+  const sendMessage = useCallback(
+    async (action: string, payload?: any) => {
+      const type = 'draw';
+      let message: string;
+      if (payload === undefined) {
+        message = JSON.stringify({ type, action });
+      } else {
+        message = JSON.stringify({ type, action, ...payload });
+      }
+      client.send(message);
+    },
+    [client],
+  );
 
   // 현재 touch 위치 찾기
   const getTouchPosition = (event: React.TouchEvent) => {
@@ -70,49 +78,53 @@ export default function Drawing({ client }: { client: W3CWebSocket }) {
   };
 
   // 그리기 및 채우기
-  const startPainting = (event: React.MouseEvent | React.TouchEvent) => {
+  const startDrawing = (event: React.MouseEvent | React.TouchEvent) => {
     if (selectedTool !== 'fill') {
       setIsDrawing(true);
       if (ctx) {
         ctx.beginPath();
-        dispatch(
-          addPrevArray(
-            ctx.getImageData(
-              0,
-              0,
-              canvasRef.current!.width,
-              canvasRef.current!.height,
-            ),
+        setPrevArray((prev) => [
+          ...prev,
+          ctx.getImageData(
+            0,
+            0,
+            canvasRef.current!.width,
+            canvasRef.current!.height,
           ),
-        );
+        ]);
       }
+      sendMessage('startDraw');
       // 터치 위치 이동
       if (event.type === 'touchstart') {
         const { offsetX, offsetY } = getTouchPosition(
           event as React.TouchEvent,
         );
         ctx?.moveTo(offsetX, offsetY);
+        sendMessage('move', { offsetX, offsetY });
       }
       return;
     }
     // 채우기
     if (selectedTool === 'fill') {
       const canvas = canvasRef.current;
-      ctx?.beginPath();
-      ctx!.fillRect(0, 0, canvas!.width, canvas!.height);
-      ctx?.closePath();
+      if (!ctx || !canvas) return;
+
+      ctx.beginPath();
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
       dispatch(changeBgColor(paletteColor));
+      sendMessage('fill');
     }
   };
 
   // 그리기 종료
-  const cancelPainting = () => {
+  const cancelDrawing = () => {
     setIsDrawing(false);
     ctx?.closePath();
+    sendMessage('cancelDraw');
   };
 
   // 마우스 이동 or 그리기
-  const onMoveHandler = (event: React.MouseEvent | React.TouchEvent) => {
+  const moveHandler = (event: React.MouseEvent | React.TouchEvent) => {
     let nativeEvent;
     let offsetX;
     let offsetY;
@@ -130,163 +142,134 @@ export default function Drawing({ client }: { client: W3CWebSocket }) {
     if (isDrawing) {
       ctx?.lineTo(offsetX, offsetY);
       ctx?.stroke();
+      sendMessage('drawMove', { offsetX, offsetY });
       return;
     }
     ctx?.moveTo(offsetX, offsetY);
+    sendMessage('move', { offsetX, offsetY });
   };
 
   // 캔버스 초기화
   const clearCanvas = () => {
-    if (ctx) {
-      ctx.fillStyle = INIT_BG_COLOR;
-      ctx.clearRect(0, 0, canvasRef.current!.width, canvasRef.current!.height);
-      ctx.fillRect(0, 0, canvasRef.current!.width, canvasRef.current!.height);
-    }
+    const canavs = canvasRef.current;
+    if (!ctx || !canavs) return;
+
+    ctx.fillStyle = INIT_BG_COLOR;
+    ctx.clearRect(0, 0, canavs.width, canavs.height);
+    ctx.fillRect(0, 0, canavs.width, canavs.height);
+    ctx.fillStyle = paletteColor;
+    dispatch(changeBgColor(INIT_BG_COLOR));
   };
 
   // 뒤로 가기 클릭
-  const onReturnIconClickHandler = () => {
-    const message = {
-      type: TYPE,
-      action: 'goPrev',
-    };
-    client.send(JSON.stringify(message));
+  const prevClickHandler = () => {
+    setPrevArray((prev) => {
+      const idx = prev.length - 1;
+      const currentImageData = ctx!.getImageData(
+        0,
+        0,
+        canvasRef.current!.width,
+        canvasRef.current!.height,
+      );
 
-    const idx = prevArray.length - 1;
-    const currentImageData = ctx!.getImageData(
-      0,
-      0,
-      canvasRef.current!.width,
-      canvasRef.current!.height,
-    );
+      if (idx >= 0) {
+        setNextArray((next) => [...next, currentImageData]);
+        const result = prev;
+        const popedImage = result.pop()!;
+        ctx?.putImageData(popedImage, 0, 0);
+        sendMessage('goPrev');
+        return result;
+      }
 
-    if (idx >= 0) {
-      dispatch(addNextArray(currentImageData));
-      const popedImage = prevArray[idx];
-      ctx?.putImageData(popedImage, 0, 0);
-      dispatch(popPrevArray());
-      return;
-    }
-
-    clearCanvas();
+      clearCanvas();
+      sendMessage('clearCanvas');
+      return [];
+    });
   };
 
-  // 앞으로 가기 클릭
-  const onNextIconClickHandler = () => {
-    const message = {
-      type: TYPE,
-      action: 'goNext',
-    };
-    client.send(JSON.stringify(message));
-
-    const idx = nextArray.length - 1;
-    if (idx < 0) return;
-    const currentImageData = ctx!.getImageData(
-      0,
-      0,
-      canvasRef.current!.width,
-      canvasRef.current!.height,
-    );
-    dispatch(addPrevArray(currentImageData));
-    const popedImage = nextArray[idx];
-    ctx?.putImageData(popedImage, 0, 0);
-    dispatch(popNextArray());
+  // 되돌리기 클릭
+  const nextClickHandler = () => {
+    setNextArray((next) => {
+      const idx = next.length - 1;
+      if (idx < 0) return [];
+      const currentImageData = ctx!.getImageData(
+        0,
+        0,
+        canvasRef.current!.width,
+        canvasRef.current!.height,
+      );
+      setPrevArray((prev) => [...prev, currentImageData]);
+      const result = next;
+      const popedImage = result.pop()!;
+      ctx?.putImageData(popedImage, 0, 0);
+      sendMessage('goNext');
+      return result;
+    });
   };
 
   // 휴지통 클릭
-  const onTrashBinClickHandler = () => {
-    const message = {
-      type: TYPE,
-      action: 'clearCanvas',
-    };
-    client.send(JSON.stringify(message));
-
+  const trashBinClickHandler = () => {
     const currentImageData = ctx!.getImageData(
       0,
       0,
       canvasRef.current!.width,
       canvasRef.current!.height,
     );
-    dispatch(addPrevArray(currentImageData));
+    setPrevArray((prev) => [...prev, currentImageData]);
     clearCanvas();
+    sendMessage('goTrashBin');
   };
-
-  const onResizeHandler = useCallback(() => {
-    const canvas = canvasRef.current;
-
-    if (canvas) {
-      const width = canvas.offsetWidth;
-      const height = canvas.offsetHeight;
-      const dpr = window.devicePixelRatio;
-
-      // 캔버스 크기 설정
-      canvas.width = width * dpr;
-      canvas.height = height * dpr;
-
-      ctx?.scale(dpr, dpr);
-    }
-  }, [ctx]);
-
-  // 선택된 색, 투명도 적용
-  useEffect(() => {
-    if (ctx) {
-      setSelectedTool('brush');
-      const rgba = [];
-      for (let i = 1; i < paletteColor.length; i += 2) {
-        const tmp = paletteColor[i] + paletteColor[i + 1];
-        rgba.push(parseInt(tmp, 16));
-      }
-      ctx.strokeStyle = `rgba(${rgba[0]}, ${rgba[1]}, ${rgba[2]}, ${opacityStyle})`;
-      ctx.fillStyle = `rgba(${rgba[0]}, ${rgba[1]}, ${rgba[2]}, ${opacityStyle})`;
-      const message = {
-        type: TYPE,
-        action: 'changeColorOpacity',
-        paletteColor,
-        opacityStyle,
-      };
-      client.send(JSON.stringify(message));
-    }
-  }, [paletteColor, ctx, opacityStyle, client]);
 
   // 캔버스 초기 설정
   useEffect(() => {
     const canvas = canvasRef.current;
-    // window.addEventListener('resize', () => {
-    //   onResizeHandler();
-    // });
-    if (canvas) {
-      const initCanvas = () => {
-        // 캔버스 구역 크기
-        const width = canvas.offsetWidth;
-        const height = canvas.offsetHeight;
-        const dpr = window.devicePixelRatio;
+    if (!canvas) return;
 
-        // 캔버스 크기 설정
-        canvas.width = width * dpr;
-        canvas.height = height * dpr;
+    // 캔버스 자체 크기와 CSS 크기 맞추기
+    const width = canvas.offsetWidth;
+    const height = canvas.offsetHeight;
+    const dpr = window.devicePixelRatio;
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
 
-        const ctx = canvas.getContext('2d', { willReadFrequently: true });
-        ctx?.scale(dpr, dpr);
+    const context = canvas.getContext('2d', { willReadFrequently: true });
+    context!.scale(dpr, dpr);
+    setCtx(context);
 
-        const message = {
-          type: TYPE,
-          action: 'saveRatio',
-          width,
-          height,
-        };
-        client.send(JSON.stringify(message));
+    sendMessage('saveRatio', { width, height });
+  }, [canvasRef, sendMessage]);
 
-        return ctx;
-      };
-      const ctx = initCanvas();
-      setCtx(ctx);
+  // 붓 너비 변경
+  useEffect(() => {
+    if (!ctx) return;
+    ctx.lineWidth = brushWidth;
+    sendMessage('changeBrushWidth', { width: brushWidth });
+  }, [ctx, brushWidth, sendMessage]);
+
+  // 색 변경
+  useEffect(() => {
+    if (!ctx) return;
+    ctx.strokeStyle = paletteColor;
+    ctx.fillStyle = paletteColor;
+    sendMessage('changeColor', { paletteColor });
+  }, [ctx, paletteColor, sendMessage]);
+
+  // 도구 변경
+  useEffect(() => {
+    if (!ctx) return;
+
+    switch (selectedTool) {
+      case 'erase':
+        ctx.fillStyle = canvasBgColor;
+        ctx.strokeStyle = canvasBgColor;
+        break;
+      default:
+        ctx.strokeStyle = paletteColor;
+        ctx.fillStyle = paletteColor;
+        break;
     }
-    return () => {
-      // window.removeEventListener('resize', () => {
-      //   onResizeHandler();
-      // });
-    };
-  }, [canvasRef, onResizeHandler, client]);
+    sendMessage('changeTool', { selectedTool });
+  }, [selectedTool, ctx, paletteColor, canvasBgColor, sendMessage]);
 
   return (
     <>
@@ -301,12 +284,12 @@ export default function Drawing({ client }: { client: W3CWebSocket }) {
         <canvas
           className="w-full flex-auto bg-white"
           ref={canvasRef}
-          onMouseDown={startPainting}
-          onTouchStart={startPainting}
-          onTouchMove={onMoveHandler}
-          onMouseUp={cancelPainting}
-          onMouseMove={onMoveHandler}
-          onMouseLeave={cancelPainting}
+          onMouseDown={startDrawing}
+          onTouchStart={startDrawing}
+          onTouchMove={moveHandler}
+          onMouseUp={cancelDrawing}
+          onMouseMove={moveHandler}
+          onMouseLeave={cancelDrawing}
         ></canvas>
         <Margin type={MarginType.height} size={16} />
         <CanvasOptions>
@@ -316,14 +299,7 @@ export default function Drawing({ client }: { client: W3CWebSocket }) {
                 <BrushWidthItem
                   key={brush[0]}
                   onClick={() => {
-                    const message = {
-                      type: TYPE,
-                      action: 'changeBrushWidth',
-                      width: brush[0] as number,
-                    };
-                    client.send(JSON.stringify(message));
                     dispatch(changeBrushWidth(brush[0] as number));
-                    ctx!.lineWidth = brush[0] as number;
                   }}
                   className={brushWidth === brush[0] ? 'bg-[#146C94]' : ''}
                 >
@@ -334,14 +310,14 @@ export default function Drawing({ client }: { client: W3CWebSocket }) {
             <div className="p-2 outline outline-1 rounded-lg flex justify-between items-center gap-4">
               <div className="w-[14px] h-[14px] rounded-full bg-gray-300" />
               <Slider
-                min={0}
-                step={0.01}
-                max={1}
-                value={opacityStyle}
+                min={1}
+                step={1}
+                max={50}
+                value={brushWidth}
                 onChange={(_, value) => {
-                  dispatch(changeOpacityStyle(value as number));
+                  dispatch(changeBrushWidth(value as number));
                 }}
-                defaultValue={1}
+                defaultValue={brushWidth}
                 valueLabelDisplay="auto"
                 className="w-full"
               />
@@ -351,9 +327,7 @@ export default function Drawing({ client }: { client: W3CWebSocket }) {
           <Tools>
             <ToolItem
               onClick={() => {
-                setSelectedTool('brush');
-                ctx!.fillStyle = paletteColor;
-                ctx!.strokeStyle = paletteColor;
+                dispatch(changeSelectedTool('brush'));
               }}
               className={selectedTool === 'brush' ? 'bg-[#146C94]' : ''}
             >
@@ -365,9 +339,7 @@ export default function Drawing({ client }: { client: W3CWebSocket }) {
             </ToolItem>
             <ToolItem
               onClick={() => {
-                setSelectedTool('erase');
-                ctx!.fillStyle = canvasBgColor;
-                ctx!.strokeStyle = canvasBgColor;
+                dispatch(changeSelectedTool('erase'));
               }}
               className={selectedTool === 'erase' ? 'bg-[#146C94]' : ''}
             >
@@ -379,9 +351,7 @@ export default function Drawing({ client }: { client: W3CWebSocket }) {
             </ToolItem>
             <ToolItem
               onClick={() => {
-                setSelectedTool('fill');
-                ctx!.fillStyle = paletteColor;
-                ctx!.strokeStyle = paletteColor;
+                dispatch(changeSelectedTool('fill'));
               }}
               className={selectedTool === 'fill' ? 'bg-[#146C94]' : ''}
             >
@@ -391,13 +361,13 @@ export default function Drawing({ client }: { client: W3CWebSocket }) {
                 fill={selectedTool === 'fill' ? '#FFFFFF' : '#000000'}
               />
             </ToolItem>
-            <ToolItem onClick={onReturnIconClickHandler}>
+            <ToolItem onClick={prevClickHandler}>
               <ReturnIcon width={32} height={32} />
             </ToolItem>
-            <ToolItem onClick={onNextIconClickHandler}>
+            <ToolItem onClick={nextClickHandler}>
               <NextIcon width={32} height={32} />
             </ToolItem>
-            <ToolItem onClick={onTrashBinClickHandler}>
+            <ToolItem onClick={trashBinClickHandler}>
               <RecycleBinIcon width={32} height={32} />
             </ToolItem>
           </Tools>
