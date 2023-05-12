@@ -41,4 +41,14 @@ public class BoardService {
         Pageable pageable = PageRequest.of(pageNum, pageSize, Sort.by("boardUpdateTime").descending());
         return boardRepository.findAll(pageable);
     }
+
+    public String deleteBoard(Integer boardIdx) {
+        Optional<Board> findBoard = boardRepository.findById(boardIdx);
+        if(findBoard.isPresent()){
+            Board board = findBoard.get();
+        }
+
+        boardRepository.delete(findBoard.get());
+        return "게시글" + boardIdx + "가 지워졌습니다.";
+    }
 }

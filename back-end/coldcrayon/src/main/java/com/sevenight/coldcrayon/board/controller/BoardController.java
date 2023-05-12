@@ -1,4 +1,6 @@
 package com.sevenight.coldcrayon.board.controller;
+import com.sevenight.coldcrayon.auth.dto.UserDto;
+import com.sevenight.coldcrayon.auth.service.AuthService;
 import com.sevenight.coldcrayon.auth.service.TokenService;
 import com.sevenight.coldcrayon.board.dto.ArticleDto;
 import com.sevenight.coldcrayon.board.dto.CreateArticleRequest;
@@ -31,6 +33,8 @@ public class BoardController {
     private final BoardService boardService;
     private final UserRepository userRepository;
     private final TokenService tokenservice;
+
+    private final AuthService authService;
 
     //게시글 작성
     @PostMapping("/create")
@@ -77,14 +81,14 @@ public class BoardController {
             // 해당 게시글을 작성한 유저와 현재 로그인한 유저가 다른 경우, 업데이트 불가능
             if (!board.getUserIdx().equals(finduser)) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(Map.of("message", "You are not authorized to update this article."));
+                        .body(Map.of("message", "글을 작성한 사용자가 아닙니다"));
             }
             LocalDateTime currentTime = LocalDateTime.now();
             LocalDateTime lastUpdateTime = board.getBoardUpdateTime();
             Duration duration = Duration.between(lastUpdateTime, currentTime);
             if (duration.toMinutes() < 10) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(Map.of("message", "Article with ID " + boardId + " has been updated within the last 10 minutes and cannot be updated again."));
+                        .body(Map.of("message", "게시글을 작성한지 10분이 지나지 않았습니다."));
 
             }
             board.setBoardUpdateTime(LocalDateTime.now());
@@ -92,15 +96,12 @@ public class BoardController {
             return ResponseEntity.ok(new CreateArticleResponse(id, board.getBoardTitle(), board.getBoardContent(), board.getBoardCreateTime(), board.getBoardUpdateTime()));
         } catch (NoSuchElementException e) {
             // 2. 요청한 게시글 정보를 찾을 수 없는 경우
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Article not found."));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "게시글을 찾을 수 없습니다."));
         } catch (Exception e) {
             // 3. 그 외 예외 발생시
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "Server error."));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "서버 에러 입니다"));
         }
-
-
-
     }
 
     //게시글 페이징
@@ -115,6 +116,13 @@ public class BoardController {
         Page<Board> articles = boardService.getArticles(pageNum, pageSize);
         Page<ArticleDto> toMap = articles.map(a -> new ArticleDto(a.getBoardId(), a.getBoardTitle(), a.getBoardContent(), a.getBoardCreateTime(), a.getBoardUpdateTime()));
         return ResponseEntity.ok().body(toMap);
+    }
+
+    @DeleteMapping("/delete/{boardIdx}")
+    public ResponseEntity<?> deleteBoard(@RequestHeader String Authorization, @PathVariable Integer boardIdx) {
+        UserDto user = authService.selectOneMember(HeaderUtil.getAccessTokenString(Authorization));
+        String res = boardService.deleteBoard(boardIdx);
+        return ResponseEntity.ok().body(res);
     }
 
 
