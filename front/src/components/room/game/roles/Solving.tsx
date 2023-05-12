@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+
+import { w3cwebsocket as W3CWebSocket } from 'websocket';
 
 import tw from 'tailwind-styled-components';
 
@@ -9,17 +11,93 @@ import Margin, { MarginType } from '@/components/ui/Margin';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 
-export default function Solving({ isReverseGame }: { isReverseGame: boolean }) {
+export default function Solving({
+  isReverseGame,
+  client,
+}: {
+  isReverseGame: boolean;
+  client: W3CWebSocket;
+}) {
   const submitHandler: React.FormEventHandler = (event) => {
     event.preventDefault();
   };
+
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  const [ctx, setCtx] = useState<CanvasRenderingContext2D | null>();
+  const [widthRatio, setWidthRatio] = useState<number>();
+  const [heightRatio, setHeightRatio] = useState<number>();
+
+  const saveRatio = (width: number, height: number) => {
+    console.log(width, height);
+  };
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (canvas) {
+      const initCanvas = () => {
+        // 캔버스 구역 크기
+        const width = canvas.offsetWidth;
+        const height = canvas.offsetHeight;
+        const dpr = window.devicePixelRatio;
+
+        // 캔버스 크기 설정
+        canvas.width = width * dpr;
+        canvas.height = height * dpr;
+
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        ctx?.scale(dpr, dpr);
+
+        return ctx;
+      };
+      const ctx = initCanvas();
+      setCtx(ctx);
+    }
+  }, [canvasRef]);
+
+  useEffect(() => {
+    client.onmessage = (message) => {
+      if (typeof message.data !== 'string') return;
+      const data = JSON.parse(message.data);
+      if (data.type !== 'draw') return;
+      if (data.action === 'saveRatio') {
+        console.log('saveRatio');
+        saveRatio(data.width, data.height);
+        return;
+      }
+      if (data.action === 'changeColorOpacity') {
+        console.log('changeColorOpacity');
+        return;
+      }
+      if (data.action === 'changeBrushWidth') {
+        console.log('changeBrushWidth');
+        return;
+      }
+      if (data.action === 'goPrev') {
+        console.log('goPrev');
+        return;
+      }
+      if (data.action === 'goNext') {
+        console.log('goNext');
+        return;
+      }
+      if (data.action === 'clearCanvas') {
+        console.log('clearCanvas');
+        return;
+      }
+    };
+    return () => {};
+  }, [client]);
 
   return (
     <>
       <GameLeftSide isPainting={false} />
       {isReverseGame && (
         <GameCenter>
-          <PaintingView />
+          <canvas
+            className="w-full bg-white flex-auto"
+            ref={canvasRef}
+          ></canvas>
           <Margin type={MarginType.height} size={16} />
           <AnswerForm onSubmit={submitHandler}>
             <Input
@@ -39,7 +117,10 @@ export default function Solving({ isReverseGame }: { isReverseGame: boolean }) {
             <p>현재 참가자5님이 그리는 중입니다.</p>
           </PaintingInfo>
           <Margin type={MarginType.height} size={16} />
-          <PaintingView />
+          <canvas
+            className="w-full bg-white flex-auto"
+            ref={canvasRef}
+          ></canvas>
           <Margin type={MarginType.height} size={16} />
           <AnswerForm onSubmit={submitHandler}>
             <Input
@@ -57,13 +138,6 @@ export default function Solving({ isReverseGame }: { isReverseGame: boolean }) {
     </>
   );
 }
-
-const PaintingView = tw.div`
-    w-full
-    bg-white
-
-    flex-auto
-`;
 
 const AnswerForm = tw.form`
     w-full
