@@ -28,7 +28,7 @@ export default function Chat({
 
   const sendMessage = () => {
     if (client !== null && currentMessage) {
-      const message = { author: userId, message: currentMessage };
+      const message = { type: 'chat', author: userId, message: currentMessage };
       client.send(JSON.stringify(message));
       setCurrentMessage('');
     }
