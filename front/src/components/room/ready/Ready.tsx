@@ -60,7 +60,6 @@ export default function Ready({
           typeof message.data === 'string' &&
           JSON.parse(message.data).type === 'chat'
         ) {
-          console.log(message.data);
           const data = JSON.parse(message.data);
           setMessageList((prevMessages) => [...prevMessages, data]);
         }
