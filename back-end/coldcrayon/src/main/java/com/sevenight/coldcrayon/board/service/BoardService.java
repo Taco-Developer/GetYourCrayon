@@ -1,8 +1,10 @@
 package com.sevenight.coldcrayon.board.service;
 
+import com.sevenight.coldcrayon.auth.dto.UserDto;
 import com.sevenight.coldcrayon.board.entity.Board;
 import com.sevenight.coldcrayon.board.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +18,7 @@ import java.util.Optional;
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class BoardService {
 
     private final BoardRepository boardRepository;
@@ -41,4 +44,18 @@ public class BoardService {
         Pageable pageable = PageRequest.of(pageNum, pageSize, Sort.by("boardUpdateTime").descending());
         return boardRepository.findAll(pageable);
     }
+
+    public String deleteBoard(Integer boardIdx) {
+        Optional<Board> findBoard = boardRepository.findById(boardIdx);
+
+        if (findBoard.isPresent()) {
+            Board board = findBoard.get();
+            boardRepository.delete(board);
+            return "게시글" + boardIdx + "가 지워졌습니다.";
+        } else {
+            return "잘못된 삭제 요청 입니다";
+        }
+    }
+
 }
+

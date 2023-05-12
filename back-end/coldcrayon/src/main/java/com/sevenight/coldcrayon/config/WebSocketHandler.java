@@ -2,7 +2,13 @@ package com.sevenight.coldcrayon.config;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
+
+import com.sevenight.coldcrayon.board.entity.Board;
+import com.sevenight.coldcrayon.board.repository.BoardRepository;
+import com.sevenight.coldcrayon.board.service.BoardService;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -17,7 +23,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class WebSocketHandler extends TextWebSocketHandler {
     private final Map<String, List<WebSocketSession>> sessionsMap = new ConcurrentHashMap<>();
-    private final Map<String, Map<WebSocketSession, Integer>> userScoreMap = new ConcurrentHashMap<>();
+
+    private final Map<String, UserInfo> dataMap = new ConcurrentHashMap<>();
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -25,8 +32,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
         List<WebSocketSession> sessions = sessionsMap.computeIfAbsent(roomId, key -> new CopyOnWriteArrayList<>());
         sessions.add(session);
 
-        Map<WebSocketSession, Integer> scores = userScoreMap.computeIfAbsent(roomId, key -> new ConcurrentHashMap<>());
-        scores.put(session, 0);
+        System.out.println(session.getId());
+
     }
 
     @Override
@@ -37,21 +44,36 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
         String roomId = extractRoomId(session);
         List<WebSocketSession> sessions = sessionsMap.getOrDefault(roomId, Collections.emptyList());
-        Map<WebSocketSession, Integer> scores = userScoreMap.getOrDefault(roomId, Collections.emptyMap());
+
 
         // JSON 파싱을 위한 ObjectMapper 객체 생성
         ObjectMapper objectMapper = new ObjectMapper();
-
         // 메시지 내용을 JSON으로 파싱하여 Map 형태로 변환
-        Map<String, String> jsonMessage = objectMapper.readValue(message.getPayload(), new TypeReference<Map<String, String>>() {});
+        Map<String, String> jsonMessage = objectMapper.readValue(message.getPayload(), new TypeReference<Map<String, String>>(){});
+        String type = jsonMessage.get("type");
 
-        // JSON에서 author와 message 값을 추출
-        String author = jsonMessage.get("author");
-        String content = jsonMessage.get("message");
+        /// chat, draw, userId, {userScore} //
 
-        for (WebSocketSession s : sessions) {
-            if (s.isOpen()) {
-                s.sendMessage(message);
+        // userIn:유저가 들어올 때 userData: (유저Id, 기본점수)
+        if (type.equals("userIn")) {
+            String userId = jsonMessage.get("author");
+            UserInfo userInfo = dataMap.computeIfAbsent(session.getId(), key -> new UserInfo());
+            userInfo.setNickname(userId);
+            userInfo.setScore(222);
+            dataMap.put(session.getId(), userInfo);
+        }
+        else if (type.equals("chat")) {
+            for (WebSocketSession s : sessions) {
+                if (s.isOpen()) {
+                    s.sendMessage(message);
+                }
+            }
+        }
+        else if (type.equals("draw")) {
+            for (WebSocketSession s : sessions) {
+                if (s.isOpen()) {
+                    s.sendMessage(message);
+                }
             }
         }
 
@@ -81,36 +103,50 @@ public class WebSocketHandler extends TextWebSocketHandler {
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         String roomId = extractRoomId(session);
         List<WebSocketSession> sessions = sessionsMap.getOrDefault(roomId, Collections.emptyList());
+
+        String i = dataMap.get(session.getId()).getNickname();
+        System.out.println("i = " + i);
         sessions.remove(session);
 
-        Map<WebSocketSession, Integer> scores = userScoreMap.getOrDefault(roomId, Collections.emptyMap());
-        scores.remove(session);
+        dataMap.remove(session.getId());
 
         if (sessions.isEmpty()) {
             sessionsMap.remove(roomId);
-            userScoreMap.remove(roomId);
+            dataMap.remove(roomId);
         }
 
-//            for (WebSocketSession s : sessions) {
-//                if (s.isOpen()) {
-//                    // ObjectMapper 객체 생성
-//                    ObjectMapper objectMapper = new ObjectMapper();
-//
-//                    // 원하는 데이터를 JSON 형식으로 변환
-//                    Map<String, String> jsonMessage = new HashMap<>();
-//                    jsonMessage.put("author", "나가는사람");
-//                    jsonMessage.put("message", "나 나가요");
-//                    String json = objectMapper.writeValueAsString(jsonMessage);
-//
-//                    // WebSocket 메시지로 전송
-//                    s.sendMessage(new TextMessage(json));
-//                }
-//            }
+        for (WebSocketSession s : sessions) {
+            if (s.isOpen()) {
+                // ObjectMapper 객체 생성
+                ObjectMapper objectMapper = new ObjectMapper();
+
+                // 원하는 데이터를 JSON 형식으로 변환
+                Map<String, String> jsonMessage = new HashMap<>();
+                jsonMessage.put("author", i);
+                jsonMessage.put("message", "나 나가요");
+                String json = objectMapper.writeValueAsString(jsonMessage);
+
+                // WebSocket 메시지로 전송
+                s.sendMessage(new TextMessage(json));
+            }
+        }
 
     }
 
     private String extractRoomId(WebSocketSession session) {
         String path = session.getUri().getPath();
         return path.substring(path.lastIndexOf('/') + 1);
+    }
+
+    @Getter
+    @Setter
+    private class UserInfo {
+        private String nickname;
+        private int score;
+        public UserInfo() {};
+        public UserInfo(String nickname, int score) {
+            this.nickname = nickname;
+            this.score = score;
+        }
     }
 }
