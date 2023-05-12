@@ -1,7 +1,9 @@
 package com.sevenight.coldcrayon.gacha.service;
 
 import com.sevenight.coldcrayon.allgacha.entity.Allgacha;
+import com.sevenight.coldcrayon.allgacha.entity.GachaClass;
 import com.sevenight.coldcrayon.allgacha.repository.AllgachaRepository;
+import com.sevenight.coldcrayon.gacha.dto.GachaDto;
 import com.sevenight.coldcrayon.gacha.entity.Gacha;
 import com.sevenight.coldcrayon.gacha.repository.GachaRepository;
 import com.sevenight.coldcrayon.user.dto.ResponseDto;
@@ -33,8 +35,22 @@ public class GachaService {
             return "유저 정보를 찾을 수 없음";
 
         } else {
-            Map<Long, List<Object>> gachaMap = null;
+            Map<Long, GachaDto> gachaMap = null;
             if (byUserIdx.get().getUserPoint() >= price) {
+                // 가지고 있는 모든 가챠 불러오기
+                System.err.println("여기까지는 들어오나 봅시다");
+                System.err.println(byUserIdx.get().getUserIdx());
+                List<Gacha> haveAll = gachaRepository.findAllByUserIdx(byUserIdx.get());
+//                log.info("haveAll = {}", haveAll.toArray().toString());
+                List<Long> exist = new ArrayList<>();
+                for (Gacha gacha : haveAll) {
+                    exist.add(gacha.getAllgachaIdx().getAllgachaIdx());
+                }
+                for (Long aLong : exist) {
+                    System.out.println("존재하나요 = " + aLong);
+                }
+
+
                 Random random = new Random();
                 gachaMap = new HashMap<>();
 
@@ -46,7 +62,12 @@ public class GachaService {
                 for (Long i = 1L; i < cnt + 1; i++) {
                     long gachaNumber = random.nextInt(allGachaCntMax) + allGachaCntMin;
 
-                    List<Object> gachaInfoList = new ArrayList<>();
+//                    List<Object> gachaInfoList = new ArrayList<>();
+//                    List<GachaDto> gachaDtoList = new ArrayList<>();
+                    List<GachaDto> gachaDtoList = new ArrayList<>();
+                    GachaDto gachaDto = new GachaDto();
+
+
                     Optional<Allgacha> allgacha = allgachaRepository.findByAllgachaIdx(gachaNumber);
 
                     if (allgacha.isEmpty()) {
@@ -55,12 +76,28 @@ public class GachaService {
                         Gacha gacha = new Gacha();
                         gacha.setAllgachaIdx(allgacha.get());
                         gacha.setUserIdx(user);
-                        gachaRepository.save(gacha);
 
-                        gachaInfoList.add(i + "번째로 뽑힌 값");
-                        gachaInfoList.add(allgacha.get().getAllgachaImg());
-                        gachaInfoList.add(allgacha.get().getAllgachaClass());
-                        gachaMap.put(i, gachaInfoList);
+                        if (exist.contains(gachaNumber)) {
+                            gachaDto.setExistGacha(false);
+                            System.err.println("있음");
+                            System.out.println("gachaNumber = " + gachaNumber);
+                        } else {
+                            gachaDto.setExistGacha(true);
+                            gachaRepository.save(gacha);
+                            System.err.println("없음");
+                        }
+
+                        // 리턴을 위한 저장
+                        gachaDto.setGachaIdx(allgacha.get().getAllgachaIdx());
+                        gachaDto.setGachaImg(allgacha.get().getAllgachaImg());
+                        gachaDto.setGachaClass(allgacha.get().getAllgachaClass());
+
+                        log.info("gachaDto ={}", gachaDto);
+                        gachaMap.put(i, gachaDto);
+//                        gachaInfoList.add(i + "번째로 뽑힌 값");
+//                        gachaInfoList.add(allgacha.get().getAllgachaImg());
+//                        gachaInfoList.add(allgacha.get().getAllgachaClass());
+//                        gachaMap.put(i, gachaInfoList);
                     }
                 }
                 return gachaMap;
@@ -86,14 +123,14 @@ public class GachaService {
                     .userProfile(byUserIdx.get().getUserProfile())
                     .userPoint(byUserIdx.get().getUserPoint())
                     .build();
-            
+
             result.put("profile", userProfileDto);
             responseDto.setMessage("유저 프로필 정보");
             responseDto.setStatusCode(200);
             responseDto.setBody(result);
         }
 
-    return responseDto;
+        return responseDto;
     }
 
     public ResponseDto gachaOnce(Long userIdx) {
