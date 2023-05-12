@@ -27,7 +27,7 @@ import gameThemeSliceReducer, {
   GameThemeType,
 } from './slice/game/gameThemeSlice';
 import userDataSliceReducer, { UserDataType } from './slice/game/userDataSlice';
-import drawSlice, { DrawStateType } from './slice/game/drawSlice';
+import drawSliceReducer, { DrawStateType } from './slice/game/drawSlice';
 // import { persistReducer, persistStore } from 'redux-persist';
 // import {
 //   FLUSH,
@@ -73,6 +73,9 @@ const rootReducer = (
         chatDatas: chatDatasSliceReducer,
         isGameStarted: isGameStartedSliceReducer,
         gameTheme: gameThemeSliceReducer,
+        userInfo: userSlice.reducer,
+        userData: userDataSliceReducer,
+        draw: drawSliceReducer,
       });
       return combinedReducer(state, action);
     }
