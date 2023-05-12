@@ -44,11 +44,13 @@ const CustomDialogTitle = (props: any) => {
 };
 
 interface ReadyProps {
-  copyAction: (code: string) => void;
+  copyAction: (url: string) => void;
+  createAction: (title: string, url: string) => void;
 }
 
-export default function Invite({ copyAction }: ReadyProps) {
+export default function Invite({ copyAction, createAction }: ReadyProps) {
   const [open, setOpen] = useState(false);
+  const [title, setTitle] = useState<string>('');
   const ClickOpen = () => {
     setOpen(true);
   };
@@ -80,17 +82,31 @@ export default function Invite({ copyAction }: ReadyProps) {
         <DialogContent>
           <ModalDiv>
             <TopDiv>
-              <TitleInput placeholder="같이할사람 여기여기 붙어라 :)" />
+              <TitleInput
+                type="text"
+                value={title}
+                placeholder="같이할사람 여기여기 붙어라 :)"
+                onChange={(event) => {
+                  setTitle(event.target.value);
+                }}
+              />
             </TopDiv>
             <UnderDiv>
               <ModalBtn
                 onClick={() => {
-                  copyAction('code');
+                  copyAction('url');
                 }}
               >
                 초대링크 복사
               </ModalBtn>
-              <ModalBtn>게시글 작성</ModalBtn>
+              <ModalBtn
+                onClick={() => {
+                  createAction(title, 'url');
+                  ClickClose();
+                }}
+              >
+                게시글 작성
+              </ModalBtn>
             </UnderDiv>
           </ModalDiv>
         </DialogContent>
