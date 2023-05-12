@@ -33,6 +33,7 @@ export default function Ready({
   const [messageList, setMessageList] = useState<MessageType[]>([]);
   const [choice, setChoice] = useState<number>(1);
   const [showChat, setShowChat] = useState<string>('ready');
+  // 게시물 번호
   const [boardId, setBoardId] = useState<number | null>(null);
 
   useEffect(() => {
