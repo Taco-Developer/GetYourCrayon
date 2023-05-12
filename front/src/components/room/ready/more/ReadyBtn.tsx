@@ -2,14 +2,20 @@ import React, { useState } from 'react';
 import tw from 'tailwind-styled-components';
 import Link from 'next/link';
 import Invite from './Invite';
+
 import { boardAPI } from '@/api/api';
+import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
+import { changeRole } from '@/store/slice/game/userDataSlice';
 
 interface ReadyProps {
   boardId: number | null;
   setBoardId: React.Dispatch<React.SetStateAction<number | null>>;
+  setStatus: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export default function ReadyBtn({ boardId, setBoardId }: ReadyProps) {
+export default function ReadyBtn({ boardId, setBoardId, setStatus }: ReadyProps) {
+  const { userId } = useAppSelector((state) => state.userData);
+  const dispatch = useAppDispatch();
   const [baseUrl, setBaseUrl] = useState<string>(
     'https://getyourcrayon.co.kr/room/',
   );
@@ -49,7 +55,15 @@ export default function ReadyBtn({ boardId, setBoardId }: ReadyProps) {
       <ModalBtn>
         <Invite copyAction={handleCopyClick} createAction={creatBaseUrl} />
       </ModalBtn>
-      <GoBtn>게임시작</GoBtn>
+      <GoBtn
+        onClick={() => {
+          const role = userId === '1' ? 'drawing' : 'solving';
+          dispatch(changeRole(role));
+          setStatus('gameStart');
+        }}
+      >
+        게임시작
+      </GoBtn>
     </OutDiv>
   );
 }

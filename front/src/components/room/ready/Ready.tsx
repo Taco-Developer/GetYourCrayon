@@ -14,6 +14,8 @@ interface RoomPropsType {
   room: string;
   setRoom: React.Dispatch<React.SetStateAction<string>>;
   setStatus: React.Dispatch<React.SetStateAction<string>>;
+  client: W3CWebSocket | null;
+  setClient: React.Dispatch<React.SetStateAction<W3CWebSocket | null>>;
 }
 
 interface MessageType {
@@ -27,9 +29,11 @@ export default function Ready({
   room,
   setRoom,
   setStatus,
+  client,
+  setClient,
 }: RoomPropsType) {
   const [finalroom, setFinalRoom] = useState<string>('');
-  const [client, setClient] = useState<W3CWebSocket | null>(null);
+  // const [client, setClient] = useState<W3CWebSocket | null>(null);
   const [messageList, setMessageList] = useState<MessageType[]>([]);
   const [choice, setChoice] = useState<number>(1);
   const [showChat, setShowChat] = useState<string>('ready');
@@ -38,7 +42,7 @@ export default function Ready({
   useEffect(() => {
     if (finalroom !== '') {
       const newClient = new W3CWebSocket(
-        `ws://getyourcrayon.co.kr/${finalroom}`,
+        `wss://getyourcrayon.co.kr/api/${finalroom}`,
       );
       setClient(newClient);
     }
@@ -131,7 +135,11 @@ export default function Ready({
               </PickContent>
             </PickDiv>
             <BtnDiv>
-              <ReadyBtn boardId={boardId} setBoardId={setBoardId} />
+              <ReadyBtn
+                boardId={boardId}
+                setBoardId={setBoardId}
+                setStatus={setStatus}
+              />
             </BtnDiv>
           </MoreDiv>
         </RoomBody>
