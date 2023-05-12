@@ -11,6 +11,8 @@ export default function Redirect() {
       try {
         const accessToken = router.query.accesstoken;
         localStorage.setItem('accesstoken', 'Bearer ' + accessToken);
+        setCookie('test', '1234');
+        setCookie('1234', '1315', { httpOnly: true });
         setCookie('accessToken', 'Bearer ' + accessToken, {
           httpOnly: true,
         });
