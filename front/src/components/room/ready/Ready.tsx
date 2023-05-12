@@ -40,6 +40,12 @@ export default function Ready({
   // 게시물 번호
   const [boardId, setBoardId] = useState<number | null>(null);
 
+  const closeSocket = () => {
+    if (client) {
+      client.close();
+    }
+  };
+
   useEffect(() => {
     if (finalroom !== '') {
       const newClient = new W3CWebSocket(
@@ -74,6 +80,9 @@ export default function Ready({
           const data = JSON.parse(message.data);
           setMessageList((prevMessages) => [...prevMessages, data]);
         }
+      };
+      client.onclose = () => {
+        console.log('소켓이 끊겼습니다');
       };
     }
   }, [client]);
@@ -141,6 +150,7 @@ export default function Ready({
                 boardId={boardId}
                 setBoardId={setBoardId}
                 setStatus={setStatus}
+                closeSocket={closeSocket}
               />
             </BtnDiv>
           </MoreDiv>
