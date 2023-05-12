@@ -14,11 +14,11 @@ export default function ReadyBtn({ boardId, setBoardId }: ReadyProps) {
     'https://getyourcrayon.co.kr/room/',
   );
 
-  // url 카피하는 함수
+  /** url 카피하는 함수 */
   const handleCopyClick = (url: string) => {
     navigator.clipboard.writeText(baseUrl + url);
   };
-  // (미완) 게시글 작성하는 함수 api 확인되어야 가능
+  /**게시글 작성 및 업데이트*/
   const creatBaseUrl = async (title: string, url: string) => {
     let defaultTitle: string;
     if (boardId === null) {
@@ -40,6 +40,12 @@ export default function ReadyBtn({ boardId, setBoardId }: ReadyProps) {
         .catch((err) => console.log(err));
     }
   };
+  /** 게시글 삭제 */
+  const deleteBorad = async (id: number | null) => {
+    if (typeof id === 'number') {
+      await boardAPI.delBorard(id);
+    }
+  };
 
   return (
     <OutDiv>
@@ -49,7 +55,13 @@ export default function ReadyBtn({ boardId, setBoardId }: ReadyProps) {
       <ModalBtn>
         <Invite copyAction={handleCopyClick} createAction={creatBaseUrl} />
       </ModalBtn>
-      <GoBtn>게임시작</GoBtn>
+      <GoBtn
+        onClick={() => {
+          deleteBorad(boardId);
+        }}
+      >
+        게임시작
+      </GoBtn>
     </OutDiv>
   );
 }
