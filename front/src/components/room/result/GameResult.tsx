@@ -8,6 +8,7 @@ import Margin, { MarginType } from '@/components/ui/Margin';
 import { useAppSelector } from '@/store/thunkhook';
 import Mic from '@/components/ui/icons/Mic';
 import { Button } from '@/components/ui/Button';
+import { w3cwebsocket as W3CWebSocket } from 'websocket';
 
 /** 결과 목록 */
 const INIT_RESULTS = [
@@ -38,7 +39,7 @@ const INIT_RESULTS = [
   },
 ];
 
-export default function GameResult({}: {}) {
+export default function GameResult({ client }: { client: W3CWebSocket }) {
   const { gameUsers } = useAppSelector((state) => state);
 
   return (

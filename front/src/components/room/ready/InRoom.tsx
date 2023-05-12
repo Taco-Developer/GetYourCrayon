@@ -1,3 +1,5 @@
+import { registerId } from '@/store/slice/game/userDataSlice';
+import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
 import { useState, useEffect } from 'react';
 
 interface MediaDeviceInfo {
@@ -31,6 +33,8 @@ export default function InRoom({
   setShowChat,
   setFinalRoom,
 }: RoomPropsType) {
+  const dispatch = useAppDispatch();
+
   const [myVoice, setMyVoice] = useState<{}>({
     contentHint: '',
     enabled: true,
@@ -50,6 +54,7 @@ export default function InRoom({
       // socket.emit('join_room', userId, room);
       setShowChat('readyRoom');
       setFinalRoom(room);
+      dispatch(registerId(userId));
     }
   };
 
