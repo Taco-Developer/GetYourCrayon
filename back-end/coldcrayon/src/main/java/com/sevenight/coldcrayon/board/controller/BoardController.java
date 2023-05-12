@@ -119,8 +119,7 @@ public class BoardController {
     }
 
     @DeleteMapping("/delete/{boardIdx}")
-    public ResponseEntity<?> deleteBoard(@RequestHeader String Authorization, @PathVariable Integer boardIdx) {
-        UserDto user = authService.selectOneMember(HeaderUtil.getAccessTokenString(Authorization));
+    public ResponseEntity<?> deleteBoard(@PathVariable Integer boardIdx) {
         String res = boardService.deleteBoard(boardIdx);
         return ResponseEntity.ok().body(res);
     }
