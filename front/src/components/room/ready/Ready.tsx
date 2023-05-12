@@ -33,6 +33,7 @@ export default function Ready({
   const [messageList, setMessageList] = useState<MessageType[]>([]);
   const [choice, setChoice] = useState<number>(1);
   const [showChat, setShowChat] = useState<string>('ready');
+  // 게시물 번호
   const [boardId, setBoardId] = useState<number | null>(null);
 
   useEffect(() => {
@@ -60,7 +61,6 @@ export default function Ready({
           typeof message.data === 'string' &&
           JSON.parse(message.data).type === 'chat'
         ) {
-          console.log(message.data);
           const data = JSON.parse(message.data);
           setMessageList((prevMessages) => [...prevMessages, data]);
         }
