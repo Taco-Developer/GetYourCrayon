@@ -23,7 +23,6 @@ export default function Paging({ boardData, setBoardData }: PropsTypes) {
     };
     changePages(page);
   };
-  console.log(boardData);
   return (
     <Pagination
       activePage={boardData.number + 1}
