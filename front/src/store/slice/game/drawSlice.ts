@@ -3,21 +3,19 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 const INIT_BG_COLOR = '#FFFFFF';
 
 export interface DrawStateType {
+  INIT_BG_COLOR: string;
   canvasBgColor: string;
   paletteColor: string;
-  opacityStyle: number;
   brushWidth: number;
-  prevArray: ImageData[];
-  nextArray: ImageData[];
+  selectedTool: string;
 }
 
 const initialState: DrawStateType = {
+  INIT_BG_COLOR: INIT_BG_COLOR,
   canvasBgColor: INIT_BG_COLOR,
+  selectedTool: 'brush',
   paletteColor: '#000000',
   brushWidth: 4,
-  opacityStyle: 1,
-  prevArray: [],
-  nextArray: [],
 };
 
 const drawSlice = createSlice({
@@ -39,29 +37,9 @@ const drawSlice = createSlice({
       state.brushWidth = action.payload;
     },
 
-    /** 선택된 투명도 변경 */
-    changeOpacityStyle(state, action: PayloadAction<number>) {
-      state.opacityStyle = action.payload;
-    },
-
-    /** 뒤로 가기 배열 추가 */
-    addPrevArray(state, action: PayloadAction<ImageData>) {
-      state.prevArray.push(action.payload);
-    },
-
-    /** 뒤로 가기 배열 맨 뒤 요소 제거 */
-    popPrevArray(state) {
-      state.prevArray.pop();
-    },
-
-    /** 되돌리기 배열 추가 */
-    addNextArray(state, action: PayloadAction<ImageData>) {
-      state.nextArray.push(action.payload);
-    },
-
-    /** 되돌리기 배열 맨 뒤 요소 제거 */
-    popNextArray(state) {
-      state.nextArray.pop();
+    /** 선택된 도구 변경 */
+    changeSelectedTool(state, action: PayloadAction<string>) {
+      state.selectedTool = action.payload;
     },
   },
 });
@@ -69,11 +47,7 @@ const drawSlice = createSlice({
 export const {
   changeBgColor,
   changeBrushWidth,
-  changeOpacityStyle,
   changePaletteColor,
-  addNextArray,
-  addPrevArray,
-  popNextArray,
-  popPrevArray,
+  changeSelectedTool,
 } = drawSlice.actions;
 export default drawSlice.reducer;
