@@ -45,6 +45,8 @@ export interface BoardPaginationType {
 }
 
 export async function getServerSideProps(context: any) {
+  const cookie = context.req ? context.req.headers.cookie : '';
+  console.log(cookie);
   try {
     const re = await boardAPI.getBoard(0);
     const res: BoardPaginationType = re.data;
@@ -56,7 +58,6 @@ export async function getServerSideProps(context: any) {
 
 export default function Board({ res }: { res: BoardPaginationType }) {
   const [boardData, setBoardData] = useState(res);
-  console.log(res.content);
   return (
     <Container>
       <div className="text-xl md:text-2xl lg:text-3xl text-center mb-4 ">
