@@ -40,6 +40,12 @@ export default function Ready({
   // 게시물 번호
   const [boardId, setBoardId] = useState<number | null>(null);
 
+  const closeSocket = () => {
+    if (client) {
+      client.close();
+    }
+  };
+
   useEffect(() => {
     if (finalroom !== '') {
       const newClient = new W3CWebSocket(
@@ -141,6 +147,7 @@ export default function Ready({
                 boardId={boardId}
                 setBoardId={setBoardId}
                 setStatus={setStatus}
+                closeSocket={closeSocket}
               />
             </BtnDiv>
           </MoreDiv>
