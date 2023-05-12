@@ -46,6 +46,16 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.OK).body(res);
     }
 
+    @GetMapping("/myinfo")
+    public ResponseEntity<?> getMyInfo(@RequestHeader String Authorization) {
+        UserDto realUser = authService.selectOneMember(HeaderUtil.getAccessTokenString(Authorization));
+        log.info("realUser(유저 정보 확인을 위한 API) = {}",realUser);
+        if (realUser == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("회원정보 없음");
+        }
+        return ResponseEntity.ok().body(realUser);
+    }
+
 
 
 //    @PostMapping("/test")

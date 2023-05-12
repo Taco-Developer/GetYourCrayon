@@ -71,8 +71,8 @@ public class SecurityConfig{
                             "/member/nickname",
                             "/member/nicknamecheck",
                             "/info/news",
-                            "/api/board",
-                            "/chat/{roomId}"
+                            "/board",
+                            "/{roomId}"
                     );
         };
     }

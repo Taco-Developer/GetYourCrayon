@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/board")
 public class BoardController {
 
     private final BoardService boardService;
@@ -32,7 +33,7 @@ public class BoardController {
     private final TokenService tokenservice;
 
     //게시글 작성
-    @PostMapping("/api/board/create")
+    @PostMapping("/create")
     public ResponseEntity<?> saveArticle(@RequestHeader String Authorization, @RequestBody CreateArticleRequest request) {
         // 1. 요청 바디가 비어있는 경우
         if (request == null || request.getTitle() == null || request.getContent() == null) {
@@ -63,7 +64,7 @@ public class BoardController {
     }
 
     //게시글 업데이트
-    @PutMapping("/api/board/update/")
+    @PutMapping("/update")
     public ResponseEntity<?> updateArticle(@RequestHeader String Authorization, @RequestParam(name = "boardId") int boardId) {
 
         try {
@@ -103,7 +104,7 @@ public class BoardController {
     }
 
     //게시글 페이징
-    @GetMapping("api/board")
+    @GetMapping
     public ResponseEntity<?> getArticles(
             @RequestParam(name = "page", defaultValue = "0") int pageNum,
             @RequestParam(name = "size", defaultValue = "5") int pageSize
@@ -117,6 +118,16 @@ public class BoardController {
     }
 
 
-
+    //게시글 전체조회
+//    @GetMapping("/api/board")
+//    public Result articles() {
+//        List<Board> findArticles = boardService.findArticles();
+//        List<ArticleDto> collect = findArticles.stream()
+//                .map(m -> new ArticleDto(m.getBoardId(), m.getBoardTitle(), m.getBoardContent(), m.getBoardCreateTime(), m.getBoardUpdateTime())
+//                ).collect(Collectors.toList());
+//
+//        return new Result(collect.size(), collect);
+//
+//    }
 
 }

@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/user/mypage")
+@RequestMapping("/user/mypage")
 @Log4j2
 @RequiredArgsConstructor
 public class UserController {
