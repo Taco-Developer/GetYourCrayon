@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 
+import { w3cwebsocket as W3CWebSocket } from 'websocket';
+
 import tw from 'tailwind-styled-components';
 
 import { Slider } from '@mui/material';
@@ -11,35 +13,60 @@ import Margin, { MarginType } from '@/components/ui/Margin';
 
 // Icons
 import BrushIcon from '../../../../../public/icons/brush.svg';
-import CircleIcon from '../../../../../public/icons/circle.svg';
 import EraserIcon from '../../../../../public/icons/eraser.svg';
 import NextIcon from '../../../../../public/icons/next.svg';
 import PaintBucketIcon from '../../../../../public/icons/paint-bucket.svg';
 import ReturnIcon from '../../../../../public/icons/return.svg';
-import SquareIcon from '../../../../../public/icons/square.svg';
 import RecycleBinIcon from '../../../../../public/icons/recycle-bin.svg';
+import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
 
-export default function Painting() {
-  const INIT_BG_COLOR = '#FFFFFF';
-  const [paletteColor, setPaletteColor] = useState<string>('#000000');
-  const [canvasBgColor, setCanvasBgColor] = useState<string>(INIT_BG_COLOR);
-  const [brushWidth, setBrushWidth] = useState<number>(4);
-  const [opacityStyle, setOpacityStyle] = useState<number>(1);
-  const [restoreArray, setRestoreArray] = useState<ImageData[]>([]);
-  const [nextArray, setNextArray] = useState<ImageData[]>([]);
-  const [ctx, setCtx] = useState<CanvasRenderingContext2D | null>();
-  const [isPainting, setIsPainting] = useState<boolean>();
-  const [selectedTool, setSelectedTool] = useState<string>('brush');
+import {
+  changeBgColor,
+  changeBrushWidth,
+  changePaletteColor,
+  changeSelectedTool,
+} from '@/store/slice/game/drawSlice';
+
+const BRUSH_WIDTH_LIST = [
+  [4, 'bg-black rounded-full w-[4px] h-[4px]'],
+  [8, 'bg-black rounded-full w-[8px] h-[8px]'],
+  [12, 'bg-black rounded-full w-[12px] h-[12px]'],
+  [16, 'bg-black rounded-full w-[16px] h-[16px]'],
+  [24, 'bg-black rounded-full w-[24px] h-[24px]'],
+];
+
+export default function Drawing({ client }: { client: W3CWebSocket }) {
+  const {
+    brushWidth,
+    canvasBgColor,
+    paletteColor,
+    INIT_BG_COLOR,
+    selectedTool,
+  } = useAppSelector((state) => state.draw);
+  const dispatch = useAppDispatch();
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [ctx, setCtx] = useState<CanvasRenderingContext2D | null>();
 
-  const brushWidthList = [
-    [4, 'bg-black rounded-full w-[4px] h-[4px]'],
-    [8, 'bg-black rounded-full w-[8px] h-[8px]'],
-    [12, 'bg-black rounded-full w-[12px] h-[12px]'],
-    [16, 'bg-black rounded-full w-[16px] h-[16px]'],
-    [24, 'bg-black rounded-full w-[24px] h-[24px]'],
-  ];
+  const [prevArray, setPrevArray] = useState<ImageData[]>([]);
+  const [nextArray, setNextArray] = useState<ImageData[]>([]);
+
+  const [isDrawing, setIsDrawing] = useState<boolean>();
+
+  // 소켓 통신
+  const sendMessage = useCallback(
+    async (action: string, payload?: any) => {
+      const type = 'draw';
+      let message: string;
+      if (payload === undefined) {
+        message = JSON.stringify({ type, action });
+      } else {
+        message = JSON.stringify({ type, action, ...payload });
+      }
+      client.send(message);
+    },
+    [client],
+  );
 
   // 현재 touch 위치 찾기
   const getTouchPosition = (event: React.TouchEvent) => {
@@ -51,12 +78,12 @@ export default function Painting() {
   };
 
   // 그리기 및 채우기
-  const startPainting = (event: React.MouseEvent | React.TouchEvent) => {
+  const startDrawing = (event: React.MouseEvent | React.TouchEvent) => {
     if (selectedTool !== 'fill') {
-      setIsPainting(true);
+      setIsDrawing(true);
       if (ctx) {
         ctx.beginPath();
-        setRestoreArray((prev) => [
+        setPrevArray((prev) => [
           ...prev,
           ctx.getImageData(
             0,
@@ -66,33 +93,38 @@ export default function Painting() {
           ),
         ]);
       }
+      sendMessage('startDraw');
       // 터치 위치 이동
       if (event.type === 'touchstart') {
         const { offsetX, offsetY } = getTouchPosition(
           event as React.TouchEvent,
         );
         ctx?.moveTo(offsetX, offsetY);
+        sendMessage('move', { offsetX, offsetY });
       }
       return;
     }
     // 채우기
     if (selectedTool === 'fill') {
       const canvas = canvasRef.current;
-      ctx?.beginPath();
-      ctx!.fillRect(0, 0, canvas!.width, canvas!.height);
-      ctx?.closePath();
-      setCanvasBgColor(paletteColor);
+      if (!ctx || !canvas) return;
+
+      ctx.beginPath();
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      dispatch(changeBgColor(paletteColor));
+      sendMessage('fill');
     }
   };
 
   // 그리기 종료
-  const cancelPainting = () => {
-    setIsPainting(false);
+  const cancelDrawing = () => {
+    setIsDrawing(false);
     ctx?.closePath();
+    sendMessage('cancelDraw');
   };
 
   // 마우스 이동 or 그리기
-  const onMoveHandler = (event: React.MouseEvent | React.TouchEvent) => {
+  const moveHandler = (event: React.MouseEvent | React.TouchEvent) => {
     let nativeEvent;
     let offsetX;
     let offsetY;
@@ -107,27 +139,32 @@ export default function Painting() {
       offsetY = nativeEvent.touches[0].clientY - canvasRef.current!.offsetTop;
     }
 
-    if (isPainting) {
+    if (isDrawing) {
       ctx?.lineTo(offsetX, offsetY);
       ctx?.stroke();
+      sendMessage('drawMove', { offsetX, offsetY });
       return;
     }
     ctx?.moveTo(offsetX, offsetY);
+    sendMessage('move', { offsetX, offsetY });
   };
 
   // 캔버스 초기화
   const clearCanvas = () => {
-    if (ctx) {
-      ctx.fillStyle = INIT_BG_COLOR;
-      ctx.clearRect(0, 0, canvasRef.current!.width, canvasRef.current!.height);
-      ctx.fillRect(0, 0, canvasRef.current!.width, canvasRef.current!.height);
-    }
+    const canavs = canvasRef.current;
+    if (!ctx || !canavs) return;
+
+    ctx.fillStyle = INIT_BG_COLOR;
+    ctx.clearRect(0, 0, canavs.width, canavs.height);
+    ctx.fillRect(0, 0, canavs.width, canavs.height);
+    ctx.fillStyle = paletteColor;
+    dispatch(changeBgColor(INIT_BG_COLOR));
   };
 
   // 뒤로 가기 클릭
-  const onReturnIconClickHandler = () => {
-    setRestoreArray((restorePrev) => {
-      const idx = restorePrev.length - 1;
+  const prevClickHandler = () => {
+    setPrevArray((prev) => {
+      const idx = prev.length - 1;
       const currentImageData = ctx!.getImageData(
         0,
         0,
@@ -136,109 +173,103 @@ export default function Painting() {
       );
 
       if (idx >= 0) {
-        setNextArray((prev) => [...prev, currentImageData]);
-        const result = restorePrev;
+        setNextArray((next) => [...next, currentImageData]);
+        const result = prev;
         const popedImage = result.pop()!;
         ctx?.putImageData(popedImage, 0, 0);
+        sendMessage('goPrev');
         return result;
       }
 
       clearCanvas();
+      sendMessage('clearCanvas');
       return [];
     });
   };
 
-  // 앞으로 가기 클릭
-  const onNextIconClickHandler = () => {
-    setNextArray((prev) => {
-      if (prev.length === 0) return prev;
+  // 되돌리기 클릭
+  const nextClickHandler = () => {
+    setNextArray((next) => {
+      const idx = next.length - 1;
+      if (idx < 0) return [];
       const currentImageData = ctx!.getImageData(
         0,
         0,
         canvasRef.current!.width,
         canvasRef.current!.height,
       );
-      setRestoreArray((prev) => [...prev, currentImageData]);
-      const result = [...prev];
-      const popedImage = result.pop();
-      ctx?.putImageData(popedImage!, 0, 0);
+      setPrevArray((prev) => [...prev, currentImageData]);
+      const result = next;
+      const popedImage = result.pop()!;
+      ctx?.putImageData(popedImage, 0, 0);
+      sendMessage('goNext');
       return result;
     });
   };
 
   // 휴지통 클릭
-  const onTrashBinClickHandler = () => {
+  const trashBinClickHandler = () => {
     const currentImageData = ctx!.getImageData(
       0,
       0,
       canvasRef.current!.width,
       canvasRef.current!.height,
     );
-    setRestoreArray((prev) => [...prev, currentImageData]);
+    setPrevArray((prev) => [...prev, currentImageData]);
     clearCanvas();
+    sendMessage('goTrashBin');
   };
-
-  const onResizeHandler = useCallback(() => {
-    const canvas = canvasRef.current;
-
-    if (canvas) {
-      const width = canvas.offsetWidth;
-      const height = canvas.offsetHeight;
-      const dpr = window.devicePixelRatio;
-
-      // 캔버스 크기 설정
-      canvas.width = width * dpr;
-      canvas.height = height * dpr;
-
-      ctx?.scale(dpr, dpr);
-    }
-  }, [ctx]);
-
-  // 선택된 색, 붓 크기, 투명도 적용
-  useEffect(() => {
-    if (ctx) {
-      setSelectedTool('brush');
-      const rgba = [];
-      for (let i = 1; i < paletteColor.length; i += 2) {
-        const tmp = paletteColor[i] + paletteColor[i + 1];
-        rgba.push(parseInt(tmp, 16));
-      }
-      ctx.strokeStyle = `rgba(${rgba[0]}, ${rgba[1]}, ${rgba[2]}, ${opacityStyle})`;
-      ctx.fillStyle = `rgba(${rgba[0]}, ${rgba[1]}, ${rgba[2]}, ${opacityStyle})`;
-    }
-  }, [paletteColor, ctx, opacityStyle]);
 
   // 캔버스 초기 설정
   useEffect(() => {
     const canvas = canvasRef.current;
-    window.addEventListener('resize', () => {
-      onResizeHandler();
-    });
-    if (canvas) {
-      const initCanvas = () => {
-        // 캔버스 구역 크기
-        const width = canvas.offsetWidth;
-        const height = canvas.offsetHeight;
-        const dpr = window.devicePixelRatio;
+    if (!canvas) return;
 
-        // 캔버스 크기 설정
-        canvas.width = width * dpr;
-        canvas.height = height * dpr;
+    // 캔버스 자체 크기와 CSS 크기 맞추기
+    const width = canvas.offsetWidth;
+    const height = canvas.offsetHeight;
+    const dpr = window.devicePixelRatio;
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
 
-        const ctx = canvas.getContext('2d', { willReadFrequently: true });
-        ctx?.scale(dpr, dpr);
+    const context = canvas.getContext('2d', { willReadFrequently: true });
+    context!.scale(dpr, dpr);
+    setCtx(context);
 
-        return ctx;
-      };
-      const ctx = initCanvas();
-      setCtx(ctx);
+    sendMessage('saveRatio', { width, height });
+  }, [canvasRef, sendMessage]);
+
+  // 붓 너비 변경
+  useEffect(() => {
+    if (!ctx) return;
+    ctx.lineWidth = brushWidth;
+    sendMessage('changeBrushWidth', { width: brushWidth });
+  }, [ctx, brushWidth, sendMessage]);
+
+  // 색 변경
+  useEffect(() => {
+    if (!ctx) return;
+    ctx.strokeStyle = paletteColor;
+    ctx.fillStyle = paletteColor;
+    sendMessage('changeColor', { paletteColor });
+  }, [ctx, paletteColor, sendMessage]);
+
+  // 도구 변경
+  useEffect(() => {
+    if (!ctx) return;
+
+    switch (selectedTool) {
+      case 'erase':
+        ctx.fillStyle = canvasBgColor;
+        ctx.strokeStyle = canvasBgColor;
+        break;
+      default:
+        ctx.strokeStyle = paletteColor;
+        ctx.fillStyle = paletteColor;
+        break;
     }
-    return () => {
-      window.removeEventListener('resize', () => {
-        onResizeHandler();
-      });
-    };
-  }, [canvasRef, onResizeHandler]);
+    sendMessage('changeTool', { selectedTool });
+  }, [selectedTool, ctx, paletteColor, canvasBgColor, sendMessage]);
 
   return (
     <>
@@ -246,30 +277,29 @@ export default function Painting() {
         isPainting={true}
         paletteColor={paletteColor}
         changeColor={(color) => {
-          setPaletteColor(color);
+          dispatch(changePaletteColor(color));
         }}
       />
       <GameCenter>
         <canvas
           className="w-full flex-auto bg-white"
           ref={canvasRef}
-          onMouseDown={startPainting}
-          onTouchStart={startPainting}
-          onTouchMove={onMoveHandler}
-          onMouseUp={cancelPainting}
-          onMouseMove={onMoveHandler}
-          onMouseLeave={cancelPainting}
+          onMouseDown={startDrawing}
+          onTouchStart={startDrawing}
+          onTouchMove={moveHandler}
+          onMouseUp={cancelDrawing}
+          onMouseMove={moveHandler}
+          onMouseLeave={cancelDrawing}
         ></canvas>
         <Margin type={MarginType.height} size={16} />
         <CanvasOptions>
           <Option>
             <BrushWidthList>
-              {brushWidthList.map((brush) => (
+              {BRUSH_WIDTH_LIST.map((brush) => (
                 <BrushWidthItem
                   key={brush[0]}
                   onClick={() => {
-                    setBrushWidth(brush[0] as number);
-                    ctx!.lineWidth = brush[0] as number;
+                    dispatch(changeBrushWidth(brush[0] as number));
                   }}
                   className={brushWidth === brush[0] ? 'bg-[#146C94]' : ''}
                 >
@@ -280,14 +310,14 @@ export default function Painting() {
             <div className="p-2 outline outline-1 rounded-lg flex justify-between items-center gap-4">
               <div className="w-[14px] h-[14px] rounded-full bg-gray-300" />
               <Slider
-                min={0}
-                step={0.01}
-                max={1}
-                value={opacityStyle}
+                min={1}
+                step={1}
+                max={50}
+                value={brushWidth}
                 onChange={(_, value) => {
-                  setOpacityStyle(value as number);
+                  dispatch(changeBrushWidth(value as number));
                 }}
-                defaultValue={1}
+                defaultValue={brushWidth}
                 valueLabelDisplay="auto"
                 className="w-full"
               />
@@ -297,9 +327,7 @@ export default function Painting() {
           <Tools>
             <ToolItem
               onClick={() => {
-                setSelectedTool('brush');
-                ctx!.fillStyle = paletteColor;
-                ctx!.strokeStyle = paletteColor;
+                dispatch(changeSelectedTool('brush'));
               }}
               className={selectedTool === 'brush' ? 'bg-[#146C94]' : ''}
             >
@@ -311,9 +339,7 @@ export default function Painting() {
             </ToolItem>
             <ToolItem
               onClick={() => {
-                setSelectedTool('erase');
-                ctx!.fillStyle = canvasBgColor;
-                ctx!.strokeStyle = canvasBgColor;
+                dispatch(changeSelectedTool('erase'));
               }}
               className={selectedTool === 'erase' ? 'bg-[#146C94]' : ''}
             >
@@ -325,9 +351,7 @@ export default function Painting() {
             </ToolItem>
             <ToolItem
               onClick={() => {
-                setSelectedTool('fill');
-                ctx!.fillStyle = paletteColor;
-                ctx!.strokeStyle = paletteColor;
+                dispatch(changeSelectedTool('fill'));
               }}
               className={selectedTool === 'fill' ? 'bg-[#146C94]' : ''}
             >
@@ -337,19 +361,13 @@ export default function Painting() {
                 fill={selectedTool === 'fill' ? '#FFFFFF' : '#000000'}
               />
             </ToolItem>
-            <ToolItem>
-              <CircleIcon width={32} height={32} />
-            </ToolItem>
-            <ToolItem>
-              <SquareIcon width={32} height={32} />
-            </ToolItem>
-            <ToolItem onClick={onReturnIconClickHandler}>
+            <ToolItem onClick={prevClickHandler}>
               <ReturnIcon width={32} height={32} />
             </ToolItem>
-            <ToolItem onClick={onNextIconClickHandler}>
+            <ToolItem onClick={nextClickHandler}>
               <NextIcon width={32} height={32} />
             </ToolItem>
-            <ToolItem onClick={onTrashBinClickHandler}>
+            <ToolItem onClick={trashBinClickHandler}>
               <RecycleBinIcon width={32} height={32} />
             </ToolItem>
           </Tools>
@@ -424,7 +442,7 @@ const Tools = tw.div`
 
   grid
   grid-rows-2
-  grid-cols-4
+  grid-cols-3
   gap-2
 `;
 
