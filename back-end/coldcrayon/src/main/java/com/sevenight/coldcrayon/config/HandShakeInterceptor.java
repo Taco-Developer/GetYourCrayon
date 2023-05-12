@@ -23,8 +23,7 @@ public class HandShakeInterceptor implements HandshakeInterceptor {
         String path = request.getURI().getPath();
         String roomId = path.substring(path.lastIndexOf('/') + 1);
 
-//        System.out.println(roomId);
-//
+
 //        Map<String, List<WebSocketSession>> sessionsMap = webSocketHandler.getSessionsMap();
 //        // sessionsMap에 접근하여 원하는 작업 수행
 //        List<WebSocketSession> sessions = sessionsMap.getOrDefault(roomId, Collections.emptyList());
