@@ -21,15 +21,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class WebSocketHandler extends TextWebSocketHandler {
-    //    private final List<WebSocketSession> sessions = new CopyOnWriteArrayList<>();
-    @Autowired
-    private BoardService boardService;
     private final Map<String, List<WebSocketSession>> sessionsMap = new ConcurrentHashMap<>();
     private final Map<String, UserInfo> dataMap = new ConcurrentHashMap<>();
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-//        sessions.add(session);
         String roomId = extractRoomId(session);
         List<WebSocketSession> sessions = sessionsMap.computeIfAbsent(roomId, key -> new CopyOnWriteArrayList<>());
         sessions.add(session);
