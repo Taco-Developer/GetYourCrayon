@@ -44,7 +44,7 @@ public class GachaController {
     // --------------------------------------------------------------------------------
 
 
-        @PostMapping("/gacha/test/once")
+        @PostMapping("/gacha/one")
         public ResponseEntity<ResponseDto> once(@RequestHeader String Authorization) {
             UserDto user = authService.selectOneMember(HeaderUtil.getAccessTokenString(Authorization));
             log.info("갓챠 한 번 뽑기 POST: /{}", user.getUserIdx());
@@ -52,7 +52,7 @@ public class GachaController {
             return new ResponseEntity<ResponseDto>(responseDto, HttpStatus.OK);
         }
 
-        @PostMapping("/gacha/test/ten")
+        @PostMapping("/gacha/ten")
         public ResponseEntity<ResponseDto> ten(@RequestHeader String Authorization) {
             UserDto user = authService.selectOneMember(HeaderUtil.getAccessTokenString(Authorization));
             log.info("갓챠 한 번 뽑기 POST: /{}", user.getUserIdx());
