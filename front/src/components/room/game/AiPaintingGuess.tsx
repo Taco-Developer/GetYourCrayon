@@ -21,6 +21,7 @@ import {
 } from '@/store/slice/game/aiGameDatasSlice';
 import { ChatType, addChat } from '@/store/slice/game/chatDatasSlice';
 import { endGame } from '@/store/slice/game/isGameStartedSlice';
+import { w3cwebsocket as W3CWebsocket } from 'websocket';
 
 const INIT_AI_IMAGES = [
   'https://img.freepik.com/free-photo/assorted-mixed-fruits_74190-6961.jpg?w=996&t=st=1683175100~exp=1683175700~hmac=7dbf59f1e64cbe127e46cf31a1890e413d83644d58d24fe0872d7c4f3f9f7943',
@@ -29,7 +30,7 @@ const INIT_AI_IMAGES = [
   'https://img.freepik.com/free-photo/mix-fruits_1339-413.jpg?w=996&t=st=1683175113~exp=1683175713~hmac=81d4f36c430e792d1fa48bcc89fbf496bfe77cef0aeca53b2dc0c44aa693d26d',
 ];
 
-export default function AiPaintingGuess() {
+export default function AiPaintingGuess({ client }: { client: W3CWebsocket }) {
   const {
     leftTime,
     aiGameDatas: { aiImages, randomAnswers, inputedAnswers },
