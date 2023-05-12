@@ -81,9 +81,6 @@ export default function Ready({
           setMessageList((prevMessages) => [...prevMessages, data]);
         }
       };
-      client.onclose = () => {
-        console.log('소켓이 끊겼습니다');
-      };
     }
   }, [client]);
 
