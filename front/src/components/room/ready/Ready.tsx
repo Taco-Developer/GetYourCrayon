@@ -54,6 +54,12 @@ export default function Ready({
       client.onopen = () => {
         client.send(
           JSON.stringify({
+            type: 'userIn',
+            author: userId,
+          }),
+        );
+        client.send(
+          JSON.stringify({
             type: 'chat',
             author: 'admin',
             message: `${userId}님이 입장하셨습니다 :)`,
