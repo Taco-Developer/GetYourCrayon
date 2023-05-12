@@ -11,12 +11,14 @@ interface ReadyProps {
   boardId: number | null;
   setBoardId: React.Dispatch<React.SetStateAction<number | null>>;
   setStatus: React.Dispatch<React.SetStateAction<string>>;
+  closeSocket: () => void;
 }
 
 export default function ReadyBtn({
   boardId,
   setBoardId,
   setStatus,
+  closeSocket,
 }: ReadyProps) {
   const { userId } = useAppSelector((state) => state.userData);
   const dispatch = useAppDispatch();
@@ -59,7 +61,13 @@ export default function ReadyBtn({
 
   return (
     <OutDiv>
-      <Link href={'/'} className="w-30 h-full">
+      <Link
+        href={'/'}
+        className="w-30 h-full"
+        onClick={() => {
+          closeSocket();
+        }}
+      >
         <GoBtn className="w-full">나가기</GoBtn>
       </Link>
       <ModalBtn>
