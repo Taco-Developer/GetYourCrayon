@@ -27,7 +27,7 @@ export default function ReadyBtn({ boardId, setBoardId }: ReadyProps) {
       } else {
         defaultTitle = title;
       }
-      await boardAPI.postBoard(defaultTitle, url).then((request) => {
+      await boardAPI.postBoard(defaultTitle, baseUrl + url).then((request) => {
         setBoardId(request.data.id);
       });
     } else {
