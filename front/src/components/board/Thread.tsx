@@ -1,11 +1,16 @@
 import tw from 'tailwind-styled-components';
+import type { Board } from '@/pages/board';
 
-export default function ThreadList() {
+interface PropsTypes {
+  data: Board;
+}
+
+export default function ThreadList({ data }: PropsTypes) {
   return (
     <Thread>
-      <Title>같이 리버스 캐치마인드 할사람~~~~~</Title>
-      <Content>접속링크 어쩌고~~~~~~~~~~~~~~ </Content>
-      <Time>방금 전</Time>
+      <Title>{data.title}</Title>
+      <Content>{data.content} </Content>
+      <Time>{data.update_time}</Time>
     </Thread>
   );
 }
