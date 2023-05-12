@@ -25,6 +25,8 @@ import isGameStartedSliceReducer from './slice/game/isGameStartedSlice';
 import gameThemeSliceReducer, {
   GameThemeType,
 } from './slice/game/gameThemeSlice';
+import userDataSliceReducer, { UserDataType } from './slice/game/userDataSlice';
+import drawSlice, { DrawStateType } from './slice/game/drawSlice';
 // import { persistReducer, persistStore } from 'redux-persist';
 // import {
 //   FLUSH,
@@ -46,6 +48,8 @@ export interface ReducerStates {
   aiGameDatas: AiGameDatasType;
   isGameStarted: boolean;
   gameTheme: GameThemeType;
+  userData: UserDataType;
+  draw: DrawStateType;
 }
 
 //HYDRATE 액션을 정의 -> 슬라이스 통함
@@ -67,6 +71,8 @@ const rootReducer = (
         chatDatas: chatDatasSliceReducer,
         isGameStarted: isGameStartedSliceReducer,
         gameTheme: gameThemeSliceReducer,
+        userData: userDataSliceReducer,
+        draw: drawSlice,
       });
       return combinedReducer(state, action);
     }
