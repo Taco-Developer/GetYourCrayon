@@ -44,11 +44,13 @@ public class BoardService {
 
     public String deleteBoard(Integer boardIdx) {
         Optional<Board> findBoard = boardRepository.findById(boardIdx);
-        if(findBoard.isPresent()){
+        if (findBoard.isPresent()) {
             Board board = findBoard.get();
+            boardRepository.delete(board);
+        } else {
+            return "잘못된 삭제 요청 입니다";
         }
 
-        boardRepository.delete(findBoard.get());
         return "게시글" + boardIdx + "가 지워졌습니다.";
     }
 }
