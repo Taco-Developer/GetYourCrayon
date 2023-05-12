@@ -13,18 +13,22 @@ interface ReadyProps {
   setStatus: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export default function ReadyBtn({ boardId, setBoardId, setStatus }: ReadyProps) {
+export default function ReadyBtn({
+  boardId,
+  setBoardId,
+  setStatus,
+}: ReadyProps) {
   const { userId } = useAppSelector((state) => state.userData);
   const dispatch = useAppDispatch();
   const [baseUrl, setBaseUrl] = useState<string>(
     'https://getyourcrayon.co.kr/room/',
   );
 
-  // url 카피하는 함수
+  /** url 카피하는 함수 */
   const handleCopyClick = (url: string) => {
     navigator.clipboard.writeText(baseUrl + url);
   };
-  // (미완) 게시글 작성하는 함수 api 확인되어야 가능
+  /**게시글 작성 및 업데이트*/
   const creatBaseUrl = async (title: string, url: string) => {
     let defaultTitle: string;
     if (boardId === null) {
@@ -33,7 +37,7 @@ export default function ReadyBtn({ boardId, setBoardId, setStatus }: ReadyProps)
       } else {
         defaultTitle = title;
       }
-      await boardAPI.postBoard(defaultTitle, url).then((request) => {
+      await boardAPI.postBoard(defaultTitle, baseUrl + url).then((request) => {
         setBoardId(request.data.id);
       });
     } else {
@@ -44,6 +48,12 @@ export default function ReadyBtn({ boardId, setBoardId, setStatus }: ReadyProps)
           console.log(`${boardId}번글 업데이트`);
         })
         .catch((err) => console.log(err));
+    }
+  };
+  /** 게시글 삭제 */
+  const deleteBorad = async (id: number | null) => {
+    if (typeof id === 'number') {
+      await boardAPI.delBorard(id);
     }
   };
 
@@ -57,6 +67,7 @@ export default function ReadyBtn({ boardId, setBoardId, setStatus }: ReadyProps)
       </ModalBtn>
       <GoBtn
         onClick={() => {
+          deleteBorad(boardId);
           const role = userId === '1' ? 'drawing' : 'solving';
           dispatch(changeRole(role));
           setStatus('gameStart');

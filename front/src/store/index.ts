@@ -10,6 +10,7 @@ import {
 
 import { HYDRATE, createWrapper } from 'next-redux-wrapper';
 
+import userSlice, { UserStateType } from './slice/userSlice';
 import navbarSlice, { NavbarStateType } from './slice/navbarSlice';
 import scoreSliceReducer from './slice/game/score';
 import chatDatasSliceReducer, { ChatType } from './slice/game/chatDatasSlice';
@@ -48,6 +49,7 @@ export interface ReducerStates {
   aiGameDatas: AiGameDatasType;
   isGameStarted: boolean;
   gameTheme: GameThemeType;
+  userInfo: UserStateType;
   userData: UserDataType;
   draw: DrawStateType;
 }
@@ -71,8 +73,6 @@ const rootReducer = (
         chatDatas: chatDatasSliceReducer,
         isGameStarted: isGameStartedSliceReducer,
         gameTheme: gameThemeSliceReducer,
-        userData: userDataSliceReducer,
-        draw: drawSlice,
       });
       return combinedReducer(state, action);
     }
@@ -102,5 +102,3 @@ const wrapper = createWrapper<AppStore>(makeStore, {
 });
 
 export default wrapper;
-
-export const { setNavbarPath } = navbarSlice.actions;

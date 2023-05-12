@@ -37,6 +37,7 @@ export default function Ready({
   const [messageList, setMessageList] = useState<MessageType[]>([]);
   const [choice, setChoice] = useState<number>(1);
   const [showChat, setShowChat] = useState<string>('ready');
+  // 게시물 번호
   const [boardId, setBoardId] = useState<number | null>(null);
 
   useEffect(() => {
@@ -53,26 +54,21 @@ export default function Ready({
       client.onopen = () => {
         client.send(
           JSON.stringify({
+            type: 'chat',
             author: 'admin',
             message: `${userId}님이 입장하셨습니다 :)`,
           }),
         );
       };
       client.onmessage = (message) => {
-        if (typeof message.data === 'string') {
+        if (
+          typeof message.data === 'string' &&
+          JSON.parse(message.data).type === 'chat'
+        ) {
           const data = JSON.parse(message.data);
           setMessageList((prevMessages) => [...prevMessages, data]);
         }
       };
-      // client.close = () => {
-      //   client.send(
-      //     JSON.stringify({
-      //       author: 'admin',
-      //       message: `${userId}님이 퇴장하셨습니다 :<`,
-      //     }),
-      //   );
-      //   console.log('WebSocket Client Disconnected');
-      // };
     }
   }, [client]);
 

@@ -60,6 +60,8 @@ export const boardAPI = {
     api.post(`/board/create`, { title: title, content: content }),
   /**끌어올리기 */
   updateBoard: (id: number) => api.put(`board/update?boardId=${id}`),
+  /** 글 지우기 */
+  delBorard: (id: number) => api.delete(`api/board/delete/${id}`),
 };
 
 export default api;
