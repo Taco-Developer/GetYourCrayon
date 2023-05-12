@@ -4,6 +4,7 @@ import tw from 'tailwind-styled-components';
 import { boardAPI } from '@/api/api';
 import ThreadList from '@/components/board/Thread';
 import Paging from '@/components/board/Paging';
+import { setCookie, getCookie } from 'cookies-next';
 
 export interface Board {
   id: number;
@@ -45,7 +46,7 @@ export interface BoardPaginationType {
 }
 
 export async function getServerSideProps(context: any) {
-  let { cookie } = context.req.headers;
+  let cookie = getCookie('accessToken');
   cookie = cookie ? cookie : '123';
   console.log(cookie);
   try {
@@ -65,7 +66,6 @@ export default function Board({
   cookie: string;
 }) {
   const [boardData, setBoardData] = useState(res);
-  console.log(cookie);
   return (
     <Container>
       <div className="text-xl md:text-2xl lg:text-3xl text-center mb-4 ">
