@@ -31,6 +31,10 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+        // 접속하는 유저 정보를 담기
+
+        // =====================
+
         String roomId = extractRoomId(session);
         List<WebSocketSession> sessions = sessionsMap.getOrDefault(roomId, Collections.emptyList());
         Map<WebSocketSession, Integer> scores = userScoreMap.getOrDefault(roomId, Collections.emptyMap());
