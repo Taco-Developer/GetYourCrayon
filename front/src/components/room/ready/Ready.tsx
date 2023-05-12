@@ -49,26 +49,22 @@ export default function Ready({
       client.onopen = () => {
         client.send(
           JSON.stringify({
+            type: 'chat',
             author: 'admin',
             message: `${userId}님이 입장하셨습니다 :)`,
           }),
         );
       };
       client.onmessage = (message) => {
-        if (typeof message.data === 'string') {
+        if (
+          typeof message.data === 'string' &&
+          JSON.parse(message.data).type === 'chat'
+        ) {
+          console.log(message.data);
           const data = JSON.parse(message.data);
           setMessageList((prevMessages) => [...prevMessages, data]);
         }
       };
-      // client.close = () => {
-      //   client.send(
-      //     JSON.stringify({
-      //       author: 'admin',
-      //       message: `${userId}님이 퇴장하셨습니다 :<`,
-      //     }),
-      //   );
-      //   console.log('WebSocket Client Disconnected');
-      // };
     }
   }, [client]);
 
