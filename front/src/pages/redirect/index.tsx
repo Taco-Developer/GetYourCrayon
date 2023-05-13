@@ -21,6 +21,7 @@ export default function Redirect() {
           httpOnly: true,
           expires: expiryDate,
           maxAge: 315360000000,
+          secure: true,
         });
         router.push('/');
       } catch (e) {
