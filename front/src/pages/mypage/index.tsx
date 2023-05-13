@@ -17,6 +17,7 @@ import type {
 } from 'next';
 import wrapper from '@/store';
 import { useAppSelector } from '@/store/thunkhook';
+import { setLogin } from '@/store/slice/loginSlice';
 
 export const getServerSideProps: GetServerSideProps =
   wrapper.getServerSideProps((store) => async (context) => {
@@ -25,6 +26,7 @@ export const getServerSideProps: GetServerSideProps =
       store.getState().isLogin.isLogin,
       'dsfasdffsddddddddddddddddddddddddddddddddddddddddddddddddddddddddf',
     );
+    store.dispatch(setLogin({ isLogin: true }));
     return { props: { message: 'Message from SSR' } };
   });
 
@@ -56,6 +58,8 @@ export const getServerSideProps: GetServerSideProps =
 // }
 
 export default function MyPage() {
+  const { isLogin } = useAppSelector((state) => state);
+  console.log(isLogin);
   useEffect(() => {
     const getInfo = async () => {
       await memberAPI
