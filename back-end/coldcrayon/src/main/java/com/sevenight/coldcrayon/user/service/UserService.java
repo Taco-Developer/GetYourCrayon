@@ -61,18 +61,22 @@ public class UserService {
             for (Gacha userGacha : userGachas) {
                 if (userGacha.getAllgachaIdx().getAllgachaClass() == GachaClass.NORMAL) {
                     NormalDto normalDto = new NormalDto();
+                    normalDto.setGachaIdx(userGacha.getAllgachaIdx().getAllgachaIdx());
                     normalDto.setGachaImg(userGacha.getAllgachaIdx().getAllgachaImg());
                     normalDtoList.add(normalDto);
                 } else if (userGacha.getAllgachaIdx().getAllgachaClass() == GachaClass.RARE) {
                     RareDto rareDto = new RareDto();
+                    rareDto.setGachaIdx(userGacha.getAllgachaIdx().getAllgachaIdx());
                     rareDto.setGachaImg(userGacha.getAllgachaIdx().getAllgachaImg());
                     rareDtoList.add(rareDto);
                 } else if (userGacha.getAllgachaIdx().getAllgachaClass() == GachaClass.SUPERRARE) {
                     SuperRareDto superRareDto = new SuperRareDto();
+                    superRareDto.setGachaIdx(userGacha.getAllgachaIdx().getAllgachaIdx());
                     superRareDto.setGachaImg(userGacha.getAllgachaIdx().getAllgachaImg());
                     superRareDtoList.add(superRareDto);
                 } else if (userGacha.getAllgachaIdx().getAllgachaClass() == GachaClass.EVENT) {
                     EventDto eventDto = new EventDto();
+                    eventDto.setGachaIdx(userGacha.getAllgachaIdx().getAllgachaIdx());
                     eventDto.setGachaImg(userGacha.getAllgachaIdx().getAllgachaImg());
                     eventDtoList.add(eventDto);
                 }
@@ -133,7 +137,7 @@ public class UserService {
         return responseDto;
     }
 
-    public ResponseDto changeUserProfileImg(long userIdx, String newProfileImg) {
+    public ResponseDto changeUserProfileImg(long userIdx, Long newProfileImgIdx) {
         ResponseDto responseDto = new ResponseDto();
 
         Optional<User> byUserNickname = userRepository.findByUserIdx(userIdx);
@@ -143,6 +147,9 @@ public class UserService {
         } else {
             User user = byUserNickname.get();
             String prevUserProfile = user.getUserProfile();
+            Optional<Allgacha> byAllgachaIdx = allgachaRepository.findByAllgachaIdx(newProfileImgIdx);
+            String newProfileImg = byAllgachaIdx.get().getAllgachaImg();
+
             user.setUserProfile(newProfileImg);
             userRepository.save(user);
 

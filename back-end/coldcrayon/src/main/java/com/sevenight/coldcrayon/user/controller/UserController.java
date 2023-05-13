@@ -36,13 +36,13 @@ public class UserController {
         ResponseDto responseDto = userService.changeUserNickname(userIdx, newNickname);
         return new ResponseEntity<ResponseDto>(responseDto, HttpStatus.OK);
     }
-    @PutMapping("/profile/changeprofileimg/{userIdx}/{newProfileImg}")
-    public ResponseEntity<ResponseDto> changeUserProfileImg(@PathVariable Long userIdx,
-                                                            @PathVariable String newProfileImg) {
-        log.info("유저 프로필 변경 PUT: /{}/{}", userIdx, newProfileImg);
-        ResponseDto responseDto = userService.changeUserProfileImg(userIdx, newProfileImg);
-        return new ResponseEntity<ResponseDto>(responseDto, HttpStatus.OK);
-    }
+//    @PutMapping("/profile/changeprofileimg/{userIdx}/{newProfileImg}")
+//    public ResponseEntity<ResponseDto> changeUserProfileImg(@PathVariable Long userIdx,
+//                                                            @PathVariable String newProfileImg) {
+//        log.info("유저 프로필 변경 PUT: /{}/{}", userIdx, newProfileImg);
+//        ResponseDto responseDto = userService.changeUserProfileImg(userIdx, newProfileImg);
+//        return new ResponseEntity<ResponseDto>(responseDto, HttpStatus.OK);
+//    }
 
     // =====================================================================================
 
@@ -54,6 +54,17 @@ public class UserController {
         ResponseDto responseDto = userService.myPage(user.getUserIdx());
         return new ResponseEntity<ResponseDto>(responseDto, HttpStatus.OK);
     }
+
+    @PutMapping("/profile/changeprofileimg/{newProfileImgIdx}")
+    public ResponseEntity<ResponseDto> changeUserProfileImg(@RequestHeader String Authorization,
+                                                            @PathVariable Long newProfileImgIdx) {
+        UserDto user = authService.selectOneMember(HeaderUtil.getAccessTokenString(Authorization));
+
+        log.info("유저, 변경 이미지 아이디 /{}/{}", user.getUserIdx(), newProfileImgIdx);
+        ResponseDto responseDto = userService.changeUserProfileImg(user.getUserIdx(), newProfileImgIdx);
+        return new ResponseEntity<ResponseDto>(responseDto, HttpStatus.OK);
+    }
+
 
 
 }
