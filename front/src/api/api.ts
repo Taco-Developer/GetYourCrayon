@@ -41,7 +41,7 @@ export const memberAPI = {
   changeName: (name: string) =>
     api.put(`/member/nickname`, { userNickname: name }),
   /**마이페이지 유저정보 가져오기 */
-  getUserInfo: (userIdx: number) => api.get(`/user/mypage/profile/${userIdx}`),
+  getUserInfo: () => api.get(`/user/mypage/profile`),
   getMyInfo: () => api.get('/member/myinfo'),
 };
 
