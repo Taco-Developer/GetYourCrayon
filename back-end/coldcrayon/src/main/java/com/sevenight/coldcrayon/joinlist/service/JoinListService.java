@@ -7,11 +7,11 @@ import java.util.List;
 @Service
 public interface JoinListService {
 
-    public void createJoinList(String roomIdx, String userIdx);
+    public void createJoinList(String roomIdx, Long userIdx);
 
-    public List<String> getJoinList(String roomIdx);
+    public List<Object> getJoinList(String roomIdx);
 
-    public String removeUser(String roomIdx, String userIdx);
+    public Long removeUser(String roomIdx, Long userIdx);
 
     public String deleteJoinList(String roomIdx);
 
