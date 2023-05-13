@@ -47,7 +47,6 @@ public class RoomDto {
     private LocalDateTime roomCreateTime;
 
 
-
     static public RoomDto of(RoomHash room){
         RoomDto roomDto = new RoomDto();
         roomDto.roomIdx = room.getRoomIdx();

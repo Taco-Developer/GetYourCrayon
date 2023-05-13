@@ -1,3 +1,7 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /chat
 spring:
   datasource:
     url: jdbc:mariadb://13.124.200.139:3307/crayon
