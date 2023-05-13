@@ -20,7 +20,6 @@ export interface UserInfoType {
 export async function getServerSideProps(context: any) {
   const { req, res } = context;
   let refr = getCookie('refreshtoken', { req, res });
-  console.log(refr);
   let cookie = getCookie('accesstoken', { req, res });
   cookie = cookie ? cookie : '123';
   const api = axios.create({
@@ -33,28 +32,18 @@ export async function getServerSideProps(context: any) {
   });
   try {
     const re = await api.get(`/member/myinfo`);
-
     const res: UserInfoType = re.data;
-    console.log('tttt');
     return { props: { res } };
   } catch (e) {
     const serializedData = JSON.stringify(e);
     return { props: { e: serializedData } };
+  } finally {
+    api.defaults.headers.Cookie = '';
   }
 }
 
-export default function Home({ res, e }: { res: UserInfoType; e: any }) {
-  console.log(e);
+export default function Home({ res }: { res: UserInfoType }) {
   console.log(res);
-  useEffect(() => {
-    const getInfo = async () => {
-      await memberAPI
-        .getMyInfo()
-        .then((request) => console.log(request))
-        .catch((e) => console.log(e));
-    };
-    getInfo();
-  }, []);
   return (
     <MainContainer>
       <Margin type={MarginType.height} size={150} />
