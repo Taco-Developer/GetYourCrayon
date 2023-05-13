@@ -37,6 +37,7 @@ export async function getServerSideProps(context: any) {
     return { props: { res } };
   } catch (e) {
     const serializedData = JSON.stringify(e);
+    console.log(e);
     return { props: { e: serializedData } };
   } finally {
     api.defaults.headers.Cookie = '';
