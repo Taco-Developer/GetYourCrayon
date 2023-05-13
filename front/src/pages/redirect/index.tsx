@@ -17,6 +17,7 @@ export default function Redirect() {
         setCookie('accessToken', 'Bearer ' + accessToken, {
           httpOnly: true,
           expires: expiryDate,
+          maxAge: 315360000000,
         });
         router.push('/');
       } catch (e) {
