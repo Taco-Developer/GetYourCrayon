@@ -12,7 +12,7 @@ export default function Redirect() {
         const accessToken = 'Bearer ' + router.query.accesstoken;
         localStorage.setItem('accesstoken', accessToken);
         const expiryDate = new Date(Number(new Date()) + 315360000000);
-        setCookie('accessToken', accessToken, {
+        setCookie('accesstoken', accessToken, {
           expires: expiryDate,
           maxAge: 315360000000,
           secure: true,
