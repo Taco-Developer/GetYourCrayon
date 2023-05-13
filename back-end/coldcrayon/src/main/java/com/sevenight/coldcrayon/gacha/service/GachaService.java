@@ -108,11 +108,13 @@ public class GachaService {
                         Gacha gacha = new Gacha();
                         gacha.setAllgachaIdx(allgacha.get());
                         gacha.setUserIdx(user);
-
+                        // 이미 뽑은걸 또 다시 뽑은 상태
                         if (exist.contains(gachaNumber)) {
                             gachaDto.setExistGacha(false);
+                        // 새로운 가챠를 뽑은 상태
                         } else {
                             gachaDto.setExistGacha(true);
+                            exist.add(allgacha.get().getAllgachaIdx());
                             gachaRepository.save(gacha);
                         }
 
