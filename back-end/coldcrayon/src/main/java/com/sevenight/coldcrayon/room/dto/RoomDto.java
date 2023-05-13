@@ -14,6 +14,7 @@ import com.sevenight.coldcrayon.room.entity.RoomHash;
 @Getter @Setter
 @Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class RoomDto {
 
     // 방 식별자 = 주소
