@@ -9,13 +9,14 @@ import { RootState, AppDispatch } from '@/store';
 import { setNavbarPath } from '@/store/slice/navbarSlice';
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
 
 interface NavbarPropsType {
   children: ReactNode;
 }
 
 export default function Navbar({ children }: NavbarPropsType) {
+  const [open, setOpen] = useState(false);
   const router = useRouter();
   const navbarPath = useSelector((state: RootState) => state.navbarPath);
   const dispatch = useDispatch<AppDispatch>();
@@ -61,7 +62,19 @@ export default function Navbar({ children }: NavbarPropsType) {
         </LogoDiv>
 
         <LoginDiv>
-          <Login />
+          <Button
+            px={8}
+            py={2}
+            rounded="lg"
+            color="bg-main-pink"
+            className="animate-bounce text-main-green text-xs lg:text-xl sm:text-sm"
+            onClick={() => {
+              setOpen(true);
+            }}
+          >
+            로그인
+          </Button>
+          <Login open={open} setOpen={setOpen} />
         </LoginDiv>
       </NavbarDiv>
 

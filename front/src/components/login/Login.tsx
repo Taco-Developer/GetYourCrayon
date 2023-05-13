@@ -11,6 +11,11 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import Slide from '@mui/material/Slide';
 
+export interface LoginPropsType {
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
 const Transition = forwardRef(function Transition(
   props: { children: React.ReactElement },
   ref,
@@ -45,8 +50,7 @@ const CustomDialogTitle = (props: any) => {
   );
 };
 
-export default function Login() {
-  const [open, setOpen] = useState(false);
+export default function Login({ open, setOpen }: LoginPropsType) {
   const KAKAO_URL = process.env.NEXT_PUBLIC_KAKAO;
   const ClickOpen = () => {
     setOpen(true);
@@ -57,18 +61,6 @@ export default function Login() {
 
   return (
     <div>
-      <Button
-        px={8}
-        py={2}
-        rounded="lg"
-        color="bg-main-pink"
-        className="animate-bounce text-main-green text-xs lg:text-xl sm:text-sm"
-        onClick={() => {
-          ClickOpen();
-        }}
-      >
-        로그인
-      </Button>
       <Dialog
         onClose={ClickClose}
         open={open}
