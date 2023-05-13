@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString
+@ToString(includeFieldNames=true, of={"allgachaIdx", "allgachaImg", "allgachaClass"})
 public class Allgacha {
 
     @Id
