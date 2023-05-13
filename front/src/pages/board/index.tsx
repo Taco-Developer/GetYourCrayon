@@ -74,7 +74,7 @@ export default function Board({
       <div className="text-xl md:text-2xl lg:text-3xl text-center mb-4 ">
         링크를 통하여 접속해주세요 !
       </div>
-      <div className="min-h-board-height">
+      <div className="min-h-board-height h-full">
         {boardData.content.map((data, i) => {
           return <ThreadList data={data} key={i} />;
         })}
