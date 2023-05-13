@@ -2,10 +2,7 @@ package com.sevenight.coldcrayon.room.dto;
 
 import com.sevenight.coldcrayon.game.entity.GameCategory;
 import com.sevenight.coldcrayon.room.entity.RoomStatus;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -46,6 +43,7 @@ public class RoomDto {
 
     // 방 생성 시각
     private LocalDateTime roomCreateTime;
+
 
 
     static public RoomDto of(RoomHash room){

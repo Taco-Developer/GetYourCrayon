@@ -38,7 +38,6 @@ public class User {
     @Column(name = "user_status")
     private boolean userStatus;
     @Column(name = "user_point")
-    @Builder.Default
     private Integer userPoint = 0;
     @Column(name = "user_provider", nullable = false)
 //    @Enumerated(EnumType.STRING)
@@ -52,11 +51,9 @@ public class User {
 
     // 역 방향
     @OneToMany(mappedBy = "userIdx")
-    @Builder.Default
     private List<Gacha> userGachas = new ArrayList<>();
 
     @OneToMany(mappedBy = "userIdx")
-    @Builder.Default
     private List<Board> userUploads = new ArrayList<>();
 
 
