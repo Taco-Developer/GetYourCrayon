@@ -5,6 +5,7 @@ import com.sevenight.coldcrayon.auth.dto.UserDto;
 import com.sevenight.coldcrayon.game.dto.GameRequestDto;
 import com.sevenight.coldcrayon.game.dto.ResponseGameDto;
 import com.sevenight.coldcrayon.game.entity.GameCategory;
+import com.sevenight.coldcrayon.game.repository.GameRepository;
 import com.sevenight.coldcrayon.joinlist.service.JoinListService;
 import com.sevenight.coldcrayon.room.entity.RoomHash;
 import com.sevenight.coldcrayon.room.entity.RoomStatus;
@@ -26,15 +27,17 @@ import java.util.Random;
 @RequiredArgsConstructor
 public class GameServiceImpl implements GameService{
 
+
     private final RoomRepository roomRepository;
     private final JoinListService joinListService;
     private final UserHashRepository userHashRepository;
     private final EntityManager entityManager;
+    private final GameRepository gameRepository;
+    private final Random random = new Random();
 //    private final JPAQuery<Theme> query;
 //    private final QTheme qTheme;
 //    private final JPAQuery<Theme> query = new JPAQuery(entityManager);
 
-    private final Random random = new Random();
 
     public ThemeCategory[] startGame(UserDto userDto, GameRequestDto gameRequestDto){
         System.err.println(gameRequestDto);
@@ -87,34 +90,42 @@ public class GameServiceImpl implements GameService{
         roomRepository.save(room);
         // 어딘가에 게임 테마랑 방 정보를 저장해둬야 한다.
 
-
+        ThemeCategory[] themeCategories = ThemeCategory.values();
+        ThemeCategory themeCategory = themeCategories[random.nextInt(themeCategories.length)];
+        // game 모드가 AI라면,,,
+        switch(gameRequestDto.getGameCategory()){
+            case AI:
+                break;
+            case LIAR:
+                break;
+            case CATCH:
+                break;
+            case RELAY:
+                break;
+            case REVERSE:
+                break;
+            default:
+                System.err.println("게임 모드 없어~~~~~~~~~~~~~~~~");
+                return null;
+        }
 
         return ThemeCategory.values();
     }
 
-    public ThemeCategory randomTheme(){
-        ThemeCategory[] themeCategories = ThemeCategory.values();
+    public void getAiImg(String themeCategory, String suffix, String roomIdx, int gameCnt, int roundCnt){
 
-        return themeCategories[random.nextInt(themeCategories.length)];
+
     }
 
-    public List<Theme> findThemesByCategory(ThemeCategory category) {
-        return entityManager.createQuery("SELECT t FROM Theme t WHERE t.theme = :category", Theme.class)
-                .setParameter("category", category)
-                .getResultList();
+    // 방에 있는 유저 중에서 한명 뽑아서 랜덤으로 지정하기
+    public Object choiceUser(String roomIdx){
+        List<Object> userList = joinListService.getJoinList(roomIdx);
+        for (Object user : userList) {
+            System.err.println(user.toString());
+        }
+        Object user = userList.get(random.nextInt(userList.size()));
+        return user;
     }
-    public String getThemeKeyword(ThemeCategory theme){
-
-        // JPA로 "keyword 중에서 theme과 일치하는 data를 들고오기"
-        JPAQuery<Theme> query = new JPAQuery(entityManager);
-        QTheme qTheme = QTheme.theme1;
-
-        List<Theme> themeList = query
-                .from(qTheme)
-                .where(qTheme.theme.eq(theme))
-                .fetch();
 
 
-        return null;
-    }
 }

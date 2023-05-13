@@ -62,6 +62,12 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 
 	implementation "com.amazonaws:aws-java-sdk-s3:1.12.281"
+
+	// WebClient (AI 사진 요청)
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-webflux'
+
+	// Apache Commons IO (사진 저장)
+	implementation 'commons-io:commons-io:2.11.0'
 }
 
 tasks.named('test') {
