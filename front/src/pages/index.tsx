@@ -3,11 +3,10 @@ import { ReactElement, useEffect } from 'react';
 import Navbar from '@/components/navbar/Navbar';
 import tw from 'tailwind-styled-components';
 import MainCarousel from '@/components/main/MainCarousel';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/store';
+import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
 import { getCookie, setCookie } from 'cookies-next';
 import axios from 'axios';
-import { memberAPI } from '@/api/api';
+import { setUser } from '@/store/slice/userSlice';
 
 export interface UserInfoType {
   userIdx: number;
@@ -19,6 +18,8 @@ export interface UserInfoType {
 
 export async function getServerSideProps(context: any) {
   const { req, res } = context;
+
+  //로컬에서 테스트할시엔 setCookie 이용해서 refreshtoken과 accesstoken을 넣어줘야합니다.
   let refr = getCookie('refreshtoken', { req, res });
   let cookie = getCookie('accesstoken', { req, res });
   cookie = cookie ? cookie : '123';
@@ -44,6 +45,10 @@ export async function getServerSideProps(context: any) {
 
 export default function Home({ res }: { res: UserInfoType }) {
   console.log(res);
+  const dispatch = useAppDispatch();
+  dispatch(setUser(res));
+  const { userInfo } = useAppSelector((state) => state);
+  console.log(userInfo);
   return (
     <MainContainer>
       <Margin type={MarginType.height} size={150} />
