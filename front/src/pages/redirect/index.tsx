@@ -22,6 +22,7 @@ export default function Redirect() {
           expires: expiryDate,
           maxAge: 315360000000,
           secure: true,
+          sameSite: 'none',
         });
         router.push('/');
       } catch (e) {
