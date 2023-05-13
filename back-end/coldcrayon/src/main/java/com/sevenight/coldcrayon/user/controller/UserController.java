@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/user/mypage")
+@RequestMapping("/user/mypage")
 @Log4j2
 @RequiredArgsConstructor
 public class UserController {
@@ -24,14 +24,14 @@ public class UserController {
         return new ResponseEntity<ResponseDto>(responseDto, HttpStatus.OK);
     }
 
-    @PutMapping("/profile/changeNickname/{userIdx}/{newNickname}")
+    @PutMapping("/profile/changenickname/{userIdx}/{newNickname}")
     public ResponseEntity<ResponseDto> changeUserNickname(@PathVariable Long userIdx,
                                                           @PathVariable String newNickname) {
         log.info("유저 닉네임 변경 PUT: /{}/{}", userIdx, newNickname);
         ResponseDto responseDto = userService.changeUserNickname(userIdx, newNickname);
         return new ResponseEntity<ResponseDto>(responseDto, HttpStatus.OK);
     }
-    @PutMapping("/profile/changeProfileImg/{userIdx}/{newProfileImg}")
+    @PutMapping("/profile/changeprofileimg/{userIdx}/{newProfileImg}")
     public ResponseEntity<ResponseDto> changeUserProfileImg(@PathVariable Long userIdx,
                                                             @PathVariable String newProfileImg) {
         log.info("유저 프로필 변경 PUT: /{}/{}", userIdx, newProfileImg);

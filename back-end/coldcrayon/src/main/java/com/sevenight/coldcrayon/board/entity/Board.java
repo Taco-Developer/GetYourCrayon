@@ -19,7 +19,7 @@ public class Board {
     // PK (AUTO_INCREMENT)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "board_id")
+    @Column(name = "board_idx")
     private int boardId;
 
     @ManyToOne(fetch = FetchType.LAZY)

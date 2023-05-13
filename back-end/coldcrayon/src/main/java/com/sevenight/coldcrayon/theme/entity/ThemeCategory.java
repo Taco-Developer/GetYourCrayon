@@ -6,5 +6,5 @@ import java.util.List;
 
 @Getter
 public enum ThemeCategory {
-    FRUIT, MOVIE, SPORTS, DRAMA,
+    FRUIT, ANIMAL, SPORT, FOOD, VEHICLE, HERO
 }

@@ -70,7 +70,11 @@ public class SecurityConfig{
                             "/",
                             "/member/nickname",
                             "/member/nicknamecheck",
-                            "/info/news");
+                            "/info/news",
+                            "/board",
+                            "/{roomId}",
+                            "/board/delete/{boardIdx}"
+                    );
         };
     }
 }
