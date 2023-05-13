@@ -33,4 +33,5 @@ public class Game {
 
 	@Column(name = "game_keyword")
 	private String gameKeyword;
+
 }
