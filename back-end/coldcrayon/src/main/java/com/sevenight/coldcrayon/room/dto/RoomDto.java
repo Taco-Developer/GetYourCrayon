@@ -2,6 +2,7 @@ package com.sevenight.coldcrayon.room.dto;
 
 import com.sevenight.coldcrayon.game.entity.GameCategory;
 import com.sevenight.coldcrayon.room.entity.RoomStatus;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 import com.sevenight.coldcrayon.room.entity.RoomHash;
 
 @Getter @Setter
+@Builder
 @NoArgsConstructor
 public class RoomDto {
 

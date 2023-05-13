@@ -128,4 +128,15 @@ public class GameServiceImpl implements GameService{
     }
 
 
+    // 게임 결과 받아서 유저
+    public void roundOver(String roomIdx, Long userIdx){
+        // 1. 유저를 찾아서 point 넣기
+
+        // 2. 유저 저장
+
+        // 3. 방에 있는 모든 유저 정보 가지고 와서 넘겨주기
+
+    }
+
+
 }

@@ -68,7 +68,7 @@ public class RoomServiceImpl implements RoomService{
         joinListService.createJoinList(roomIdx, userHash.getUserIdx());
         userHashRepository.save(userHash);
 
-        return RoomDto.of(room);
+        return RoomDto.builder().roomIdx(roomIdx).build();
 
     }
 

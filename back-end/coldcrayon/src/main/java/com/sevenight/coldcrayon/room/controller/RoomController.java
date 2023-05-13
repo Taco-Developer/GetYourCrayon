@@ -25,8 +25,8 @@ public class RoomController {
     @PostMapping("/create")
     public ResponseEntity<RoomDto> createRoom(@RequestHeader String Authorization){
 
-//        UserDto user = authService.selectOneMember(HeaderUtil.getAccessTokenString(Authorization));
-        UserDto user = UserDto.builder().userIdx(1L).userEmail("1번@naver.com").userPoint(0).userNickname("바보").build();
+        UserDto user = authService.selectOneMember(HeaderUtil.getAccessTokenString(Authorization));
+//        UserDto user = UserDto.builder().userIdx(1L).userEmail("1번@naver.com").userPoint(0).userNickname("바보").build();
         RoomDto roomDto = roomService.saveRoom(user);
         System.out.println("완료");
 
@@ -36,10 +36,10 @@ public class RoomController {
     @PostMapping("/join")
     public ResponseEntity<RoomDto> joinRoom(@RequestHeader String Authorization, @RequestBody String roomIdx){
 
-//        UserDto user = authService.selectOneMember(HeaderUtil.getAccessTokenString(Authorization));
+        UserDto user = authService.selectOneMember(HeaderUtil.getAccessTokenString(Authorization));
 
         System.err.println("dmasdfkeaiwofhjiodsa;fjioa;ejfklasd;jfioa;ewjf");
-        UserDto user = UserDto.builder().userIdx(2L).userEmail("2번@naver.com").userPoint(0).userNickname("바보2").build();
+//        UserDto user = UserDto.builder().userIdx(2L).userEmail("2번@naver.com").userPoint(0).userNickname("바보2").build();
 
         RoomDto roomDto = roomService.joinRoom(user, roomIdx);
 
@@ -63,9 +63,9 @@ public class RoomController {
 
     @PatchMapping("/change-admin")
     public RoomDto changeAdmin(@RequestHeader String Authorization, @RequestBody RoomReqestDto roomReqestDto){
-//        UserDto user = authService.selectOneMember(HeaderUtil.getAccessTokenString(Authorization));
+        UserDto user = authService.selectOneMember(HeaderUtil.getAccessTokenString(Authorization));
 //        return roomService.changeAdminUser(user, roomIdx, toUserIdx);
-        UserDto user = UserDto.builder().userIdx(1L).userEmail("1번@naver.com").userPoint(0).userNickname("바보").build();
+//        UserDto user = UserDto.builder().userIdx(1L).userEmail("1번@naver.com").userPoint(0).userNickname("바보").build();
 
         return roomService.changeAdminUser(user, roomReqestDto.getRoomIdx(), roomReqestDto.getToUserIdx());
     }
@@ -73,8 +73,8 @@ public class RoomController {
     @PatchMapping("/maxuser")
     public RoomDto changeMaxUser(@RequestHeader String Authorization, @RequestBody RoomReqestDto roomReqestDto){
 
-//        UserDto user = authService.selectOneMember(HeaderUtil.getAccessTokenString(Authorization));
-        UserDto user = UserDto.builder().userIdx(1L).userEmail("1번@naver.com").userPoint(0).userNickname("바보").build();
+        UserDto user = authService.selectOneMember(HeaderUtil.getAccessTokenString(Authorization));
+//        UserDto user = UserDto.builder().userIdx(1L).userEmail("1번@naver.com").userPoint(0).userNickname("바보").build();
         return roomService.changeMaxUser(user, roomReqestDto.getRoomIdx(), roomReqestDto.getRoomMax());
 
     }
