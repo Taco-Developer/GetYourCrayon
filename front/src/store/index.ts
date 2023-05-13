@@ -10,6 +10,7 @@ import {
 
 import { HYDRATE, createWrapper } from 'next-redux-wrapper';
 
+import loginSlice, { LoginStateType } from './slice/loginSlice';
 import userSlice, { UserStateType } from './slice/userSlice';
 import navbarSlice, { NavbarStateType } from './slice/navbarSlice';
 import scoreSliceReducer from './slice/game/score';
@@ -52,6 +53,7 @@ export interface ReducerStates {
   userInfo: UserStateType;
   userData: UserDataType;
   draw: DrawStateType;
+  isLogin: LoginStateType;
 }
 
 //HYDRATE 액션을 정의 -> 슬라이스 통함
@@ -76,6 +78,7 @@ const rootReducer = (
         userInfo: userSlice.reducer,
         userData: userDataSliceReducer,
         draw: drawSliceReducer,
+        isLogin: loginSlice.reducer,
       });
       return combinedReducer(state, action);
     }
