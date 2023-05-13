@@ -1,7 +1,9 @@
 package com.sevenight.coldcrayon.gacha.service;
 
 import com.sevenight.coldcrayon.allgacha.entity.Allgacha;
+import com.sevenight.coldcrayon.allgacha.entity.GachaClass;
 import com.sevenight.coldcrayon.allgacha.repository.AllgachaRepository;
+import com.sevenight.coldcrayon.gacha.dto.GachaDto;
 import com.sevenight.coldcrayon.gacha.entity.Gacha;
 import com.sevenight.coldcrayon.gacha.repository.GachaRepository;
 import com.sevenight.coldcrayon.user.dto.ResponseDto;
@@ -19,13 +21,52 @@ import java.util.*;
 @Slf4j
 @RequiredArgsConstructor
 public class GachaService {
+    private static final double NORMAL_RATING_MAX = 0.8;
+    private static final double NORMAL_RATING_MIN = 0.2;
+    private static final double RARE_RATING = 0.15;
+    private static final double SUPER_RARE_RATING = 0.05;
+    private static final double EVENT_PROBABILITY = 0.00001;
     private final UserRepository userRepository;
     private final GachaRepository gachaRepository;
     private final AllgachaRepository allgachaRepository;
 
-    private static int allGachaCntMin = 1;
-    private static int allGachaCntMax = 20;
+    private static int allGachaCntMin;
+    private static int allGachaCntMax;
 
+    public Void randomGacha() {
+        Random random = new Random();
+        double eventProbabilityThreshold = random.nextDouble();
+        boolean itemObtained = false;
+
+//        double probability = random.nextDouble();
+
+        log.info("이벤트 체크 난수값 = {}", eventProbabilityThreshold);
+        if (eventProbabilityThreshold >= EVENT_PROBABILITY) {
+            double rarityThreshold = random.nextDouble();
+            log.info("그 외 체크 난수값 = {}",rarityThreshold);
+            if (NORMAL_RATING_MIN <= rarityThreshold && rarityThreshold <= NORMAL_RATING_MAX) {
+                log.info("노말 가챠 생성");
+                allGachaCntMin = 1;
+                allGachaCntMax = 22;
+
+            } else if (rarityThreshold >= RARE_RATING) {
+                log.info("레어 가챠 생성");
+                allGachaCntMin = 23;
+                allGachaCntMax = 40;
+
+            } else if (rarityThreshold >= SUPER_RARE_RATING) {
+                log.info("슈퍼레어 가챠 생성");
+                allGachaCntMin = 41;
+                allGachaCntMax = 58;
+
+            }
+        } else {
+            log.info("이벤트 가챠 생성");
+            allGachaCntMin = 59;
+            allGachaCntMax = 94;
+        }
+        return null;
+    }
     public Object N_Gacha(Long userIdx, int cnt, int price) {
         Optional<User> byUserIdx = userRepository.findByUserIdx(userIdx);
         if (byUserIdx.isEmpty()) {
@@ -33,9 +74,16 @@ public class GachaService {
             return "유저 정보를 찾을 수 없음";
 
         } else {
-            Map<Long, List<Object>> gachaMap = null;
+            Map<Long, GachaDto> gachaMap = null;
             if (byUserIdx.get().getUserPoint() >= price) {
+                // 가지고 있는 모든 가챠 불러오기
+                List<Gacha> haveAll = gachaRepository.findAllByUserIdx(byUserIdx.get());
+                List<Long> exist = new ArrayList<>();
+                for (Gacha gacha : haveAll) {
+                    exist.add(gacha.getAllgachaIdx().getAllgachaIdx());
+                }
                 Random random = new Random();
+
                 gachaMap = new HashMap<>();
 
                 User user = byUserIdx.get();
@@ -44,9 +92,14 @@ public class GachaService {
                 userRepository.save(user);
 
                 for (Long i = 1L; i < cnt + 1; i++) {
-                    long gachaNumber = random.nextInt(allGachaCntMax) + allGachaCntMin;
+                    randomGacha();
+//                    long gachaNumber = random.nextInt(allGachaCntMax) + allGachaCntMin;
+                    long gachaNumber = random.nextInt((allGachaCntMax - allGachaCntMin) + 1) + allGachaCntMin;
 
-                    List<Object> gachaInfoList = new ArrayList<>();
+                    List<GachaDto> gachaDtoList = new ArrayList<>();
+                    GachaDto gachaDto = new GachaDto();
+
+
                     Optional<Allgacha> allgacha = allgachaRepository.findByAllgachaIdx(gachaNumber);
 
                     if (allgacha.isEmpty()) {
@@ -55,12 +108,23 @@ public class GachaService {
                         Gacha gacha = new Gacha();
                         gacha.setAllgachaIdx(allgacha.get());
                         gacha.setUserIdx(user);
-                        gachaRepository.save(gacha);
+                        // 이미 뽑은걸 또 다시 뽑은 상태
+                        if (exist.contains(gachaNumber)) {
+                            gachaDto.setExistGacha(false);
+                        // 새로운 가챠를 뽑은 상태
+                        } else {
+                            gachaDto.setExistGacha(true);
+                            exist.add(allgacha.get().getAllgachaIdx());
+                            gachaRepository.save(gacha);
+                        }
 
-                        gachaInfoList.add(i + "번째로 뽑힌 값");
-                        gachaInfoList.add(allgacha.get().getAllgachaImg());
-                        gachaInfoList.add(allgacha.get().getAllgachaClass());
-                        gachaMap.put(i, gachaInfoList);
+                        // 리턴을 위한 저장
+                        gachaDto.setGachaIdx(allgacha.get().getAllgachaIdx());
+                        gachaDto.setGachaImg(allgacha.get().getAllgachaImg());
+                        gachaDto.setGachaClass(allgacha.get().getAllgachaClass());
+
+                        log.info("gachaDto ={}", gachaDto);
+                        gachaMap.put(i, gachaDto);
                     }
                 }
                 return gachaMap;
@@ -86,14 +150,14 @@ public class GachaService {
                     .userProfile(byUserIdx.get().getUserProfile())
                     .userPoint(byUserIdx.get().getUserPoint())
                     .build();
-            
+
             result.put("profile", userProfileDto);
             responseDto.setMessage("유저 프로필 정보");
             responseDto.setStatusCode(200);
             responseDto.setBody(result);
         }
 
-    return responseDto;
+        return responseDto;
     }
 
     public ResponseDto gachaOnce(Long userIdx) {
