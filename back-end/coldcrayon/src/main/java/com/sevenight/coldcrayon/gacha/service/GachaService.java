@@ -38,17 +38,17 @@ public class GachaService {
             Map<Long, GachaDto> gachaMap = null;
             if (byUserIdx.get().getUserPoint() >= price) {
                 // 가지고 있는 모든 가챠 불러오기
-                System.err.println("여기까지는 들어오나 봅시다");
-                System.err.println(byUserIdx.get().getUserIdx());
+//                System.err.println("여기까지는 들어오나 봅시다");
+//                System.err.println(byUserIdx.get().getUserIdx());
                 List<Gacha> haveAll = gachaRepository.findAllByUserIdx(byUserIdx.get());
 //                log.info("haveAll = {}", haveAll.toArray().toString());
                 List<Long> exist = new ArrayList<>();
                 for (Gacha gacha : haveAll) {
                     exist.add(gacha.getAllgachaIdx().getAllgachaIdx());
                 }
-                for (Long aLong : exist) {
-                    System.out.println("존재하나요 = " + aLong);
-                }
+//                for (Long aLong : exist) {
+//                    System.out.println("존재하나요 = " + aLong);
+//                }
 
 
                 Random random = new Random();
@@ -79,12 +79,12 @@ public class GachaService {
 
                         if (exist.contains(gachaNumber)) {
                             gachaDto.setExistGacha(false);
-                            System.err.println("있음");
-                            System.out.println("gachaNumber = " + gachaNumber);
+//                            System.err.println("있음");
+//                            System.out.println("gachaNumber = " + gachaNumber);
                         } else {
                             gachaDto.setExistGacha(true);
                             gachaRepository.save(gacha);
-                            System.err.println("없음");
+//                            System.err.println("없음");
                         }
 
                         // 리턴을 위한 저장

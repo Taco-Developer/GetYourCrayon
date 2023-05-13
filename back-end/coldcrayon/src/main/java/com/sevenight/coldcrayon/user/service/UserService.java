@@ -4,6 +4,7 @@ import com.sevenight.coldcrayon.allgacha.dto.AllgachaDto;
 import com.sevenight.coldcrayon.allgacha.entity.Allgacha;
 import com.sevenight.coldcrayon.allgacha.entity.GachaClass;
 import com.sevenight.coldcrayon.allgacha.repository.AllgachaRepository;
+import com.sevenight.coldcrayon.gacha.dto.*;
 import com.sevenight.coldcrayon.gacha.entity.Gacha;
 import com.sevenight.coldcrayon.gacha.repository.GachaRepository;
 import com.sevenight.coldcrayon.user.dto.ResponseDto;
@@ -44,25 +45,67 @@ public class UserService {
                     .userPoint(byUserIdx.get().getUserPoint())
                     .build();
 
+            // 유저가 가지고 있는 가챠 모음인듯?
             List<Gacha> userGachas = byUserIdx.get().getUserGachas();
             List<Object> collectionsInfo = new ArrayList<>();
 
-            for (int i = 0; i<userGachas.size(); i++) {
-                Long allgachaIdx = userGachas.get(i).getAllgachaIdx().getAllgachaIdx();
-                Optional<Allgacha> byAllgachaIdx = allgachaRepository.findByAllgachaIdx(allgachaIdx);
+            Map<String, List> gachaMap = new HashMap<>();
 
-                Long allgachaIdxLong = byAllgachaIdx.get().getAllgachaIdx();
-                String allgachaImg = byAllgachaIdx.get().getAllgachaImg();
-                GachaClass allgachaClass = byAllgachaIdx.get().getAllgachaClass();
+            List<NormalDto> normalDtoList = new ArrayList<>();
+            List<RareDto> rareDtoList = new ArrayList<>();
+            List<SuperRareDto> superRareDtoList = new ArrayList<>();
+            List<EventDto> eventDtoList = new ArrayList<>();
 
-                AllgachaDto allgachaDto = AllgachaDto.builder()
-                        .allgachaIdx(allgachaIdxLong)
-                        .allgachaClass(allgachaClass)
-                        .allgachaImg(allgachaImg)
-                        .build();
+//            normalDto.add(new NormalDto().setGachaImg(userGacha.getAllgachaIdx().getAllgachaImg()));
 
-                collectionsInfo.add(allgachaDto);
+            for (Gacha userGacha : userGachas) {
+                System.err.println("가지고 있는 가챠의 아이디 = " + userGacha.getGachaIdx());
+                System.err.println("가지고 있는 가챠 이미지 = " + userGacha.getAllgachaIdx().getAllgachaImg());
+                System.err.println("가지고 있는 가챠 클래스= " + userGacha.getAllgachaIdx().getAllgachaClass());
+                System.err.println("가지고 있는 가챠 클래스 의 타입= " +
+                        userGacha.getAllgachaIdx().getAllgachaClass().getClass().getName());
+                if (userGacha.getAllgachaIdx().getAllgachaClass() == GachaClass.NORMAL) {
+                    NormalDto normalDto = new NormalDto();
+                    normalDto.setGachaImg(userGacha.getAllgachaIdx().getAllgachaImg());
+                    normalDtoList.add(normalDto);
+                } else if (userGacha.getAllgachaIdx().getAllgachaClass() == GachaClass.RARE) {
+                    RareDto rareDto = new RareDto();
+                    rareDto.setGachaImg(userGacha.getAllgachaIdx().getAllgachaImg());
+                    rareDtoList.add(rareDto);
+                } else if (userGacha.getAllgachaIdx().getAllgachaClass() == GachaClass.SUPERRARE) {
+                    SuperRareDto superRareDto = new SuperRareDto();
+                    superRareDto.setGachaImg(userGacha.getAllgachaIdx().getAllgachaImg());
+                    superRareDtoList.add(superRareDto);
+                } else if (userGacha.getAllgachaIdx().getAllgachaClass() == GachaClass.EVENT) {
+                    EventDto eventDto = new EventDto();
+                    eventDto.setGachaImg(userGacha.getAllgachaIdx().getAllgachaImg());
+                    eventDtoList.add(eventDto);
+                }
             }
+
+            gachaMap.put("normal", normalDtoList);
+            gachaMap.put("rare", rareDtoList);
+            gachaMap.put("superRare", superRareDtoList);
+            gachaMap.put("event", eventDtoList);
+
+            collectionsInfo.add(gachaMap);
+
+//            for (int i = 0; i<userGachas.size(); i++) {
+//                Long allgachaIdx = userGachas.get(i).getAllgachaIdx().getAllgachaIdx();
+//                Optional<Allgacha> byAllgachaIdx = allgachaRepository.findByAllgachaIdx(allgachaIdx);
+//
+//                Long allgachaIdxLong = byAllgachaIdx.get().getAllgachaIdx();
+//                String allgachaImg = byAllgachaIdx.get().getAllgachaImg();
+//                GachaClass allgachaClass = byAllgachaIdx.get().getAllgachaClass();
+//
+//                AllgachaDto allgachaDto = AllgachaDto.builder()
+//                        .allgachaIdx(allgachaIdxLong)
+//                        .allgachaClass(allgachaClass)
+//                        .allgachaImg(allgachaImg)
+//                        .build();
+//
+//                collectionsInfo.add(allgachaDto);
+//            }
 
             result.put("profile", userProfileDto);
             result.put("gacha", collectionsInfo);
@@ -94,6 +137,7 @@ public class UserService {
         }
         return responseDto;
     }
+
     public ResponseDto changeUserProfileImg(long userIdx, String newProfileImg) {
         ResponseDto responseDto = new ResponseDto();
 
