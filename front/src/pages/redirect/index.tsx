@@ -9,10 +9,10 @@ export default function Redirect() {
   useEffect(() => {
     const getToken = async () => {
       try {
-        const accessToken = router.query.accesstoken;
-        localStorage.setItem('accesstoken', 'Bearer ' + accessToken);
+        const accessToken = 'Bearer ' + router.query.accesstoken;
+        localStorage.setItem('accesstoken', accessToken);
         const expiryDate = new Date(Number(new Date()) + 315360000000);
-        setCookie('accessToken', 'Bearer ' + accessToken, {
+        setCookie('accessToken', accessToken, {
           expires: expiryDate,
           maxAge: 315360000000,
           secure: true,
