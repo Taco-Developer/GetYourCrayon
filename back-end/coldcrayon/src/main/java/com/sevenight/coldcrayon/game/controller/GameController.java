@@ -21,7 +21,7 @@ import java.util.Map;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/game")
+@RequestMapping("/game")
 @RequiredArgsConstructor
 public class GameController {
 
