@@ -64,6 +64,12 @@ dependencies {
 	implementation "com.amazonaws:aws-java-sdk-s3:1.12.281"
 	// WebSocket
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	// WebClient (AI 사진 요청)
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-webflux'
+
+	// Apache Commons IO (사진 저장)
+	implementation 'commons-io:commons-io:2.11.0'
+
 }
 
 tasks.named('test') {
