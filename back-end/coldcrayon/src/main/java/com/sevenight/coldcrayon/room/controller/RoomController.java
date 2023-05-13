@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/room")
+@RequestMapping("/room")
 @RequiredArgsConstructor
 public class RoomController {
 
@@ -25,7 +25,9 @@ public class RoomController {
     @PostMapping("/create")
     public ResponseEntity<RoomDto> createRoom(@RequestHeader String Authorization){
 
+        System.err.println("컨트롤러 진입");
         UserDto user = authService.selectOneMember(HeaderUtil.getAccessTokenString(Authorization));
+        System.err.println(user);
 //        UserDto user = UserDto.builder().userIdx(1L).userEmail("1번@naver.com").userPoint(0).userNickname("바보").build();
         RoomDto roomDto = roomService.saveRoom(user);
         System.out.println("완료");
