@@ -2,6 +2,9 @@ package com.sevenight.coldcrayon.room.service;
 
 import com.sevenight.coldcrayon.auth.dto.UserDto;
 import com.sevenight.coldcrayon.room.dto.RoomDto;
+import com.sevenight.coldcrayon.room.entity.UserHash;
+
+import java.util.List;
 
 public interface RoomService {
 
@@ -17,6 +20,7 @@ public interface RoomService {
 
     RoomDto changeMaxUser(UserDto user, String roomIdx, int roomMax);
 
+    List<UserHash> getUserList(String roomIdx);
 
     // 3-3 유저 차단
 //    String banUser(String roomIdx, String adminUserIdx, String banUserIdx);

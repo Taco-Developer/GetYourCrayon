@@ -46,6 +46,13 @@ public class RoomController {
         return ResponseEntity.status(HttpStatus.OK).body(roomDto);
     }
 
+    @GetMapping("/get-user-list")
+    public ResponseEntity<?> getUserList(@RequestHeader String Authorization, @RequestBody String roomIdx){
+        System.err.println("컨트롤러 진입");
+        return ResponseEntity.ok().body(roomService.getUserList(roomIdx));
+    }
+
+
     @PostMapping("/out")
     public String outRoom(@RequestHeader String Authorization){
 

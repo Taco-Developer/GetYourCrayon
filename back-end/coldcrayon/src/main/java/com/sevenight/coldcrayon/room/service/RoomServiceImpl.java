@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.rmi.ServerError;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -231,6 +232,15 @@ public class RoomServiceImpl implements RoomService{
         return RoomDto.of(room);
     }
 
+    public List<UserHash> getUserList(String roomIdx){
+        System.err.println("서비스도 들어옴");
+        List<Object> userList = redisMethods.getList(roomIdx);
+        List<UserHash> userHashList = new ArrayList<>();
+        for(Object userIdx: userList){
+            userHashList.add(userHashRepository.findById(Long.parseLong(userIdx.toString())).get());
+        }
+        return userHashList;
+    }
     // U : 유저 차단
 //    public String banUser(String roomIdx, String adminUserIdx, String banUserIdx){
 //        Optional<RoomHash> optionalRoom = roomRepository.findById(roomIdx);
