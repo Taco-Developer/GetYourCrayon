@@ -59,11 +59,6 @@ public class UserService {
 //            normalDto.add(new NormalDto().setGachaImg(userGacha.getAllgachaIdx().getAllgachaImg()));
 
             for (Gacha userGacha : userGachas) {
-                System.err.println("가지고 있는 가챠의 아이디 = " + userGacha.getGachaIdx());
-                System.err.println("가지고 있는 가챠 이미지 = " + userGacha.getAllgachaIdx().getAllgachaImg());
-                System.err.println("가지고 있는 가챠 클래스= " + userGacha.getAllgachaIdx().getAllgachaClass());
-                System.err.println("가지고 있는 가챠 클래스 의 타입= " +
-                        userGacha.getAllgachaIdx().getAllgachaClass().getClass().getName());
                 if (userGacha.getAllgachaIdx().getAllgachaClass() == GachaClass.NORMAL) {
                     NormalDto normalDto = new NormalDto();
                     normalDto.setGachaImg(userGacha.getAllgachaIdx().getAllgachaImg());
