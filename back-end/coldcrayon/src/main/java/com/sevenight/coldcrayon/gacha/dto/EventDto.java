@@ -9,6 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EventDto {
+    private Long gachaIdx;
     private String gachaImg;
 //
 //    public EventDto(String gachaImg) {

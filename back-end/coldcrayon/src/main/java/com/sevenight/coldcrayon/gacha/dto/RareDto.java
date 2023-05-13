@@ -9,6 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RareDto {
+    private Long gachaIdx;
     private String gachaImg;
 
 //    public RareDto(String gachaImg) {

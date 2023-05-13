@@ -9,6 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class NormalDto {
+    private Long gachaIdx;
     private String gachaImg;
 
 //    public NormalDto(String gachaImg) {
