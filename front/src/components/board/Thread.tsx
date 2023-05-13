@@ -20,6 +20,7 @@ const Thread = tw.div`
     border-custom-gray
     py-2
     font-['SUIT']
+    h-full
 `;
 
 const ThreadLast = tw.div`
