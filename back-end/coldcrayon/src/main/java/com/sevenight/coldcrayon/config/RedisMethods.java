@@ -1,9 +1,7 @@
 package com.sevenight.coldcrayon.config;
 
 import lombok.RequiredArgsConstructor;
-import org.hibernate.type.ClassType;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
