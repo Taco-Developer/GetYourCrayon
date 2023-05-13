@@ -18,7 +18,6 @@ export interface UserInfoType {
 
 export async function getServerSideProps(context: any) {
   const { req, res } = context;
-
   //로컬에서 테스트할시엔 setCookie 이용해서 refreshtoken과 accesstoken을 넣어줘야합니다.
   let refr = getCookie('refreshtoken', { req, res });
   let cookie = getCookie('accesstoken', { req, res });

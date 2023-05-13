@@ -10,6 +10,23 @@ import Contents from '@/components/mypage/Contents';
 import { getCookie } from 'cookies-next';
 import axios from 'axios';
 import { memberAPI } from '@/api/api';
+import type {
+  GetServerSideProps,
+  InferGetServerSidePropsType,
+  NextPage,
+} from 'next';
+import wrapper from '@/store';
+import { useAppSelector } from '@/store/thunkhook';
+
+export const getServerSideProps: GetServerSideProps =
+  wrapper.getServerSideProps((store) => async (context) => {
+    // 서버 영역에서 Redux 사용
+    console.log(
+      store.getState().isLogin.isLogin,
+      'dsfasdffsddddddddddddddddddddddddddddddddddddddddddddddddddddddddf',
+    );
+    return { props: { message: 'Message from SSR' } };
+  });
 
 // export async function getServerSideProps(context: any) {
 //   const { req, res } = context;
