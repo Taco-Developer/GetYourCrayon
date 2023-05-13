@@ -1,7 +1,11 @@
 package com.sevenight.coldcrayon.game.service;
 
-import com.sevenight.coldcrayon.game.dto.ResponseGameDto;
+import com.sevenight.coldcrayon.auth.dto.UserDto;
+import com.sevenight.coldcrayon.game.dto.GameRequestDto;
+import com.sevenight.coldcrayon.theme.entity.ThemeCategory;
 
 public interface GameService {
-    ResponseGameDto startGame(String roomIdx, String userIdx);
+    ThemeCategory[] startGame(UserDto userDto, GameRequestDto gameRequestDto);
+
+    Object choiceUser(String roomIdx);
 }

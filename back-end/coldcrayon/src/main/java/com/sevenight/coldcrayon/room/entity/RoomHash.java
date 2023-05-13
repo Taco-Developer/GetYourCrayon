@@ -1,13 +1,15 @@
 package com.sevenight.coldcrayon.room.entity;
 
+import com.sevenight.coldcrayon.game.entity.GameCategory;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @RedisHash("room")
-@Data
+@ToString
 @Setter
 @Getter
 @Builder
@@ -18,9 +20,15 @@ public class RoomHash {
     @Id
     private String roomIdx;
 
-    private String gameIdx;
+    private GameCategory gameCategory;
 
-    private String adminUserIdx;
+    private int gameCnt;
+
+    private int nowRound;
+
+    private int maxRound;
+
+    private Long adminUserIdx;
 
     private RoomStatus roomStatus;
 
