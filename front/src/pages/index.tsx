@@ -19,41 +19,33 @@ export interface UserInfoType {
 
 export async function getServerSideProps(context: any) {
   const { req, res } = context;
-  // setCookie(
-  //   'accesstoken',
-  //   'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0a2RndXNkbDYzQG5hdmVyLmNvbSIsInJvbGUiOiJST0xFX01FTUJFUiIsIm5pY2tuYW1lIjoic2Rmc2FkcyIsImV4cCI6MTY4NDE0NzAyNX0.S55uwOh8qWgAyTUxoZfZBlEk0eoQxcvM9hCte7BYBcM',
-  //   { req, res },
-  // );
-  let test = context.req.headers;
   let refr = getCookie('refreshtoken', { req, res });
   console.log(refr);
   let cookie = getCookie('accesstoken', { req, res });
   cookie = cookie ? cookie : '123';
   const api = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_URL,
-    withCredentials: true,
     headers: {
       Authorization: cookie,
       'Content-Type': 'application/json',
+      Cookie: `refreshtoken=` + refr,
     },
   });
-  // try {
-  //   const re = await api.get(`/member/myinfo`);
+  try {
+    const re = await api.get(`/member/myinfo`);
 
-  //   const res: UserInfoType = re.data;
-  //   console.log('tttt');
-  //   return { props: { res } };
-  // } catch (e) {
-  //   const serializedData = JSON.stringify(e);
-  //   return { props: { e: serializedData, refr } };
-  // }
-  return { props: { cookie, refr, test } };
+    const res: UserInfoType = re.data;
+    console.log('tttt');
+    return { props: { res } };
+  } catch (e) {
+    const serializedData = JSON.stringify(e);
+    return { props: { e: serializedData } };
+  }
 }
 
-export default function Home({ cookie, refr, test }: any) {
-  console.log(cookie);
-  console.log(refr);
-  console.log(test);
+export default function Home({ res, e }: { res: UserInfoType; e: any }) {
+  console.log(e);
+  console.log(res);
   useEffect(() => {
     const getInfo = async () => {
       await memberAPI
