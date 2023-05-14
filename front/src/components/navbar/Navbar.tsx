@@ -11,6 +11,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { ReactNode, useState } from 'react';
 import { gameAPI } from '@/api/api';
+import { useAppSelector } from '@/store/thunkhook';
 
 interface NavbarPropsType {
   children: ReactNode;
@@ -18,6 +19,7 @@ interface NavbarPropsType {
 
 export default function Navbar({ children }: NavbarPropsType) {
   const [open, setOpen] = useState(false);
+  const { isLogin } = useAppSelector((state) => state);
   const router = useRouter();
   const navbarPath = useSelector((state: RootState) => state.navbarPath);
   const dispatch = useDispatch<AppDispatch>();

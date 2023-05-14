@@ -9,7 +9,7 @@ import {
 } from '@reduxjs/toolkit';
 
 import { HYDRATE, createWrapper } from 'next-redux-wrapper';
-
+import mypageSlice, { MypageStateType } from './slice/mypageSlice';
 import loginSlice, { LoginStateType } from './slice/loginSlice';
 import userSlice, { UserStateType } from './slice/userSlice';
 import navbarSlice, { NavbarStateType } from './slice/navbarSlice';
@@ -54,6 +54,7 @@ export interface ReducerStates {
   userData: UserDataType;
   draw: DrawStateType;
   isLogin: LoginStateType;
+  mypageInfo: MypageStateType;
 }
 
 //HYDRATE 액션을 정의 -> 슬라이스 통함
@@ -79,6 +80,7 @@ const rootReducer = (
         userData: userDataSliceReducer,
         draw: drawSliceReducer,
         isLogin: loginSlice.reducer,
+        mypageInfo: mypageSlice.reducer,
       });
       return combinedReducer(state, action);
     }

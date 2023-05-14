@@ -7,6 +7,7 @@ import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
 import { getCookie, setCookie } from 'cookies-next';
 import axios from 'axios';
 import { setUser } from '@/store/slice/userSlice';
+import { setLogin } from '@/store/slice/loginSlice';
 import wrapper from '@/store';
 import type { GetServerSideProps } from 'next';
 import Login from '@/components/login/Login';
@@ -64,6 +65,7 @@ export const getServerSideProps: GetServerSideProps =
       const re = await api.get(`/member/myinfo`);
       const res: UserInfoType = re.data;
       store.dispatch(setUser(res));
+      store.dispatch(setLogin({ isLogin: true }));
       // return { props: { res } };
       return { props: { message: 'Login' } };
     } catch (e) {
