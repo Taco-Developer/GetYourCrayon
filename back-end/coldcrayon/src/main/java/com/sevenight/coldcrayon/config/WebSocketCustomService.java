@@ -1,6 +1,11 @@
 package com.sevenight.coldcrayon.config;
 
 import com.sevenight.coldcrayon.auth.dto.UserDto;
+import com.sevenight.coldcrayon.game.dto.GameRequestDto;
+import com.sevenight.coldcrayon.game.entity.Game;
+import com.sevenight.coldcrayon.game.entity.GameCategory;
+import com.sevenight.coldcrayon.game.repository.GameRepository;
+import com.sevenight.coldcrayon.game.service.GameService;
 import com.sevenight.coldcrayon.joinlist.entity.Joinlist;
 import com.sevenight.coldcrayon.joinlist.repository.JoinListRepository;
 import com.sevenight.coldcrayon.room.dto.RoomDto;
@@ -19,10 +24,12 @@ import java.util.Optional;
 @Slf4j
 public class WebSocketCustomService {
 
+    private GameRepository gameRepository;
     private JoinListRepository joinListRepository;
     private RoomRepository roomRepository;
     private UserRepository userRepository;
     private RoomService roomService;
+    private GameService gameService;
 
     public boolean checkEnableEnter(String roomId) {
         boolean enable = false;
@@ -54,11 +61,24 @@ public class WebSocketCustomService {
         }
     }
 
-    public UserDto makeUserDto(Long userIdx) {
+    public UserDto getUserDto(Long userIdx) {
         // User객체 찾아오면 of 메서드로 만들 수 있음//
         Optional<User> byUserIdx = userRepository.findByUserIdx(userIdx);
         UserDto userDto = UserDto.of(byUserIdx.get());
         return userDto;
+    }
+
+    public void changeGameType(String changedGameType) {
+
+    }
+
+    public GameRequestDto getGameRequestDto(String roomIdx, int gameIdx) {
+        int maxRound = roomService.getRoom(roomIdx).getMaxRound();
+        GameCategory gameCategory = gameRepository.findById(gameIdx).get().getGameCategory();
+
+        GameRequestDto gameRequestDto = new GameRequestDto(roomIdx, gameCategory, maxRound)
+
+        return gameRequestDto;
     }
 
 }
