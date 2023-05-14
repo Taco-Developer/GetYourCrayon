@@ -41,34 +41,32 @@ const MyProfile = ({ isClick, setIsClick }: isClickType) => {
           sizes="100%"
         />
       </div>
-      {isClick && (
-        <ProfileDropDown setIsClick={setIsClick}>
-          <Link
-            href={'/mypage'}
-            className="mb-3 text-center active:relative active:top-0.5"
-            onClick={() => {
-              setIsClick(false);
-            }}
-          >
-            마이페이지
-          </Link>
+      <ProfileDropDown setIsClick={setIsClick} isClick={isClick}>
+        <Link
+          href={'/mypage'}
+          className="mb-3 text-center active:relative active:top-0.5"
+          onClick={() => {
+            setIsClick(false);
+          }}
+        >
+          마이페이지
+        </Link>
 
-          <button
-            className="pb-4  active:relative active:top-0.5"
-            onClick={() => {
-              const logout = async () => {
-                await memberAPI
-                  .logout()
-                  .then((request) => console.log(request))
-                  .catch((e) => console.log(e));
-              };
-              logout();
-            }}
-          >
-            로그아웃
-          </button>
-        </ProfileDropDown>
-      )}
+        <button
+          className="pb-4  active:relative active:top-0.5"
+          onClick={() => {
+            const logout = async () => {
+              await memberAPI
+                .logout()
+                .then((request) => console.log(request))
+                .catch((e) => console.log(e));
+            };
+            logout();
+          }}
+        >
+          로그아웃
+        </button>
+      </ProfileDropDown>
     </div>
   );
 };

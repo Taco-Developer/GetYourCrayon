@@ -21,6 +21,7 @@ module.exports = {
         'after-noon': "url('/images/bgafter.gif')",
         'even-ing': "url('/images/bgevening.gif')",
         'night-ing': "url('/images/bgnight.gif')",
+        'gacha-bg': "url('/images/gachabgimg.png')",
       },
       spacing: {
         10: '10%',
@@ -64,15 +65,28 @@ module.exports = {
         'fade-in-up': {
           '0%': {
             opacity: '0',
-            transform: 'translateY(0)',
+            transform: 'translateY(-10px)',
           },
           '100%': {
             opacity: '1',
             transform: 'translateY(0)',
           },
         },
+        'fade-out-up': {
+          '0%': {
+            opacity: '1',
+            transform: 'translateY(0)',
+          },
+          '100%': {
+            opacity: '0',
+            transform: 'translateY(-10px)',
+          },
+        },
       },
-      animation: { 'fade-in-up': 'fade-in-up 0.3s ease-out' },
+      animation: {
+        'fade-in-up': 'fade-in-up 0.3s ease-out',
+        'fade-out-up': 'fade-out-up 0.3s ease-out',
+      },
     },
   },
   plugins: [

@@ -3,20 +3,12 @@ import tw from 'tailwind-styled-components';
 import Navbar from '@/components/navbar/Navbar';
 import type { ReactElement } from 'react';
 import { useEffect, useState } from 'react';
-import Image from 'next/image';
-import { Button } from '@/components/ui/Button';
 import UserInfo from '@/components/mypage/UserInfo';
 import Contents from '@/components/mypage/Contents';
 import { getCookie } from 'cookies-next';
 import axios from 'axios';
-import { memberAPI } from '@/api/api';
-import type {
-  GetServerSideProps,
-  InferGetServerSidePropsType,
-  NextPage,
-} from 'next';
+import type { GetServerSideProps } from 'next';
 import wrapper from '@/store';
-import { useAppSelector } from '@/store/thunkhook';
 import { setLogin } from '@/store/slice/loginSlice';
 import { setMypage } from '@/store/slice/mypageSlice';
 import Login from '@/components/login/Login';
@@ -76,8 +68,6 @@ export const getServerSideProps: GetServerSideProps =
 // }
 
 export default function MyPage({ message }: { message: string }) {
-  const { isLogin } = useAppSelector((state) => state);
-  const { mypageInfo } = useAppSelector((state) => state);
   const [open, setOpen] = useState(false);
   useEffect(() => {
     console.log(message);
@@ -85,8 +75,6 @@ export default function MyPage({ message }: { message: string }) {
       setOpen(true);
     }
   }, []);
-  console.log(isLogin);
-  console.log(mypageInfo);
   return (
     <Container>
       <UserInfo />
