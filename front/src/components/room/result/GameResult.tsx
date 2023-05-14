@@ -6,7 +6,6 @@ import tw from 'tailwind-styled-components';
 
 import Margin, { MarginType } from '@/components/ui/Margin';
 import { useAppSelector } from '@/store/thunkhook';
-import Mic from '@/components/ui/icons/Mic';
 import { Button } from '@/components/ui/Button';
 import { w3cwebsocket as W3CWebSocket } from 'websocket';
 
@@ -57,9 +56,7 @@ export default function GameResult({ client }: { client: W3CWebSocket }) {
               <UserItem key={user.id}>
                 <UserProfile />
                 <span className="text-ellipsis">{user.nickname}</span>
-                <div className="flex-auto flex justify-end text-2xl">
-                  <Mic isMyStatus={false} isMuted={true} />
-                </div>
+                <div className="flex-auto flex justify-end text-2xl"></div>
               </UserItem>
             ))}
           </UserList>
