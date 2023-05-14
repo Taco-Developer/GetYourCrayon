@@ -6,10 +6,6 @@ import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
 import { closeIsSelectThemeModalOpened } from '@/store/slice/game/aiGameDatasSlice';
 import { resetTime } from '@/store/slice/game/leftTimeSlice';
 import { startGame } from '@/store/slice/game/isGameStartedSlice';
-import {
-  addThemeList,
-  saveSelectedTheme,
-} from '@/store/slice/game/gameThemeSlice';
 
 // 더미 파일
 const INIT_THEME_LIST = [
@@ -26,7 +22,7 @@ const INIT_THEME_LIST = [
 
 export default function AiWordsDialog() {
   const {
-    gameTheme: { themeList },
+    gameTheme: { selectedTheme },
     aiGameDatas: { isSelectThemeModalOpened },
   } = useAppSelector((state) => state);
   const dispatch = useAppDispatch();
@@ -45,16 +41,11 @@ export default function AiWordsDialog() {
   const startClickHandler = () => {
     if (savedTheme) {
       setSavedTheme('');
-      dispatch(saveSelectedTheme(savedTheme));
       dispatch(closeIsSelectThemeModalOpened());
       dispatch(startGame());
       dispatch(resetTime());
     }
   };
-
-  useEffect(() => {
-    dispatch(addThemeList(INIT_THEME_LIST));
-  }, [dispatch]);
 
   // 다이얼로그 닫기 함수
   const onDialogClose = (_: object, reason: string) => {
@@ -76,21 +67,7 @@ export default function AiWordsDialog() {
           <p className="text-xl text-gray-500">원하는 주제를 선택하세요.</p>
         </header>
         <Margin type={MarginType.height} size={16} />
-        <main className="w-full grid grid-rows-3 grid-cols-3 gap-2">
-          {themeList.map((theme, index) => (
-            <div
-              key={index}
-              className={`flex justify-center items-center py-2 ${
-                theme === savedTheme ? 'bg-green-600' : 'bg-orange-400'
-              }`}
-              onClick={() => {
-                themeClickHandler(theme);
-              }}
-            >
-              {theme}
-            </div>
-          ))}
-        </main>
+        <main className="w-full grid grid-rows-3 grid-cols-3 gap-2"></main>
         <Margin type={MarginType.height} size={16} />
         <footer>
           <button
