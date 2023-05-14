@@ -11,6 +11,8 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { ReactNode, useState } from 'react';
 import { gameAPI } from '@/api/api';
+import { useAppSelector } from '@/store/thunkhook';
+import MyProfile from './MyProfile';
 
 interface NavbarPropsType {
   children: ReactNode;
@@ -18,6 +20,8 @@ interface NavbarPropsType {
 
 export default function Navbar({ children }: NavbarPropsType) {
   const [open, setOpen] = useState(false);
+  const [isClick, setIsClick] = useState(false);
+  const { isLogin } = useAppSelector((state) => state);
   const router = useRouter();
   const navbarPath = useSelector((state: RootState) => state.navbarPath);
   const dispatch = useDispatch<AppDispatch>();
@@ -75,19 +79,25 @@ export default function Navbar({ children }: NavbarPropsType) {
         </LogoDiv>
 
         <LoginDiv>
-          <Button
-            px={8}
-            py={2}
-            rounded="lg"
-            color="bg-main-pink"
-            className="animate-bounce text-main-green text-xs lg:text-xl sm:text-sm"
-            onClick={() => {
-              setOpen(true);
-            }}
-          >
-            로그인
-          </Button>
-          <Login open={open} setOpen={setOpen} />
+          {isLogin ? (
+            <MyProfile isClick={isClick} setIsClick={setIsClick} />
+          ) : (
+            <div>
+              <Button
+                px={8}
+                py={2}
+                rounded="lg"
+                color="bg-main-pink"
+                className="animate-bounce text-main-green text-xs lg:text-xl sm:text-sm"
+                onClick={() => {
+                  setOpen(true);
+                }}
+              >
+                로그인
+              </Button>
+              <Login open={open} setOpen={setOpen} />
+            </div>
+          )}
         </LoginDiv>
       </NavbarDiv>
 
