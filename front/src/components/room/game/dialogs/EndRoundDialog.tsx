@@ -6,9 +6,9 @@ import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
 import {
   closeIsScoreCheckModalOpened,
   openIsSelectThemeModalOpened,
-  resetAnserwer,
 } from '@/store/slice/game/aiGameDatasSlice';
 import { goNextRound } from '@/store/slice/game/gameRoundSlice';
+import { resetAnserwer } from '@/store/slice/game/answersSlice';
 
 export default function EndRoundDialog() {
   const {

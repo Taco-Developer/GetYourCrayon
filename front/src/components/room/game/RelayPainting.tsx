@@ -10,7 +10,7 @@ export default function RelayPainting({ client }: { client: W3CWebsocket }) {
   const { userRole } = useAppSelector((state) => state.userData);
 
   switch (userRole) {
-    case 'painting':
+    case 'drawing':
       return <Drawing client={client} />;
     case 'solving':
       return <Solving isReverseGame={false} client={client} />;

@@ -1,8 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export interface AiGameDatasType {
-  randomAnswers: string[];
-  inputedAnswers: string[];
   aiImages: string[];
   isSelectThemeModalOpened: boolean;
   isScoreCheckModalOpened: boolean;
@@ -10,8 +8,6 @@ export interface AiGameDatasType {
 
 const INIT_AI_GAME_DATAS: AiGameDatasType = {
   aiImages: [],
-  randomAnswers: [],
-  inputedAnswers: [],
   isScoreCheckModalOpened: false,
   isSelectThemeModalOpened: false,
 };
@@ -45,32 +41,19 @@ const aiGameDatasSlice = createSlice({
       state.aiImages = action.payload;
     },
 
-    /** 랜덤 정답 추가 */
-    addRandomAnswers(state, action: PayloadAction<string[]>) {
-      state.randomAnswers = action.payload;
-    },
-
-    /** 정답 입력 */
-    addInputedAnswers(state, action: PayloadAction<string>) {
-      state.inputedAnswers.push(action.payload);
-    },
-
-    /** 정답 초기화 */
-    resetAnserwer(state) {
-      state.randomAnswers = [];
-      state.inputedAnswers = [];
+    /** AI 이미지 리셋 */
+    resetAiImages(state) {
+      state.aiImages = [];
     },
   },
 });
 
 export const {
   addAiImages,
-  addInputedAnswers,
-  addRandomAnswers,
   closeIsScoreCheckModalOpened,
   closeIsSelectThemeModalOpened,
   openIsScoreCheckModalOpened,
   openIsSelectThemeModalOpened,
-  resetAnserwer,
+  resetAiImages,
 } = aiGameDatasSlice.actions;
 export default aiGameDatasSlice.reducer;
