@@ -52,13 +52,12 @@ export const getServerSideProps: GetServerSideProps =
     //로컬에서 테스트할시엔 setCookie 이용해서 refreshtoken과 accesstoken을 넣어줘야합니다.
     let refr = getCookie('refreshtoken', { req, res });
     let cookie = getCookie('accesstoken', { req, res });
-    cookie = cookie ? cookie : '123';
     const api = axios.create({
       baseURL: process.env.NEXT_PUBLIC_API_URL,
       headers: {
         Authorization: cookie,
         'Content-Type': 'application/json',
-        // Cookie: `refreshtoken=` + refr,
+        Cookie: `refreshtoken=` + refr,
       },
     });
     try {
@@ -81,6 +80,7 @@ export const getServerSideProps: GetServerSideProps =
 export default function Home({ message }: { message: string }) {
   const [open, setOpen] = useState(false);
   useEffect(() => {
+    console.log(message);
     if (message === 'notLogin') {
       setOpen(true);
     }

@@ -80,6 +80,7 @@ export default function MyPage({ message }: { message: string }) {
   const { mypageInfo } = useAppSelector((state) => state);
   const [open, setOpen] = useState(false);
   useEffect(() => {
+    console.log(message);
     if (message === 'notLogin') {
       setOpen(true);
     }

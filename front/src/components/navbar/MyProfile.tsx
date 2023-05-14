@@ -1,8 +1,9 @@
 import tw from 'tailwind-styled-components';
-import highlands from '../../assets/ethiopiahighlands.webp';
 import ProfileDropDown from './ProfileDropDown';
 import { useState, useRef, useEffect } from 'react';
-import { RootState } from '../../store';
+import { useAppSelector } from '@/store/thunkhook';
+import Image from 'next/image';
+import { memberAPI } from '@/api/api';
 
 interface isClickType {
   isClick: boolean;
@@ -24,48 +25,36 @@ const MyProfile = ({ isClick, setIsClick }: isClickType) => {
     };
   }, [ref]);
   return (
-    <div className="hover:text-mainColorBrown" ref={ref}>
+    <div className="" ref={ref}>
       <div
-        className="h-42 w-42 rounded-percent overflow-hidden"
+        className="h-navbar-profile w-navbar-profile relative rounded-profile-img overflow-hidden"
         onClick={() => {
           setIsClick(!isClick);
         }}
       >
-        <img
-          src={
-            reduxData.memberInfo == null
-              ? highlands
-              : reduxData.memberInfo.profileImg || ''
-          }
+        <Image
+          src={'/images/loopy2.jpg'}
           alt="no_img"
-          className="w-full h-full object-cover"
+          priority
+          fill
+          sizes="100%"
         />
       </div>
       {isClick && (
         <ProfileDropDown setIsClick={setIsClick}>
-          <div
-            className="mb-3 hover:text-mainColorOrange active:relative active:top-0.5"
-            onClick={(e) => {
-              navigate('/mypage');
-              setIsClick(false);
-            }}
-          >
+          <div className="mb-3 hover:text-mainColorOrange active:relative active:top-0.5">
             마이페이지
           </div>
           <div
             className="pb-4 hover:text-mainColorOrange active:relative active:top-0.5"
-            onClick={(e) => {
-              loginAPI
-                .logout()
-                .then((request) => {
-                  window.localStorage.clear();
-                  window.location.replace('/');
-                  setIsClick(false);
-                })
-                .catch((e) => {
-                  console.log(e);
-                  setIsClick(false);
-                });
+            onClick={() => {
+              const logout = async () => {
+                await memberAPI
+                  .logout()
+                  .then((request) => console.log(request))
+                  .catch((e) => console.log(e));
+              };
+              logout();
             }}
           >
             로그아웃

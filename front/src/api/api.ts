@@ -43,6 +43,7 @@ export const memberAPI = {
   /**마이페이지 유저정보 가져오기 */
   getUserInfo: () => api.get(`/user/mypage/profile`),
   getMyInfo: () => api.get('/member/myinfo'),
+  logout: () => api.post('/member/logout'),
 };
 
 export const gatchaAPI = {
