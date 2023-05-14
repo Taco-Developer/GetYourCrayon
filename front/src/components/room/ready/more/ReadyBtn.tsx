@@ -73,12 +73,11 @@ export default function ReadyBtn({
         href={'/'}
         className="w-30 h-full"
         onClick={() => {
+          gameOut();
           closeSocket();
         }}
       >
-        <GoBtn onClick={gameOut} className="w-full">
-          나가기
-        </GoBtn>
+        <GoBtn className="w-full">나가기</GoBtn>
       </Link>
       <ModalBtn>
         <Invite copyAction={handleCopyClick} createAction={creatBaseUrl} />
