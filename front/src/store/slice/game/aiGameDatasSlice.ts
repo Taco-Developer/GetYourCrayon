@@ -40,6 +40,11 @@ const aiGameDatasSlice = createSlice({
     addAiImages(state, action: PayloadAction<string[]>) {
       state.aiImages = action.payload;
     },
+
+    /** AI 이미지 리셋 */
+    resetAiImages(state) {
+      state.aiImages = [];
+    },
   },
 });
 
@@ -49,5 +54,6 @@ export const {
   closeIsSelectThemeModalOpened,
   openIsScoreCheckModalOpened,
   openIsSelectThemeModalOpened,
+  resetAiImages,
 } = aiGameDatasSlice.actions;
 export default aiGameDatasSlice.reducer;
