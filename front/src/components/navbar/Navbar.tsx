@@ -10,6 +10,7 @@ import { setNavbarPath } from '@/store/slice/navbarSlice';
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { ReactNode, useState } from 'react';
+import { gameAPI } from '@/api/api';
 
 interface NavbarPropsType {
   children: ReactNode;
@@ -20,6 +21,18 @@ export default function Navbar({ children }: NavbarPropsType) {
   const router = useRouter();
   const navbarPath = useSelector((state: RootState) => state.navbarPath);
   const dispatch = useDispatch<AppDispatch>();
+
+  const enterRoom = async () => {
+    await gameAPI
+      .createRoom()
+      .then((request) => {
+        console.log(request.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   useEffect(() => {
     dispatch(setNavbarPath(router.pathname));
   }, [dispatch, router]);
@@ -28,8 +41,8 @@ export default function Navbar({ children }: NavbarPropsType) {
     <div>
       <NavbarDiv>
         <LogoDiv>
-          <Link
-            href={'/room'}
+          <button
+            onClick={enterRoom}
             className={`${
               navbarPath.path.indexOf('room') !== -1
                 ? 'bg-main-pink text-main-green'
@@ -37,7 +50,7 @@ export default function Navbar({ children }: NavbarPropsType) {
             } px-8 py-2 rounded-lg  text-xs lg:text-xl sm:text-sm hover:bg-main-pink hover:text-main-green `}
           >
             게임하기
-          </Link>
+          </button>
           <Link href={'/'}>
             <ImageDiv>
               <Image
