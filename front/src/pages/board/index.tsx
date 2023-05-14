@@ -47,7 +47,6 @@ export interface BoardPaginationType {
 
 export async function getServerSideProps({ req, res }: any) {
   let cookie = getCookie('accesstoken', { req, res });
-  cookie = cookie ? cookie : '123';
   console.log(cookie);
   try {
     const re = await boardAPI.getBoard(0);

@@ -50,9 +50,11 @@ module.exports = {
       height: {
         'profile-img': '17vw',
         'profile-menu': '7vh',
+        'navbar-profile': '88px',
       },
       width: {
         'profile-img': '17vw',
+        'navbar-profile': '88px',
       },
     },
   },

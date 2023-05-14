@@ -2,7 +2,7 @@ import React from 'react';
 import tw from 'tailwind-styled-components';
 import Navbar from '@/components/navbar/Navbar';
 import type { ReactElement } from 'react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/Button';
 import UserInfo from '@/components/mypage/UserInfo';
@@ -18,16 +18,34 @@ import type {
 import wrapper from '@/store';
 import { useAppSelector } from '@/store/thunkhook';
 import { setLogin } from '@/store/slice/loginSlice';
+import { setMypage } from '@/store/slice/mypageSlice';
+import Login from '@/components/login/Login';
 
 export const getServerSideProps: GetServerSideProps =
-  wrapper.getServerSideProps((store) => async (context) => {
-    // 서버 영역에서 Redux 사용
-    console.log(
-      store.getState().isLogin.isLogin,
-      'dsfasdffsddddddddddddddddddddddddddddddddddddddddddddddddddddddddf',
-    );
-    store.dispatch(setLogin({ isLogin: true }));
-    return { props: { message: 'Message from SSR' } };
+  wrapper.getServerSideProps((store) => async (context: any) => {
+    const { req, res } = context;
+    let refreshtoken = getCookie('refreshtoken', { req, res });
+    let accesstoken = getCookie('accesstoken', { req, res });
+    const api = axios.create({
+      baseURL: process.env.NEXT_PUBLIC_API_URL,
+      headers: {
+        Authorization: accesstoken,
+        'Content-Type': 'application/json',
+        Cookie: `refreshtoken=` + refreshtoken,
+      },
+    });
+    try {
+      const re = await api.get(`/user/mypage/profile`);
+      const res = re.data.body;
+      store.dispatch(setLogin({ isLogin: true }));
+      store.dispatch(setMypage(res));
+      return { props: { message: 'Login' } };
+    } catch (e) {
+      console.log(e);
+      return { props: { message: 'notLogin' } };
+    } finally {
+      api.defaults.headers.Cookie = '';
+    }
   });
 
 // export async function getServerSideProps(context: any) {
@@ -57,22 +75,23 @@ export const getServerSideProps: GetServerSideProps =
 //   }
 // }
 
-export default function MyPage() {
+export default function MyPage({ message }: { message: string }) {
   const { isLogin } = useAppSelector((state) => state);
-  console.log(isLogin);
+  const { mypageInfo } = useAppSelector((state) => state);
+  const [open, setOpen] = useState(false);
   useEffect(() => {
-    const getInfo = async () => {
-      await memberAPI
-        .getUserInfo()
-        .then((request) => console.log(request.data))
-        .catch((e) => console.log(e));
-    };
-    getInfo();
+    console.log(message);
+    if (message === 'notLogin') {
+      setOpen(true);
+    }
   }, []);
+  console.log(isLogin);
+  console.log(mypageInfo);
   return (
     <Container>
       <UserInfo />
       <Contents />
+      <Login open={open} setOpen={setOpen} />
     </Container>
   );
 }
