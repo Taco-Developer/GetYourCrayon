@@ -26,7 +26,7 @@ const MyProfile = ({ isClick, setIsClick }: isClickType) => {
     };
   }, [ref]);
   return (
-    <div className="" ref={ref}>
+    <div className="w-28 " ref={ref}>
       <div
         className="h-navbar-profile w-navbar-profile relative rounded-profile-img overflow-hidden"
         onClick={() => {
@@ -43,11 +43,18 @@ const MyProfile = ({ isClick, setIsClick }: isClickType) => {
       </div>
       {isClick && (
         <ProfileDropDown setIsClick={setIsClick}>
-          <div className="mb-3 hover:text-mainColorOrange active:relative active:top-0.5">
-            <Link href={'/mypage'}>마이페이지</Link>
-          </div>
-          <div
-            className="pb-4 hover:text-mainColorOrange active:relative active:top-0.5"
+          <Link
+            href={'/mypage'}
+            className="mb-3 text-center active:relative active:top-0.5"
+            onClick={() => {
+              setIsClick(false);
+            }}
+          >
+            마이페이지
+          </Link>
+
+          <button
+            className="pb-4  active:relative active:top-0.5"
             onClick={() => {
               const logout = async () => {
                 await memberAPI
@@ -59,7 +66,7 @@ const MyProfile = ({ isClick, setIsClick }: isClickType) => {
             }}
           >
             로그아웃
-          </div>
+          </button>
         </ProfileDropDown>
       )}
     </div>
