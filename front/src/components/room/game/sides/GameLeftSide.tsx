@@ -4,8 +4,6 @@ import tw from 'tailwind-styled-components';
 
 import SideDisplay from './SideDisplay';
 import Margin, { MarginType } from '@/components/ui/Margin';
-import Mic from '@/components/ui/icons/Mic';
-import SoundVolume from '@/components/ui/icons/SoundVolume';
 import { useAppSelector } from '@/store/thunkhook';
 
 export default function GameLeftSide({
@@ -79,7 +77,7 @@ export default function GameLeftSide({
               <MemberItem key={user.id}>
                 <Profile />
                 <span className="truncate flex-auto">{user.nickname}</span>
-                <MemberStatus>
+                {/* <MemberStatus>
                   {user.id % 2 === 0 ? (
                     <div className="text-base">
                       <Mic
@@ -95,13 +93,13 @@ export default function GameLeftSide({
                       />
                     </div>
                   )}
-                </MemberStatus>
+                </MemberStatus> */}
               </MemberItem>
             );
           })}
         </MemberList>
       </Members>
-      <SoundSetting>
+      {/* <SoundSetting>
         <div
           className="bg-white rounded-full w-[32px] h-[32px] flex justify-center items-center"
           onClick={micOptionClickHandler}
@@ -114,7 +112,7 @@ export default function GameLeftSide({
         >
           <SoundVolume isMuted={isVolumeMuted} isMyStatus={true} />
         </div>
-      </SoundSetting>
+      </SoundSetting> */}
     </SideDisplay>
   );
 }
