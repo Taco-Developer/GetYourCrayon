@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import Image from 'next/image';
 
+import { w3cwebsocket as W3CWebsocket } from 'websocket';
+
 import tw from 'tailwind-styled-components';
 
 import GameLeftSide from './sides/GameLeftSide';
@@ -11,17 +13,20 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import AiWordsDialog from './dialogs/AiWordsDialog';
 import EndRoundDialog from './dialogs/EndRoundDialog';
+
 import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
 import {
   addAiImages,
-  addInputedAnswers,
-  addRandomAnswers,
   openIsScoreCheckModalOpened,
   openIsSelectThemeModalOpened,
 } from '@/store/slice/game/aiGameDatasSlice';
 import { ChatType, addChat } from '@/store/slice/game/chatDatasSlice';
 import { endGame } from '@/store/slice/game/isGameStartedSlice';
-import { w3cwebsocket as W3CWebsocket } from 'websocket';
+import { saveTheme } from '@/store/slice/game/gameThemeSlice';
+import {
+  addInputedAnswers,
+  addSavedAnswers,
+} from '@/store/slice/game/answersSlice';
 
 const INIT_AI_IMAGES = [
   'https://img.freepik.com/free-photo/assorted-mixed-fruits_74190-6961.jpg?w=996&t=st=1683175100~exp=1683175700~hmac=7dbf59f1e64cbe127e46cf31a1890e413d83644d58d24fe0872d7c4f3f9f7943',
@@ -33,7 +38,9 @@ const INIT_AI_IMAGES = [
 export default function AiPaintingGuess({ client }: { client: W3CWebsocket }) {
   const {
     leftTime,
-    aiGameDatas: { aiImages, randomAnswers, inputedAnswers },
+    gameTheme,
+    answers: { savedAnswers, inputedAnswers },
+    aiGameDatas: { aiImages },
   } = useAppSelector((state) => state);
   const dispatch = useAppDispatch();
 
@@ -57,7 +64,7 @@ export default function AiPaintingGuess({ client }: { client: W3CWebsocket }) {
     dispatch(addChat(chatInputValue));
     setAnswerInputValue('');
     if (
-      randomAnswers.indexOf(answer) === -1 ||
+      savedAnswers.indexOf(answer) === -1 ||
       inputedAnswers.indexOf(answer) !== -1
     )
       return;
@@ -69,31 +76,44 @@ export default function AiPaintingGuess({ client }: { client: W3CWebsocket }) {
     dispatch(openIsSelectThemeModalOpened());
   }, [dispatch]);
 
-  // 이미지 불러오기
+  // 이미지 불러오기 - 더미
   useEffect(() => {
     if (aiImages.length === 0) {
       dispatch(addAiImages(INIT_AI_IMAGES));
     }
   }, [aiImages, dispatch]);
 
-  // 정답 불러오기
+  // 정답 불러오기 - 더미
   useEffect(() => {
-    if (randomAnswers.length === 0) {
-      dispatch(addRandomAnswers(['사과', '바나나', '배']));
+    if (savedAnswers.length === 0) {
+      dispatch(addSavedAnswers(['사과', '바나나', '배']));
     }
-  }, [randomAnswers, dispatch]);
+  }, [savedAnswers, dispatch]);
 
   // 정답 비교
   useEffect(() => {
     if (
-      (randomAnswers.length > 0 &&
-        randomAnswers.length === inputedAnswers.length) ||
+      (savedAnswers.length > 0 &&
+        savedAnswers.length === inputedAnswers.length) ||
       leftTime === 0
     ) {
       dispatch(endGame());
       dispatch(openIsScoreCheckModalOpened());
     }
-  }, [randomAnswers, inputedAnswers, leftTime, dispatch]);
+  }, [savedAnswers, inputedAnswers, leftTime, dispatch]);
+
+  // socket 통신 => 사용할 때 주석 풀기
+  useEffect(() => {
+    client.onmessage = (message) => {
+      if (typeof message.data !== 'string') return;
+      const data = JSON.parse(message.data);
+      // 게임에 필요한 데이터 받기(aiImages, theme)
+      if (data.type === 'problem') {
+        dispatch(addAiImages(data.aiImages));
+        dispatch(saveTheme(data.selectedTheme));
+      }
+    };
+  }, [client, dispatch]);
 
   return (
     <>
@@ -121,7 +141,7 @@ export default function AiPaintingGuess({ client }: { client: W3CWebsocket }) {
               ))}
             </p>
             <p>
-              {inputedAnswers.length} / {randomAnswers.length}
+              {inputedAnswers.length} / {savedAnswers.length}
             </p>
           </AnswerInfo>
           <Margin type={MarginType.height} size={24} />
