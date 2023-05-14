@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useAppSelector } from '@/store/thunkhook';
 import Image from 'next/image';
 import { memberAPI } from '@/api/api';
+import Link from 'next/link';
 
 interface isClickType {
   isClick: boolean;
@@ -43,7 +44,7 @@ const MyProfile = ({ isClick, setIsClick }: isClickType) => {
       {isClick && (
         <ProfileDropDown setIsClick={setIsClick}>
           <div className="mb-3 hover:text-mainColorOrange active:relative active:top-0.5">
-            마이페이지
+            <Link href={'/mypage'}>마이페이지</Link>
           </div>
           <div
             className="pb-4 hover:text-mainColorOrange active:relative active:top-0.5"
