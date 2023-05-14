@@ -11,6 +11,7 @@ import com.sevenight.coldcrayon.theme.entity.ThemeCategory;
 import com.sevenight.coldcrayon.user.service.UserService;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -20,6 +21,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+@Slf4j
 public class WebSocketHandler extends TextWebSocketHandler {
     // ConcurrentHashMap: 여러 스레드가 동시에 접근해도 안전하게 동작
     private final Map<String, List<WebSocketSession>> sessionsMap = new ConcurrentHashMap<>();
@@ -27,7 +29,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
     // 참여자 정보 리스트
     private final LinkedHashMap<String, UserInfo> userInfoMap = new LinkedHashMap<>();
 
-    // 방정보를 담을 map타입으로 하나 만들어서 해당 정보로 공유하자
+    // 방정보를 담을 Map타입으로 하나 만들어서 해당 정보로 공유하자
     private Map<String, Object> roomInfoMap = new ConcurrentHashMap<>();
 
 
@@ -41,7 +43,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
     private boolean flag = false;   // 웹 소켓이 생성되기 전: false, 한 번 생성되고 난 후: true
 
 
-    // roomTitle을 가져오면 좋을까요?
+    // roomTitle을 가져와야 할까요??
     public void initailizeRoomInfo(String roomIdx) {
         RoomDto room = roomService.getRoom(roomIdx);
         roomInfoMap.put("roomIdx", roomIdx);
@@ -61,9 +63,10 @@ public class WebSocketHandler extends TextWebSocketHandler {
         String roomId = extractRoomId(session);
         List<WebSocketSession> sessions = sessionsMap.computeIfAbsent(roomId, key -> new CopyOnWriteArrayList<>());
         sessions.add(session);
-        System.out.println(session.getId());
+        log.info(session.getId());
 
         if (flag == false) {        // 아직 웹 소켓 연결이 시도된 적이 없을 때: 첫 번째로 시도할 때
+            log.info("flag가 false여서 실행");
             
             // 소켓에 정보 저장
             initailizeRoomInfo(roomId);
@@ -89,57 +92,62 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
         // userIn:유저가 들어올 때 userData: (유저Id, 기본점수)
         if (type.equals("userIn")) {
+            String userIdx = jsonMessage.get("userIdx");
+            UserDto userDto = webSocketCustomService.getUserDto(Long.valueOf(userIdx));
 
-            // 최대인원 확인: 현재인원이 최대인원보다 작을 때 true, 같거나 클 경우 false
-            boolean enable = webSocketCustomService.checkEnableEnter(roomId);
+            roomService.joinRoom(userDto, roomId);
 
-            if (!enable) {  // 입장불가(최대인원 <= 현재인원): false 전송
-                for (WebSocketSession s : sessions) {
-                    if (s.isOpen()) {
-                        s.sendMessage(new TextMessage("false"));
-                    }
-                }
-            } else {  // 입장가능: true
-                // 프론트 전송 확인 필요
-                String userNickname = jsonMessage.get("userNickname");
-                String userIdx = jsonMessage.get("userIdx");  // userIdx: 유저 번호(Long): userId가 닉네임? 주소? user_idx?
+// 수민이 만든 joinRoom 서비스 이용방식으로 변경하면서 주석처리
+//            // 최대인원 확인: 현재인원이 최대인원보다 작을 때 true, 같거나 클 경우 false
+//            boolean enable = webSocketCustomService.checkEnableEnter(roomId);
 
-                // 입장하려는 유저를 DB에 저장
-                webSocketCustomService.userRoomIn(roomId, Long.valueOf(userIdx));
-
-                // userId를 통해 UserDTO 정보 가져오기
-                UserDto userDto = webSocketCustomService.getUserDto(Long.valueOf(userIdx));
-
-                // roomService.joinRoom 실행
-                roomService.joinRoom(userDto, roomId);
-
-                // 세션에 기록: 입장하려는 유저 인스턴스 생성
-                UserInfo userInfo = userInfoMap.computeIfAbsent(session.getId(), key -> new UserInfo());
-                userInfo.setNickname(userNickname);
-                userInfo.setScore(0);
-                userInfoMap.put(session.getId(), userInfo);
-
-                //== 방에 있는 정보를 전송 ==//
-                for (WebSocketSession s : sessions) {
-                    if (s.isOpen()) {
-                        // 방에 있는 유저 정보(userInfoMap) 전송: <세션, 유저Info(유저 닉네임, 유저 점수)>
-                        List<UserInfo> allUserInfo = new ArrayList<>(userInfoMap.values());
-                        String userJson = objectMapper.writeValueAsString(allUserInfo);
-
-                        // 현재 방 정보: service 이용 vs 소켓 정보 가져오기
-                        RoomDto roomDto = roomService.getRoom(roomId);  // repository 서비스를 통해서
-
-
-                        // 정보 전송
-                        Map<String, Object> combinedJson = new HashMap<>();
-                        combinedJson.put("room", roomDto);
-                        combinedJson.put("users", userJson);
-                        String json = objectMapper.writeValueAsString(combinedJson);
-
-                        s.sendMessage(new TextMessage(json));
-                    }
-                }
-            }
+//            if (!enable) {  // 입장불가(최대인원 <= 현재인원): false 전송
+//                for (WebSocketSession s : sessions) {
+//                    if (s.isOpen()) {
+//                        s.sendMessage(new TextMessage("false"));
+//                    }
+//                }
+//            } else {  // 입장가능: true
+//                // 프론트 전송 확인 필요
+//                String userNickname = jsonMessage.get("userNickname");
+//                String userIdx = jsonMessage.get("userIdx");  // userIdx: 유저 번호(Long): userId가 닉네임? 주소? user_idx?
+//
+//                // 입장하려는 유저를 DB에 저장
+//                webSocketCustomService.userRoomIn(roomId, Long.valueOf(userIdx));
+//
+//                // userId를 통해 UserDTO 정보 가져오기
+//                UserDto userDto = webSocketCustomService.getUserDto(Long.valueOf(userIdx));
+//
+//                // roomService.joinRoom 실행
+//                roomService.joinRoom(userDto, roomId);
+//
+//                // 세션에 기록: 입장하려는 유저 인스턴스 생성
+//                UserInfo userInfo = userInfoMap.computeIfAbsent(session.getId(), key -> new UserInfo());
+//                userInfo.setNickname(userNickname);
+//                userInfo.setScore(0);
+//                userInfoMap.put(session.getId(), userInfo);
+//
+//                //== 방에 있는 정보를 전송 ==//
+//                for (WebSocketSession s : sessions) {
+//                    if (s.isOpen()) {
+//                        // 방에 있는 유저 정보(userInfoMap) 전송: <세션, 유저Info(유저 닉네임, 유저 점수)>
+//                        List<UserInfo> allUserInfo = new ArrayList<>(userInfoMap.values());
+//                        String userJson = objectMapper.writeValueAsString(allUserInfo);
+//
+//                        // 현재 방 정보: service 이용 vs 소켓 정보 가져오기
+//                        RoomDto roomDto = roomService.getRoom(roomId);  // repository 서비스를 통해서
+//
+//
+//                        // 정보 전송
+//                        Map<String, Object> combinedJson = new HashMap<>();
+//                        combinedJson.put("room", roomDto);
+//                        combinedJson.put("users", userJson);
+//                        String json = objectMapper.writeValueAsString(combinedJson);
+//
+//                        s.sendMessage(new TextMessage(json));
+//                    }
+//                }
+//            }
         } else if (type.equals("chat")) {
             for (WebSocketSession s : sessions) {
                 if (s.isOpen()) {
@@ -160,7 +168,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
             // 세션 기록 변경(세션정보는 변경되지만 굳이 가져올 필요는 없음)
             roomInfoMap.put("roomMax", changedMax);
-
 
             UserDto userDto = webSocketCustomService.getUserDto(Long.valueOf(authorIdx));
             RoomDto roomDto = roomService.changeMaxUser(userDto, roomId, changedMax);
@@ -240,21 +247,21 @@ public class WebSocketHandler extends TextWebSocketHandler {
         else if (type.equals("roundOver")) {
             String gameRoundInfo = jsonMessage.get("gameRoundInfo");
 
-            // 현재 세션의 유저 닉네임 조회?
-
-            // 참여 유저 수만큼 소켓 데이터에 저장
-            for (UserInfo userinfo : userInfoMap.values()) {
-                if (userinfo.nickname.equals())
-                userinfo.setScore(userinfo.score + {pointsFromRedis?});     // 수민이와 상의: 어떤 써비스로 넘겨받은걸로 아예 갱신
+//            // 현재 세션의 유저 닉네임 조회?
+//
+//            // 참여 유저 수만큼 소켓 데이터에 저장
+//            for (UserInfo userinfo : userInfoMap.values()) {
+//                if (userinfo.nickname.equals())
+//                userinfo.setScore(userinfo.score + {pointsFromRedis?});     // 수민이와 상의: 어떤 써비스로 넘겨받은걸로 아예 갱신
             }
 
         // 게임 종료
-        } else if (type.equals("gameOver")) {
-
-            // 세션 정보 변경
-            roomInfoMap.put("roomStatus", "Ready");
-
-        }
+//        } else if (type.equals("gameOver")) {
+//
+//            // 세션 정보 변경
+//            roomInfoMap.put("roomStatus", "Ready");
+//
+//        }
     }
 
     @Override

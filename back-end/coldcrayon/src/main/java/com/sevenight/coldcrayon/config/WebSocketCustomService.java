@@ -45,20 +45,20 @@ public class WebSocketCustomService {
     }
 
     public void userRoomIn(String roomId, Long userIdx) {
-        Optional<User> byUserIdx = userRepository.findByUserIdx(userIdx);
-        if (byUserIdx.isEmpty()) {
-            log.error("Long userIdx로 유저 정보를 조회할 수 없음");
-        } else {
-            Optional<RoomHash> room = roomRepository.findById(roomId);
-            Optional<User> user = userRepository.findByUserIdx(userIdx);
-
-            Joinlist joinlist = Joinlist.builder()
-//                    .joinlistIdx()  // 백엔드 질문: userJoinListIdx는 autoincrement 설정이 필요하지 않나?
-                    .room(room)     // 수민질문: Room타입이 필요한 상황, RoomHash를 Room으로 전환?
-                    .user(user)
-                    .build();
-            joinListRepository.save(joinlist);
-        }
+//        Optional<User> byUserIdx = userRepository.findByUserIdx(userIdx);
+//        if (byUserIdx.isEmpty()) {
+//            log.error("Long userIdx로 유저 정보를 조회할 수 없음");
+//        } else {
+//            Optional<RoomHash> room = roomRepository.findById(roomId);
+//            Optional<User> user = userRepository.findByUserIdx(userIdx);
+//
+//            Joinlist joinlist = Joinlist.builder()
+////                    .joinlistIdx()  // 백엔드 질문: userJoinListIdx는 autoincrement 설정이 필요하지 않나?
+//                    .room(room)     // 수민질문: Room타입이 필요한 상황, RoomHash를 Room으로 전환?
+//                    .user(user)
+//                    .build();
+//            joinListRepository.save(joinlist);
+//        }
     }
 
     public UserDto getUserDto(Long userIdx) {
@@ -76,7 +76,7 @@ public class WebSocketCustomService {
         int maxRound = roomService.getRoom(roomIdx).getMaxRound();
         GameCategory gameCategory = gameRepository.findById(gameIdx).get().getGameCategory();
 
-        GameRequestDto gameRequestDto = new GameRequestDto(roomIdx, gameCategory, maxRound)
+        GameRequestDto gameRequestDto = new GameRequestDto(roomIdx, gameCategory, maxRound);
 
         return gameRequestDto;
     }
