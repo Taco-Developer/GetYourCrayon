@@ -3,7 +3,7 @@ import tw from 'tailwind-styled-components';
 import Link from 'next/link';
 import Invite from './Invite';
 
-import { boardAPI } from '@/api/api';
+import { gameAPI, boardAPI } from '@/api/api';
 import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
 import { changeRole } from '@/store/slice/game/userDataSlice';
 
@@ -25,6 +25,14 @@ export default function ReadyBtn({
   const [baseUrl, setBaseUrl] = useState<string>(
     'https://getyourcrayon.co.kr/room/',
   );
+
+  /** 게임방 나가기 api */
+  const gameOut = async () => {
+    await gameAPI
+      .outRoom()
+      .then((request) => console.log(request.data))
+      .catch((err) => console.log(err));
+  };
 
   /** url 카피하는 함수 */
   const handleCopyClick = (url: string) => {
@@ -68,7 +76,9 @@ export default function ReadyBtn({
           closeSocket();
         }}
       >
-        <GoBtn className="w-full">나가기</GoBtn>
+        <GoBtn onClick={gameOut} className="w-full">
+          나가기
+        </GoBtn>
       </Link>
       <ModalBtn>
         <Invite copyAction={handleCopyClick} createAction={creatBaseUrl} />
