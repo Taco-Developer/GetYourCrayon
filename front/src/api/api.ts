@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { getCookie } from 'cookies-next';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -18,7 +19,7 @@ export const noAuthApi = axios.create({
 });
 
 api.interceptors.request.use(function (config) {
-  const token = localStorage.getItem('accesstoken');
+  const token = getCookie('accesstoken');
   config.headers.Authorization = token;
 
   return config;
@@ -40,7 +41,8 @@ export const memberAPI = {
   changeName: (name: string) =>
     api.put(`/member/nickname`, { userNickname: name }),
   /**마이페이지 유저정보 가져오기 */
-  getUserInfo: (userIdx: number) => api.get(`/user/mypage/profile/${userIdx}`),
+  getUserInfo: () => api.get(`/user/mypage/profile`),
+  getMyInfo: () => api.get('/member/myinfo'),
 };
 
 export const gatchaAPI = {

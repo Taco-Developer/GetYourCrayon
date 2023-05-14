@@ -45,8 +45,8 @@ export interface BoardPaginationType {
   empty: boolean;
 }
 
-export async function getServerSideProps(context: any) {
-  let cookie = getCookie('accessToken');
+export async function getServerSideProps({ req, res }: any) {
+  let cookie = getCookie('accesstoken', { req, res });
   cookie = cookie ? cookie : '123';
   console.log(cookie);
   try {
@@ -66,8 +66,6 @@ export default function Board({
   cookie: string;
 }) {
   const [boardData, setBoardData] = useState(res);
-  let coks = getCookie('accessToken');
-  console.log(coks, 'no.1');
   console.log(cookie);
   return (
     <Container>

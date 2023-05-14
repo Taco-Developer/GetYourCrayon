@@ -9,14 +9,14 @@ export default function Redirect() {
   useEffect(() => {
     const getToken = async () => {
       try {
-        const accessToken = router.query.accesstoken;
-        localStorage.setItem('accesstoken', 'Bearer ' + accessToken);
+        const accessToken = 'Bearer ' + router.query.accesstoken;
+        localStorage.setItem('accesstoken', accessToken);
         const expiryDate = new Date(Number(new Date()) + 315360000000);
-        setCookie('test', '1234');
-        setCookie('1234', '1315', { httpOnly: true });
-        setCookie('accessToken', 'Bearer ' + accessToken, {
-          httpOnly: true,
+        setCookie('accesstoken', accessToken, {
           expires: expiryDate,
+          maxAge: 315360000000,
+          secure: true,
+          sameSite: 'none',
         });
         router.push('/');
       } catch (e) {
