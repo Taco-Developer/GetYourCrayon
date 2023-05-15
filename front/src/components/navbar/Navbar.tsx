@@ -13,6 +13,7 @@ import { ReactNode, useState } from 'react';
 import { gameAPI } from '@/api/api';
 import { useAppSelector } from '@/store/thunkhook';
 import MyProfile from './MyProfile';
+import { setRoomIdx } from '@/store/slice/game/gameRoom';
 
 interface NavbarPropsType {
   children: ReactNode;
@@ -24,6 +25,7 @@ export default function Navbar({ children }: NavbarPropsType) {
   const { isLogin } = useAppSelector((state) => state);
   const router = useRouter();
   const navbarPath = useSelector((state: RootState) => state.navbarPath);
+  const { roomIdx } = useAppSelector((state) => state.roomIdx);
   const dispatch = useDispatch<AppDispatch>();
 
   const enterRoom = async () => {
@@ -31,6 +33,8 @@ export default function Navbar({ children }: NavbarPropsType) {
       .createRoom()
       .then((request) => {
         console.log(request.data);
+        dispatch(setRoomIdx({ roomIdx: request.data.roomIdx }));
+        router.push(`/room/${roomIdx}`);
       })
       .catch((err) => {
         console.log(err);
@@ -46,7 +50,9 @@ export default function Navbar({ children }: NavbarPropsType) {
       <NavbarDiv>
         <LogoDiv>
           <button
-            onClick={enterRoom}
+            onClick={() => {
+              enterRoom();
+            }}
             className={`${
               navbarPath.path.indexOf('room') !== -1
                 ? 'bg-main-pink text-main-green'
