@@ -34,6 +34,7 @@ export const getServerSideProps: GetServerSideProps =
       return { props: { message: 'Login' } };
     } catch (e) {
       console.log(e);
+      store.dispatch(setLogin({ isLogin: false }));
       return { props: { message: 'notLogin' } };
     } finally {
       api.defaults.headers.Cookie = '';

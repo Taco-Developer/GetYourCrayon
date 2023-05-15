@@ -14,7 +14,13 @@ export default function UserInfo() {
     <UserInfoDiv>
       <ProfileDiv>
         <ProfileImgDiv>
-          <Image src="/images/loopy3.jpg" alt="no_img" fill sizes="100%" />
+          <Image
+            src="/images/loopy3.jpg"
+            alt="no_img"
+            fill
+            sizes="100%"
+            priority
+          />
         </ProfileImgDiv>
       </ProfileDiv>
       <InfoBottomDiv>

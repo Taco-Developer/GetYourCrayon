@@ -70,6 +70,7 @@ export const getServerSideProps: GetServerSideProps =
     } catch (e) {
       const serializedData = JSON.stringify(e);
       console.log(e);
+      store.dispatch(setLogin({ isLogin: false }));
       return { props: { message: 'notLogin' } };
       // return { props: { e: serializedData } };
     } finally {
