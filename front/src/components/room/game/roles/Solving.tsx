@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 
-import { w3cwebsocket as W3CWebSocket } from 'websocket';
-
 import tw from 'tailwind-styled-components';
 
 import GameLeftSide from '../sides/GameLeftSide';
@@ -21,14 +19,16 @@ import {
   InGameChatDataType,
   addInGameChat,
 } from '@/store/slice/game/inGameChatDatasSlice';
+
 import { addInputedAnswers } from '@/store/slice/game/answersSlice';
+import { listenEvent, removeEvent } from '@/socket/socketEvent';
 
 export default function Solving({
   isReverseGame,
-  client,
+  socket,
 }: {
   isReverseGame: boolean;
-  client: W3CWebSocket;
+  socket: WebSocket;
 }) {
   const {
     brushWidth,
@@ -250,9 +250,8 @@ export default function Solving({
 
   // 소켓 메시지 수신
   useEffect(() => {
-    client.onmessage = (message) => {
-      if (typeof message.data !== 'string') return;
-      const data = JSON.parse(message.data);
+    const messageHandler = (event: MessageEvent) => {
+      const data = JSON.parse(event.data);
       if (data.type !== 'draw') return;
       switch (data.action) {
         // 비율 저장
@@ -310,9 +309,13 @@ export default function Solving({
           return;
       }
     };
-    return () => {};
+    listenEvent(socket, messageHandler);
+
+    return () => {
+      removeEvent(socket, messageHandler);
+    };
   }, [
-    client,
+    socket,
     dispatch,
     goNext,
     goPrev,

@@ -1,6 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
-
-import { w3cwebsocket as W3CWebSocket } from 'websocket';
+import React, { useEffect, useRef, useState } from 'react';
 
 import tw from 'tailwind-styled-components';
 
@@ -26,6 +24,7 @@ import {
   changePaletteColor,
   changeSelectedTool,
 } from '@/store/slice/game/drawSlice';
+import { sendMessage } from '@/socket/messageSend';
 
 const BRUSH_WIDTH_LIST = [
   [4, 'bg-black rounded-full w-[4px] h-[4px]'],
@@ -35,7 +34,7 @@ const BRUSH_WIDTH_LIST = [
   [24, 'bg-black rounded-full w-[24px] h-[24px]'],
 ];
 
-export default function Drawing({ client }: { client: W3CWebSocket }) {
+export default function Drawing({ socket }: { socket: WebSocket }) {
   const {
     brushWidth,
     canvasBgColor,
@@ -52,21 +51,6 @@ export default function Drawing({ client }: { client: W3CWebSocket }) {
   const [nextArray, setNextArray] = useState<ImageData[]>([]);
 
   const [isDrawing, setIsDrawing] = useState<boolean>();
-
-  // 소켓 통신
-  const sendMessage = useCallback(
-    async (action: string, payload?: any) => {
-      const type = 'draw';
-      let message: string;
-      if (payload === undefined) {
-        message = JSON.stringify({ type, action });
-      } else {
-        message = JSON.stringify({ type, action, ...payload });
-      }
-      client.send(message);
-    },
-    [client],
-  );
 
   // 현재 touch 위치 찾기
   const getTouchPosition = (event: React.TouchEvent) => {
@@ -93,14 +77,14 @@ export default function Drawing({ client }: { client: W3CWebSocket }) {
           ),
         ]);
       }
-      sendMessage('startDraw');
+      sendMessage(socket, 'startDraw');
       // 터치 위치 이동
       if (event.type === 'touchstart') {
         const { offsetX, offsetY } = getTouchPosition(
           event as React.TouchEvent,
         );
         ctx?.moveTo(offsetX, offsetY);
-        sendMessage('move', { offsetX, offsetY });
+        sendMessage(socket, 'move', { offsetX, offsetY });
       }
       return;
     }
@@ -112,7 +96,7 @@ export default function Drawing({ client }: { client: W3CWebSocket }) {
       ctx.beginPath();
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       dispatch(changeBgColor(paletteColor));
-      sendMessage('fill');
+      sendMessage(socket, 'fill');
     }
   };
 
@@ -120,7 +104,7 @@ export default function Drawing({ client }: { client: W3CWebSocket }) {
   const cancelDrawing = () => {
     setIsDrawing(false);
     ctx?.closePath();
-    sendMessage('cancelDraw');
+    sendMessage(socket, 'cancelDraw');
   };
 
   // 마우스 이동 or 그리기
@@ -142,11 +126,11 @@ export default function Drawing({ client }: { client: W3CWebSocket }) {
     if (isDrawing) {
       ctx?.lineTo(offsetX, offsetY);
       ctx?.stroke();
-      sendMessage('drawMove', { offsetX, offsetY });
+      sendMessage(socket, 'drawMove', { offsetX, offsetY });
       return;
     }
     ctx?.moveTo(offsetX, offsetY);
-    sendMessage('move', { offsetX, offsetY });
+    sendMessage(socket, 'move', { offsetX, offsetY });
   };
 
   // 캔버스 초기화
@@ -177,12 +161,12 @@ export default function Drawing({ client }: { client: W3CWebSocket }) {
         const result = prev;
         const popedImage = result.pop()!;
         ctx?.putImageData(popedImage, 0, 0);
-        sendMessage('goPrev');
+        sendMessage(socket, 'goPrev');
         return result;
       }
 
       clearCanvas();
-      sendMessage('clearCanvas');
+      sendMessage(socket, 'clearCanvas');
       return [];
     });
   };
@@ -202,7 +186,7 @@ export default function Drawing({ client }: { client: W3CWebSocket }) {
       const result = next;
       const popedImage = result.pop()!;
       ctx?.putImageData(popedImage, 0, 0);
-      sendMessage('goNext');
+      sendMessage(socket, 'goNext');
       return result;
     });
   };
@@ -217,7 +201,7 @@ export default function Drawing({ client }: { client: W3CWebSocket }) {
     );
     setPrevArray((prev) => [...prev, currentImageData]);
     clearCanvas();
-    sendMessage('goTrashBin');
+    sendMessage(socket, 'goTrashBin');
   };
 
   // 캔버스 초기 설정
@@ -236,23 +220,23 @@ export default function Drawing({ client }: { client: W3CWebSocket }) {
     context!.scale(dpr, dpr);
     setCtx(context);
 
-    sendMessage('saveRatio', { width, height });
-  }, [canvasRef, sendMessage]);
+    sendMessage(socket, 'saveRatio', { width, height });
+  }, [canvasRef, socket]);
 
   // 붓 너비 변경
   useEffect(() => {
     if (!ctx) return;
     ctx.lineWidth = brushWidth;
-    sendMessage('changeBrushWidth', { width: brushWidth });
-  }, [ctx, brushWidth, sendMessage]);
+    sendMessage(socket, 'changeBrushWidth', { width: brushWidth });
+  }, [ctx, brushWidth, socket]);
 
   // 색 변경
   useEffect(() => {
     if (!ctx) return;
     ctx.strokeStyle = paletteColor;
     ctx.fillStyle = paletteColor;
-    sendMessage('changeColor', { paletteColor });
-  }, [ctx, paletteColor, sendMessage]);
+    sendMessage(socket, 'changeColor', { paletteColor });
+  }, [ctx, paletteColor, socket]);
 
   // 도구 변경
   useEffect(() => {
@@ -268,8 +252,8 @@ export default function Drawing({ client }: { client: W3CWebSocket }) {
         ctx.fillStyle = paletteColor;
         break;
     }
-    sendMessage('changeTool', { selectedTool });
-  }, [selectedTool, ctx, paletteColor, canvasBgColor, sendMessage]);
+    sendMessage(socket, 'changeTool', { selectedTool });
+  }, [selectedTool, ctx, paletteColor, canvasBgColor, socket]);
 
   return (
     <>

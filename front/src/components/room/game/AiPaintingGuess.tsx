@@ -1,8 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import Image from 'next/image';
 
-import { w3cwebsocket as W3CWebsocket } from 'websocket';
-
 import tw from 'tailwind-styled-components';
 
 import GameLeftSide from './sides/GameLeftSide';
@@ -29,8 +27,9 @@ import {
   addInputedAnswers,
   addSavedAnswers,
 } from '@/store/slice/game/answersSlice';
+import { listenEvent, removeEvent } from '@/socket/socketEvent';
 
-export default function AiPaintingGuess({ client }: { client: W3CWebsocket }) {
+export default function AiPaintingGuess({ socket }: { socket: WebSocket }) {
   const {
     leftTime,
     gameTheme,
@@ -80,18 +79,21 @@ export default function AiPaintingGuess({ client }: { client: W3CWebsocket }) {
 
   // socket 통신
   useEffect(() => {
-    client.onmessage = (message) => {
-      if (typeof message.data !== 'string') return;
-      const data = JSON.parse(message.data);
-      // 게임에 필요한 데이터 받기(aiImages, theme, propt, answers)
-      if (data.type === 'problem') {
-        dispatch(addAiImages(data.aiImages));
-        dispatch(saveTheme(data.selectedTheme));
-        dispatch(addSavedAnswers(data.answers));
-        dispatch(savePrompt(data.prompt));
-      }
+    const messageHandler = (event: MessageEvent) => {
+      const data = JSON.parse(event.data);
+      if (data.type !== 'problem') return;
+      dispatch(addAiImages(data.aiImages));
+      dispatch(saveTheme(data.selectedTheme));
+      dispatch(addSavedAnswers(data.answers));
+      dispatch(savePrompt(data.prompt));
     };
-  }, [client, dispatch]);
+
+    listenEvent(socket, messageHandler);
+
+    return () => {
+      removeEvent(socket, messageHandler);
+    };
+  }, [socket, dispatch]);
 
   // if (aiImages.length === 0) {
   //   return <div>AI가 이미지를 만들고 있어요ㅠㅠ</div>;

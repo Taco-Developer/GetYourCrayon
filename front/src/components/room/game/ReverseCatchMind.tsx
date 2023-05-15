@@ -1,19 +1,17 @@
 import React from 'react';
 
-import { w3cwebsocket as W3CWebsocket } from 'websocket';
-
 import Drawing from './roles/Drawing';
 import Solving from './roles/Solving';
 import { useAppSelector } from '@/store/thunkhook';
 
-export default function ReverseCatchMind({ client }: { client: W3CWebsocket }) {
+export default function ReverseCatchMind({ socket }: { socket: WebSocket }) {
   const { userRole } = useAppSelector((state) => state);
 
   switch (userRole) {
     case 'drawing':
-      return <Drawing client={client} />;
+      return <Drawing socket={socket} />;
     case 'solving':
-      return <Solving isReverseGame={true} client={client} />;
+      return <Solving isReverseGame={true} socket={socket} />;
     default:
       return <div>Something wrong!!</div>;
   }
