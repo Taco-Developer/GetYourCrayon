@@ -120,7 +120,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         if (type.equals("userIn")) {
             String authorization = jsonMessage.get("authorization");
             log.info("제발 나와주세요: {}", authorization);
-            UserDto userDto = authService.selectOneMember(authorization);  // 변경
+            UserDto userDto = authService.selectOneMember(HeaderUtil.getAccessTokenString(authorization));  // 변경
             log.info("유저DTO: {}", userDto);
 
             // 세션에 기록: 입장하려는 유저 인스턴스 생성
