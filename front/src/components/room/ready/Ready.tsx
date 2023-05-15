@@ -8,7 +8,6 @@ import tw from 'tailwind-styled-components';
 import { w3cwebsocket as W3CWebSocket } from 'websocket';
 import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
 import { setUser } from '@/store/slice/userSlice';
-import { registerId } from '@/store/slice/game/userDataSlice';
 import { getCookie } from 'cookies-next';
 
 interface RoomPropsType {
@@ -41,8 +40,7 @@ export default function Ready({
   const { userNickname } = useAppSelector((state) => state.userInfo);
   /** 유저가 생성한 방 */
   const { roomIdx } = useAppSelector((state) => state.roomIdx);
-  /** 토큰 */
-  const token = getCookie('accesstoken');
+
   const [messageList, setMessageList] = useState<MessageType[]>([]);
   const [choice, setChoice] = useState<number>(1);
   // 게시물 번호
@@ -61,12 +59,13 @@ export default function Ready({
       );
       setClient(newClient);
     }
-  }, [roomIdx]);
+  }, [roomIdx, setClient]);
 
   useEffect(() => {
+    /** 토큰 */
+    const token = getCookie('accesstoken');
     if (client) {
       client.onopen = () => {
-        dispatch(registerId(userNickname));
         client.send(
           JSON.stringify({
             type: 'userIn',
@@ -91,7 +90,7 @@ export default function Ready({
         }
       };
     }
-  }, [client]);
+  }, [client, userNickname]);
 
   return (
     <RoomBody>
