@@ -17,6 +17,7 @@ import com.sevenight.coldcrayon.util.HeaderUtil;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -43,7 +44,11 @@ public class WebSocketHandler extends TextWebSocketHandler {
     public RoomService roomService;
     public UserService userService;
     public GameService gameService;
-    public AuthService authService;
+    private final AuthService authService;
+
+    public WebSocketHandler(AuthService authService) {
+        this.authService =authService;
+    }
 
     // flag 변수
     private boolean flag = false;   // 웹 소켓이 생성되기 전: false, 한 번 생성되고 난 후: true
