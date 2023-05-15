@@ -17,10 +17,11 @@ import org.springframework.web.socket.server.standard.ServletServerContainerFact
 public class WebSocketConfig implements WebSocketConfigurer {
 
     private final AuthService authService;
+    private final RoomService roomService;
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        WebSocketHandler webSocketHandler = new WebSocketHandler(authService);
+        WebSocketHandler webSocketHandler = new WebSocketHandler(roomService, authService);
         registry.addHandler(webSocketHandler, "/{roomId}").setAllowedOrigins("*").addInterceptors(new HandShakeInterceptor(webSocketHandler));
     }
 
