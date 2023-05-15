@@ -74,12 +74,12 @@ public class AuthService {
     public UserDto selectOneMember(String token) {
         String email = tokenservice.getEmail(token);
         User byUserEmail = userRepository.findByUserEmail(email);
-        log.info("token, email, byUserEmail: {}, {}, {}", token, email, byUserEmail);
+
         if (byUserEmail == null) {
             log.info("byUserEmail이 null");
             throw new RuntimeException();
         }
-        log.info("UserDto.of(userRepository.findByUserEmail(email), {}", UserDto.of(userRepository.findByUserEmail(email)));
+
         return UserDto.of(userRepository.findByUserEmail(email));
     }
 
