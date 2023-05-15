@@ -80,6 +80,7 @@ public class RoomServiceImpl implements RoomService{
     public RoomResponseDto joinRoom(UserDto userDto, String roomIdx){
 
         Optional<RoomHash> optionalRoomHash = roomRepository.findById(roomIdx);
+        log.info("여기3: optionalRoomHash: {}", optionalRoomHash);
         String status = "fail";
         String message;
         if(optionalRoomHash.isEmpty()){
@@ -107,7 +108,7 @@ public class RoomServiceImpl implements RoomService{
             joinListService.createJoinList(roomIdx, userDto.getUserIdx());
             roomRepository.save(roomHash);
         }
-
+        log.info("여기4: RoomResponseDto.of(optionalRoomHash, status, message): {}", RoomResponseDto.of(optionalRoomHash, status, message));
         return RoomResponseDto.of(optionalRoomHash, status, message);
     }
 
