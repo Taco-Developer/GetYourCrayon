@@ -2,7 +2,8 @@ package com.sevenight.coldcrayon.room.controller;
 import com.sevenight.coldcrayon.auth.dto.UserDto;
 import com.sevenight.coldcrayon.auth.service.AuthService;
 import com.sevenight.coldcrayon.room.dto.RoomDto;
-import com.sevenight.coldcrayon.room.dto.RoomReqestDto;
+import com.sevenight.coldcrayon.room.dto.RoomRequestDto;
+import com.sevenight.coldcrayon.room.dto.RoomResponseDto;
 import com.sevenight.coldcrayon.room.service.RoomService;
 import com.sevenight.coldcrayon.util.HeaderUtil;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 
 @Slf4j
@@ -23,29 +26,28 @@ public class RoomController {
     private final AuthService authService;
 
     @PostMapping("/create")
-    public ResponseEntity<RoomDto> createRoom(@RequestHeader String Authorization){
+    public ResponseEntity<?> createRoom(@RequestHeader String Authorization){
 
         System.err.println("컨트롤러 진입");
-        UserDto user = authService.selectOneMember(HeaderUtil.getAccessTokenString(Authorization));
-        System.err.println(user);
-//        UserDto user = UserDto.builder().userIdx(1L).userEmail("1번@naver.com").userPoint(0).userNickname("바보").build();
-        RoomDto roomDto = roomService.saveRoom(user);
-        System.out.println("완료");
+//        UserDto user = authService.selectOneMember(HeaderUtil.getAccessTokenString(Authorization));  // 서버용
+//        System.err.println(user);
+        UserDto user = UserDto.builder().userIdx(1L).userEmail("1번@naver.com").userPoint(0).userNickname("바보").build(); // 로컬 테스트용
+        Map<String, Object> data = roomService.saveRoom(user);
 
-        return ResponseEntity.status(HttpStatus.OK).body(roomDto);
+        return ResponseEntity.badRequest().body(data);
     }
 
     @PostMapping("/join")
-    public ResponseEntity<RoomDto> joinRoom(@RequestHeader String Authorization, @RequestBody String roomIdx){
+    public ResponseEntity<RoomResponseDto> joinRoom(@RequestHeader String Authorization, @RequestBody String roomIdx){
 
-        UserDto user = authService.selectOneMember(HeaderUtil.getAccessTokenString(Authorization));
+//        UserDto user = authService.selectOneMember(HeaderUtil.getAccessTokenString(Authorization));  // 서버용
 
-        System.err.println("dmasdfkeaiwofhjiodsa;fjioa;ejfklasd;jfioa;ewjf");
-//        UserDto user = UserDto.builder().userIdx(2L).userEmail("2번@naver.com").userPoint(0).userNickname("바보2").build();
+//        System.err.println("dmasdfkeaiwofhjiodsa;fjioa;ejfklasd;jfioa;ewjf");
+        UserDto user = UserDto.builder().userIdx(2L).userEmail("2번@naver.com").userPoint(0).userNickname("바보2").build();  // 로컬용
 
-        RoomDto roomDto = roomService.joinRoom(user, roomIdx);
+        RoomResponseDto roomResponseDto = roomService.joinRoom(user, roomIdx);
 
-        return ResponseEntity.status(HttpStatus.OK).body(roomDto);
+        return ResponseEntity.status(HttpStatus.OK).body(roomResponseDto);
     }
 
     @GetMapping("/get-user-list")
@@ -58,33 +60,32 @@ public class RoomController {
     @PostMapping("/out")
     public String outRoom(@RequestHeader String Authorization){
 
-//        UserDto user = authService.selectOneMember(HeaderUtil.getAccessTokenString(Authorization));
-        UserDto user = UserDto.builder().userIdx(1L).userEmail("1번@naver.com").userPoint(0).userNickname("바보").build();
+//        UserDto user = authService.selectOneMember(HeaderUtil.getAccessTokenString(Authorization));  // 서버용
+        UserDto user = UserDto.builder().userIdx(1L).userEmail("1번@naver.com").userPoint(0).userNickname("바보").build();  // 로컬용
         return roomService.outRoom(user);
     }
 
     @PatchMapping("/change-admin")
-    public RoomDto changeAdmin(@RequestHeader String Authorization, @RequestBody RoomReqestDto roomReqestDto){
-        UserDto user = authService.selectOneMember(HeaderUtil.getAccessTokenString(Authorization));
-//        return roomService.changeAdminUser(user, roomIdx, toUserIdx);
-//        UserDto user = UserDto.builder().userIdx(1L).userEmail("1번@naver.com").userPoint(0).userNickname("바보").build();
+    public RoomResponseDto changeAdmin(@RequestHeader String Authorization, @RequestBody RoomRequestDto roomRequestDto){
+//        UserDto user = authService.selectOneMember(HeaderUtil.getAccessTokenString(Authorization));  //서버용
+        UserDto user = UserDto.builder().userIdx(1L).userEmail("1번@naver.com").userPoint(0).userNickname("바보").build();  // 로컬용
 
-        return roomService.changeAdminUser(user, roomReqestDto.getRoomIdx(), roomReqestDto.getToUserIdx());
+        return roomService.changeAdminUser(user, roomRequestDto.getRoomIdx(), roomRequestDto.getToUserIdx());
     }
 
     @PatchMapping("/maxuser")
-    public RoomDto changeMaxUser(@RequestHeader String Authorization, @RequestBody RoomReqestDto roomReqestDto){
+    public RoomResponseDto changeMaxUser(@RequestHeader String Authorization, @RequestBody RoomRequestDto roomRequestDto){
 
-        UserDto user = authService.selectOneMember(HeaderUtil.getAccessTokenString(Authorization));
-//        UserDto user = UserDto.builder().userIdx(1L).userEmail("1번@naver.com").userPoint(0).userNickname("바보").build();
-        return roomService.changeMaxUser(user, roomReqestDto.getRoomIdx(), roomReqestDto.getRoomMax());
+//        UserDto user = authService.selectOneMember(HeaderUtil.getAccessTokenString(Authorization));  // 서버용
+        UserDto user = UserDto.builder().userIdx(1L).userEmail("1번@naver.com").userPoint(0).userNickname("바보").build();  //로컬용
+        return roomService.changeMaxUser(user, roomRequestDto.getRoomIdx(), roomRequestDto.getRoomMax());
 
     }
 
 
     @GetMapping("/{roomIdx}")
-    public ResponseEntity<RoomDto> getRoom(@PathVariable String roomIdx){
-        RoomDto roomDto = roomService.getRoom(roomIdx);
-        return ResponseEntity.ok().body(roomDto);
+    public ResponseEntity<RoomResponseDto> getRoom(@RequestHeader String Authorization, @PathVariable String roomIdx){
+        RoomResponseDto roomResponseDto = roomService.getRoom(roomIdx);
+        return ResponseEntity.ok().body(roomResponseDto);
     }
 }
