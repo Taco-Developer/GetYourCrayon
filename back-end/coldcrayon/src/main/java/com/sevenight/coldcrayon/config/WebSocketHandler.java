@@ -7,6 +7,7 @@ import com.sevenight.coldcrayon.auth.service.AuthService;
 import com.sevenight.coldcrayon.game.dto.GameRequestDto;
 import com.sevenight.coldcrayon.game.service.GameService;
 import com.sevenight.coldcrayon.room.dto.RoomDto;
+import com.sevenight.coldcrayon.room.dto.RoomResponseDto;
 import com.sevenight.coldcrayon.room.service.RoomService;
 import com.sevenight.coldcrayon.theme.entity.ThemeCategory;
 import com.sevenight.coldcrayon.user.dto.ResponseDto;
@@ -46,6 +47,26 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
     // flag 변수
     private boolean flag = false;   // 웹 소켓이 생성되기 전: false, 한 번 생성되고 난 후: true
+
+    //=============temp==================//
+
+    //
+//            if (status.equals("fail")) {    // 실패했을 때
+//                for (WebSocketSession s : sessions) {
+//                    if (s.isOpen()) {
+//                        s.sendMessage(new TextMessage(roomResponseDto.getMessage()));
+//                    }
+//                }
+//            } else {    // 성공했을 때
+//                String roomDtoJson = objectMapper.writeValueAsString(roomResponseDto);
+//                for (WebSocketSession s : sessions) {
+//                    if (s.isOpen()) {
+//                        s.sendMessage(new TextMessage(roomDtoJson));
+//                    }
+//                }
+//            }
+    //
+    //========================================//
 
 
     // roomTitle을 가져와야 할까요??
@@ -107,13 +128,23 @@ public class WebSocketHandler extends TextWebSocketHandler {
             userInfoMap.put(session.getId(), userInfo);
             
             // 방 입장 로직 수행
-            ResponseDto responseDto = roomService.joinRoom(userDto, roomId);    // 수민 로직 추가 예정: 타입을 ReponseDto로 정상일 때 ResponseDto 정보, 오류일 때 state를 포함한 정보
-            String roomDtoJson = objectMapper.writeValueAsString(responseDto);
-            for (WebSocketSession s : sessions) {
-                if (s.isOpen()) {
-                    s.sendMessage(new TextMessage(roomDtoJson));
+            RoomResponseDto roomResponseDto = roomService.joinRoom(userDto, roomId);    // 수민 로직 추가 예정: 타입을 ReponseDto로 정상일 때 ResponseDto 정보, 오류일 때 state를 포함한 정보
+            String status = roomResponseDto.getStatus();
+            if (status.equals("fail")) {    // 실패했을 때
+                for (WebSocketSession s : sessions) {
+                    if (s.isOpen()) {
+                        s.sendMessage(new TextMessage(roomResponseDto.getMessage()));
+                    }
+                }
+            } else {    // 성공했을 때
+                String roomDtoJson = objectMapper.writeValueAsString(roomResponseDto);
+                for (WebSocketSession s : sessions) {
+                    if (s.isOpen()) {
+                        s.sendMessage(new TextMessage(roomDtoJson));
+                    }
                 }
             }
+
 
 
 // 수민이 만든 joinRoom 서비스 이용방식으로 변경하면서 주석처리
@@ -189,14 +220,26 @@ public class WebSocketHandler extends TextWebSocketHandler {
             roomInfoMap.put("roomMax", changedMax);
 
             UserDto userDto = authService.selectOneMember(HeaderUtil.getAccessTokenString(authorization));
-            ResponseDto responseDto = roomService.changeMaxUser(userDto, roomId, changedMax);
+            RoomResponseDto roomResponseDto = roomService.changeMaxUser(userDto, roomId, changedMax);
+            String status = roomResponseDto.getStatus();
 
-            for (WebSocketSession s : sessions) {
-                if (s.isOpen()) {
-                    // 변경된 방 정보 전송
-                    s.sendMessage(new TextMessage(objectMapper.writeValueAsString(responseDto)));
+            if (status.equals("fail")) {
+                for (WebSocketSession s : sessions) {
+                    if (s.isOpen()) {
+                        s.sendMessage(new TextMessage(objectMapper.writeValueAsString(roomResponseDto.getMessage())));
+                    }
+                }
+            } else {
+                String roomDtoJson = objectMapper.writeValueAsString(roomResponseDto);
+                for (WebSocketSession s : sessions) {
+                    if (s.isOpen()) {
+                        s.sendMessage(new TextMessage(objectMapper.writeValueAsString(roomDtoJson)));
+                    }
                 }
             }
+
+
+
 
 //            // 최대 인원에 따라 강퇴하는 로직
 //            if (responseDto != null && responseDto.getStatus.equals("success")) {
@@ -218,7 +261,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
         }
         // 방장 변경
         else if (type.equals("changeAdmin")) {
-//            String userIdx = jsonMessage.get("userIdx");
             String authorization = jsonMessage.get("authorization");
             String newAdminIdx = jsonMessage.get("newAdminIdx");
 
@@ -226,12 +268,20 @@ public class WebSocketHandler extends TextWebSocketHandler {
             roomInfoMap.put("adminUserIdx", newAdminIdx);
             UserDto userDto = authService.selectOneMember(HeaderUtil.getAccessTokenString(authorization));
 
-//            UserDto userDto = webSocketCustomService.getUserDto(Long.valueOf(userIdx));
-            ResponseDto responseDto = roomService.changeAdminUser(userDto, roomId, Long.valueOf(newAdminIdx));
-
-            for (WebSocketSession s : sessions) {
-                if (s.isOpen()) {
-                    s.sendMessage(new TextMessage(userDto.getUserNickname()));  // 닉네임을 가진 유저로 방장 변경
+            RoomResponseDto roomResponseDto = roomService.changeAdminUser(userDto, roomId, Long.valueOf(newAdminIdx));
+            String status = roomResponseDto.getStatus();
+            if (status.equals("fail")) {
+                for (WebSocketSession s : sessions) {
+                    if (s.isOpen()) {
+                        s.sendMessage(new TextMessage(userDto.getUserNickname()));  // 닉네임을 가진 유저로 방장 변경
+                    }
+                }
+            } else {
+                String roomDtoJson = objectMapper.writeValueAsString(roomResponseDto);
+                for (WebSocketSession s : sessions) {
+                    if (s.isOpen()) {
+                        s.sendMessage(new TextMessage(roomDtoJson));
+                    }
                 }
             }
         }
