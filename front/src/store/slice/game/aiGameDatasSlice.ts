@@ -2,14 +2,14 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export interface AiGameDatasType {
   aiImages: string[];
-  isSelectThemeModalOpened: boolean;
   isScoreCheckModalOpened: boolean;
+  prompt: string;
 }
 
 const INIT_AI_GAME_DATAS: AiGameDatasType = {
   aiImages: [],
   isScoreCheckModalOpened: false,
-  isSelectThemeModalOpened: false,
+  prompt: '',
 };
 
 const initialState = INIT_AI_GAME_DATAS;
@@ -18,15 +18,6 @@ const aiGameDatasSlice = createSlice({
   name: 'aiGameDatas',
   initialState,
   reducers: {
-    /** 테마 선택 모달 열기 */
-    openIsSelectThemeModalOpened(state) {
-      state.isSelectThemeModalOpened = true;
-    },
-    /** 테마 선택 모달 닫기 */
-    closeIsSelectThemeModalOpened(state) {
-      state.isSelectThemeModalOpened = false;
-    },
-
     /** 점수 확인 모달 열기 */
     openIsScoreCheckModalOpened(state) {
       state.isScoreCheckModalOpened = true;
@@ -45,15 +36,25 @@ const aiGameDatasSlice = createSlice({
     resetAiImages(state) {
       state.aiImages = [];
     },
+
+    /** 프롬프트 저장 */
+    savePrompt(state, action: PayloadAction<string>) {
+      state.prompt = action.payload;
+    },
+
+    /** 프롬프트 리셋 */
+    resetPrompt(state) {
+      state.prompt = '';
+    },
   },
 });
 
 export const {
   addAiImages,
   closeIsScoreCheckModalOpened,
-  closeIsSelectThemeModalOpened,
   openIsScoreCheckModalOpened,
-  openIsSelectThemeModalOpened,
   resetAiImages,
+  resetPrompt,
+  savePrompt,
 } = aiGameDatasSlice.actions;
 export default aiGameDatasSlice.reducer;

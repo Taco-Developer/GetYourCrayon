@@ -8,17 +8,16 @@ import tw from 'tailwind-styled-components';
 import GameLeftSide from './sides/GameLeftSide';
 import GameRightSide from './sides/GameRightSide';
 import GameCenter from './sides/GameCenter';
+import EndRoundDialog from './dialogs/EndRoundDialog';
 import Margin, { MarginType } from '@/components/ui/Margin';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import AiWordsDialog from './dialogs/AiWordsDialog';
-import EndRoundDialog from './dialogs/EndRoundDialog';
 
 import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
 import {
   addAiImages,
   openIsScoreCheckModalOpened,
-  openIsSelectThemeModalOpened,
+  savePrompt,
 } from '@/store/slice/game/aiGameDatasSlice';
 import { ChatType, addChat } from '@/store/slice/game/chatDatasSlice';
 import { endGame } from '@/store/slice/game/isGameStartedSlice';
@@ -27,13 +26,6 @@ import {
   addInputedAnswers,
   addSavedAnswers,
 } from '@/store/slice/game/answersSlice';
-
-const INIT_AI_IMAGES = [
-  'https://img.freepik.com/free-photo/assorted-mixed-fruits_74190-6961.jpg?w=996&t=st=1683175100~exp=1683175700~hmac=7dbf59f1e64cbe127e46cf31a1890e413d83644d58d24fe0872d7c4f3f9f7943',
-  'https://img.freepik.com/free-photo/grapes-strawberries-pineapple-kiwi-apricot-banana-whole-pineapple_23-2147968680.jpg?w=900&t=st=1683175089~exp=1683175689~hmac=07298c43585c7067f7cac9a574653457c68f3749820cba9bf97b0659e4100d28',
-  'https://img.freepik.com/free-photo/colorful-collage-fruits-texture-close-up_23-2149870295.jpg?w=1060&t=st=1683175124~exp=1683175724~hmac=9358b617e6eccb13c7a4ff28873a757a7fa165283770c100ffe4b87f150c576a',
-  'https://img.freepik.com/free-photo/mix-fruits_1339-413.jpg?w=996&t=st=1683175113~exp=1683175713~hmac=81d4f36c430e792d1fa48bcc89fbf496bfe77cef0aeca53b2dc0c44aa693d26d',
-];
 
 export default function AiPaintingGuess({ client }: { client: W3CWebsocket }) {
   const {
@@ -71,25 +63,6 @@ export default function AiPaintingGuess({ client }: { client: W3CWebsocket }) {
     dispatch(addInputedAnswers(answer));
   };
 
-  // 처음 테마 선택 모달 열기
-  useEffect(() => {
-    dispatch(openIsSelectThemeModalOpened());
-  }, [dispatch]);
-
-  // 이미지 불러오기 - 더미
-  useEffect(() => {
-    if (aiImages.length === 0) {
-      dispatch(addAiImages(INIT_AI_IMAGES));
-    }
-  }, [aiImages, dispatch]);
-
-  // 정답 불러오기 - 더미
-  useEffect(() => {
-    if (savedAnswers.length === 0) {
-      dispatch(addSavedAnswers(['사과', '바나나', '배']));
-    }
-  }, [savedAnswers, dispatch]);
-
   // 정답 비교
   useEffect(() => {
     if (
@@ -102,22 +75,27 @@ export default function AiPaintingGuess({ client }: { client: W3CWebsocket }) {
     }
   }, [savedAnswers, inputedAnswers, leftTime, dispatch]);
 
-  // socket 통신 => 사용할 때 주석 풀기
+  // socket 통신
   useEffect(() => {
     client.onmessage = (message) => {
       if (typeof message.data !== 'string') return;
       const data = JSON.parse(message.data);
-      // 게임에 필요한 데이터 받기(aiImages, theme)
+      // 게임에 필요한 데이터 받기(aiImages, theme, propt, answers)
       if (data.type === 'problem') {
         dispatch(addAiImages(data.aiImages));
         dispatch(saveTheme(data.selectedTheme));
+        dispatch(addSavedAnswers(data.answers));
+        dispatch(savePrompt(data.prompt));
       }
     };
   }, [client, dispatch]);
 
+  // if (aiImages.length === 0) {
+  //   return <div>AI가 이미지를 만들고 있어요ㅠㅠ</div>;
+  // }
+
   return (
     <>
-      <AiWordsDialog />
       <EndRoundDialog />
       <GameLeftSide isPainting={false} />
       <GameCenter>
