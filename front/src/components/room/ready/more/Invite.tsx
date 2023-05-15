@@ -44,7 +44,7 @@ const CustomDialogTitle = (props: any) => {
 };
 
 interface ReadyProps {
-  copyAction: (url: string) => void;
+  copyAction: () => void;
   createAction: (title: string, url: string) => void;
 }
 
@@ -94,7 +94,7 @@ export default function Invite({ copyAction, createAction }: ReadyProps) {
             <UnderDiv>
               <ModalBtn
                 onClick={() => {
-                  copyAction('url');
+                  copyAction();
                 }}
               >
                 초대링크 복사
