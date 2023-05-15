@@ -8,6 +8,7 @@ import com.sevenight.coldcrayon.game.dto.GameRequestDto;
 import com.sevenight.coldcrayon.game.service.GameService;
 import com.sevenight.coldcrayon.room.dto.RoomDto;
 import com.sevenight.coldcrayon.room.dto.RoomResponseDto;
+import com.sevenight.coldcrayon.room.entity.UserHash;
 import com.sevenight.coldcrayon.room.service.RoomService;
 import com.sevenight.coldcrayon.theme.entity.ThemeCategory;
 import com.sevenight.coldcrayon.user.dto.ResponseDto;
@@ -146,10 +147,11 @@ public class WebSocketHandler extends TextWebSocketHandler {
                     }
                 }
             } else {    // 성공했을 때
-                String roomDtoJson = objectMapper.writeValueAsString(roomResponseDto);
+                List<UserHash> userList = roomService.getUserList(roomId);
+                String userListJson = objectMapper.writeValueAsString(userList);    // 방에 접속한 유저 목록
                 for (WebSocketSession s : sessions) {
                     if (s.isOpen()) {
-                        s.sendMessage(new TextMessage(roomDtoJson));
+                        s.sendMessage(new TextMessage(userListJson));
                     }
                 }
             }
@@ -287,7 +289,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         String roomId = extractRoomId(session);
         List<WebSocketSession> sessions = sessionsMap.getOrDefault(roomId, Collections.emptyList());
 
-//        String i = userInfoMap.get(session.getId()).getNickname();
+        String i = userInfoMap.get(session.getId()).getNickname();
         sessions.remove(session);
 
         if (sessions.isEmpty()) {
@@ -303,7 +305,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 Map<String, String> jsonMessage = new HashMap<>();
                 jsonMessage.put("type", "chat");
                 jsonMessage.put("author", "admin");
-                jsonMessage.put("message", "님이 나갔습니다(구현 수정 필요) 나가는 세션의 유저 닉네임 가져오기");
+                jsonMessage.put("message", i + "님이 나갔습니다");
                 String json = objectMapper.writeValueAsString(jsonMessage);
 
                 // WebSocket 메시지로 전송
