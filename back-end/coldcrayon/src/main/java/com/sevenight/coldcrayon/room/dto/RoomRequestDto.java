@@ -8,7 +8,7 @@ import lombok.*;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class RoomReqestDto {
+public class RoomRequestDto {
 
     private String roomIdx;
 
