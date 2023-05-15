@@ -30,6 +30,7 @@ import gameThemeSliceReducer, {
 import userDataSliceReducer, { UserDataType } from './slice/game/userDataSlice';
 import drawSliceReducer, { DrawStateType } from './slice/game/drawSlice';
 import answersSliceReducer, { AnswersType } from './slice/game/answersSlice';
+import gameRoomSlice, { RoomIdxtype } from './slice/game/gameRoom';
 // import { persistReducer, persistStore } from 'redux-persist';
 // import {
 //   FLUSH,
@@ -57,6 +58,7 @@ export interface ReducerStates {
   isLogin: LoginStateType;
   mypageInfo: MypageStateType;
   answers: AnswersType;
+  roomIdx: RoomIdxtype;
 }
 
 //HYDRATE 액션을 정의 -> 슬라이스 통함
@@ -84,6 +86,7 @@ const rootReducer = (
         isLogin: loginSlice.reducer,
         mypageInfo: mypageSlice.reducer,
         answers: answersSliceReducer,
+        roomIdx: gameRoomSlice.reducer,
       });
       return combinedReducer(state, action);
     }

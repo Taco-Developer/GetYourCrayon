@@ -7,6 +7,7 @@ import Chat from './more/Chat';
 import ReadyBtn from './more/ReadyBtn';
 import tw from 'tailwind-styled-components';
 import { w3cwebsocket as W3CWebSocket } from 'websocket';
+import { useAppSelector } from '@/store/thunkhook';
 
 interface RoomPropsType {
   userId: string;
@@ -32,8 +33,7 @@ export default function Ready({
   client,
   setClient,
 }: RoomPropsType) {
-  const [finalroom, setFinalRoom] = useState<string>('');
-  // const [client, setClient] = useState<W3CWebSocket | null>(null);
+  const { roomIdx } = useAppSelector((state) => state.roomIdx);
   const [messageList, setMessageList] = useState<MessageType[]>([]);
   const [choice, setChoice] = useState<number>(1);
   const [showChat, setShowChat] = useState<string>('ready');
@@ -47,13 +47,13 @@ export default function Ready({
   };
 
   useEffect(() => {
-    if (finalroom !== '') {
+    if (roomIdx !== null) {
       const newClient = new W3CWebSocket(
-        `wss://getyourcrayon.co.kr/api/${finalroom}`,
+        `wss://getyourcrayon.co.kr/api/${roomIdx}`,
       );
       setClient(newClient);
     }
-  }, [finalroom]);
+  }, [roomIdx]);
 
   useEffect(() => {
     if (client) {
@@ -95,7 +95,6 @@ export default function Ready({
             room={room}
             setRoom={setRoom}
             setShowChat={setShowChat}
-            setFinalRoom={setFinalRoom}
           />
         </div>
       );
