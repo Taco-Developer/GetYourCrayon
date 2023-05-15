@@ -15,6 +15,10 @@ import com.sevenight.coldcrayon.room.repository.UserHashRepository;
 import com.sevenight.coldcrayon.theme.entity.QTheme;
 import com.sevenight.coldcrayon.theme.entity.Theme;
 import com.sevenight.coldcrayon.theme.entity.ThemeCategory;
+import com.sevenight.coldcrayon.theme.repository.ThemeRepository;
+import com.sevenight.coldcrayon.theme.service.ThemeService;
+import com.sevenight.coldcrayon.theme.service.ThemeServiceImpl;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -34,12 +38,13 @@ public class GameServiceImpl implements GameService{
     private final EntityManager entityManager;
     private final GameRepository gameRepository;
     private final Random random = new Random();
+    private final ThemeService themeService;
 //    private final JPAQuery<Theme> query;
 //    private final QTheme qTheme;
 //    private final JPAQuery<Theme> query = new JPAQuery(entityManager);
 
 
-    public ThemeCategory[] startGame(UserDto userDto, GameRequestDto gameRequestDto){
+    public String startGame(UserDto userDto, GameRequestDto gameRequestDto){
         System.err.println(gameRequestDto);
         Optional<RoomHash> optionalRoomHash = roomRepository.findById(gameRequestDto.getRoomIdx());
 
@@ -92,25 +97,26 @@ public class GameServiceImpl implements GameService{
 
         ThemeCategory[] themeCategories = ThemeCategory.values();
         ThemeCategory themeCategory = themeCategories[random.nextInt(themeCategories.length)];
+        return themeService.getThemeKeyword(themeCategory);
         // game 모드가 AI라면,,,
-        switch(gameRequestDto.getGameCategory()){
-            case AI:
-                break;
-            case LIAR:
-                break;
-            case CATCH:
-                break;
-            case RELAY:
-                break;
-            case REVERSE:
-                break;
-            default:
-                System.err.println("게임 모드 없어~~~~~~~~~~~~~~~~");
-                return null;
+        // switch(gameRequestDto.getGameCategory()){
+        //     case AI:
+        //         break;
+        //     case LIAR:
+        //         break;
+        //     case CATCH:
+        //         break;
+        //     case RELAY:
+        //         break;
+        //     case REVERSE:
+        //         break;
+        //     default:
+        //         System.err.println("게임 모드 없어~~~~~~~~~~~~~~~~");
+        //         return null;
         }
 
-        return ThemeCategory.values();
-    }
+
+
 
     public void getAiImg(String themeCategory, String suffix, String roomIdx, int gameCnt, int roundCnt){
 

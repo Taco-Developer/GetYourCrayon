@@ -312,13 +312,14 @@ public class WebSocketHandler extends TextWebSocketHandler {
             GameRequestDto gameRequestDto = webSocketCustomService.getGameRequestDto(roomId, Integer.parseInt(gameIdx));  // game_idx 확인 필요
 
             // gameService 시작
-            ThemeCategory[] themeCategories = gameService.startGame(userDto, gameRequestDto);
+            // ThemeCategory[] themeCategories = gameService.startGame(userDto, gameRequestDto);
 
             // 전송
             for (WebSocketSession s : sessions) {
                 if (s.isOpen()) {
-                    String json = objectMapper.writeValueAsString(themeCategories);
-                    s.sendMessage(new TextMessage(json));
+                    // String json = objectMapper.writeValueAsString(themeCategories);
+                    // s.sendMessage(new TextMessage(json));
+                    continue;
                 }
             }
         }

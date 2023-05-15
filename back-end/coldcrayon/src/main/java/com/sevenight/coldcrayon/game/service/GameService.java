@@ -5,7 +5,7 @@ import com.sevenight.coldcrayon.game.dto.GameRequestDto;
 import com.sevenight.coldcrayon.theme.entity.ThemeCategory;
 
 public interface GameService {
-    ThemeCategory[] startGame(UserDto userDto, GameRequestDto gameRequestDto);
+    String startGame(UserDto userDto, GameRequestDto gameRequestDto);
 
     Object choiceUser(String roomIdx);
 }

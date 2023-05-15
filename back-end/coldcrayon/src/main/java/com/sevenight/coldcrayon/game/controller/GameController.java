@@ -33,13 +33,26 @@ public class GameController {
     @PostMapping("/start")
     public ResponseEntity<?> gameStart(@RequestHeader String Authorization, @RequestBody GameRequestDto gameRequestDto) {
         // 에러는 못 던진다.....
+        System.err.println("start 컨트롤러 진입");
 //        UserDto user = authService.selectOneMember(HeaderUtil.getAccessTokenString(Authorization));
         UserDto user = UserDto.builder().userIdx(1L).userEmail("1번@naver.com").userPoint(0).userNickname("바보").build();
-        gameService.startGame(user, gameRequestDto);
 
-        return ResponseEntity.ok().body(null);
+
+        return ResponseEntity.ok().body(gameService.startGame(user, gameRequestDto));
     }
 
+    @PostMapping("/translate")
+    public ResponseEntity<?> translate(@RequestHeader String Authorization, @RequestBody GameRequestDto gameRequestDto) {
+        System.err.println("translate 컨트롤러 진입");
+        //        UserDto user = authService.selectOneMember(HeaderUtil.getAccessTokenString(Authorization));
+        UserDto user = UserDto.builder().userIdx(1L).userEmail("1번@naver.com").userPoint(0).userNickname("바보").build();
+        String script = gameService.startGame(user, gameRequestDto);
+        System.err.println(script);
+        Map response = webClientService.papagoPost(script);
+        System.err.println(response);
+
+        return ResponseEntity.ok().body(response);
+    }
     @PostMapping("startRound")
     public ResponseEntity<String> getKeyword(@RequestHeader String Authorization, @RequestBody ThemeCategory theme){
         //        UserDto user = authService.selectOneMember(HeaderUtil.getAccessTokenString(Authorization));
@@ -56,7 +69,7 @@ public class GameController {
 
     @GetMapping("/save-image")
     public ResponseEntity<?> saveImage(@RequestHeader String Authorization) throws IOException {
-        Map<String, Object> response = webClientService.post("Please draw a picture of people wearing swimsuits on the beach");
+        Map<String, Object> response = webClientService.AiPost("Please draw a picture of people wearing swimsuits on the beach");
         List<Object> urlList = (List<Object>) response.get("data");
 
         int i = 1;
@@ -73,7 +86,7 @@ public class GameController {
     public ResponseEntity<Map<String, Object>> getImage(@RequestHeader String Authorization){
 
 //        UserDto user = authService.selectOneMember(HeaderUtil.getAccessTokenString(Authorization));
-        return ResponseEntity.ok().body(webClientService.post("Please draw a picture of people wearing swimsuits on the beach"));
+        return ResponseEntity.ok().body(webClientService.AiPost("Please draw a picture of people wearing swimsuits on the beach"));
     }
 
     @PostMapping("/end-round")
