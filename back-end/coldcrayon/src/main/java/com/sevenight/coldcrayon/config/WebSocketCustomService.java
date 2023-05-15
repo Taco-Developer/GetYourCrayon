@@ -2,15 +2,10 @@ package com.sevenight.coldcrayon.config;
 
 import com.sevenight.coldcrayon.auth.dto.UserDto;
 import com.sevenight.coldcrayon.game.dto.GameRequestDto;
-import com.sevenight.coldcrayon.game.entity.Game;
 import com.sevenight.coldcrayon.game.entity.GameCategory;
 import com.sevenight.coldcrayon.game.repository.GameRepository;
 import com.sevenight.coldcrayon.game.service.GameService;
-import com.sevenight.coldcrayon.joinlist.entity.Joinlist;
-import com.sevenight.coldcrayon.joinlist.repository.JoinListRepository;
 import com.sevenight.coldcrayon.room.dto.RoomDto;
-import com.sevenight.coldcrayon.room.entity.Room;
-import com.sevenight.coldcrayon.room.entity.RoomHash;
 import com.sevenight.coldcrayon.room.repository.RoomRepository;
 import com.sevenight.coldcrayon.room.service.RoomService;
 import com.sevenight.coldcrayon.user.entity.User;
@@ -25,26 +20,26 @@ import java.util.Optional;
 public class WebSocketCustomService {
 
     private GameRepository gameRepository;
-    private JoinListRepository joinListRepository;
+//    private JoinListRepository joinListRepository;
     private RoomRepository roomRepository;
     private UserRepository userRepository;
     private RoomService roomService;
     private GameService gameService;
 
-    public boolean checkEnableEnter(String roomId) {
-        boolean enable = false;
+//    public boolean checkEnableEnter(String roomId) {
+//        boolean enable = false;
+//
+//        RoomDto roomDto = roomService.getRoom(roomId);
+//        int roomMax = roomDto.getRoomMax();
+//        int roomNow = roomDto.getRoomNow();
+//
+//        if (roomNow < roomMax) {
+//            enable = true;
+//        }
+//        return enable;
+//    }
 
-        RoomDto roomDto = roomService.getRoom(roomId);
-        int roomMax = roomDto.getRoomMax();
-        int roomNow = roomDto.getRoomNow();
-
-        if (roomNow < roomMax) {
-            enable = true;
-        }
-        return enable;
-    }
-
-    public void userRoomIn(String roomId, Long userIdx) {
+//    public void userRoomIn(String roomId, Long userIdx) {
 //        Optional<User> byUserIdx = userRepository.findByUserIdx(userIdx);
 //        if (byUserIdx.isEmpty()) {
 //            log.error("Long userIdx로 유저 정보를 조회할 수 없음");
@@ -59,7 +54,7 @@ public class WebSocketCustomService {
 //                    .build();
 //            joinListRepository.save(joinlist);
 //        }
-    }
+//    }
 
     public UserDto getUserDto(Long userIdx) {
         // User객체 찾아오면 of 메서드로 만들 수 있음//
