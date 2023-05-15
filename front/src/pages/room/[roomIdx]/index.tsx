@@ -9,6 +9,7 @@ export default function Room() {
   const [userId, setUserId] = useState<string>('');
   const [room, setRoom] = useState<string>('');
   const [status, setStatus] = useState<string>('ready');
+  const [socket, setSocket] = useState<WebSocket | null>(null);
 
   const [client, setClient] = useState<W3CWebSocket | null>(null);
 
@@ -26,7 +27,13 @@ export default function Room() {
         />
       );
     case 'gameStart':
-      return <InGameRoom game="CatchMind" client={client as W3CWebSocket} />;
+      return (
+        <InGameRoom
+          game="CatchMind"
+          client={client as W3CWebSocket}
+          socket={socket as WebSocket}
+        />
+      );
     case 'gameEnd':
       return <GameResult client={client as W3CWebSocket} />;
     default:
