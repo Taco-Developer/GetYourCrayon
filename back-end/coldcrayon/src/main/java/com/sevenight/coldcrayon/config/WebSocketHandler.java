@@ -349,30 +349,30 @@ public class WebSocketHandler extends TextWebSocketHandler {
         String roomId = extractRoomId(session);
         List<WebSocketSession> sessions = sessionsMap.getOrDefault(roomId, Collections.emptyList());
 
-        String i = userInfoMap.get(session.getId()).getNickname();
-        sessions.remove(session);
-        userInfoMap.remove(session.getId());
-
-        if (sessions.isEmpty()) {
-            sessionsMap.remove(roomId);
-        }
-
-        for (WebSocketSession s : sessions) {
-            if (s.isOpen()) {
-                // ObjectMapper 객체 생성
-                ObjectMapper objectMapper = new ObjectMapper();
-
-                // 원하는 데이터를 JSON 형식으로 변환
-                Map<String, String> jsonMessage = new HashMap<>();
-                jsonMessage.put("type", "chat");
-                jsonMessage.put("author", "admin");
-                jsonMessage.put("message", i+ "님이 나갔습니다");
-                String json = objectMapper.writeValueAsString(jsonMessage);
-
-                // WebSocket 메시지로 전송
-                s.sendMessage(new TextMessage(json));
-            }
-        }
+//        String i = userInfoMap.get(session.getId()).getNickname();
+//        sessions.remove(session);
+//        userInfoMap.remove(session.getId());
+//
+//        if (sessions.isEmpty()) {
+//            sessionsMap.remove(roomId);
+//        }
+//
+//        for (WebSocketSession s : sessions) {
+//            if (s.isOpen()) {
+//                // ObjectMapper 객체 생성
+//                ObjectMapper objectMapper = new ObjectMapper();
+//
+//                // 원하는 데이터를 JSON 형식으로 변환
+//                Map<String, String> jsonMessage = new HashMap<>();
+//                jsonMessage.put("type", "chat");
+//                jsonMessage.put("author", "admin");
+//                jsonMessage.put("message", i+ "님이 나갔습니다");
+//                String json = objectMapper.writeValueAsString(jsonMessage);
+//
+//                // WebSocket 메시지로 전송
+//                s.sendMessage(new TextMessage(json));
+//            }
+//        }
 
     }
 
