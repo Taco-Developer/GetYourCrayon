@@ -33,6 +33,8 @@ module.exports = {
         70: '70%',
         80: '80%',
         90: '90%',
+        'bomul-margin': '12vh',
+        'bomul-buttom-margin': '4vh',
       },
       minHeight: {
         'container-height': '90vh',
@@ -50,12 +52,16 @@ module.exports = {
       },
       height: {
         'profile-img': '17vw',
+        'bomul-img': '10vw',
         'profile-menu': '7vh',
         'navbar-profile': '88px',
+        'effect-gif': '20vw',
       },
       width: {
         'profile-img': '17vw',
+        'bomul-img': '10vw',
         'navbar-profile': '88px',
+        'effect-gif': '20vw',
       },
       zIndex: {
         100: 100,
