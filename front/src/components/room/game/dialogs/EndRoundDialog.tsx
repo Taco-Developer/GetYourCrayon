@@ -6,6 +6,10 @@ import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
 import {
   closeIsScoreCheckModalOpened,
   openIsSelectThemeModalOpened,
+<<<<<<< HEAD
+  // resetAnserwer,
+=======
+>>>>>>> 1d4b6f83dddec9aab5a57bd1c114a90ee792e248
 } from '@/store/slice/game/aiGameDatasSlice';
 import { goNextRound } from '@/store/slice/game/gameRoundSlice';
 import { resetAnserwer } from '@/store/slice/game/answersSlice';
@@ -23,7 +27,7 @@ export default function EndRoundDialog() {
     dispatch(closeIsScoreCheckModalOpened());
     if (gameRound.now < gameRound.total) {
       dispatch(goNextRound());
-      dispatch(resetAnserwer());
+      // dispatch(resetAnserwer());
       dispatch(openIsSelectThemeModalOpened());
     }
   };
