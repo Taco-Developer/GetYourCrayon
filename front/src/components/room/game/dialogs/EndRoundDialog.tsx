@@ -3,13 +3,9 @@ import React from 'react';
 import { Dialog } from '@mui/material';
 import Margin, { MarginType } from '@/components/ui/Margin';
 import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
-import {
-  closeIsScoreCheckModalOpened,
-  openIsSelectThemeModalOpened,
-  // resetAnserwer,
-} from '@/store/slice/game/aiGameDatasSlice';
+import { closeIsScoreCheckModalOpened } from '@/store/slice/game/aiGameDatasSlice';
 import { goNextRound } from '@/store/slice/game/gameRoundSlice';
-import { resetAnserwer } from '@/store/slice/game/answersSlice';
+import { resetAnswer } from '@/store/slice/game/answersSlice';
 
 export default function EndRoundDialog() {
   const {
@@ -24,8 +20,7 @@ export default function EndRoundDialog() {
     dispatch(closeIsScoreCheckModalOpened());
     if (gameRound.now < gameRound.total) {
       dispatch(goNextRound());
-      // dispatch(resetAnserwer());
-      dispatch(openIsSelectThemeModalOpened());
+      dispatch(resetAnswer());
     }
   };
 
