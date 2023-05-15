@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { w3cwebsocket as W3CWebsocket } from 'websocket';
 
@@ -9,14 +9,35 @@ import ReverseCatchMind from '@/components/room/game/ReverseCatchMind';
 import AiPaintingGuess from '@/components/room/game/AiPaintingGuess';
 import RelayPainting from '@/components/room/game/RelayPainting';
 import CatchMind from '@/components/room/game/CatchMind';
+import { useAppDispatch } from '@/store/thunkhook';
+import { addInGameChat } from '@/store/slice/game/inGameChatDatasSlice';
+import { listenEvent, removeEvent } from '@/socket/socketEvent';
 
 export default function InGameRoom({
   game,
   client,
+  socket,
 }: {
   game: string;
   client: W3CWebsocket;
+  socket: WebSocket;
 }) {
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    const messageHandler = (message: MessageEvent) => {
+      const data = JSON.parse(message.data);
+      if (data.type === 'inGameChat') {
+        dispatch(addInGameChat(data.content));
+      }
+    };
+    listenEvent(socket, messageHandler);
+
+    return () => {
+      removeEvent(socket, messageHandler);
+    };
+  }, [dispatch, socket]);
+
   return (
     <>
       <Container>

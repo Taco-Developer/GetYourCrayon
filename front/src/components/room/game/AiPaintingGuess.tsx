@@ -19,7 +19,10 @@ import {
   openIsScoreCheckModalOpened,
   savePrompt,
 } from '@/store/slice/game/aiGameDatasSlice';
-import { ChatType, addChat } from '@/store/slice/game/chatDatasSlice';
+import {
+  InGameChatDataType,
+  addInGameChat,
+} from '@/store/slice/game/inGameChatDatasSlice';
 import { endGame } from '@/store/slice/game/isGameStartedSlice';
 import { saveTheme } from '@/store/slice/game/gameThemeSlice';
 import {
@@ -48,12 +51,12 @@ export default function AiPaintingGuess({ client }: { client: W3CWebsocket }) {
   const answerSubmitHandler: React.FormEventHandler = (event) => {
     event.preventDefault();
     const answer = answerInputValue;
-    const chatInputValue: ChatType = {
+    const chatInputValue: InGameChatDataType = {
       user: '아프리카청춘이다',
       status: 'answer',
       content: answer,
     };
-    dispatch(addChat(chatInputValue));
+    dispatch(addInGameChat(chatInputValue));
     setAnswerInputValue('');
     if (
       savedAnswers.indexOf(answer) === -1 ||
