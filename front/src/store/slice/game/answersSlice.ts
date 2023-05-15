@@ -27,12 +27,12 @@ const answersSlice = createSlice({
     },
 
     /** 정답 초기화 */
-    resetAnserwer(state) {
+    resetAnswer(state) {
       return initialState;
     },
   },
 });
 
-export const { addInputedAnswers, addSavedAnswers, resetAnserwer } =
+export const { addInputedAnswers, addSavedAnswers, resetAnswer } =
   answersSlice.actions;
 export default answersSlice.reducer;

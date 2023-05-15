@@ -14,7 +14,9 @@ import loginSlice, { LoginStateType } from './slice/loginSlice';
 import userSlice, { UserStateType } from './slice/userSlice';
 import navbarSlice, { NavbarStateType } from './slice/navbarSlice';
 import scoreSliceReducer from './slice/game/score';
-import chatDatasSliceReducer, { ChatType } from './slice/game/chatDatasSlice';
+import inGameChatDatasSliceReducer, {
+  InGameChatDataType,
+} from './slice/game/inGameChatDatasSlice';
 import gameRoundSliceReducer, {
   GameRoundType,
 } from './slice/game/gameRoundSlice';
@@ -49,7 +51,7 @@ export interface ReducerStates {
   leftTime: number;
   gameUsers: GameUser[];
   gameRound: GameRoundType;
-  chatDatas: ChatType[];
+  inGameChatDatas: InGameChatDataType[];
   aiGameDatas: AiGameDatasType;
   isGameStarted: boolean;
   gameTheme: GameThemeType;
@@ -79,7 +81,7 @@ const rootReducer = (
         leftTime: leftTimeSliceReducer,
         gameUsers: gameUsersSliceReducer,
         gameRound: gameRoundSliceReducer,
-        chatDatas: chatDatasSliceReducer,
+        inGameChatDatas: inGameChatDatasSliceReducer,
         isGameStarted: isGameStartedSliceReducer,
         gameTheme: gameThemeSliceReducer,
         userInfo: userSlice.reducer,
