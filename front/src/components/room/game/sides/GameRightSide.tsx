@@ -7,7 +7,10 @@ import { Button } from '@/components/ui/Button';
 import Margin, { MarginType } from '@/components/ui/Margin';
 
 import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
-import { ChatType, addChat } from '@/store/slice/game/chatDatasSlice';
+import {
+  InGameChatDataType,
+  addInGameChat,
+} from '@/store/slice/game/inGameChatDatasSlice';
 import { countDown } from '@/store/slice/game/leftTimeSlice';
 
 interface GameRightSidePropsType {
@@ -15,7 +18,7 @@ interface GameRightSidePropsType {
 }
 
 export default function GameRightSide({ isPainting }: GameRightSidePropsType) {
-  const { leftTime, chatDatas, isGameStarted } = useAppSelector(
+  const { leftTime, inGameChatDatas, isGameStarted } = useAppSelector(
     (state) => state,
   );
   const dispatch = useAppDispatch();
@@ -31,12 +34,12 @@ export default function GameRightSide({ isPainting }: GameRightSidePropsType) {
     event.preventDefault();
     const chat = inputValue.trim();
     if (!chat) return;
-    const chatInput: ChatType = {
+    const chatInput: InGameChatDataType = {
       user: '아프리카청춘이다',
       status: 'chatting',
       content: chat,
     };
-    dispatch(addChat(chatInput));
+    dispatch(addInGameChat(chatInput));
     setInputValue('');
   };
 
@@ -67,11 +70,11 @@ export default function GameRightSide({ isPainting }: GameRightSidePropsType) {
       <InGameChat>
         채팅
         <ChatView>
-          {chatDatas.map((chat, idx) => (
+          {inGameChatDatas.map(({ content, status, user }, idx) => (
             <li
               key={idx}
-              className={chat.status === 'answer' ? 'bg-amber-300' : ''}
-            >{`${chat.user} : ${chat.content}`}</li>
+              className={status === 'answer' ? 'bg-amber-300' : ''}
+            >{`${user} : ${content}`}</li>
           ))}
         </ChatView>
         <ChatForm onSubmit={chatSubmitHandler}>
