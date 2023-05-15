@@ -238,9 +238,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 }
             }
 
-
-
-
 //            // 최대 인원에 따라 강퇴하는 로직
 //            if (responseDto != null && responseDto.getStatus.equals("success")) {
 //                for (WebSocketSession s : sessions) {
