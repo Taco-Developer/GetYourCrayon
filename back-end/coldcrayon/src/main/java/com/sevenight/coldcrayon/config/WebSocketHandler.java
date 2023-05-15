@@ -39,11 +39,11 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
 
     // 외부 서비스 주입
-    private WebSocketCustomService webSocketCustomService;
-    private RoomService roomService;
-    private UserService userService;
-    private GameService gameService;
-    private AuthService authService;
+    public WebSocketCustomService webSocketCustomService;
+    public RoomService roomService;
+    public UserService userService;
+    public GameService gameService;
+    public AuthService authService;
 
     // flag 변수
     private boolean flag = false;   // 웹 소켓이 생성되기 전: false, 한 번 생성되고 난 후: true
