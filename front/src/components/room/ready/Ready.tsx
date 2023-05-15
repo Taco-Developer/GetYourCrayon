@@ -9,6 +9,8 @@ import { w3cwebsocket as W3CWebSocket } from 'websocket';
 import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
 import { setUser } from '@/store/slice/userSlice';
 import { getCookie } from 'cookies-next';
+import { sendMessage } from '@/socket/messageSend';
+import { listenEvent, removeEvent } from '@/socket/socketEvent';
 
 interface RoomPropsType {
   userId: string;
@@ -16,8 +18,8 @@ interface RoomPropsType {
   room: string;
   setRoom: React.Dispatch<React.SetStateAction<string>>;
   setStatus: React.Dispatch<React.SetStateAction<string>>;
-  client: W3CWebSocket | null;
-  setClient: React.Dispatch<React.SetStateAction<W3CWebSocket | null>>;
+  socket: WebSocket | null;
+  setSocket: React.Dispatch<React.SetStateAction<WebSocket | null>>;
 }
 
 interface MessageType {
@@ -31,8 +33,8 @@ export default function Ready({
   room,
   setRoom,
   setStatus,
-  client,
-  setClient,
+  socket,
+  setSocket,
 }: RoomPropsType) {
   const dispatch = useAppDispatch();
 
@@ -47,50 +49,44 @@ export default function Ready({
   const [boardId, setBoardId] = useState<number | null>(null);
 
   const closeSocket = () => {
-    if (client) {
-      client.close();
+    if (socket) {
+      socket.close();
     }
   };
 
   useEffect(() => {
     if (roomIdx !== null) {
-      const newClient = new W3CWebSocket(
+      const newSocket = new WebSocket(
         `wss://getyourcrayon.co.kr/api/${roomIdx}`,
       );
-      setClient(newClient);
+      setSocket(newSocket);
     }
-  }, [roomIdx, setClient]);
+  }, [roomIdx, setSocket]);
 
   useEffect(() => {
     /** 토큰 */
     const token = getCookie('accesstoken');
-    if (client) {
-      client.onopen = () => {
-        client.send(
-          JSON.stringify({
-            type: 'userIn',
-            authorization: token,
-          }),
-        );
-        client.send(
-          JSON.stringify({
-            type: 'chat',
-            author: 'admin',
-            message: `${userNickname}님이 입장하셨습니다 :)`,
-          }),
-        );
+    if (socket) {
+      socket.onopen = () => {
+        sendMessage(socket, 'userIn', { authorization: token });
+        sendMessage(socket, 'chat', {
+          author: 'admin',
+          message: `${userNickname}님이 입장하셨습니다 :)`,
+        });
       };
-      client.onmessage = (message) => {
-        if (
-          typeof message.data === 'string' &&
-          JSON.parse(message.data).type === 'chat'
-        ) {
-          const data = JSON.parse(message.data);
-          setMessageList((prevMessages) => [...prevMessages, data]);
-        }
+
+      const messageHandler = (event: MessageEvent) => {
+        const data = JSON.parse(event.data);
+        if (data.type !== 'chat') return;
+        setMessageList((prev) => [...prev, data]);
+      };
+      listenEvent(socket, messageHandler);
+
+      return () => {
+        removeEvent(socket, messageHandler);
       };
     }
-  }, [client, userNickname]);
+  }, [userNickname, socket]);
 
   return (
     <RoomBody>
@@ -125,7 +121,7 @@ export default function Ready({
               </SettingDiv>
             ) : (
               <Chat
-                client={client}
+                socket={socket}
                 userId={userId}
                 room={room}
                 messageList={messageList}
