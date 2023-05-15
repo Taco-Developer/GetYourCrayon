@@ -53,9 +53,9 @@ export default function GameResult({ client }: { client: W3CWebSocket }) {
           <Margin type={MarginType.height} size={40} />
           <UserList>
             {gameUsers.map((user) => (
-              <UserItem key={user.id}>
+              <UserItem key={user.userIdx}>
                 <UserProfile />
-                <span className="text-ellipsis">{user.nickname}</span>
+                <span className="text-ellipsis">{user.userNickname}</span>
                 <div className="flex-auto flex justify-end text-2xl"></div>
               </UserItem>
             ))}
