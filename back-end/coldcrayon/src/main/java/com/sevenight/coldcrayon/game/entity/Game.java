@@ -28,9 +28,10 @@ public class Game {
 	private int gameIdx;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name="game_theme")
+	@Column(name="game_category")
 	private GameCategory gameCategory;
 
 	@Column(name = "game_keyword")
 	private String gameKeyword;
+
 }
