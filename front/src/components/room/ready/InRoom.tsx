@@ -35,7 +35,7 @@ export default function InRoom({
   const { roomIdx } = useAppSelector((state) => state.roomIdx);
 
   const joinRoom = () => {
-    if (userId !== '' && roomIdx !== null) {
+    if (userId !== '') {
       // socket.emit('join_room', userId, room);
       setShowChat('readyRoom');
       dispatch(registerId(userId));
