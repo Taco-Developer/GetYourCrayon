@@ -42,7 +42,7 @@ export default function Ready({
   const { roomIdx } = useAppSelector((state) => state.roomIdx);
 
   const [messageList, setMessageList] = useState<MessageType[]>([]);
-  const [choice, setChoice] = useState<number>(1);
+  const [choice, setChoice] = useState<number>(2);
   // 게시물 번호
   const [boardId, setBoardId] = useState<number | null>(null);
 
