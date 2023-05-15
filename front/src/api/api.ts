@@ -28,6 +28,8 @@ api.interceptors.request.use(function (config) {
 export const gameAPI = {
   /**방 생성 */
   createRoom: () => api.post(`/room/create`),
+  /**방 조회 */
+  findRoom: (idx: string) => api.get(`/room/${idx}`),
   /**방 참여 */
   joinRoom: (roomIdx: string) => api.post(`/room/join`, { roomidx: roomIdx }),
   /**방 나가기 */
