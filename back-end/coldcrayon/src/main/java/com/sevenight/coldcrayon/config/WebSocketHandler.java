@@ -287,7 +287,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         String roomId = extractRoomId(session);
         List<WebSocketSession> sessions = sessionsMap.getOrDefault(roomId, Collections.emptyList());
 
-        String i = userInfoMap.get(session.getId()).getNickname();
+//        String i = userInfoMap.get(session.getId()).getNickname();
         sessions.remove(session);
 
         if (sessions.isEmpty()) {
@@ -303,7 +303,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 Map<String, String> jsonMessage = new HashMap<>();
                 jsonMessage.put("type", "chat");
                 jsonMessage.put("author", "admin");
-                jsonMessage.put("message", i+ "님이 나갔습니다");
+                jsonMessage.put("message", "님이 나갔습니다(구현 수정 필요) 나가는 세션의 유저 닉네임 가져오기");
                 String json = objectMapper.writeValueAsString(jsonMessage);
 
                 // WebSocket 메시지로 전송
