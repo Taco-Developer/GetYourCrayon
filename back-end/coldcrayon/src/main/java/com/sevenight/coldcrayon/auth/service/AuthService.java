@@ -78,7 +78,7 @@ public class AuthService {
             log.info("byUserEmail이 null");
             throw new RuntimeException();
         }
-        log.info("UserDto.of(userRepository.findByUserEmail(email), {}", UserDto.of(userRepository.findByUserEmail(email));
+        log.info("UserDto.of(userRepository.findByUserEmail(email), {}", UserDto.of(userRepository.findByUserEmail(email)));
         return UserDto.of(userRepository.findByUserEmail(email));
     }
 
