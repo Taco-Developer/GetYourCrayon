@@ -30,12 +30,8 @@ const MainContainer = tw.div`
 
 const MainHeader = tw.header`
   w-full
-
-  relative
 `;
 
 const Category = tw.div`
-  absolute
-
-  bottom-0 right-0
+  text-2xl
 `;
