@@ -6,11 +6,20 @@ import { memberAPI } from '@/api/api';
 import { useAppDispatch } from '@/store/thunkhook';
 import { setMypage } from '@/store/slice/mypageSlice';
 import { useState } from 'react';
+import OneModal from './gachamodal/OneModal';
+import TenModal from './gachamodal/TenModal';
 
 export default function Gacha() {
   const dispatch = useAppDispatch();
-  const [isOpen, setIsOpen] = useState(false);
+  /**첫번째 가챠 모달창 */
+  const [isOpenOne, setIsOpenOne] = useState(false);
+  /**두번째 가챠 모달창 */
+  const [isOpenTen, setIsOpenTen] = useState(false);
+  /**가챠이펙트 보이고 안보이고 */
   const [isVisible, setIsVisible] = useState(false);
+  /**뽑기버튼을 누르고 일정시간 버튼동작 막을State */
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  /**뽑기결과를 props해줄 State */
   const [gachaData, setGachaData] = useState(null);
   const gachaEffect = () => {
     setIsVisible(true);
@@ -27,13 +36,13 @@ export default function Gacha() {
         priority
         sizes="100%"
       />
-      {isOpen ? (
+      {isOpenOne || isOpenTen ? (
         <div className=" w-bomul-img h-bomul-img absolute mb-bomul-margin  ">
           <Image
             src={'/images/openbomul.png'}
             alt="no_img"
             fill
-            priority
+            priority={false}
             sizes="100%"
           />
         </div>
@@ -70,17 +79,25 @@ export default function Gacha() {
           py={2}
           color="bg-apple-yellow"
           rounded="lg"
+          disabled={isButtonDisabled}
           className="hover:scale-125"
           onClick={() => {
+            setIsButtonDisabled(true);
             const getOnes = async () => {
               try {
                 await gatchaAPI.oneGacha();
                 const request = await memberAPI.getUserInfo();
                 dispatch(setMypage(request.data.body));
-                setIsOpen(true);
+                setTimeout(() => {
+                  setIsOpenOne(true);
+                }, 1000);
                 gachaEffect();
               } catch (e) {
                 console.log(e);
+              } finally {
+                setTimeout(() => {
+                  setIsButtonDisabled(false);
+                }, 1500);
               }
             };
             getOnes();
@@ -93,6 +110,7 @@ export default function Gacha() {
           py={2}
           color="bg-apple-yellow"
           rounded="lg"
+          disabled={isButtonDisabled}
           className="hover:scale-125"
           onClick={() => {
             const getTens = async () => {
@@ -101,10 +119,17 @@ export default function Gacha() {
                 setGachaData(gacha.data.body.nGacha);
                 const request = await memberAPI.getUserInfo();
                 dispatch(setMypage(request.data.body));
-                setIsOpen(true);
+                setTimeout(() => {
+                  setIsOpenTen(true);
+                }, 1000);
+
                 gachaEffect();
               } catch (e) {
                 console.log(e);
+              } finally {
+                setTimeout(() => {
+                  setIsButtonDisabled(false);
+                }, 1500);
               }
             };
             getTens();
@@ -113,6 +138,8 @@ export default function Gacha() {
           10회 뽑기
         </Button>
       </div>
+      <TenModal isOpenTen={isOpenTen} setIsOpenTen={setIsOpenTen} />
+      <OneModal isOpenOne={isOpenOne} setIsOpenOne={setIsOpenOne} />
     </GachaDiv>
   );
 }
