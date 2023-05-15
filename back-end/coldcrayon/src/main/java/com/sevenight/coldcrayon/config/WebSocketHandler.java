@@ -121,6 +121,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
             String authorization = jsonMessage.get("authorization");
             log.info("제발 나와주세요: {}", authorization);
             UserDto userDto = authService.selectOneMember(authorization);  // 변경
+            log.info("유저DTO: {}", userDto);
 
             // 세션에 기록: 입장하려는 유저 인스턴스 생성
             UserInfo userInfo = userInfoMap.computeIfAbsent(session.getId(), key -> new UserInfo());
