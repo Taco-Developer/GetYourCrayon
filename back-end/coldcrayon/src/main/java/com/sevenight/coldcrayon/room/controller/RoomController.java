@@ -33,7 +33,7 @@ public class RoomController {
 //        UserDto user = UserDto.builder().userIdx(1L).userEmail("1번@naver.com").userPoint(0).userNickname("바보").build();
         Map<String, Object> data = roomService.saveRoom(user);
 
-        return ResponseEntity.badRequest().body(data);
+        return ResponseEntity.ok().body(data);
     }
 
     @PostMapping("/join")
