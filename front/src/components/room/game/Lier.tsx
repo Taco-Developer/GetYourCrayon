@@ -1,18 +1,16 @@
 import React from 'react';
 
-import { w3cwebsocket as W3CWebsocket } from 'websocket';
-
 import Drawing from './roles/Drawing';
 import Watching from './roles/Watching';
 import Selecting from './roles/Selecting';
 import { useAppSelector } from '@/store/thunkhook';
 
-export default function Lier({ client }: { client: W3CWebsocket }) {
+export default function Lier({ socket }: { socket: WebSocket }) {
   const { userRole } = useAppSelector((state) => state);
 
   switch (userRole) {
     case 'drawing':
-      return <Drawing client={client} />;
+      return <Drawing socket={socket} />;
     case 'watching':
       return <Watching />;
     case 'selecting':

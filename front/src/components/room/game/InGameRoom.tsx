@@ -1,7 +1,5 @@
 import React, { useEffect } from 'react';
 
-import { w3cwebsocket as W3CWebsocket } from 'websocket';
-
 import tw from 'tailwind-styled-components';
 
 import Lier from '@/components/room/game/Lier';
@@ -15,11 +13,9 @@ import { listenEvent, removeEvent } from '@/socket/socketEvent';
 
 export default function InGameRoom({
   game,
-  client,
   socket,
 }: {
   game: string;
-  client: W3CWebsocket;
   socket: WebSocket;
 }) {
   const dispatch = useAppDispatch();
@@ -41,11 +37,11 @@ export default function InGameRoom({
   return (
     <>
       <Container>
-        {game === 'Lier' && <Lier client={client} />}
-        {game === 'AiPainting' && <AiPaintingGuess client={client} />}
-        {game === 'RelayPainting' && <RelayPainting client={client} />}
-        {game === 'ReverseCatchMind' && <ReverseCatchMind client={client} />}
-        {game === 'CatchMind' && <CatchMind client={client} />}
+        {game === 'Lier' && <Lier socket={socket} />}
+        {game === 'AiPainting' && <AiPaintingGuess socket={socket} />}
+        {game === 'RelayPainting' && <RelayPainting socket={socket} />}
+        {game === 'ReverseCatchMind' && <ReverseCatchMind socket={socket} />}
+        {game === 'CatchMind' && <CatchMind socket={socket} />}
       </Container>
     </>
   );
