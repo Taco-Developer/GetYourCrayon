@@ -139,6 +139,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
             
             // 방 입장 로직 수행
             RoomResponseDto roomResponseDto = roomService.joinRoom(userDto, roomId);    // 수민 로직 추가 예정: 타입을 ReponseDto로 정상일 때 ResponseDto 정보, 오류일 때 state를 포함한 정보
+            log.info("여기 roomResponseDto: {}", roomResponseDto);
             String status = roomResponseDto.getStatus();
             if (status.equals("fail")) {    // 실패했을 때
                 for (WebSocketSession s : sessions) {
