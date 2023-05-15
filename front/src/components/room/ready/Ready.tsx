@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import InRoom from './InRoom';
 import UserList from './user/UserList';
 import ModeChoice from './more/ModeChoice';
 import Setting from './more/Setting';
@@ -10,6 +9,7 @@ import { w3cwebsocket as W3CWebSocket } from 'websocket';
 import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
 import { setUser } from '@/store/slice/userSlice';
 import { registerId } from '@/store/slice/game/userDataSlice';
+import { getCookie } from 'cookies-next';
 
 interface RoomPropsType {
   userId: string;
@@ -41,6 +41,8 @@ export default function Ready({
   const { userNickname } = useAppSelector((state) => state.userInfo);
   /** 유저가 생성한 방 */
   const { roomIdx } = useAppSelector((state) => state.roomIdx);
+  /** 토큰 */
+  const token = getCookie('accesstoken');
   const [messageList, setMessageList] = useState<MessageType[]>([]);
   const [choice, setChoice] = useState<number>(1);
   // 게시물 번호
@@ -68,7 +70,7 @@ export default function Ready({
         client.send(
           JSON.stringify({
             type: 'userIn',
-            author: userNickname,
+            authorization: token,
           }),
         );
         client.send(
