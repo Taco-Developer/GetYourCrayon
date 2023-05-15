@@ -3,12 +3,16 @@ package com.sevenight.coldcrayon.config;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sevenight.coldcrayon.auth.dto.UserDto;
+import com.sevenight.coldcrayon.auth.service.AuthService;
 import com.sevenight.coldcrayon.game.dto.GameRequestDto;
 import com.sevenight.coldcrayon.game.service.GameService;
 import com.sevenight.coldcrayon.room.dto.RoomDto;
 import com.sevenight.coldcrayon.room.service.RoomService;
 import com.sevenight.coldcrayon.theme.entity.ThemeCategory;
+import com.sevenight.coldcrayon.user.dto.ResponseDto;
+import com.sevenight.coldcrayon.user.entity.User;
 import com.sevenight.coldcrayon.user.service.UserService;
+import com.sevenight.coldcrayon.util.HeaderUtil;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -38,25 +42,26 @@ public class WebSocketHandler extends TextWebSocketHandler {
     private RoomService roomService;
     private UserService userService;
     private GameService gameService;
+    private AuthService authService;
 
     // flag 변수
     private boolean flag = false;   // 웹 소켓이 생성되기 전: false, 한 번 생성되고 난 후: true
 
 
     // roomTitle을 가져와야 할까요??
-    public void initailizeRoomInfo(String roomIdx) {
-        RoomDto room = roomService.getRoom(roomIdx);
-        roomInfoMap.put("roomIdx", roomIdx);
-        roomInfoMap.put("roomNow", room.getRoomNow());
-        roomInfoMap.put("roomMax", room.getRoomMax());
-        roomInfoMap.put("maxRound", room.getMaxRound());
-        roomInfoMap.put("gameCategory", room.getGameCategory());
-        roomInfoMap.put("roomStatus", room.getRoomStatus());
-        roomInfoMap.put("adminUserIdx", room.getAdminUserIdx());
-        roomInfoMap.put("gameCnt", room.getGameCnt());
-        roomInfoMap.put("roomCreateTime", room.getRoomCreateTime());
-        roomInfoMap.put("nowRound", room.getNowRound());
-    }
+//    public void initailizeRoomInfo(String roomIdx) {
+//        RoomDto room = roomService.getRoom(roomIdx);
+//        roomInfoMap.put("roomIdx", roomIdx);
+//        roomInfoMap.put("roomNow", room.getRoomNow());
+//        roomInfoMap.put("roomMax", room.getRoomMax());
+//        roomInfoMap.put("maxRound", room.getMaxRound());
+//        roomInfoMap.put("gameCategory", room.getGameCategory());
+//        roomInfoMap.put("roomStatus", room.getRoomStatus());
+//        roomInfoMap.put("adminUserIdx", room.getAdminUserIdx());
+//        roomInfoMap.put("gameCnt", room.getGameCnt());
+//        roomInfoMap.put("roomCreateTime", room.getRoomCreateTime());
+//        roomInfoMap.put("nowRound", room.getNowRound());
+//    }
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -65,15 +70,15 @@ public class WebSocketHandler extends TextWebSocketHandler {
         sessions.add(session);
         log.info(session.getId());
 
-        if (flag == false) {        // 아직 웹 소켓 연결이 시도된 적이 없을 때: 첫 번째로 시도할 때
-            log.info("flag가 false여서 실행");
-            
-            // 소켓에 정보 저장
-            initailizeRoomInfo(roomId);
-            
-            // 1번만 실행될 수 있도록 true(이미 실행됨)으로 변경
-            flag = true;
-        }
+//        if (flag == false) {        // 아직 웹 소켓 연결이 시도된 적이 없을 때: 첫 번째로 시도할 때
+//            log.info("flag가 false여서 실행");
+//
+//            // 소켓에 정보 저장
+//            initailizeRoomInfo(roomId);
+//
+//            // 1번만 실행될 수 있도록 true(이미 실행됨)으로 변경
+//            flag = true;
+//        }
     }
 
     @Override
@@ -92,10 +97,24 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
         // userIn:유저가 들어올 때 userData: (유저Id, 기본점수)
         if (type.equals("userIn")) {
-            String userIdx = jsonMessage.get("userIdx");
-            UserDto userDto = webSocketCustomService.getUserDto(Long.valueOf(userIdx));
+            String authorization = jsonMessage.get("authorization");
+            UserDto userDto = authService.selectOneMember(HeaderUtil.getAccessTokenString(authorization));
 
-            roomService.joinRoom(userDto, roomId);
+            // 세션에 기록: 입장하려는 유저 인스턴스 생성
+            UserInfo userInfo = userInfoMap.computeIfAbsent(session.getId(), key -> new UserInfo());
+            userInfo.setNickname(userDto.getUserNickname());
+            userInfo.setScore(0);
+            userInfoMap.put(session.getId(), userInfo);
+            
+            // 방 입장 로직 수행
+            ResponseDto responseDto = roomService.joinRoom(userDto, roomId);    // 수민 로직 추가 예정: 타입을 ReponseDto로 정상일 때 ResponseDto 정보, 오류일 때 state를 포함한 정보
+            String roomDtoJson = objectMapper.writeValueAsString(responseDto);
+            for (WebSocketSession s : sessions) {
+                if (s.isOpen()) {
+                    s.sendMessage(new TextMessage(roomDtoJson));
+                }
+            }
+
 
 // 수민이 만든 joinRoom 서비스 이용방식으로 변경하면서 주석처리
 //            // 최대인원 확인: 현재인원이 최대인원보다 작을 때 true, 같거나 클 경우 false
@@ -163,38 +182,52 @@ public class WebSocketHandler extends TextWebSocketHandler {
         }
         // 방 최대 인원 변경
         else if (type.equals("changeMax")) {
-            String authorIdx = jsonMessage.get("authorIdx");
+            String authorization = jsonMessage.get("authorization");
             int changedMax = Integer.parseInt(jsonMessage.get("changedMax"));
 
             // 세션 기록 변경(세션정보는 변경되지만 굳이 가져올 필요는 없음)
             roomInfoMap.put("roomMax", changedMax);
 
-            UserDto userDto = webSocketCustomService.getUserDto(Long.valueOf(authorIdx));
-            RoomDto roomDto = roomService.changeMaxUser(userDto, roomId, changedMax);
+            UserDto userDto = authService.selectOneMember(HeaderUtil.getAccessTokenString(authorization));
+            ResponseDto responseDto = roomService.changeMaxUser(userDto, roomId, changedMax);
 
-            // 최대 인원에 따라 강퇴하는 로직
-            if (roomDto != null) {
-                for (WebSocketSession s : sessions) {
-                    if (s.isOpen()) {
-                        // 변경된 방 정보 전송
-                        s.sendMessage(new TextMessage(objectMapper.writeValueAsString(roomDto)));
-                    }
+            for (WebSocketSession s : sessions) {
+                if (s.isOpen()) {
+                    // 변경된 방 정보 전송
+                    s.sendMessage(new TextMessage(objectMapper.writeValueAsString(responseDto)));
                 }
-            } else {
-                // 최대 인원 변경 실패
-                System.err.println("최대 인원 변경에 실패했습니다.");
             }
+
+//            // 최대 인원에 따라 강퇴하는 로직
+//            if (responseDto != null && responseDto.getStatus.equals("success")) {
+//                for (WebSocketSession s : sessions) {
+//                    if (s.isOpen()) {
+//                        // 변경된 방 정보 전송
+//                        s.sendMessage(new TextMessage(objectMapper.writeValueAsString(responseDto)));
+//                    }
+//                }
+//            } else {
+//                // 최대 인원 변경 실패
+//                for (WebSocketSession s : sessions) {
+//                    if (s.isOpen()) {
+//                        // 변경된 방 정보 전송
+//                        s.sendMessage(new TextMessage(objectMapper.writeValueAsString(responseDto)));
+//                    }
+//                }
+//            }
         }
         // 방장 변경
         else if (type.equals("changeAdmin")) {
-            String userIdx = jsonMessage.get("userIdx");
+//            String userIdx = jsonMessage.get("userIdx");
+            String authorization = jsonMessage.get("authorization");
             String newAdminIdx = jsonMessage.get("newAdminIdx");
 
             // 세션 기록 변경
             roomInfoMap.put("adminUserIdx", newAdminIdx);
+            UserDto userDto = authService.selectOneMember(HeaderUtil.getAccessTokenString(authorization));
 
-            UserDto userDto = webSocketCustomService.getUserDto(Long.valueOf(userIdx));
-            roomService.changeAdminUser(userDto, roomId, Long.valueOf(newAdminIdx));
+//            UserDto userDto = webSocketCustomService.getUserDto(Long.valueOf(userIdx));
+            ResponseDto responseDto = roomService.changeAdminUser(userDto, roomId, Long.valueOf(newAdminIdx));
 
             for (WebSocketSession s : sessions) {
                 if (s.isOpen()) {
@@ -221,14 +254,14 @@ public class WebSocketHandler extends TextWebSocketHandler {
         // 게임 시작
         else if (type.equals("gameStart")) {
             // 현재 설정된 게임 타입을 받아와서 case 구분
-            String authorIdx = jsonMessage.get("authorIdx");
             String gameIdx = jsonMessage.get("gameIdx");    // 프론트에서 받을 수 있나요? 수민&도겸 필요
+            String authorization = jsonMessage.get("authorization");
 
             // 소켓 정보 변경
             roomInfoMap.put("roomStatus", "Playing");
 
             // userDto, gameRequestDto(roomIdx, gameCategory, maxRound) 필요
-            UserDto userDto = webSocketCustomService.getUserDto(Long.valueOf(authorIdx));
+            UserDto userDto = authService.selectOneMember(HeaderUtil.getAccessTokenString(authorization));
             GameRequestDto gameRequestDto = webSocketCustomService.getGameRequestDto(roomId, Integer.parseInt(gameIdx));  // game_idx 확인 필요
 
             // gameService 시작
