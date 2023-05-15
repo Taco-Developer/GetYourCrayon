@@ -4,8 +4,10 @@ import Link from 'next/link';
 import Invite from './Invite';
 
 import { gameAPI, boardAPI } from '@/api/api';
+import { useDispatch, useSelector } from 'react-redux';
 import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
 import { changeRole } from '@/store/slice/game/userDataSlice';
+import { setRoomIdx } from '@/store/slice/game/gameRoom';
 
 interface ReadyProps {
   boardId: number | null;
@@ -22,9 +24,8 @@ export default function ReadyBtn({
 }: ReadyProps) {
   const { userId } = useAppSelector((state) => state.userData);
   const dispatch = useAppDispatch();
-  const [baseUrl, setBaseUrl] = useState<string>(
-    'https://getyourcrayon.co.kr/room/',
-  );
+  const baseUrl: string = 'https://getyourcrayon.co.kr/room/';
+  const { roomIdx } = useAppSelector((state) => state.roomIdx);
 
   /** 게임방 나가기 api */
   const gameOut = async () => {
@@ -32,6 +33,7 @@ export default function ReadyBtn({
       .outRoom()
       .then((request) => console.log(request.data))
       .catch((err) => console.log(err));
+    dispatch(setRoomIdx({ roomIdx: null }));
   };
 
   /** url 카피하는 함수 */
