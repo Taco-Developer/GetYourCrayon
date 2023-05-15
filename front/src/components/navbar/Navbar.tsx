@@ -34,7 +34,7 @@ export default function Navbar({ children }: NavbarPropsType) {
       .then((request) => {
         console.log(request.data);
         dispatch(setRoomIdx({ roomIdx: request.data.roomIdx }));
-        router.push(`/room/${roomIdx}`);
+        router.push(`/room/${request.data.roomIdx}`);
       })
       .catch((err) => {
         console.log(err);
