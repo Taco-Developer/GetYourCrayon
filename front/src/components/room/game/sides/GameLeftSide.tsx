@@ -72,47 +72,17 @@ export default function GameLeftSide({
         <h2>참가자 목록</h2>
         <Margin type={MarginType.height} size={16} />
         <MemberList>
-          {gameUsers.map((user) => {
+          {gameUsers.map(({ userIdx, userNickname }) => {
             return (
-              <MemberItem key={user.id}>
+              <MemberItem key={userIdx}>
                 <Profile />
-                <span className="truncate flex-auto">{user.nickname}</span>
-                {/* <MemberStatus>
-                  {user.id % 2 === 0 ? (
-                    <div className="text-base">
-                      <Mic
-                        isMuted={user.id === 2 ? false : true}
-                        isMyStatus={false}
-                      />
-                    </div>
-                  ) : (
-                    <div className="text-base">
-                      <SoundVolume
-                        isMuted={user.id === 3 ? false : true}
-                        isMyStatus={false}
-                      />
-                    </div>
-                  )}
-                </MemberStatus> */}
+                <span className="truncate flex-auto">{userNickname}</span>
               </MemberItem>
             );
           })}
         </MemberList>
       </Members>
-      {/* <SoundSetting>
-        <div
-          className="bg-white rounded-full w-[32px] h-[32px] flex justify-center items-center"
-          onClick={micOptionClickHandler}
-        >
-          <Mic isMuted={isMicMuted} isMyStatus={true} />
-        </div>
-        <div
-          className="bg-white rounded-full w-[32px] h-[32px] flex justify-center items-center"
-          onClick={volumeOptionClickHandler}
-        >
-          <SoundVolume isMuted={isVolumeMuted} isMyStatus={true} />
-        </div>
-      </SoundSetting> */}
+      {!isPainting && <div></div>}
     </SideDisplay>
   );
 }

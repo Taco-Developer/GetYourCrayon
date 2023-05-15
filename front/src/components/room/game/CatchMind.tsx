@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
 import { w3cwebsocket as W3CWebsocket } from 'websocket';
 
@@ -7,7 +7,9 @@ import Solving from './roles/Solving';
 import { useAppSelector } from '@/store/thunkhook';
 
 export default function CatchMinde({ client }: { client: W3CWebsocket }) {
-  const { userRole } = useAppSelector((state) => state.userData);
+  const { userRole } = useAppSelector((state) => state);
+
+  if (userRole === '') return <div>로딩 중!!!~~</div>;
 
   switch (userRole) {
     case 'drawing':

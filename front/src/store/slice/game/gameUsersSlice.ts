@@ -1,17 +1,56 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export interface GameUser {
-  id: number;
-  nickname: string;
+  userIdx: number;
+  roomIdx: string;
+  userNickname: string;
+  userPoint: number;
+  userScore: number;
 }
 
 const initialState: GameUser[] = [
-  { id: 1, nickname: '아프리카청춘이다' },
-  { id: 2, nickname: '벼랑위의당뇨' },
-  { id: 3, nickname: '넌내게목욕값을줬어' },
-  { id: 4, nickname: '돈들어손내놔' },
-  { id: 5, nickname: '헬리콥터와마법사의똥' },
-  { id: 6, nickname: '아무리생강캐도난마늘' },
+  {
+    roomIdx: 'asdf123',
+    userIdx: 1,
+    userNickname: '아프리카청춘이다',
+    userPoint: 0,
+    userScore: 0,
+  },
+  {
+    roomIdx: 'asdf123',
+    userIdx: 2,
+    userNickname: '벼랑위의당뇨',
+    userPoint: 0,
+    userScore: 0,
+  },
+  {
+    roomIdx: 'asdf123',
+    userIdx: 3,
+    userNickname: '넌내게목욕값을줬어',
+    userPoint: 0,
+    userScore: 0,
+  },
+  {
+    roomIdx: 'asdf123',
+    userIdx: 4,
+    userNickname: '돈들어손내놔',
+    userPoint: 0,
+    userScore: 0,
+  },
+  {
+    roomIdx: 'asdf123',
+    userIdx: 5,
+    userNickname: '헬리콥터와마법사의똥',
+    userPoint: 0,
+    userScore: 0,
+  },
+  {
+    roomIdx: 'asdf123',
+    userIdx: 6,
+    userNickname: '아무리생강캐도난마늘',
+    userPoint: 0,
+    userScore: 0,
+  },
 ];
 
 const gameUsersSlice = createSlice({
@@ -24,7 +63,7 @@ const gameUsersSlice = createSlice({
     },
     /** 유저 퇴장 */
     deleteUser(state, action: PayloadAction<number>) {
-      return state.filter((user) => user.id !== action.payload);
+      return state.filter((user) => user.userIdx !== action.payload);
     },
   },
 });
