@@ -9,7 +9,7 @@ import {
 } from '@reduxjs/toolkit';
 
 import { HYDRATE, createWrapper } from 'next-redux-wrapper';
-
+import mypageSlice, { MypageStateType } from './slice/mypageSlice';
 import loginSlice, { LoginStateType } from './slice/loginSlice';
 import userSlice, { UserStateType } from './slice/userSlice';
 import navbarSlice, { NavbarStateType } from './slice/navbarSlice';
@@ -55,6 +55,10 @@ export interface ReducerStates {
   userData: UserDataType;
   draw: DrawStateType;
   isLogin: LoginStateType;
+<<<<<<< HEAD
+=======
+  mypageInfo: MypageStateType;
+>>>>>>> 1d4b6f83dddec9aab5a57bd1c114a90ee792e248
   answers: AnswersType;
 }
 
@@ -81,6 +85,10 @@ const rootReducer = (
         userData: userDataSliceReducer,
         draw: drawSliceReducer,
         isLogin: loginSlice.reducer,
+<<<<<<< HEAD
+=======
+        mypageInfo: mypageSlice.reducer,
+>>>>>>> 1d4b6f83dddec9aab5a57bd1c114a90ee792e248
         answers: answersSliceReducer,
       });
       return combinedReducer(state, action);
