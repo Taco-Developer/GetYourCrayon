@@ -5,7 +5,6 @@ import Setting from './more/Setting';
 import Chat from './more/Chat';
 import ReadyBtn from './more/ReadyBtn';
 import tw from 'tailwind-styled-components';
-import { w3cwebsocket as W3CWebSocket } from 'websocket';
 import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
 import { setUser } from '@/store/slice/userSlice';
 import { getCookie } from 'cookies-next';
