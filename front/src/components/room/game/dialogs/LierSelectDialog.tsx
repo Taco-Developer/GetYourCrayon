@@ -50,11 +50,14 @@ export default function LierSelectDialog({
         <main className="w-full">
           <ul className="flex flex-col gap-4">
             {gameUsers.map((user) => (
-              <li key={user.id} className="flex justify-between items-center">
-                <span>{user.nickname}</span>
+              <li
+                key={user.userIdx}
+                className="flex justify-between items-center"
+              >
+                <span>{user.userNickname}</span>
                 <button
                   className={
-                    selectedUser?.id === user.id
+                    selectedUser?.userIdx === user.userIdx
                       ? 'px-4 py-2 rounded-lg bg-red-400'
                       : 'px-4 py-2 rounded-lg bg-blue-400'
                   }
@@ -62,7 +65,9 @@ export default function LierSelectDialog({
                     onUserClickHandler(user);
                   }}
                 >
-                  {selectedUser?.id === user.id ? '선택 취소' : '선택'}
+                  {selectedUser?.userIdx === user.userIdx
+                    ? '선택 취소'
+                    : '선택'}
                 </button>
               </li>
             ))}
