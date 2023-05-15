@@ -4,8 +4,8 @@ import com.sevenight.coldcrayon.auth.dto.UserDto;
 import com.sevenight.coldcrayon.config.RedisMethods;
 import com.sevenight.coldcrayon.game.entity.GameCategory;
 import com.sevenight.coldcrayon.joinlist.service.JoinListService;
-import com.sevenight.coldcrayon.room.dto.RoomDto;
 import com.sevenight.coldcrayon.room.dto.RoomResponseDto;
+import com.sevenight.coldcrayon.room.dto.UserHashResponseDto;
 import com.sevenight.coldcrayon.room.entity.RoomHash;
 import com.sevenight.coldcrayon.room.entity.RoomStatus;
 import com.sevenight.coldcrayon.room.entity.UserHash;
@@ -16,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.rmi.ServerError;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -113,55 +112,56 @@ public class RoomServiceImpl implements RoomService{
     }
 
     // 방에서 나가기
-    public String outRoom(UserDto userDto){
+    public RoomResponseDto outRoom(UserDto userDto){
         // 방 정보 가지고 오기
         Optional<UserHash> userHash = userHashRepository.findById(userDto.getUserIdx());
+        Optional<RoomHash> optionalRoomHash;
         String status = "fail";
         String message;
 
         if(userHash.isEmpty()){
-            message = "유저가 참여한 방이 없습니다.";
-        }
-
-        Optional<RoomHash> optionalRoomHash = roomRepository.findById(userHash.get().getRoomIdx());
-
-        if(optionalRoomHash.isPresent()){
-
-
-            RoomHash room = optionalRoomHash.get();
-
-            if(room.getRoomNow() == 1){
-                status = "Success";
-                message = "방의 인원이 1명이라 방을 삭제합니다.";
-                roomRepository.deleteById(room.getRoomIdx()); // 방 삭제
-                redisMethods.removeList(room.getRoomIdx());   // 방에 참여 인원 List 삭제
-                userHashRepository.deleteById(userDto.getUserIdx());
-            } else {
-                // 방장 위임
-                status = "Success";
-                message = "방의 인원이 1명이라 방을 삭제합니다.";
-                if(room.getAdminUserIdx().equals(userDto.getUserIdx())){
-                    List<Object> userList = redisMethods.getList(room.getRoomIdx());
-                    int i=0;
-                    while(userList.get(i).equals(userDto.getUserIdx().toString())){
-                        i++;
-                    }
-
-//                    RoomDto newRoonDto = this.changeAdminUser(userDto, room.getRoomIdx(), Long.parseLong(userList.get(i).toString()));
-//                    room.setAdminUserIdx(newRoonDto.getAdminUserIdx());
-
-                }
-                room.setRoomNow(room.getRoomNow()-1); // 방 현재 인원 -1
-                redisMethods.removeElement(room.getRoomIdx(), userDto.getUserIdx()); //  방에 참여 인원 List에서 유저 삭제
-                userHashRepository.deleteById(userDto.getUserIdx());
-                roomRepository.save(room);
-            }
-            return room.getRoomIdx();
+            message = "유저가 게임방에 들어간 적이 없습니다.";
+            optionalRoomHash = Optional.empty();
         } else {
-            status = "fail";
-            message = "나갈 방이 없습니다.";
+            optionalRoomHash = roomRepository.findById(userHash.get().getRoomIdx());
+
+            if(optionalRoomHash.isPresent()){
+
+
+                RoomHash room = optionalRoomHash.get();
+
+                if(room.getRoomNow() == 1){
+                    status = "Success";
+                    message = "방의 인원이 1명이라 방을 삭제합니다.";
+                    roomRepository.deleteById(room.getRoomIdx()); // 방 삭제
+                    redisMethods.removeList(room.getRoomIdx());   // 방에 참여 인원 List 삭제
+                    userHashRepository.deleteById(userDto.getUserIdx());
+                } else {
+                    // 방장 위임
+                    status = "success";
+                    message = "방장을 위임합니다.";
+                    if(room.getAdminUserIdx().equals(userDto.getUserIdx())){
+                        List<Object> userList = redisMethods.getList(room.getRoomIdx());
+                        int i=0;
+                        while(userList.get(i).equals(userDto.getUserIdx().toString())){
+                            i++;
+                        }
+
+                    RoomResponseDto roomResponseDto = this.changeAdminUser(userDto, room.getRoomIdx(), Long.parseLong(userList.get(i).toString()));
+                    room.setAdminUserIdx(roomResponseDto.getAdminUserIdx());
+
+                    }
+                    room.setRoomNow(room.getRoomNow()-1); // 방 현재 인원 -1
+                    redisMethods.removeElement(room.getRoomIdx(), userDto.getUserIdx()); //  방에 참여 인원 List에서 유저 삭제
+                    userHashRepository.deleteById(userDto.getUserIdx());
+                    roomRepository.save(room);
+                }
+            } else {
+                message = "조회하신 방이 없습니다.";
+            }
         }
-        return null;
+
+        return RoomResponseDto.of(optionalRoomHash, status, message);
     }
 
     // 방장 위임
@@ -228,6 +228,7 @@ public class RoomServiceImpl implements RoomService{
         return RoomResponseDto.of(optionalRoomHash, status, message);
     }
 
+    // 참여 인원 조회하기
     public List<UserHash> getUserList(String roomIdx){
         List<Object> userList = redisMethods.getList(roomIdx);
         List<UserHash> userHashList = new ArrayList<>();
@@ -236,6 +237,7 @@ public class RoomServiceImpl implements RoomService{
         }
         return userHashList;
     }
+
     // U : 유저 차단
 //    public String banUser(String roomIdx, String adminUserIdx, String banUserIdx){
 //        Optional<RoomHash> optionalRoom = roomRepository.findById(roomIdx);
