@@ -39,11 +39,20 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
 
     // 외부 서비스 주입
-    private WebSocketCustomService webSocketCustomService;
-    private RoomService roomService;
-    private UserService userService;
-    private GameService gameService;
-    private AuthService authService;
+    private final WebSocketCustomService webSocketCustomService;
+    private final RoomService roomService;
+    private final UserService userService;
+    private final GameService gameService;
+    private final AuthService authService;
+
+
+    public WebSocketHandler(WebSocketCustomService webSocketCustomService, RoomService roomService, UserService userService, GameService gameService, AuthService authService) {
+        this.authService = authService;
+        this.roomService = roomService;
+        this.webSocketCustomService = webSocketCustomService;
+        this.userService = userService;
+        this.gameService = gameService;
+    }
 
     // flag 변수
     private boolean flag = false;   // 웹 소켓이 생성되기 전: false, 한 번 생성되고 난 후: true
@@ -280,7 +289,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
         String i = userInfoMap.get(session.getId()).getNickname();
         sessions.remove(session);
-        userInfoMap.remove(session.getId());
 
         if (sessions.isEmpty()) {
             sessionsMap.remove(roomId);
