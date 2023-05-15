@@ -27,9 +27,10 @@ import isGameStartedSliceReducer from './slice/game/isGameStartedSlice';
 import gameThemeSliceReducer, {
   GameThemeType,
 } from './slice/game/gameThemeSlice';
-import userDataSliceReducer, { UserDataType } from './slice/game/userDataSlice';
 import drawSliceReducer, { DrawStateType } from './slice/game/drawSlice';
 import answersSliceReducer, { AnswersType } from './slice/game/answersSlice';
+import gameModeSliceReducer from './slice/game/gameModeSlice';
+import userRoleSliceReducer from './slice/game/userRoleSlice';
 // import { persistReducer, persistStore } from 'redux-persist';
 // import {
 //   FLUSH,
@@ -52,11 +53,12 @@ export interface ReducerStates {
   isGameStarted: boolean;
   gameTheme: GameThemeType;
   userInfo: UserStateType;
-  userData: UserDataType;
+  userRole: string;
   draw: DrawStateType;
   isLogin: LoginStateType;
   mypageInfo: MypageStateType;
   answers: AnswersType;
+  gameMode: string;
 }
 
 //HYDRATE 액션을 정의 -> 슬라이스 통함
@@ -79,11 +81,12 @@ const rootReducer = (
         isGameStarted: isGameStartedSliceReducer,
         gameTheme: gameThemeSliceReducer,
         userInfo: userSlice.reducer,
-        userData: userDataSliceReducer,
+        userRole: userRoleSliceReducer,
         draw: drawSliceReducer,
         isLogin: loginSlice.reducer,
         mypageInfo: mypageSlice.reducer,
         answers: answersSliceReducer,
+        gameMode: gameModeSliceReducer,
       });
       return combinedReducer(state, action);
     }
