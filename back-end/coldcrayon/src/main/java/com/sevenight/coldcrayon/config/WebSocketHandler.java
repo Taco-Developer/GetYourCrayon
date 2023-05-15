@@ -50,6 +50,9 @@ public class WebSocketHandler extends TextWebSocketHandler {
     public WebSocketHandler(WebSocketCustomService webSocketCustomService, RoomService roomService, UserService userService, GameService gameService, AuthService authService) {
         this.authService = authService;
         this.roomService = roomService;
+        this.webSocketCustomService = webSocketCustomService;
+        this.userService = userService;
+        this.gameService = gameService;
     }
 
     // flag 변수
