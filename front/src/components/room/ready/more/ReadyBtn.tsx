@@ -6,7 +6,6 @@ import Invite from './Invite';
 import { gameAPI, boardAPI } from '@/api/api';
 import { useDispatch, useSelector } from 'react-redux';
 import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
-import { changeRole } from '@/store/slice/game/userDataSlice';
 import { setRoomIdx } from '@/store/slice/game/gameRoom';
 import { setUser } from '@/store/slice/userSlice';
 
@@ -23,7 +22,6 @@ export default function ReadyBtn({
   setStatus,
   closeSocket,
 }: ReadyProps) {
-  const { userId } = useAppSelector((state) => state.userData);
   const dispatch = useAppDispatch();
   const baseUrl: string = 'https://getyourcrayon.co.kr/room/';
   const { userNickname } = useAppSelector((state) => state.userInfo);
@@ -89,8 +87,6 @@ export default function ReadyBtn({
       <GoBtn
         onClick={() => {
           deleteBorad(boardId);
-          const role = userId === '1' ? 'drawing' : 'solving';
-          dispatch(changeRole(role));
           setStatus('gameStart');
         }}
       >
