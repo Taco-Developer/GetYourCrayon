@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import tw from 'tailwind-styled-components';
 import Image from 'next/image';
 import UserDrop from './UserDrop';
+import { gameAPI } from '@/api/api';
+import { useAppSelector } from '@/store/thunkhook';
 
 export default function UserList() {
   const [userCnt, setUserCnt] = useState<number>(6);
@@ -13,10 +15,24 @@ export default function UserList() {
     '갓 덕호',
     '도커경민',
   ]);
+  const { roomIdx } = useAppSelector((state) => state.roomIdx);
+
+  const roomInfo = async (idx: string) => {
+    await gameAPI
+      .findRoom(idx)
+      .then((request) => console.log(request.data))
+      .catch((err) => console.log(err));
+  };
 
   return (
     <UserBody>
-      <TitleDiv>플레이어 1/{userCnt}</TitleDiv>
+      <TitleDiv
+        onClick={() => {
+          roomInfo(roomIdx!);
+        }}
+      >
+        플레이어 1/{userCnt}
+      </TitleDiv>
       <UserDrop setUserCnt={setUserCnt} />
       <ListDiv>
         {player.map((user, i) => (
