@@ -6,8 +6,8 @@ import com.sevenight.coldcrayon.board.entity.Board;
 import com.sevenight.coldcrayon.board.repository.BoardRepository;
 import com.sevenight.coldcrayon.board.service.BoardService;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -20,7 +20,11 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+@RequiredArgsConstructor
 public class WebSocketHandler extends TextWebSocketHandler {
+
+    //필요한 도메인 서비스 아래에 추가.
+    private final BoardService boardService;
     private final Map<String, List<WebSocketSession>> sessionsMap = new ConcurrentHashMap<>();
     private final Map<String, UserInfo> dataMap = new ConcurrentHashMap<>();
 
@@ -30,6 +34,9 @@ public class WebSocketHandler extends TextWebSocketHandler {
         List<WebSocketSession> sessions = sessionsMap.computeIfAbsent(roomId, key -> new CopyOnWriteArrayList<>());
         sessions.add(session);
         System.out.println(session.getId());
+
+        Board board = boardService.findById(1).get();
+        System.out.println("board = " + board.getBoardContent());
 
     }
 

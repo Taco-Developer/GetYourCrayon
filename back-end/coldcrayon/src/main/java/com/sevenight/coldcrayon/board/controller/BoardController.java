@@ -45,7 +45,6 @@ public class BoardController {
         }
 
         try {
-//            User finduser = userRepository.findById(1L).get();
             String token = HeaderUtil.getAccessTokenString(Authorization);
             String email = tokenservice.getEmail(token);
             User finduser = userRepository.findByUserEmail(email);
@@ -123,18 +122,5 @@ public class BoardController {
         String res = boardService.deleteBoard(boardIdx);
         return ResponseEntity.ok().body(res);
     }
-
-
-    //게시글 전체조회
-//    @GetMapping("/api/board")
-//    public Result articles() {
-//        List<Board> findArticles = boardService.findArticles();
-//        List<ArticleDto> collect = findArticles.stream()
-//                .map(m -> new ArticleDto(m.getBoardId(), m.getBoardTitle(), m.getBoardContent(), m.getBoardCreateTime(), m.getBoardUpdateTime())
-//                ).collect(Collectors.toList());
-//
-//        return new Result(collect.size(), collect);
-//
-//    }
 
 }
