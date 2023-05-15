@@ -7,6 +7,9 @@ import Chat from './more/Chat';
 import ReadyBtn from './more/ReadyBtn';
 import tw from 'tailwind-styled-components';
 import { w3cwebsocket as W3CWebSocket } from 'websocket';
+import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
+import { setUser } from '@/store/slice/userSlice';
+import { registerId } from '@/store/slice/game/userDataSlice';
 
 interface RoomPropsType {
   userId: string;
@@ -32,11 +35,14 @@ export default function Ready({
   client,
   setClient,
 }: RoomPropsType) {
-  const [finalroom, setFinalRoom] = useState<string>('');
-  // const [client, setClient] = useState<W3CWebSocket | null>(null);
+  const dispatch = useAppDispatch();
+
+  /** 유저 닉네임 */
+  const { userNickname } = useAppSelector((state) => state.userInfo);
+  /** 유저가 생성한 방 */
+  const { roomIdx } = useAppSelector((state) => state.roomIdx);
   const [messageList, setMessageList] = useState<MessageType[]>([]);
   const [choice, setChoice] = useState<number>(1);
-  const [showChat, setShowChat] = useState<string>('ready');
   // 게시물 번호
   const [boardId, setBoardId] = useState<number | null>(null);
 
@@ -47,28 +53,29 @@ export default function Ready({
   };
 
   useEffect(() => {
-    if (finalroom !== '') {
+    if (roomIdx !== null) {
       const newClient = new W3CWebSocket(
-        `wss://getyourcrayon.co.kr/api/${finalroom}`,
+        `wss://getyourcrayon.co.kr/api/${roomIdx}`,
       );
       setClient(newClient);
     }
-  }, [finalroom]);
+  }, [roomIdx]);
 
   useEffect(() => {
     if (client) {
       client.onopen = () => {
+        dispatch(registerId(userNickname));
         client.send(
           JSON.stringify({
             type: 'userIn',
-            author: userId,
+            author: userNickname,
           }),
         );
         client.send(
           JSON.stringify({
             type: 'chat',
             author: 'admin',
-            message: `${userId}님이 입장하셨습니다 :)`,
+            message: `${userNickname}님이 입장하셨습니다 :)`,
           }),
         );
       };
@@ -84,78 +91,58 @@ export default function Ready({
     }
   }, [client]);
 
-  switch (showChat) {
-    case 'ready':
-      return (
-        <div>
-          <h1>닉네임, 방번호 입력 페이지(임시)</h1>
-          <InRoom
-            userId={userId}
-            setUserId={setUserId}
-            room={room}
-            setRoom={setRoom}
-            setShowChat={setShowChat}
-            setFinalRoom={setFinalRoom}
-          />
-        </div>
-      );
-      break;
-    case 'readyRoom':
-      return (
-        <RoomBody>
-          <UserDiv>
-            <UserList />
-          </UserDiv>
-          <MoreDiv>
-            <PickDiv>
-              <PickMenu>
-                <SetBtn
-                  className={choice === 1 ? 'h-full text-4xl mr-2' : ''}
-                  onClick={() => {
-                    setChoice(1);
-                  }}
-                >
-                  모드
-                </SetBtn>
-                <SetBtn
-                  className={choice === 2 ? 'h-full text-4xl ml-2' : ''}
-                  onClick={() => {
-                    setChoice(2);
-                  }}
-                >
-                  채팅
-                </SetBtn>
-              </PickMenu>
-              <PickContent>
-                {choice === 1 ? (
-                  <SettingDiv>
-                    <ModeChoice />
-                    <Setting />
-                  </SettingDiv>
-                ) : (
-                  <Chat
-                    client={client}
-                    userId={userId}
-                    room={room}
-                    messageList={messageList}
-                  />
-                )}
-              </PickContent>
-            </PickDiv>
-            <BtnDiv>
-              <ReadyBtn
-                boardId={boardId}
-                setBoardId={setBoardId}
-                setStatus={setStatus}
-                closeSocket={closeSocket}
+  return (
+    <RoomBody>
+      <UserDiv>
+        <UserList />
+      </UserDiv>
+      <MoreDiv>
+        <PickDiv>
+          <PickMenu>
+            <SetBtn
+              className={choice === 1 ? 'h-full text-4xl mr-2' : ''}
+              onClick={() => {
+                setChoice(1);
+              }}
+            >
+              모드
+            </SetBtn>
+            <SetBtn
+              className={choice === 2 ? 'h-full text-4xl ml-2' : ''}
+              onClick={() => {
+                setChoice(2);
+              }}
+            >
+              채팅
+            </SetBtn>
+          </PickMenu>
+          <PickContent>
+            {choice === 1 ? (
+              <SettingDiv>
+                <ModeChoice />
+                <Setting />
+              </SettingDiv>
+            ) : (
+              <Chat
+                client={client}
+                userId={userId}
+                room={room}
+                messageList={messageList}
               />
-            </BtnDiv>
-          </MoreDiv>
-        </RoomBody>
-      );
-    default:
-      return <div>예외입니다.</div>;
-  }
+            )}
+          </PickContent>
+        </PickDiv>
+        <BtnDiv>
+          <ReadyBtn
+            boardId={boardId}
+            setBoardId={setBoardId}
+            setStatus={setStatus}
+            closeSocket={closeSocket}
+          />
+        </BtnDiv>
+      </MoreDiv>
+    </RoomBody>
+  );
 }
 
 const RoomBody = tw.div`w-screen h-screen flex items-center justify-center`;

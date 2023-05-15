@@ -29,6 +29,7 @@ import gameThemeSliceReducer, {
 } from './slice/game/gameThemeSlice';
 import drawSliceReducer, { DrawStateType } from './slice/game/drawSlice';
 import answersSliceReducer, { AnswersType } from './slice/game/answersSlice';
+import gameRoomSlice, { RoomIdxtype } from './slice/game/gameRoom';
 import gameModeSliceReducer from './slice/game/gameModeSlice';
 import userRoleSliceReducer from './slice/game/userRoleSlice';
 // import { persistReducer, persistStore } from 'redux-persist';
@@ -58,6 +59,7 @@ export interface ReducerStates {
   isLogin: LoginStateType;
   mypageInfo: MypageStateType;
   answers: AnswersType;
+  roomIdx: RoomIdxtype;
   gameMode: string;
 }
 
@@ -86,6 +88,7 @@ const rootReducer = (
         isLogin: loginSlice.reducer,
         mypageInfo: mypageSlice.reducer,
         answers: answersSliceReducer,
+        roomIdx: gameRoomSlice.reducer,
         gameMode: gameModeSliceReducer,
       });
       return combinedReducer(state, action);

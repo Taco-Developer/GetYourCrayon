@@ -22,7 +22,6 @@ interface RoomPropsType {
   room: string;
   setRoom: React.Dispatch<React.SetStateAction<string>>;
   setShowChat: React.Dispatch<React.SetStateAction<string>>;
-  setFinalRoom: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export default function InRoom({
@@ -31,29 +30,14 @@ export default function InRoom({
   room,
   setRoom,
   setShowChat,
-  setFinalRoom,
 }: RoomPropsType) {
   const dispatch = useAppDispatch();
-
-  const [myVoice, setMyVoice] = useState<{}>({
-    contentHint: '',
-    enabled: true,
-    id: '',
-    kind: '',
-    label: '',
-    muted: false,
-    oncapturehandlechange: null,
-    onended: null,
-    onmute: null,
-    onunmute: null,
-    readyState: '',
-  });
+  const { roomIdx } = useAppSelector((state) => state.roomIdx);
 
   const joinRoom = () => {
-    if (userId !== '' && room !== '') {
+    if (userId !== '') {
       // socket.emit('join_room', userId, room);
       setShowChat('readyRoom');
-      setFinalRoom(room);
       dispatch(registerId(userId));
     }
   };
@@ -66,14 +50,6 @@ export default function InRoom({
         placeholder="nickname..."
         onChange={(event) => {
           setUserId(event.target.value);
-        }}
-      />
-      <input
-        type="text"
-        value={room}
-        placeholder="room..."
-        onChange={(event) => {
-          setRoom(event.target.value);
         }}
       />
       <button onClick={joinRoom}>입장</button>
