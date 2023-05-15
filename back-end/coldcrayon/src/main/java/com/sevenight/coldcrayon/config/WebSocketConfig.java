@@ -1,6 +1,9 @@
 package com.sevenight.coldcrayon.config;
 
+import com.sevenight.coldcrayon.auth.service.AuthService;
+import com.sevenight.coldcrayon.game.service.GameService;
 import com.sevenight.coldcrayon.room.service.RoomService;
+import com.sevenight.coldcrayon.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,9 +18,16 @@ import org.springframework.web.socket.server.standard.ServletServerContainerFact
 @RequiredArgsConstructor
 public class WebSocketConfig implements WebSocketConfigurer {
 
+    private final WebSocketCustomService webSocketCustomService;
+    private final RoomService roomService;
+    private final UserService userService;
+    private final GameService gameService;
+    private final AuthService authService;
+
+
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        WebSocketHandler webSocketHandler = new WebSocketHandler();
+        WebSocketHandler webSocketHandler = new WebSocketHandler(webSocketCustomService, roomService, userService, gameService, authService);
         registry.addHandler(webSocketHandler, "/{roomId}").setAllowedOrigins("*").addInterceptors(new HandShakeInterceptor(webSocketHandler));
     }
 
