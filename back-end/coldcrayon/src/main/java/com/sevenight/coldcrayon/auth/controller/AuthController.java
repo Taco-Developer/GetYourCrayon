@@ -1,6 +1,7 @@
 package com.sevenight.coldcrayon.auth.controller;
 
 import com.sevenight.coldcrayon.auth.dto.UserDto;
+import com.sevenight.coldcrayon.auth.dto.UserResponseDto;
 import com.sevenight.coldcrayon.auth.service.AuthService;
 import com.sevenight.coldcrayon.user.repository.UserRepository;
 import com.sevenight.coldcrayon.util.HeaderUtil;
@@ -48,7 +49,7 @@ public class AuthController {
 
     @GetMapping("/myinfo")
     public ResponseEntity<?> getMyInfo(@RequestHeader String Authorization) {
-        UserDto realUser = authService.selectOneMember(HeaderUtil.getAccessTokenString(Authorization));
+        UserResponseDto realUser = authService.selectUser(HeaderUtil.getAccessTokenString(Authorization));
         log.info("realUser(유저 정보 확인을 위한 API) = {}",realUser);
         if (realUser == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("회원정보 없음");
