@@ -44,7 +44,7 @@ export default function Chat({ socket, room, messageList }: ChatPropsType) {
   const you = 'justify-start';
   const youMeta = 'justify-start';
   const youContent = 'justify-start bg-slate-600';
-  const admin = 'justify-center max-w-lg';
+  const admin = 'justify-center';
   const adminMeta = 'hidden';
   const adminContent = 'justify-start bg-black text-white';
 
