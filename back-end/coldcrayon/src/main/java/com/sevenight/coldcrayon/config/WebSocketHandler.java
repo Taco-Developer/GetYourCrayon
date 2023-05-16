@@ -8,6 +8,7 @@ import com.sevenight.coldcrayon.auth.service.AuthService;
 import com.sevenight.coldcrayon.game.dto.GameRequestDto;
 import com.sevenight.coldcrayon.game.dto.RequestRoundDto;
 import com.sevenight.coldcrayon.game.dto.ResponseGameDto;
+import com.sevenight.coldcrayon.game.dto.ResponseRoundDto;
 import com.sevenight.coldcrayon.game.entity.GameCategory;
 import com.sevenight.coldcrayon.game.service.GameService;
 import com.sevenight.coldcrayon.room.dto.RoomDto;
@@ -338,8 +339,27 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
         }
 
-        // 라운드 종료
+        // 라운드 종료  ------- type 지정 필요 -------   // 수민: gameDto에 responseRoundDto type 속성 설정 필요
         else if (type.equals("roundOver")) {
+            Long winnerIdx = Long.valueOf(jsonMessage.get("winnerIdx"));
+
+            RequestRoundDto requestRoundDto = RequestRoundDto.builder()
+                    .roomIdx(roomId)
+                    .winner(winnerIdx)
+                    .build();
+
+            ResponseRoundDto responseRoundDto = gameService.endRound(requestRoundDto);
+            String json = objectMapper.writeValueAsString(responseRoundDto);
+
+            for (WebSocketSession s : sessions) {
+                if (s.isOpen()) {
+                    s.sendMessage(new TextMessage(json));
+                }
+            }
+
+
+
+            // 경민 임의 작업 -> 수민이가 작업한걸로 변경시켜야 함
             List<UserHash> userList = roomService.getUserList(roomId);
             Map<String, Object> response = new HashMap<>();
             response.put("type", "roundOver");
@@ -352,6 +372,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                     s.sendMessage(new TextMessage(jsonResponse));
                 }
             }
+            //-=========-//
 
         // 게임 종료
         } else if (type.equals("gameOver")) {
