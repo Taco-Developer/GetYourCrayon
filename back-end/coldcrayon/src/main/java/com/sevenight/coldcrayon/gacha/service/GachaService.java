@@ -36,9 +36,6 @@ public class GachaService {
     public Void randomGacha() {
         Random random = new Random();
         double eventProbabilityThreshold = random.nextDouble();
-        boolean itemObtained = false;
-
-//        double probability = random.nextDouble();
 
         log.info("이벤트 체크 난수값 = {}", eventProbabilityThreshold);
         if (eventProbabilityThreshold >= EVENT_PROBABILITY) {
@@ -75,6 +72,7 @@ public class GachaService {
 
         } else {
             Map<Long, GachaDto> gachaMap = null;
+            ArrayList<GachaDto> gachaList = new ArrayList<>();
             if (byUserIdx.get().getUserPoint() >= price) {
                 // 가지고 있는 모든 가챠 불러오기
                 List<Gacha> haveAll = gachaRepository.findAllByUserIdx(byUserIdx.get());
@@ -124,10 +122,12 @@ public class GachaService {
                         gachaDto.setGachaClass(allgacha.get().getAllgachaClass());
 
                         log.info("gachaDto ={}", gachaDto);
-                        gachaMap.put(i, gachaDto);
+//                        gachaMap.put(i, gachaDto);
+                        gachaList.add(gachaDto);
                     }
                 }
-                return gachaMap;
+//                return gachaMap;
+                return gachaList;
 
             } else {
                 return "포인트가 부족합니다";
