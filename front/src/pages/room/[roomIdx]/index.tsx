@@ -57,7 +57,7 @@ export default function Room({
         />
       );
     case 'gameStart':
-      return <InGameRoom game="CatchMind" socket={socket as WebSocket} />;
+      return <InGameRoom game="AiPainting" socket={socket as WebSocket} />;
     case 'gameEnd':
       return <GameResult socket={socket as WebSocket} />;
     default:
