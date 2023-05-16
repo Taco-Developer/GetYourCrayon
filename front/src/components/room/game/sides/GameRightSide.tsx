@@ -12,15 +12,23 @@ import {
   addInGameChat,
 } from '@/store/slice/game/inGameChatDatasSlice';
 import { countDown } from '@/store/slice/game/leftTimeSlice';
+import { sendMessage } from '@/socket/messageSend';
 
 interface GameRightSidePropsType {
   isPainting: boolean;
+  socket: WebSocket;
 }
 
-export default function GameRightSide({ isPainting }: GameRightSidePropsType) {
-  const { leftTime, inGameChatDatas, isGameStarted } = useAppSelector(
-    (state) => state,
-  );
+export default function GameRightSide({
+  isPainting,
+  socket,
+}: GameRightSidePropsType) {
+  const {
+    leftTime,
+    inGameChatDatas,
+    isGameStarted,
+    userInfo: { userIdx, userNickname },
+  } = useAppSelector((state) => state);
   const dispatch = useAppDispatch();
 
   // 채팅 입력값
@@ -39,7 +47,9 @@ export default function GameRightSide({ isPainting }: GameRightSidePropsType) {
       status: 'chatting',
       content: chat,
     };
-    dispatch(addInGameChat(chatInput));
+    sendMessage(socket, 'chat', {
+      ...chatInput,
+    });
     setInputValue('');
   };
 
@@ -124,7 +134,7 @@ const InGameChat = tw.div`
   items-center
   gap-4
 
-  overflow-hidden
+  overflow-y-hidden
 `;
 
 const ChatView = tw.ul`

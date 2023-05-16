@@ -23,8 +23,10 @@ export default function InGameRoom({
   useEffect(() => {
     const messageHandler = (message: MessageEvent) => {
       const data = JSON.parse(message.data);
-      if (data.type === 'inGameChat') {
-        dispatch(addInGameChat(data.content));
+
+      if (data.type === 'chat') {
+        const { content, status, user } = data;
+        dispatch(addInGameChat({ content, status, user }));
       }
     };
     listenEvent(socket, messageHandler);

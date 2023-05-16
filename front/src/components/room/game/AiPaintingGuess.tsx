@@ -28,6 +28,8 @@ import {
   addSavedAnswers,
 } from '@/store/slice/game/answersSlice';
 import { listenEvent, removeEvent } from '@/socket/socketEvent';
+import { sendMessage } from '@/socket/messageSend';
+import { gameAPI } from '@/api/api';
 
 export default function AiPaintingGuess({ socket }: { socket: WebSocket }) {
   const {
@@ -35,6 +37,7 @@ export default function AiPaintingGuess({ socket }: { socket: WebSocket }) {
     gameTheme,
     answers: { savedAnswers, inputedAnswers },
     aiGameDatas: { aiImages },
+    roomIdx: { roomIdx },
   } = useAppSelector((state) => state);
   const dispatch = useAppDispatch();
 
@@ -55,7 +58,7 @@ export default function AiPaintingGuess({ socket }: { socket: WebSocket }) {
       status: 'answer',
       content: answer,
     };
-    dispatch(addInGameChat(chatInputValue));
+    sendMessage(socket, 'chat', { ...chatInputValue });
     setAnswerInputValue('');
     if (
       savedAnswers.indexOf(answer) === -1 ||
@@ -81,7 +84,7 @@ export default function AiPaintingGuess({ socket }: { socket: WebSocket }) {
   useEffect(() => {
     const messageHandler = (event: MessageEvent) => {
       const data = JSON.parse(event.data);
-      if (data.type !== 'problem') return;
+      if (data.type !== 'gameDto') return;
       dispatch(addAiImages(data.aiImages));
       dispatch(saveTheme(data.selectedTheme));
       dispatch(addSavedAnswers(data.answers));
@@ -94,6 +97,21 @@ export default function AiPaintingGuess({ socket }: { socket: WebSocket }) {
       removeEvent(socket, messageHandler);
     };
   }, [socket, dispatch]);
+
+  useEffect(() => {
+    const dummy = async () => {
+      const response = await gameAPI.postGameStart(roomIdx!, 'AI', 4);
+      console.log(response);
+      const { correct, message, selectedUserIdx, theme, type, urlList } =
+        await response.data;
+
+      dispatch(addAiImages(urlList));
+      dispatch(addSavedAnswers(correct));
+      dispatch(saveTheme(theme));
+      dispatch(savePrompt(message));
+    };
+    dummy();
+  }, [roomIdx, dispatch]);
 
   // if (aiImages.length === 0) {
   //   return <div>AI가 이미지를 만들고 있어요ㅠㅠ</div>;
@@ -142,7 +160,7 @@ export default function AiPaintingGuess({ socket }: { socket: WebSocket }) {
           </AnswerInputSection>
         </AnswerForm>
       </GameCenter>
-      <GameRightSide isPainting={false} />
+      <GameRightSide isPainting={false} socket={socket} />
     </>
   );
 }
