@@ -320,7 +320,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         String roomId = extractRoomId(session);
         List<WebSocketSession> sessions = sessionsMap.getOrDefault(roomId, Collections.emptyList());
 
-        String i = userInfoMap.get(session.getId()).getNickname();
+//        String i = userInfoMap.get(session.getId()).getNickname();
         sessions.remove(session);
 
         if (sessions.isEmpty()) {
