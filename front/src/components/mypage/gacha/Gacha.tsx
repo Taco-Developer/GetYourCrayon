@@ -75,7 +75,7 @@ export default function Gacha() {
 
       <div className="z-30 flex flex-row w-full justify-between px-16 font-bold bottom-bomul-buttom-margin absolute ">
         <Button
-          px={6}
+          px={8}
           py={2}
           color="bg-apple-yellow"
           rounded="lg"
@@ -108,7 +108,7 @@ export default function Gacha() {
           1회 뽑기
         </Button>
         <Button
-          px={6}
+          px={8}
           py={2}
           color="bg-apple-yellow"
           rounded="lg"
