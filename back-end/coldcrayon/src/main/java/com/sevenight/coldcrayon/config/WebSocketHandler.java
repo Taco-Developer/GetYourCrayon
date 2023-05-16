@@ -1,10 +1,12 @@
 package com.sevenight.coldcrayon.config;
 
+import com.amazonaws.Request;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sevenight.coldcrayon.auth.dto.UserDto;
 import com.sevenight.coldcrayon.auth.service.AuthService;
 import com.sevenight.coldcrayon.game.dto.GameRequestDto;
+import com.sevenight.coldcrayon.game.dto.RequestRoundDto;
 import com.sevenight.coldcrayon.game.dto.ResponseGameDto;
 import com.sevenight.coldcrayon.game.entity.GameCategory;
 import com.sevenight.coldcrayon.game.service.GameService;
@@ -319,7 +321,20 @@ public class WebSocketHandler extends TextWebSocketHandler {
 //            }
         }
         // 라운드 시작
-        else if(type.equals("gameStart")) {
+        else if(type.equals("roundStart")) {
+            RequestRoundDto requestRoundDto = RequestRoundDto.builder()
+                    .roomIdx(roomId)
+                    .build();
+
+            ResponseGameDto responseGameDto = gameService.nextRound(requestRoundDto);      // type: gameDto로 기본 설정되어 있음
+            String json = objectMapper.writeValueAsString(responseGameDto);
+
+            for (WebSocketSession s : sessions) {
+                if (s.isOpen()) {
+                    s.sendMessage(new TextMessage(json));
+                }
+            }
+
 
         }
 
