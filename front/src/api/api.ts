@@ -50,10 +50,9 @@ export const memberAPI = {
 
 export const gatchaAPI = {
   /** 1회뽑기 */
-  oneGacha: (userIdx: number) => api.post(`/user/mypage/gacha/${userIdx}/once`),
+  oneGacha: () => api.post(`/user/mypage/gacha/one`),
   /** 10회뽑기 */
-  tenGacha: (userIdx: number) =>
-    api.post(`/user/mypage/gacha/${userIdx}/tenth`),
+  tenGacha: () => api.post(`/user/mypage/gacha/ten`),
 };
 
 export const boardAPI = {
