@@ -86,7 +86,7 @@ export default function ChangeName() {
   return (
     <div>
       <Button
-        px={6}
+        px={8}
         py={2}
         rounded="lg"
         color="bg-apple-green"
