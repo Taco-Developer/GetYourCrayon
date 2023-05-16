@@ -21,5 +21,5 @@ const SideContainer = tw.div<{ 'data-left': boolean }>`
   justify-between
   gap-4
   
-  overflow-hidden
+  overflow-y-hidden
 `;
