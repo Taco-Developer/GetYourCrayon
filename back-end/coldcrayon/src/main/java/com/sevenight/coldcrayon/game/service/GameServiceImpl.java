@@ -49,9 +49,11 @@ public class GameServiceImpl implements GameService{
                 message = "방장이 아니에요.";
             } else if (room.getRoomNow() < 1) {
                 message = "최소 3명의 인원이 필요합니다.";
-            } else if(!room.getRoomStatus().equals(RoomStatus.Ready)){
-                message = "방이 게임중인 상태인가요?";
-            } else {
+            } 
+            // else if(room.getRoomStatus().equals(RoomStatus.Playing)){
+                // message = "방이 게임중인 상태인가요?";
+            // } 
+            else {
                 // 게임 방 설정 변경
                 System.err.println("방을 만듭니다.");
                 status = "success";
