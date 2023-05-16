@@ -2,15 +2,18 @@ package com.sevenight.coldcrayon.game.service;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Service;
-
+import org.springframework.beans.factory.annotation.Value;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
-
+       
 @Service
 public class SaveImageServiceImpl {
 
+    @Value("${java.file.homeUrl}")
+    String HomeUrl;
+ 
     public String downloadImage(String imageUrl, String destinationPath, Long idx) throws IOException {
         String prefix = "/getchacrayon/image/history/";
         destinationPath = prefix + destinationPath;
@@ -26,6 +29,6 @@ public class SaveImageServiceImpl {
         FileOutputStream outputStream = new FileOutputStream(destinationPath + "/" +idx + ".jpg");
         IOUtils.copy(url.openStream(), outputStream);
         outputStream.close();
-        return destinationPath + "/" +idx + ".jpg";
+        return HomeUrl + destinationPath + "/" +idx + ".jpg";
     }
 }

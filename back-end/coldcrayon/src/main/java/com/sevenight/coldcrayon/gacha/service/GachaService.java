@@ -175,7 +175,7 @@ public class GachaService {
                 Object nGacha = N_Gacha(byUserIdx.get().getUserIdx(), 1, 10);
                 log.info("nGachas 결과: {}", nGacha);
 
-                result.put("nGachasIdx", nGacha);
+                result.put("nGacha", nGacha);
                 responseDto.setBody(result);
                 responseDto.setMessage("1회 뽑기 실행");
                 responseDto.setStatusCode(200);
