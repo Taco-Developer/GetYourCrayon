@@ -23,6 +23,12 @@ interface MessageType {
   message: string;
 }
 
+interface UserInType {
+  type: string;
+  roomInfo: {};
+  userList: {};
+}
+
 export default function Ready({ setStatus, socket, setSocket }: RoomPropsType) {
   /** 유저 정보 */
   const { profile } = useAppSelector((state) => state.mypageInfo);
@@ -81,10 +87,8 @@ export default function Ready({ setStatus, socket, setSocket }: RoomPropsType) {
   useEffect(() => {
     const roomInHandler = (event: any) => {
       const data = JSON.parse(event.data);
-      // if (data.type !== 'room') return;
-      // setMessageList((prev) => [...prev, data]);
       if (data.type !== 'userIn') return;
-      setUserList(data);
+      setUserList(data.userList);
       console.log(data);
     };
     /** 토큰 */
@@ -116,7 +120,7 @@ export default function Ready({ setStatus, socket, setSocket }: RoomPropsType) {
   return (
     <RoomBody>
       <UserDiv>
-        <UserList />
+        <UserList userList={userList} />
       </UserDiv>
       <MoreDiv>
         <PickDiv>
