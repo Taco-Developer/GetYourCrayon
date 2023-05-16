@@ -271,47 +271,18 @@ public class WebSocketHandler extends TextWebSocketHandler {
             UserDto userDto = authService.selectOneMember(HeaderUtil.getAccessTokenString(authorization));
             GameRequestDto gameRequestDto = webSocketCustomService.getGameRequestDto(roomId, Integer.parseInt(gameIdx));  // game_idx 확인 필요
 
-            //=== 시간 전달 ===//
-            AtomicInteger roundTime = new AtomicInteger((int) roomInfoMap.get("roundTime"));
+            int roundTime = (int) roomInfoMap.get("roundTime");
 
-            ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-            executorService.scheduleAtFixedRate(() -> {
-                int currentTime = roundTime.getAndDecrement();
-
+            // 설정된 roundTime을 프론트에 전달
+            while (roundTime > 0) {
                 for (WebSocketSession s : sessions) {
                     if (s.isOpen()) {
-                        try {
-                            s.sendMessage((new TextMessage(String.valueOf(currentTime))));
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                        s.sendMessage(new TextMessage(String.valueOf(roundTime)));
                     }
+                    roundTime--;
+                    Thread.sleep(1000);
                 }
-
-            }, 1, 1, TimeUnit.SECONDS);
-//
-//            for (WebSocketSession s : sessions) {
-//                if (s.isOpen()) {
-//                    s.sendMessage(new TextMessage(String.valueOf(roundTime)));
-//                }
-//            }
-
-
-
-
-            // gameService 시작
-//            ThemeCategory[] themeCategories = gameService.startGame(userDto, gameRequestDto);
-
-            // 전송
-//            for (WebSocketSession s : sessions) {
-//                if (s.isOpen()) {
-//                    String json = objectMapper.writeValueAsString(themeCategories);
-//                    s.sendMessage(new TextMessage(json));
-//                }
-//            }
-
-            // 시간 전송
-
+            }
         }
 
         // 라운드 종료
@@ -369,6 +340,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         }
 
     }
+
 
     private String extractRoomId(WebSocketSession session) {
         String path = session.getUri().getPath();
