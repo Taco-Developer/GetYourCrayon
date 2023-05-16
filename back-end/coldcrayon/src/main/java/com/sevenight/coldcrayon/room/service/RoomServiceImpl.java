@@ -77,38 +77,46 @@ public class RoomServiceImpl implements RoomService{
     }
 
     // 방에 참여하기
-    public RoomResponseDto joinRoom(UserDto userDto, String roomIdx){
+    public Map<String, Object> joinRoom(UserDto userDto, String roomIdx){
+
+        Map<String, Object> joinRoomResponse = new HashMap<>();
+        List<UserHash> userHashList = new ArrayList<>();
 
         Optional<RoomHash> optionalRoomHash = roomRepository.findById(roomIdx);
         String status = "fail";
         String message;
         if(optionalRoomHash.isEmpty()){
             message = "조회하신 방이 없습니다.";
-            return null;
-        }
-
-        RoomHash roomHash = optionalRoomHash.get();
-        if(roomHash.getRoomStatus().equals(RoomStatus.Playing)){
-            message = "게임중인 방에는 입장할 수 없습니다.";
-
-        } else if(roomHash.getRoomMax() == roomHash.getRoomNow()){
-            message = "방이 가득 찼습니다.";
-
-        } else if(userHashRepository.findById(userDto.getUserIdx()).isPresent()){
-            message = "다른 방에 참여중인 유저입니다.";
-
         } else {
-            status = "success";
-            message = "방의 정보 입니다.";
-            UserHash userHash = UserHash.createUserHash(userDto, roomIdx);
-            roomHash.setRoomNow(roomHash.getRoomNow()+1);
+            RoomHash roomHash = optionalRoomHash.get();
+            if(roomHash.getRoomStatus().equals(RoomStatus.Playing)){
+                message = "게임중인 방에는 입장할 수 없습니다.";
 
-            userHashRepository.save(userHash);
-            joinListService.createJoinList(roomIdx, userDto.getUserIdx());
-            roomRepository.save(roomHash);
+            } else if(roomHash.getRoomMax() == roomHash.getRoomNow()){
+                message = "방이 가득 찼습니다.";
+
+            } else if(userHashRepository.findById(userDto.getUserIdx()).isPresent()){
+                message = "다른 방에 참여중인 유저입니다.";
+
+            } else {
+                status = "success";
+                message = "방의 정보 입니다.";
+                UserHash userHash = UserHash.createUserHash(userDto, roomIdx);
+                roomHash.setRoomNow(roomHash.getRoomNow()+1);
+
+                userHashRepository.save(userHash);
+                joinListService.createJoinList(roomIdx, userDto.getUserIdx());
+                roomRepository.save(roomHash);
+            }
+            userHashList = this.getUserList(roomIdx);
         }
+        RoomResponseDto roomResponseDto = RoomResponseDto.of(optionalRoomHash, status, message);
 
-        return RoomResponseDto.of(optionalRoomHash, status, message);
+        joinRoomResponse.put("type", "userIn");
+        joinRoomResponse.put("roomInfo",roomResponseDto);
+        joinRoomResponse.put("userList",userHashList);
+
+        return joinRoomResponse;
     }
 
     // 방에서 나가기
