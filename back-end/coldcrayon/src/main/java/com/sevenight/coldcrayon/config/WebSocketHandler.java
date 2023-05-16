@@ -18,11 +18,6 @@ import com.sevenight.coldcrayon.util.HeaderUtil;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-<<<<<<< HEAD
-import org.springframework.beans.factory.annotation.Autowired;
-=======
-import org.springframework.scheduling.annotation.Scheduled;
->>>>>>> dev_be
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
