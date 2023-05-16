@@ -56,12 +56,14 @@ module.exports = {
         'profile-menu': '7vh',
         'navbar-profile': '88px',
         'effect-gif': '20vw',
+        'gacha-result': '50vh',
       },
       width: {
         'profile-img': '17vw',
         'bomul-img': '10vw',
         'navbar-profile': '88px',
         'effect-gif': '20vw',
+        'gacha-result': '65vw',
       },
       zIndex: {
         100: 100,

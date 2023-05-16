@@ -85,11 +85,13 @@ export default function Gacha() {
             setIsButtonDisabled(true);
             const getOnes = async () => {
               try {
-                await gatchaAPI.oneGacha();
+                const gacha = await gatchaAPI.oneGacha();
+                console.log(gacha);
+                // setGachaData(gacha.data.body.nGacha);
                 const request = await memberAPI.getUserInfo();
                 dispatch(setMypage(request.data.body));
                 setTimeout(() => {
-                  setIsOpenOne(true);
+                  setIsOpenTen(true);
                 }, 1000);
                 gachaEffect();
               } catch (e) {
@@ -138,7 +140,14 @@ export default function Gacha() {
           10회 뽑기
         </Button>
       </div>
-      <TenModal isOpenTen={isOpenTen} setIsOpenTen={setIsOpenTen} />
+      {gachaData && (
+        <TenModal
+          isOpenTen={isOpenTen}
+          setIsOpenTen={setIsOpenTen}
+          gachaData={gachaData}
+        />
+      )}
+
       <OneModal isOpenOne={isOpenOne} setIsOpenOne={setIsOpenOne} />
     </GachaDiv>
   );
