@@ -14,7 +14,7 @@ export default function UserInfo() {
       <ProfileDiv>
         <ProfileImgDiv>
           <Image
-            src="/images/loopy3.jpg"
+            src={mypageInfo.profile.userProfile}
             alt="no_img"
             fill
             sizes="100%"

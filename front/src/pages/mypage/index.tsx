@@ -11,6 +11,7 @@ import type { GetServerSideProps } from 'next';
 import wrapper from '@/store';
 import { setLogin } from '@/store/slice/loginSlice';
 import { setMypage } from '@/store/slice/mypageSlice';
+import { setUser } from '@/store/slice/userSlice';
 import Login from '@/components/login/Login';
 
 export const getServerSideProps: GetServerSideProps =
@@ -31,6 +32,7 @@ export const getServerSideProps: GetServerSideProps =
       const res = re.data.body;
       store.dispatch(setLogin({ isLogin: true }));
       store.dispatch(setMypage(res));
+      store.dispatch(setUser(res.profile));
       return { props: { message: 'Login' } };
     } catch (e) {
       console.log(e);

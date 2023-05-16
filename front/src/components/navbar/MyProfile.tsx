@@ -13,7 +13,8 @@ interface isClickType {
 
 const MyProfile = ({ isClick, setIsClick }: isClickType) => {
   const ref = useRef<HTMLDivElement>(null);
-
+  const { userInfo } = useAppSelector((state) => state);
+  console.log(userInfo, 123);
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (ref.current && !ref.current.contains(e.target as Node)) {
@@ -34,7 +35,7 @@ const MyProfile = ({ isClick, setIsClick }: isClickType) => {
         }}
       >
         <Image
-          src={'/images/loopy2.jpg'}
+          src={userInfo.userProfile}
           alt="no_img"
           priority
           fill
