@@ -13,7 +13,8 @@ interface isClickType {
 
 const MyProfile = ({ isClick, setIsClick }: isClickType) => {
   const ref = useRef<HTMLDivElement>(null);
-
+  const { userInfo } = useAppSelector((state) => state);
+  console.log(userInfo, 123);
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (ref.current && !ref.current.contains(e.target as Node)) {
@@ -26,7 +27,7 @@ const MyProfile = ({ isClick, setIsClick }: isClickType) => {
     };
   }, [ref]);
   return (
-    <div className="" ref={ref}>
+    <div className="w-28 " ref={ref}>
       <div
         className="h-navbar-profile w-navbar-profile relative rounded-profile-img overflow-hidden"
         onClick={() => {
@@ -34,34 +35,39 @@ const MyProfile = ({ isClick, setIsClick }: isClickType) => {
         }}
       >
         <Image
-          src={'/images/loopy2.jpg'}
+          src={userInfo.userProfile}
           alt="no_img"
           priority
           fill
           sizes="100%"
         />
       </div>
-      {isClick && (
-        <ProfileDropDown setIsClick={setIsClick}>
-          <div className="mb-3 hover:text-mainColorOrange active:relative active:top-0.5">
-            <Link href={'/mypage'}>마이페이지</Link>
-          </div>
-          <div
-            className="pb-4 hover:text-mainColorOrange active:relative active:top-0.5"
-            onClick={() => {
-              const logout = async () => {
-                await memberAPI
-                  .logout()
-                  .then((request) => console.log(request))
-                  .catch((e) => console.log(e));
-              };
-              logout();
-            }}
-          >
-            로그아웃
-          </div>
-        </ProfileDropDown>
-      )}
+      <ProfileDropDown setIsClick={setIsClick} isClick={isClick}>
+        <Link
+          href={'/mypage'}
+          className="mb-3 text-center active:relative active:top-0.5"
+          onClick={() => {
+            setIsClick(false);
+          }}
+        >
+          마이페이지
+        </Link>
+
+        <button
+          className="pb-4  active:relative active:top-0.5"
+          onClick={() => {
+            const logout = async () => {
+              await memberAPI
+                .logout()
+                .then((request) => console.log(request))
+                .catch((e) => console.log(e));
+            };
+            logout();
+          }}
+        >
+          로그아웃
+        </button>
+      </ProfileDropDown>
     </div>
   );
 };

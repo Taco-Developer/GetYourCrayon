@@ -13,10 +13,9 @@ import type { GetServerSideProps } from 'next';
 import Login from '@/components/login/Login';
 export interface UserInfoType {
   userIdx: number;
-  userEmail: string;
   userNickname: string;
   userPoint: number;
-  userProfile: null | string;
+  userProfile: string;
 }
 
 // export async function getServerSideProps(context: any) {
@@ -70,6 +69,7 @@ export const getServerSideProps: GetServerSideProps =
     } catch (e) {
       const serializedData = JSON.stringify(e);
       console.log(e);
+      store.dispatch(setLogin({ isLogin: false }));
       return { props: { message: 'notLogin' } };
       // return { props: { e: serializedData } };
     } finally {
