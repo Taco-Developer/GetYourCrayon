@@ -18,14 +18,16 @@ import com.sevenight.coldcrayon.util.HeaderUtil;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 public class WebSocketHandler extends TextWebSocketHandler {
@@ -269,28 +271,47 @@ public class WebSocketHandler extends TextWebSocketHandler {
             UserDto userDto = authService.selectOneMember(HeaderUtil.getAccessTokenString(authorization));
             GameRequestDto gameRequestDto = webSocketCustomService.getGameRequestDto(roomId, Integer.parseInt(gameIdx));  // game_idx 확인 필요
 
-            // gameService 시작
-            ThemeCategory[] themeCategories = gameService.startGame(userDto, gameRequestDto);
-            int roundTime = (int) roomInfoMap.get("roundTime");
+            //=== 시간 전달 ===//
+            AtomicInteger roundTime = new AtomicInteger((int) roomInfoMap.get("roundTime"));
 
-            // 전송
-            for (WebSocketSession s : sessions) {
-                if (s.isOpen()) {
-                    String json = objectMapper.writeValueAsString(themeCategories);
-                    s.sendMessage(new TextMessage(json));
-                }
-            }
+            ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+            executorService.scheduleAtFixedRate(() -> {
+                int currentTime = roundTime.getAndDecrement();
 
-            // 시간 전송
-            while (roundTime > 0) {
-                log.info("roundTime 실행: {}", roundTime);
                 for (WebSocketSession s : sessions) {
                     if (s.isOpen()) {
-                        String json = objectMapper.writeValueAsString(themeCategories);
-                        s.sendMessage(new TextMessage(json));
+                        try {
+                            s.sendMessage((new TextMessage(String.valueOf(currentTime))));
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
-            }
+
+            }, 1, 1, TimeUnit.SECONDS);
+//
+//            for (WebSocketSession s : sessions) {
+//                if (s.isOpen()) {
+//                    s.sendMessage(new TextMessage(String.valueOf(roundTime)));
+//                }
+//            }
+
+
+
+
+            // gameService 시작
+//            ThemeCategory[] themeCategories = gameService.startGame(userDto, gameRequestDto);
+
+            // 전송
+//            for (WebSocketSession s : sessions) {
+//                if (s.isOpen()) {
+//                    String json = objectMapper.writeValueAsString(themeCategories);
+//                    s.sendMessage(new TextMessage(json));
+//                }
+//            }
+
+            // 시간 전송
+
         }
 
         // 라운드 종료
@@ -306,6 +327,9 @@ public class WebSocketHandler extends TextWebSocketHandler {
         } else if (type.equals("gameOver")) {
             List<UserHash> userList = roomService.getUserList(roomId);
 
+            // 소켓 정보 변경
+            roomInfoMap.put("roomStatus", "Ready");
+
             for (WebSocketSession s : sessions) {
                 if (s.isOpen()) {
                     String json = objectMapper.writeValueAsString(userList);
@@ -320,7 +344,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         String roomId = extractRoomId(session);
         List<WebSocketSession> sessions = sessionsMap.getOrDefault(roomId, Collections.emptyList());
 
-//        String i = userInfoMap.get(session.getId()).getNickname();
+        String i = userInfoMap.get(session.getId()).getNickname();
         sessions.remove(session);
 
         if (sessions.isEmpty()) {
@@ -350,7 +374,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         String path = session.getUri().getPath();
         return path.substring(path.lastIndexOf('/') + 1);
     }
-
+    
     @Getter
     @Setter
     private class UserInfo {
