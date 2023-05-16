@@ -10,6 +10,7 @@ import { setUser } from '@/store/slice/userSlice';
 import { getCookie } from 'cookies-next';
 import { sendMessage } from '@/socket/messageSend';
 import { listenEvent, removeEvent } from '@/socket/socketEvent';
+import { gameAPI } from '@/api/api';
 
 interface RoomPropsType {
   room: string;
@@ -38,14 +39,42 @@ export default function Ready({
 
   const [messageList, setMessageList] = useState<MessageType[]>([]);
   const [choice, setChoice] = useState<number>(2);
-  // 게시물 번호
+  /** 게시물 번호 */
   const [boardId, setBoardId] = useState<number | null>(null);
+  /** 방정보 */
+  const [roomInfo, setRoomInfo] = useState<{}>({
+    adminUserIdx: 0,
+    gameCategory: '',
+    maxRound: 0,
+    message: '',
+    nowRound: 0,
+    roomIdx: '',
+    roomMax: 0,
+    roomNow: 0,
+    roomStatus: '',
+    status: '',
+  });
 
   const closeSocket = () => {
     if (socket) {
       socket.close();
     }
   };
+
+  useEffect(() => {
+    const roomInfoFind = async (idx: string) => {
+      await gameAPI
+        .findRoom(idx)
+        .then((request) => {
+          console.log(request.data), setRoomInfo(request.data);
+        })
+        .catch((err) => console.log(err));
+    };
+    if (roomIdx) {
+      roomInfoFind(roomIdx);
+      console.log(roomInfo);
+    }
+  }, [roomIdx]);
 
   useEffect(() => {
     if (roomIdx !== null) {
