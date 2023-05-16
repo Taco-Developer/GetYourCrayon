@@ -23,11 +23,7 @@ export default function Room({
   roomIdx: string;
 }) {
   const { profile } = useAppSelector((state) => state.mypageInfo);
-  console.log('================================');
-  console.log(profile);
-  console.log('================================');
   const router = useRouter();
-  const [room, setRoom] = useState<string>('');
   const [status, setStatus] = useState<string>('ready');
   const [socket, setSocket] = useState<WebSocket | null>(null);
 
@@ -48,13 +44,7 @@ export default function Room({
   switch (status) {
     case 'ready':
       return (
-        <Ready
-          room={room}
-          setRoom={setRoom}
-          setStatus={setStatus}
-          socket={socket}
-          setSocket={setSocket}
-        />
+        <Ready setStatus={setStatus} socket={socket} setSocket={setSocket} />
       );
     case 'gameStart':
       return <InGameRoom game="CatchMind" socket={socket as WebSocket} />;
