@@ -47,16 +47,6 @@ export default function UserList() {
             </Profile>
             <InnerDiv>
               <UserName>{user}</UserName>
-              <CtrlDiv>
-                <MicIcon>
-                  <Image
-                    src="/icons/mic_on.png"
-                    alt="sound_on"
-                    width={512}
-                    height={512}
-                  />
-                </MicIcon>
-              </CtrlDiv>
             </InnerDiv>
           </UserDiv>
         ))}
