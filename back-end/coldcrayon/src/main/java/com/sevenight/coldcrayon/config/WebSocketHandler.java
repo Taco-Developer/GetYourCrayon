@@ -6,6 +6,7 @@ import com.sevenight.coldcrayon.auth.dto.UserDto;
 import com.sevenight.coldcrayon.auth.service.AuthService;
 import com.sevenight.coldcrayon.game.dto.GameRequestDto;
 import com.sevenight.coldcrayon.game.dto.ResponseGameDto;
+import com.sevenight.coldcrayon.game.entity.GameCategory;
 import com.sevenight.coldcrayon.game.service.GameService;
 import com.sevenight.coldcrayon.room.dto.RoomDto;
 import com.sevenight.coldcrayon.room.dto.RoomResponseDto;
@@ -86,7 +87,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
     public void initailizeRoomInfo(String roomIdx) {
         RoomResponseDto room = roomService.getRoom(roomIdx);
         roomInfoMap.put("roomIdx", roomIdx);
-        roomInfoMap.put("roundTime", 0);
+        roomInfoMap.put("roundTime", 100);
         roomInfoMap.put("roomNow", room.getRoomNow());
         roomInfoMap.put("roomMax", room.getRoomMax());
         roomInfoMap.put("maxRound", room.getMaxRound());
@@ -275,38 +276,51 @@ public class WebSocketHandler extends TextWebSocketHandler {
         // 게임 시작
         else if (type.equals("gameStart")) {
             // 현재 설정된 게임 타입을 받아와서 case 구분
-            String gameIdx = jsonMessage.get("gameIdx");    // 프론트에서 받을 수 있나요? 수민&도겸 필요
+            log.info("여기좀 확인해봐 제발");
             String authorization = jsonMessage.get("authorization");
+            log.info("로그로그 authorization: {}", authorization);
 
             // 소켓 정보 변경
             roomInfoMap.put("roomStatus", "Playing");
 
             // userDto, gameRequestDto(roomIdx, gameCategory, maxRound) 필요
             UserDto userDto = authService.selectOneMember(HeaderUtil.getAccessTokenString(authorization));
-            GameRequestDto gameRequestDto = webSocketCustomService.getGameRequestDto(roomId, Integer.parseInt(gameIdx));  // type 안달고 보내는걸로 합의
-
-            int roundTime = (int) roomInfoMap.get("roundTime");
-
+            GameRequestDto gameRequestDto = GameRequestDto.builder()
+                    .gameCategory((GameCategory) roomInfoMap.get("gameCategory"))
+                    .maxRound((Integer) roomInfoMap.get("maxRound"))
+                    .roomIdx(roomId)
+                    .build();
             ResponseGameDto responseGameDto = gameService.startGame(userDto, gameRequestDto);
+            String json = objectMapper.writeValueAsString(responseGameDto);
 
             // 게임 정보
             for (WebSocketSession s : sessions) {
                 if (s.isOpen()) {
-                    String json = objectMapper.writeValueAsString(responseGameDto);
                     s.sendMessage(new TextMessage(json));
                 }
             }
 
-            // 설정된 시간 감소: 테스팅 필요
-            while (roundTime > 0) {
-                for (WebSocketSession s : sessions) {
-                    if (s.isOpen()) {
-                        s.sendMessage(new TextMessage(String.valueOf(roundTime)));
-                    }
-                    roundTime--;
-                    Thread.sleep(1000);
-                }
-            }
+            int roundTime = (int) roomInfoMap.get("roundTime");
+
+//            // 설정된 시간 감소: 테스팅 필요
+//            while (roundTime > 0) {
+//                Map<String, Object> response = new HashMap<String, Object>();
+//                response.put("type", "gameTime");
+//                response.put("roundTime", roundTime);
+//                String jsonResponse = objectMapper.writeValueAsString(response);
+//
+//                for (WebSocketSession s : sessions) {
+//                    if (s.isOpen()) {
+//                        s.sendMessage(new TextMessage(jsonResponse));
+//                    }
+//                    roundTime--;
+//                    Thread.sleep(1000);
+//                }
+//            }
+        }
+        // 라운드 시작
+        else if(type.equals("gameStart")) {
+
         }
 
         // 라운드 종료
@@ -323,6 +337,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
                     s.sendMessage(new TextMessage(jsonResponse));
                 }
             }
+
+        // 게임 종료
         } else if (type.equals("gameOver")) {
             List<UserHash> userList = roomService.getUserList(roomId);
             Map<String, Object> response = new HashMap<>();
