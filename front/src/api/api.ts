@@ -36,6 +36,9 @@ export const gameAPI = {
   outRoom: () => api.post(`/room/out`),
   /**AI 이미지가져오기 */
   getAiImages: () => api.get(`/game/reversecatch`),
+  /** 더미 게임 시작 */
+  postGameStart: (roomIdx: string, gameCategory: string, maxRound: number) =>
+    api.post('/game/start', { roomIdx, gameCategory, maxRound }),
 };
 
 export const memberAPI = {
