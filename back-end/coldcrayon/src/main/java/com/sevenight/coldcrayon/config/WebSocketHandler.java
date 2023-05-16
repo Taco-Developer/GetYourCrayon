@@ -317,15 +317,15 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
         List<WebSocketSession> sessions = sessionsMap.getOrDefault(roomId, Collections.emptyList());
 
-        UserInfo userInfo = userInfoMap.get(session.getId());
+        UserInfo userInfo = userInfoMap.get(session.getId());   // 세션의 Id로 유저 정보를 가져옴
 
-        String userNickname = userInfo.getNickname();
-        String userToken = userInfo.getToken();
-        UserDto user = authService.findUser(userToken);
+        String userNickname = userInfo.getNickname();   // userInfo에서 닉네임 가져오기 -> 나간 사람 표시
+        String userToken = userInfo.getToken();     // userInfo에서 토큰 값 가져오기
+        UserDto user = authService.findUser(userToken);     // 토큰으로 유저 Dto 가져오기
 
-        roomService.outRoom(user);
+        roomService.outRoom(user);      // user가 DB에서 제거될 수 있도록 처리
 
-        sessions.remove(session);
+        sessions.remove(session);       // 세션 제거
 
         if (sessions.isEmpty()) {
             sessionsMap.remove(roomId);
