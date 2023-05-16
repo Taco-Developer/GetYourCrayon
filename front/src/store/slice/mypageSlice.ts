@@ -14,14 +14,20 @@ interface UserProfile {
 }
 
 interface GachaItem {
-  allgachaIdx: number;
-  allgachaImg: string;
-  allgachaClass: string;
+  gachaIdx: number;
+  gachaImg: string;
+}
+
+interface GachaGrade {
+  event: GachaItem[];
+  normal: GachaItem[];
+  rare: GachaItem[];
+  superRare: GachaItem[];
 }
 
 export interface MypageStateType {
   profile: UserProfile;
-  gacha: GachaItem[];
+  gacha: GachaGrade[];
 }
 
 const initialState: MypageStateType = {
