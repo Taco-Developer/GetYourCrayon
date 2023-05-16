@@ -42,7 +42,7 @@ export default function Chat({ socket, room, messageList }: ChatPropsType) {
   const meMeta = 'hidden';
   const meContent = 'justify-end bg-sky-400';
   const you = 'justify-start';
-  const youMeta = 'justify-start ml-3';
+  const youMeta = 'justify-start';
   const youContent = 'justify-start bg-slate-600';
   const admin = 'justify-center max-w-lg';
   const adminMeta = 'hidden';
@@ -123,7 +123,7 @@ const ChatDiv = tw.div`h-90 w-full flex items-center justify-center relative px-
 const ChatBody = tw.div`h-full w-full overflow-y-scroll overflow-x-hidden scrollbar-ssibal`;
 const MessageBody = tw.div`max-w-xs`;
 const Message = tw.div`h-auto flex`;
-const MessageContent = tw.div`h-auto w-auto rounded-xl bg-white text-white text-xl font-bold flex items-center mb-4 p-2 break-all`;
+const MessageContent = tw.div`h-auto w-auto rounded-xl bg-white text-white text-xl font-bold flex items-center mb-4 p-2`;
 const YouMeMeta = tw.p`ml-1 mb-1`;
 const InputDiv = tw.div`h-10 w-full flex items-center justify-around`;
 const ChatInput = tw.input`h-full w-70 text-2xl bg-white rounded-xl flex items-center justify-center px-5`;
