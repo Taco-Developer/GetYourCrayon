@@ -86,7 +86,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
     public void initailizeRoomInfo(String roomIdx) {
         RoomResponseDto room = roomService.getRoom(roomIdx);
         roomInfoMap.put("roomIdx", roomIdx);
-        roomInfoMap.put("roundTime", 0);
+        roomInfoMap.put("roundTime", 100);
         roomInfoMap.put("roomNow", room.getRoomNow());
         roomInfoMap.put("roomMax", room.getRoomMax());
         roomInfoMap.put("maxRound", room.getMaxRound());
@@ -299,16 +299,16 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
             int roundTime = (int) roomInfoMap.get("roundTime");
 
-            // 설정된 시간 감소: 테스팅 필요
-            while (roundTime > 0) {
-                for (WebSocketSession s : sessions) {
-                    if (s.isOpen()) {
-                        s.sendMessage(new TextMessage(String.valueOf(roundTime)));
-                    }
-                    roundTime--;
-                    Thread.sleep(1000);
-                }
-            }
+//            // 설정된 시간 감소: 테스팅 필요
+//            while (roundTime > 0) {
+//                for (WebSocketSession s : sessions) {
+//                    if (s.isOpen()) {
+//                        s.sendMessage(new TextMessage(String.valueOf(roundTime)));
+//                    }
+//                    roundTime--;
+//                    Thread.sleep(1000);
+//                }
+//            }
         }
 
         // 라운드 종료
