@@ -148,26 +148,12 @@ public class WebSocketHandler extends TextWebSocketHandler {
             RoomResponseDto roomInfo = (RoomResponseDto) joinRoomResponse.get("roomInfo");
             String status = roomInfo.getStatus();
             String message1 = roomInfo.getMessage();
-            
-            if (status.equals("fail")) {    // 실패했을 때
-                Map<String, String> response = new HashMap<>();
-                response.put("type", "userIn");
-                response.put("status", status);
-                response.put("message", message1);
-            
-                String jsonResponse = objectMapper.writeValueAsString(response);
-                for (WebSocketSession s : sessions) {
-                    if (s.isOpen()) {
-                        s.sendMessage(new TextMessage(jsonResponse));       // json(status, message) 전달
-                    }
-                }
-            } else {    // 성공했을 때
-                String jsonResponse = objectMapper.writeValueAsString(joinRoomResponse);    // 방에 접속한 유저 목록
 
-                for (WebSocketSession s : sessions) {
-                    if (s.isOpen()) {
-                        s.sendMessage(new TextMessage(jsonResponse));       // room, userList 전달
-                    }
+            String jsonResponse = objectMapper.writeValueAsString(joinRoomResponse);    // 방에 접속한 유저 목록
+
+            for (WebSocketSession s : sessions) {
+                if (s.isOpen()) {
+                    s.sendMessage(new TextMessage(jsonResponse));       // room, userList 전달
                 }
             }
 
