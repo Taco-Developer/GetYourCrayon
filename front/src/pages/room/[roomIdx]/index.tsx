@@ -27,7 +27,6 @@ export default function Room({
   console.log(profile);
   console.log('================================');
   const router = useRouter();
-  const [userId, setUserId] = useState<string>('');
   const [room, setRoom] = useState<string>('');
   const [status, setStatus] = useState<string>('ready');
   const [socket, setSocket] = useState<WebSocket | null>(null);
@@ -50,8 +49,6 @@ export default function Room({
     case 'ready':
       return (
         <Ready
-          userId={userId}
-          setUserId={setUserId}
           room={room}
           setRoom={setRoom}
           setStatus={setStatus}

@@ -12,8 +12,6 @@ import { sendMessage } from '@/socket/messageSend';
 import { listenEvent, removeEvent } from '@/socket/socketEvent';
 
 interface RoomPropsType {
-  userId: string;
-  setUserId: React.Dispatch<React.SetStateAction<string>>;
   room: string;
   setRoom: React.Dispatch<React.SetStateAction<string>>;
   setStatus: React.Dispatch<React.SetStateAction<string>>;
@@ -27,8 +25,6 @@ interface MessageType {
 }
 
 export default function Ready({
-  userId,
-  setUserId,
   room,
   setRoom,
   setStatus,
@@ -117,12 +113,7 @@ export default function Ready({
                 <Setting />
               </SettingDiv>
             ) : (
-              <Chat
-                socket={socket}
-                userId={userId}
-                room={room}
-                messageList={messageList}
-              />
+              <Chat socket={socket} room={room} messageList={messageList} />
             )}
           </PickContent>
         </PickDiv>
