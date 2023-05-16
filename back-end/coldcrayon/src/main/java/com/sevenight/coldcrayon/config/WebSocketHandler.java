@@ -300,16 +300,16 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
             int roundTime = (int) roomInfoMap.get("roundTime");
 
-            // 설정된 시간 감소: 테스팅 필요
-            while (roundTime > 0) {
-                for (WebSocketSession s : sessions) {
-                    if (s.isOpen()) {
-                        s.sendMessage(new TextMessage(String.valueOf(roundTime)));
-                    }
-                    roundTime--;
-                    Thread.sleep(1000);
-                }
-            }
+//            // 설정된 시간 감소: 테스팅 필요
+//            while (roundTime > 0) {
+//                for (WebSocketSession s : sessions) {
+//                    if (s.isOpen()) {
+//                        s.sendMessage(new TextMessage(String.valueOf(roundTime)));
+//                    }
+//                    roundTime--;
+//                    Thread.sleep(1000);
+//                }
+//            }
         }
 
         // 라운드 종료
