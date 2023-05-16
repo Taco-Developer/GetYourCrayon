@@ -138,6 +138,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
             UserInfo userInfo = userInfoMap.computeIfAbsent(session.getId(), key -> new UserInfo());
             userInfo.setNickname(userDto.getUserNickname());
             userInfo.setScore(0);
+            userInfo.setToken(authorization);
             userInfoMap.put(session.getId(), userInfo);
             
             // 방 입장 로직 수행
@@ -313,9 +314,17 @@ public class WebSocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         String roomId = extractRoomId(session);
+
         List<WebSocketSession> sessions = sessionsMap.getOrDefault(roomId, Collections.emptyList());
 
-        String i = userInfoMap.get(session.getId()).getNickname();
+        UserInfo userInfo = userInfoMap.get(session.getId());
+
+        String userNickname = userInfo.getNickname();
+        String userToken = userInfo.getToken();
+        UserDto user = authService.findUser(userToken);
+
+        roomService.outRoom(user);
+
         sessions.remove(session);
 
         if (sessions.isEmpty()) {
@@ -331,7 +340,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 Map<String, String> jsonMessage = new HashMap<>();
                 jsonMessage.put("type", "chat");
                 jsonMessage.put("author", "admin");
-                jsonMessage.put("message", i + "님이 나갔습니다");
+                jsonMessage.put("message", userNickname+ "님이 나갔습니다");
                 String json = objectMapper.writeValueAsString(jsonMessage);
 
                 // WebSocket 메시지로 전송
@@ -352,10 +361,13 @@ public class WebSocketHandler extends TextWebSocketHandler {
     private class UserInfo {
         private String nickname;
         private int score;
+        private String token;
+
         public UserInfo() {};
-        public UserInfo(String nickname, int score) {
+        public UserInfo(String nickname, int score, String token) {
             this.nickname = nickname;
             this.score = score;
+            this.token = token;
         }
     }
 }
