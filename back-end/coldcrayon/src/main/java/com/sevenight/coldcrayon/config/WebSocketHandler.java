@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sevenight.coldcrayon.auth.dto.UserDto;
 import com.sevenight.coldcrayon.auth.service.AuthService;
 import com.sevenight.coldcrayon.game.dto.GameRequestDto;
+import com.sevenight.coldcrayon.game.dto.ResponseGameDto;
 import com.sevenight.coldcrayon.game.service.GameService;
 import com.sevenight.coldcrayon.room.dto.RoomDto;
 import com.sevenight.coldcrayon.room.dto.RoomResponseDto;
@@ -145,14 +146,16 @@ public class WebSocketHandler extends TextWebSocketHandler {
             RoomResponseDto roomResponseDto = roomService.joinRoom(userDto, roomId);    // 수민 로직 추가 예정: 타입을 ReponseDto로 정상일 때 ResponseDto 정보, 오류일 때 state를 포함한 정보
             String status = roomResponseDto.getStatus();
             String message1 = roomResponseDto.getMessage();
+            
             if (status.equals("fail")) {    // 실패했을 때
                 Map<String, String> response = new HashMap<>();
                 response.put("status", status);
                 response.put("message", message1);
+            
                 String jsonResponse = objectMapper.writeValueAsString(response);
                 for (WebSocketSession s : sessions) {
                     if (s.isOpen()) {
-                        s.sendMessage(new TextMessage(jsonResponse));
+                        s.sendMessage(new TextMessage(jsonResponse));       // json(status, message) 전달
                     }
                 }
             } else {    // 성공했을 때
@@ -166,7 +169,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 
                 for (WebSocketSession s : sessions) {
                     if (s.isOpen()) {
-                        s.sendMessage(new TextMessage(jsonResponse));
+                        s.sendMessage(new TextMessage(jsonResponse));       // room, userList 전달
                     }
                 }
             }
@@ -189,8 +192,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
             String authorization = jsonMessage.get("authorization");
             int changedMax = Integer.parseInt(jsonMessage.get("changedMax"));
 
-            // 세션 기록 변경(세션정보는 변경되지만 굳이 가져올 필요는 없음)
-            roomInfoMap.put("roomMax", changedMax);
+//             세션 기록 변경(세션정보는 변경되지만 굳이 가져올 필요는 없음)
+//            roomInfoMap.put("roomMax", changedMax);
 
             UserDto userDto = authService.selectOneMember(HeaderUtil.getAccessTokenString(authorization));
             RoomResponseDto roomResponseDto = roomService.changeMaxUser(userDto, roomId, changedMax);
@@ -274,7 +277,17 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
             int roundTime = (int) roomInfoMap.get("roundTime");
 
-            // 설정된 roundTime을 프론트에 전달
+            ResponseGameDto responseGameDto = gameService.startGame(userDto, gameRequestDto);
+
+            // 게임 정보
+            for (WebSocketSession s : sessions) {
+                if (s.isOpen()) {
+                    String json = objectMapper.writeValueAsString(responseGameDto);
+                    s.sendMessage(new TextMessage(json));ㄴ
+                }
+            }
+
+            // 설정된 시간 감소
             while (roundTime > 0) {
                 for (WebSocketSession s : sessions) {
                     if (s.isOpen()) {
