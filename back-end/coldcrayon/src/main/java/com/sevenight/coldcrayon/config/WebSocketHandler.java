@@ -277,7 +277,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         else if (type.equals("gameStart")) {
             // 현재 설정된 게임 타입을 받아와서 case 구분
             String authorization = jsonMessage.get("authorization");
-            log.info("authorization: {}", authorization);
+            log.info("로그로그 authorization: {}", authorization);
 
             // 소켓 정보 변경
             roomInfoMap.put("roomStatus", "Playing");
