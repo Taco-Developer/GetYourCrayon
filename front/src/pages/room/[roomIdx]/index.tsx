@@ -88,7 +88,7 @@ export const getServerSideProps: GetServerSideProps =
       return {
         props: {
           message: 'Login',
-          mydata: 'res',
+          mydata: res,
           roomIdx: context.params?.roomIdx || 'noRoom',
         },
       };
