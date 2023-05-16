@@ -7,7 +7,6 @@ import com.sevenight.coldcrayon.auth.service.AuthService;
 import com.sevenight.coldcrayon.game.dto.GameRequestDto;
 import com.sevenight.coldcrayon.game.entity.Game;
 import com.sevenight.coldcrayon.game.service.GameService;
-import com.sevenight.coldcrayon.room.dto.RoomDto;
 import com.sevenight.coldcrayon.room.dto.RoomResponseDto;
 import com.sevenight.coldcrayon.room.entity.UserHash;
 import com.sevenight.coldcrayon.room.service.RoomService;
@@ -286,15 +285,15 @@ public class WebSocketHandler extends TextWebSocketHandler {
             }
 
             // 시간 전송
-            while (roundTime > 0) {
-                log.info("roundTime 실행: {}", roundTime);
-                for (WebSocketSession s : sessions) {
-                    if (s.isOpen()) {
-                        String json = objectMapper.writeValueAsString(themeCategories);
-                        s.sendMessage(new TextMessage(json));
-                    }
-                }
-            }
+//            while (roundTime > 0) {
+//                log.info("roundTime 실행: {}", roundTime);
+//                for (WebSocketSession s : sessions) {
+//                    if (s.isOpen()) {
+//                        String json = objectMapper.writeValueAsString(themeCategories);
+//                        s.sendMessage(new TextMessage(json));
+//                    }
+//                }
+//            }
         }
 
         // 라운드 종료
