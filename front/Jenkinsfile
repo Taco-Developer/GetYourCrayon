@@ -44,7 +44,7 @@ pipeline {
             echo 'delete previous crayon-next-container'
             # docker stop crayon-next-container
             # docker rm crayon-next-container
-            docker run -d -p 3002:3000 --name crayon-next-container gmkim716/crayon-next-container
+            docker run -d -p 3002:3000 -v /getchacrayon/image/:/getchacrayon/image/ --name crayon-next-container gmkim716/crayon-next-container
             echo 'Success: next'
             '''
             }
