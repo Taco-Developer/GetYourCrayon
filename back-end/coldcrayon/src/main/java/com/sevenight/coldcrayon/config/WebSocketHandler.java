@@ -8,6 +8,7 @@ import com.sevenight.coldcrayon.game.dto.GameRequestDto;
 import com.sevenight.coldcrayon.game.service.GameService;
 import com.sevenight.coldcrayon.room.dto.RoomDto;
 import com.sevenight.coldcrayon.room.dto.RoomResponseDto;
+import com.sevenight.coldcrayon.room.entity.UserHash;
 import com.sevenight.coldcrayon.room.service.RoomService;
 import com.sevenight.coldcrayon.theme.entity.ThemeCategory;
 import com.sevenight.coldcrayon.user.dto.ResponseDto;
@@ -39,11 +40,20 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
 
     // 외부 서비스 주입
-    private WebSocketCustomService webSocketCustomService;
-    private RoomService roomService;
-    private UserService userService;
-    private GameService gameService;
-    private AuthService authService;
+    private final WebSocketCustomService webSocketCustomService;
+    private final RoomService roomService;
+    private final UserService userService;
+    private final GameService gameService;
+    private final AuthService authService;
+
+
+    public WebSocketHandler(WebSocketCustomService webSocketCustomService, RoomService roomService, UserService userService, GameService gameService, AuthService authService) {
+        this.authService = authService;
+        this.roomService = roomService;
+        this.webSocketCustomService = webSocketCustomService;
+        this.userService = userService;
+        this.gameService = gameService;
+    }
 
     // flag 변수
     private boolean flag = false;   // 웹 소켓이 생성되기 전: false, 한 번 생성되고 난 후: true
@@ -70,19 +80,18 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
 
     // roomTitle을 가져와야 할까요??
-//    public void initailizeRoomInfo(String roomIdx) {
-//        RoomDto room = roomService.getRoom(roomIdx);
-//        roomInfoMap.put("roomIdx", roomIdx);
-//        roomInfoMap.put("roomNow", room.getRoomNow());
-//        roomInfoMap.put("roomMax", room.getRoomMax());
-//        roomInfoMap.put("maxRound", room.getMaxRound());
-//        roomInfoMap.put("gameCategory", room.getGameCategory());
-//        roomInfoMap.put("roomStatus", room.getRoomStatus());
-//        roomInfoMap.put("adminUserIdx", room.getAdminUserIdx());
-//        roomInfoMap.put("gameCnt", room.getGameCnt());
-//        roomInfoMap.put("roomCreateTime", room.getRoomCreateTime());
-//        roomInfoMap.put("nowRound", room.getNowRound());
-//    }
+    public void initailizeRoomInfo(String roomIdx) {
+        RoomResponseDto room = roomService.getRoom(roomIdx);
+        roomInfoMap.put("roomIdx", roomIdx);
+        roomInfoMap.put("roundTime", 0);
+        roomInfoMap.put("roomNow", room.getRoomNow());
+        roomInfoMap.put("roomMax", room.getRoomMax());
+        roomInfoMap.put("maxRound", room.getMaxRound());
+        roomInfoMap.put("gameCategory", room.getGameCategory());
+        roomInfoMap.put("roomStatus", room.getRoomStatus());
+        roomInfoMap.put("adminUserIdx", room.getAdminUserIdx());
+        roomInfoMap.put("nowRound", room.getNowRound());
+    }
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -91,15 +100,15 @@ public class WebSocketHandler extends TextWebSocketHandler {
         sessions.add(session);
         log.info(session.getId());
 
-//        if (flag == false) {        // 아직 웹 소켓 연결이 시도된 적이 없을 때: 첫 번째로 시도할 때
-//            log.info("flag가 false여서 실행");
-//
-//            // 소켓에 정보 저장
-//            initailizeRoomInfo(roomId);
-//
-//            // 1번만 실행될 수 있도록 true(이미 실행됨)으로 변경
-//            flag = true;
-//        }
+        if (flag == false) {        // 아직 웹 소켓 연결이 시도된 적이 없을 때: 첫 번째로 시도할 때
+            log.info("flag가 false여서 실행");
+
+            // 소켓에 정보 저장
+            initailizeRoomInfo(roomId);
+
+            // 1번만 실행될 수 있도록 true(이미 실행됨)으로 변경
+            flag = true;
+        }
     }
 
     @Override
@@ -120,6 +129,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
         if (type.equals("userIn")) {
             String authorization = jsonMessage.get("authorization");
             UserDto userDto = authService.selectOneMember(HeaderUtil.getAccessTokenString(authorization));
+            // 닉네임, 소켓 아이디을 터미너스에서 확인할 수 있도록 설정: 5/16 DG
+            log.info("접속하는 유저의 닉네임: {}, 소켓 아이디(roomId): {}", userDto.getUserNickname(), roomId);
 
             // 세션에 기록: 입장하려는 유저 인스턴스 생성
             UserInfo userInfo = userInfoMap.computeIfAbsent(session.getId(), key -> new UserInfo());
@@ -130,74 +141,33 @@ public class WebSocketHandler extends TextWebSocketHandler {
             // 방 입장 로직 수행
             RoomResponseDto roomResponseDto = roomService.joinRoom(userDto, roomId);    // 수민 로직 추가 예정: 타입을 ReponseDto로 정상일 때 ResponseDto 정보, 오류일 때 state를 포함한 정보
             String status = roomResponseDto.getStatus();
+            String message1 = roomResponseDto.getMessage();
             if (status.equals("fail")) {    // 실패했을 때
+                Map<String, String> response = new HashMap<>();
+                response.put("status", status);
+                response.put("message", message1);
+                String jsonResponse = objectMapper.writeValueAsString(response);
                 for (WebSocketSession s : sessions) {
                     if (s.isOpen()) {
-                        s.sendMessage(new TextMessage(roomResponseDto.getMessage()));
+                        s.sendMessage(new TextMessage(jsonResponse));
                     }
                 }
             } else {    // 성공했을 때
-                String roomDtoJson = objectMapper.writeValueAsString(roomResponseDto);
+                RoomResponseDto room = roomService.getRoom(roomId);         // 방정보
+                List<UserHash> userList = roomService.getUserList(roomId);  // 방에 있는 유저 목록
+                Map<String, Object> successResponse = new HashMap<>();
+                successResponse.put("room", room);
+                successResponse.put("userList", userList);
+
+                String jsonResponse = objectMapper.writeValueAsString(successResponse);    // 방에 접속한 유저 목록
+                
                 for (WebSocketSession s : sessions) {
                     if (s.isOpen()) {
-                        s.sendMessage(new TextMessage(roomDtoJson));
+                        s.sendMessage(new TextMessage(jsonResponse));
                     }
                 }
             }
 
-
-
-// 수민이 만든 joinRoom 서비스 이용방식으로 변경하면서 주석처리
-//            // 최대인원 확인: 현재인원이 최대인원보다 작을 때 true, 같거나 클 경우 false
-//            boolean enable = webSocketCustomService.checkEnableEnter(roomId);
-
-//            if (!enable) {  // 입장불가(최대인원 <= 현재인원): false 전송
-//                for (WebSocketSession s : sessions) {
-//                    if (s.isOpen()) {
-//                        s.sendMessage(new TextMessage("false"));
-//                    }
-//                }
-//            } else {  // 입장가능: true
-//                // 프론트 전송 확인 필요
-//                String userNickname = jsonMessage.get("userNickname");
-//                String userIdx = jsonMessage.get("userIdx");  // userIdx: 유저 번호(Long): userId가 닉네임? 주소? user_idx?
-//
-//                // 입장하려는 유저를 DB에 저장
-//                webSocketCustomService.userRoomIn(roomId, Long.valueOf(userIdx));
-//
-//                // userId를 통해 UserDTO 정보 가져오기
-//                UserDto userDto = webSocketCustomService.getUserDto(Long.valueOf(userIdx));
-//
-//                // roomService.joinRoom 실행
-//                roomService.joinRoom(userDto, roomId);
-//
-//                // 세션에 기록: 입장하려는 유저 인스턴스 생성
-//                UserInfo userInfo = userInfoMap.computeIfAbsent(session.getId(), key -> new UserInfo());
-//                userInfo.setNickname(userNickname);
-//                userInfo.setScore(0);
-//                userInfoMap.put(session.getId(), userInfo);
-//
-//                //== 방에 있는 정보를 전송 ==//
-//                for (WebSocketSession s : sessions) {
-//                    if (s.isOpen()) {
-//                        // 방에 있는 유저 정보(userInfoMap) 전송: <세션, 유저Info(유저 닉네임, 유저 점수)>
-//                        List<UserInfo> allUserInfo = new ArrayList<>(userInfoMap.values());
-//                        String userJson = objectMapper.writeValueAsString(allUserInfo);
-//
-//                        // 현재 방 정보: service 이용 vs 소켓 정보 가져오기
-//                        RoomDto roomDto = roomService.getRoom(roomId);  // repository 서비스를 통해서
-//
-//
-//                        // 정보 전송
-//                        Map<String, Object> combinedJson = new HashMap<>();
-//                        combinedJson.put("room", roomDto);
-//                        combinedJson.put("users", userJson);
-//                        String json = objectMapper.writeValueAsString(combinedJson);
-//
-//                        s.sendMessage(new TextMessage(json));
-//                    }
-//                }
-//            }
         } else if (type.equals("chat")) {
             for (WebSocketSession s : sessions) {
                 if (s.isOpen()) {
@@ -237,24 +207,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
                     }
                 }
             }
-
-//            // 최대 인원에 따라 강퇴하는 로직
-//            if (responseDto != null && responseDto.getStatus.equals("success")) {
-//                for (WebSocketSession s : sessions) {
-//                    if (s.isOpen()) {
-//                        // 변경된 방 정보 전송
-//                        s.sendMessage(new TextMessage(objectMapper.writeValueAsString(responseDto)));
-//                    }
-//                }
-//            } else {
-//                // 최대 인원 변경 실패
-//                for (WebSocketSession s : sessions) {
-//                    if (s.isOpen()) {
-//                        // 변경된 방 정보 전송
-//                        s.sendMessage(new TextMessage(objectMapper.writeValueAsString(responseDto)));
-//                    }
-//                }
-//            }
         }
         // 방장 변경
         else if (type.equals("changeAdmin")) {
@@ -298,6 +250,12 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 }
             }
         }
+        // 게임 시간 설정
+        else if (type.equals("roundTime")) {
+            String changedRoundTime = jsonMessage.get("changedRoundTime");
+            roomInfoMap.put("roundTime", Integer.parseInt(changedRoundTime));
+        }
+
         // 게임 시작
         else if (type.equals("gameStart")) {
             // 현재 설정된 게임 타입을 받아와서 case 구분
@@ -322,27 +280,39 @@ public class WebSocketHandler extends TextWebSocketHandler {
                     continue;
                 }
             }
+
+            // 시간 전송
+            while (roundTime > 0) {
+                log.info("roundTime 실행: {}", roundTime);
+                for (WebSocketSession s : sessions) {
+                    if (s.isOpen()) {
+                        String json = objectMapper.writeValueAsString(themeCategories);
+                        s.sendMessage(new TextMessage(json));
+                    }
+                }
+            }
         }
 
         // 라운드 종료
         else if (type.equals("roundOver")) {
-            String gameRoundInfo = jsonMessage.get("gameRoundInfo");
+            List<UserHash> userList = roomService.getUserList(roomId);
 
-//            // 현재 세션의 유저 닉네임 조회?
-//
-//            // 참여 유저 수만큼 소켓 데이터에 저장
-//            for (UserInfo userinfo : userInfoMap.values()) {
-//                if (userinfo.nickname.equals())
-//                userinfo.setScore(userinfo.score + {pointsFromRedis?});     // 수민이와 상의: 어떤 써비스로 넘겨받은걸로 아예 갱신
+            for (WebSocketSession s : sessions) {
+                if (s.isOpen()) {
+                    String json = objectMapper.writeValueAsString(userList);
+                    s.sendMessage(new TextMessage(json));
+                }
             }
+        } else if (type.equals("gameOver")) {
+            List<UserHash> userList = roomService.getUserList(roomId);
 
-        // 게임 종료
-//        } else if (type.equals("gameOver")) {
-//
-//            // 세션 정보 변경
-//            roomInfoMap.put("roomStatus", "Ready");
-//
-//        }
+            for (WebSocketSession s : sessions) {
+                if (s.isOpen()) {
+                    String json = objectMapper.writeValueAsString(userList);
+                    s.sendMessage(new TextMessage(json));
+                }
+            }
+        }
     }
 
     @Override
@@ -350,9 +320,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
         String roomId = extractRoomId(session);
         List<WebSocketSession> sessions = sessionsMap.getOrDefault(roomId, Collections.emptyList());
 
-        String i = userInfoMap.get(session.getId()).getNickname();
+//        String i = userInfoMap.get(session.getId()).getNickname();
         sessions.remove(session);
-        userInfoMap.remove(session.getId());
 
         if (sessions.isEmpty()) {
             sessionsMap.remove(roomId);
@@ -367,7 +336,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 Map<String, String> jsonMessage = new HashMap<>();
                 jsonMessage.put("type", "chat");
                 jsonMessage.put("author", "admin");
-                jsonMessage.put("message", i+ "님이 나갔습니다");
+                jsonMessage.put("message", i + "님이 나갔습니다");
                 String json = objectMapper.writeValueAsString(jsonMessage);
 
                 // WebSocket 메시지로 전송
