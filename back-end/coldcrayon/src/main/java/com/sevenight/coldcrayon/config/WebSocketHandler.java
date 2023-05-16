@@ -65,27 +65,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
     // flag 변수
     private boolean flag = false;   // 웹 소켓이 생성되기 전: false, 한 번 생성되고 난 후: true
 
-    //=============temp==================//
-
-    //
-//            if (status.equals("fail")) {    // 실패했을 때
-//                for (WebSocketSession s : sessions) {
-//                    if (s.isOpen()) {
-//                        s.sendMessage(new TextMessage(roomResponseDto.getMessage()));
-//                    }
-//                }
-//            } else {    // 성공했을 때
-//                String roomDtoJson = objectMapper.writeValueAsString(roomResponseDto);
-//                for (WebSocketSession s : sessions) {
-//                    if (s.isOpen()) {
-//                        s.sendMessage(new TextMessage(roomDtoJson));
-//                    }
-//                }
-//            }
-    //
-    //========================================//
-
-
     // roomTitle을 가져와야 할까요??
     public void initailizeRoomInfo(String roomIdx) {
         RoomResponseDto room = roomService.getRoom(roomIdx);
@@ -313,7 +292,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
             int roundTime = (int) roomInfoMap.get("roundTime");
 
-
             Map<String, Object> response = new HashMap<>();
             response.put("type", "gameTime");
             response.put("roundTime", roundTime);
@@ -355,9 +333,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         // 게임 시작
         else if (type.equals("gameStart")) {
             // 현재 설정된 게임 타입을 받아와서 case 구분
-            log.info("여기좀 확인해봐 제발");
             String authorization = jsonMessage.get("authorization");
-            log.info("로그로그 authorization: {}", authorization);
 
             // 소켓 정보 변경
             roomInfoMap.put("roomStatus", "Playing");
@@ -397,6 +373,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
 //                }
 //            }
         }
+
         // 라운드 시작
         else if (type.equals("roundStart")) {
             RequestRoundDto requestRoundDto = RequestRoundDto.builder()
@@ -433,21 +410,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 }
             }
 
-
-            // 경민 임의 작업 -> 수민이가 작업한걸로 변경시켜야 함
-            List<UserHash> userList = roomService.getUserList(roomId);
-            Map<String, Object> response = new HashMap<>();
-            response.put("type", "roundOver");
-            response.put("userList", userList);
-
-            String jsonResponse = objectMapper.writeValueAsString(response);
-
-            for (WebSocketSession s : sessions) {
-                if (s.isOpen()) {
-                    s.sendMessage(new TextMessage(jsonResponse));
-                }
-            }
-            //-=========-//
 
             // 게임 종료
         } else if (type.equals("gameOver")) {
