@@ -9,9 +9,10 @@ pipeline {
 
         stage('BUILD') {
             steps {
-                withCredentials([file(credentialsId: 'server', variable: 'yml')]) {
+                withCredentials([file(credentialsId: 'envProperties', variable: 'envProperties'), file(credentialsId: 'server', variable: 'yml')]) {
                     script {
                         sh 'cp $yml back-end/coldcrayon/src/main/resources/application-server.yml'
+	            sh 'cp $envProperties back-end/coldcrayon/src/main/resources/env.properties'
                         sh '''
                         cd back-end/coldcrayon/src/main/resources
                         cat application-server.yml
