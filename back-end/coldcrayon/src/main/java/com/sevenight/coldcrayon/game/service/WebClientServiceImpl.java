@@ -24,6 +24,7 @@ public class WebClientServiceImpl {
     @Value("${java.file.NaverClientSecret}")
     String NaverClientSecret;
 
+
     public List<Object> AiPost(String prompt) {
         Map<String, Object> bodyMap = new HashMap<>(Map.of( "n", 4, "size", "256x256"));
         bodyMap.put("prompt", prompt);
