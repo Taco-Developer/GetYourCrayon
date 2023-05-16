@@ -18,18 +18,19 @@ import { useRouter } from 'next/router';
 export default function Room({
   roomIdx,
   message,
-  mydata,
 }: {
-  mydata: string;
   message: string;
   roomIdx: string;
 }) {
+  const { profile } = useAppSelector((state) => state.mypageInfo);
+  console.log('================================');
+  console.log(profile);
+  console.log('================================');
   const router = useRouter();
   const [userId, setUserId] = useState<string>('');
   const [room, setRoom] = useState<string>('');
   const [status, setStatus] = useState<string>('ready');
   const [socket, setSocket] = useState<WebSocket | null>(null);
-  console.log(`mydata -> ${mydata}`);
 
   const dispatch = useAppDispatch();
   useEffect(() => {
@@ -88,7 +89,6 @@ export const getServerSideProps: GetServerSideProps =
       return {
         props: {
           message: 'Login',
-          mydata: res,
           roomIdx: context.params?.roomIdx || 'noRoom',
         },
       };
@@ -97,7 +97,6 @@ export const getServerSideProps: GetServerSideProps =
       return {
         props: {
           message: 'notLogin',
-          mydata: '',
           roomIdx: '',
         },
       };
