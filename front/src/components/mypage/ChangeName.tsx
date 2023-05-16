@@ -4,7 +4,8 @@ import { TextField } from '@mui/material';
 import Swal from 'sweetalert2';
 import { memberAPI } from '@/api/api';
 import { Button } from '../ui/Button';
-
+import { useAppDispatch } from '@/store/thunkhook';
+import { setMypage } from '@/store/slice/mypageSlice';
 //mui 관련 import
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -50,6 +51,7 @@ const CustomDialogTitle = (props: any) => {
 export default function ChangeName() {
   const [open, setOpen] = useState(false);
   const [text, setText] = useState('');
+  const dispatch = useAppDispatch();
   let check_spe =
     /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩαβγδεζηθικλμνξοπρστυφχψω½⅓⅔¼¾⅛⅜⅝⅞¹²³⁴ⁿ₁₂₃₄ⅰⅱⅲⅳⅴⅵⅶⅷⅸⅹⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ─│┌┐┘└├┬┤┴┼━┃┏┓┛┗┣┳┫┻╋┠┯┨┷┿┝┰┥┸╂┒┑┚┙┖┕┎┍┞┟┡┢┦┧┩┪┭┮┱┲┵┶┹┺┽┾╀╁╃╄╅╆╇╈╉╊＄％￦Ｆ′″℃Å￠￡￥¤℉‰?㎕㎖㎗ℓ㎘㏄㎣㎤㎥㎦㎙㎚㎛㎜㎝㎞㎟㎠㎡㎙㏊㎍㎎㎏㏏㎈㎉㏈㎧㎨㎰㎱㎲㎳㎴㎵㎶㎷㎸㎹㎀㎁㎂㎃㎄㎺㎻㎼㎽㎾㎿㎐㎑㎒㎓㎔Ω㏀㏁㎊㎋㎌㏖㏅㎭㎮㎯㏛㎩㎪㎫㎬㏝㏐㏓㏃㏉㏜㏆＋－＜＝＞±×÷≠≤≥∞∴♂♀∠⊥⌒∂∇≡≒≪≫√∽∝∵∫∬∈∋⊆⊇⊂⊃∪∩∧∨￢⇒⇔∀∃∮∑∏＂（）［］｛｝‘’“”〔〕〈〉《》「」『』【】！＇，．￣：；‥…¨〃­―∥＼∼´～ˇ˘˝˚˙¸˛¡¿ː＃＆＊＠§※☆★○●◎◇◆□■△▲▽▼→←↑↓↔〓◁◀▷▶♤♠♡♥♧♣⊙◈▣◐◑▒▤▥▨▧▦▩♨☏☎☜☞¶†‡↕↗↙↖↘♭♩♪♬㉿㈜№㏇™㏂㏘℡?ªⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝⓞⓖⓠⓡⓢⓣⓤⓥⓦⓧⓨⓩ①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⒜⒝⒞⒟⒠⒡⒢⒣⒤⒥⒦⒧⒨⒩⒪⒫⒬⒭⒮⒯㉠㉡㉢㉣㉭㉥㉦㉧㉨㉩㉪㉫㉬㉭㉮㉯㉰㉱㉲㉳㉴㉵㉶㉷㉸㉹㉺㉻㈀㈁㈂㈃㈄㈅㈆㈇㈈㈉㈊㈋㈌㈍㈎㈏㈐㈑㈒㈓㈔㈕㈖㈗㈘㈙㈚㈛⒜⒝⒞⒟⒠⒡⒢⒣⒤⒥⒦⒧⒨⒩⒪⒫⒬⒭⒮⒯⒰⒱⒲⒳⒴⒵⑴⑵⑶⑷⑸⑹⑺⑻⑼⑽⑾⑿⒀⒁⒂%&\\\=\(\'\"]/gi; // 특수문자 제거
   let check_str = /[ㄱ-ㅎㅏ-ㅣ]/gi; // 자음, 모음 제거
@@ -141,6 +143,22 @@ export default function ChangeName() {
               rounded="lg"
               color="bg-main-green"
               onClick={() => {
+                const changed = async () => {
+                  await memberAPI
+                    .changeName(text)
+                    .then((request) => {
+                      console.log('성공');
+                      memberAPI
+                        .getUserInfo()
+                        .then((request) => {
+                          console.log(request.data);
+                          dispatch(setMypage(request.data.body));
+                          ClickClose();
+                        })
+                        .catch((e) => console.log(e));
+                    })
+                    .catch((err) => console.log(err));
+                };
                 if (
                   check_spe.test(text) === false &&
                   check_str.test(text) === false &&
@@ -148,15 +166,9 @@ export default function ChangeName() {
                   text.length < 11 &&
                   text.length !== 0
                 ) {
-                  memberAPI
-                    .changeName(text)
-                    .then((request) => {
-                      console.log(request.data);
-                      console.log('성공');
-                    })
-                    .catch((err) => console.log(err));
+                  changed();
                 } else {
-                  errAlert();
+                  alert('조건에 부합하지 않은 닉네임입니다.');
                 }
               }}
             >

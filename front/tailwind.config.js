@@ -21,6 +21,7 @@ module.exports = {
         'after-noon': "url('/images/bgafter.gif')",
         'even-ing': "url('/images/bgevening.gif')",
         'night-ing': "url('/images/bgnight.gif')",
+        'gacha-bg': "url('/images/gachabgimg.png')",
       },
       spacing: {
         10: '10%',
@@ -32,6 +33,8 @@ module.exports = {
         70: '70%',
         80: '80%',
         90: '90%',
+        'bomul-margin': '12vh',
+        'bomul-buttom-margin': '4vh',
       },
       minHeight: {
         'container-height': '90vh',
@@ -49,12 +52,48 @@ module.exports = {
       },
       height: {
         'profile-img': '17vw',
+        'bomul-img': '10vw',
         'profile-menu': '7vh',
         'navbar-profile': '88px',
+        'effect-gif': '20vw',
+        'gacha-result': '50vh',
       },
       width: {
         'profile-img': '17vw',
+        'bomul-img': '10vw',
         'navbar-profile': '88px',
+        'effect-gif': '20vw',
+        'gacha-result': '65vw',
+      },
+      zIndex: {
+        100: 100,
+      },
+
+      keyframes: {
+        'fade-in-up': {
+          '0%': {
+            opacity: '0',
+            transform: 'translateY(-10px)',
+          },
+          '100%': {
+            opacity: '1',
+            transform: 'translateY(0)',
+          },
+        },
+        'fade-out-up': {
+          '0%': {
+            opacity: '1',
+            transform: 'translateY(0)',
+          },
+          '100%': {
+            opacity: '0',
+            transform: 'translateY(-10px)',
+          },
+        },
+      },
+      animation: {
+        'fade-in-up': 'fade-in-up 0.3s ease-out',
+        'fade-out-up': 'fade-out-up 0.3s ease-out',
       },
     },
   },

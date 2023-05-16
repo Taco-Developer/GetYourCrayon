@@ -3,19 +3,29 @@ import ChangeName from './ChangeName';
 import { Button } from '@/components/ui/Button';
 import React from 'react';
 import tw from 'tailwind-styled-components';
+import { useAppSelector } from '@/store/thunkhook';
 
 /**프로필 이미지, 닉네임변경 컴포넌트 */
 export default function UserInfo() {
+  const { mypageInfo } = useAppSelector((state) => state);
+
   return (
     <UserInfoDiv>
       <ProfileDiv>
         <ProfileImgDiv>
-          <Image src="/images/loopy3.jpg" alt="no_img" fill sizes="100%" />
+          <Image
+            src={mypageInfo.profile.userProfile}
+            alt="no_img"
+            fill
+            sizes="100%"
+            priority
+          />
         </ProfileImgDiv>
       </ProfileDiv>
       <InfoBottomDiv>
         <NicknameDiv>
-          <div>제발도와주세요제발</div>
+          <div>{mypageInfo.profile.userNickname}</div>
+          <div>Point : {mypageInfo.profile.userPoint}</div>
         </NicknameDiv>
         <InfoChangeDiv>
           <ChangeName />
@@ -64,6 +74,7 @@ const NicknameDiv = tw.div`
  flex 
  justify-center 
  items-center
+ flex-col
 `;
 
 const InfoBottomDiv = tw.div`
