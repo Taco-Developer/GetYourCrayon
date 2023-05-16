@@ -11,6 +11,8 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 public class ResponseGameDto {
+    String type = "gameDto";
+
     String message;
 
     String status;
