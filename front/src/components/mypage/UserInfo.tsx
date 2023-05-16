@@ -8,7 +8,6 @@ import { useAppSelector } from '@/store/thunkhook';
 /**프로필 이미지, 닉네임변경 컴포넌트 */
 export default function UserInfo() {
   const { mypageInfo } = useAppSelector((state) => state);
-  console.log(mypageInfo);
 
   return (
     <UserInfoDiv>
