@@ -35,10 +35,8 @@ export default function Ready({
   socket,
   setSocket,
 }: RoomPropsType) {
-  const dispatch = useAppDispatch();
-
-  /** 유저 닉네임 */
-  const { userNickname } = useAppSelector((state) => state.userInfo);
+  /** 유저 정보 */
+  const { profile } = useAppSelector((state) => state.mypageInfo);
   /** 유저가 생성한 방 */
   const { roomIdx } = useAppSelector((state) => state.roomIdx);
 
@@ -70,7 +68,7 @@ export default function Ready({
         sendMessage(socket, 'userIn', { authorization: token });
         sendMessage(socket, 'chat', {
           author: 'admin',
-          message: `${userNickname}님이 입장하셨습니다 :)`,
+          message: `${profile.userNickname}님이 입장하셨습니다 :)`,
         });
       };
 
@@ -85,7 +83,7 @@ export default function Ready({
         removeEvent(socket, messageHandler);
       };
     }
-  }, [userNickname, socket]);
+  }, [profile.userNickname, socket]);
 
   return (
     <RoomBody>
