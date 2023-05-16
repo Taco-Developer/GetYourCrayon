@@ -29,11 +29,11 @@ export default function Room({
   const [room, setRoom] = useState<string>('');
   const [status, setStatus] = useState<string>('ready');
   const [socket, setSocket] = useState<WebSocket | null>(null);
+  console.log(`mydata -> ${mydata}`);
 
   const dispatch = useAppDispatch();
   useEffect(() => {
     if (message === 'notLogin') {
-      console.log(mydata);
       console.log('로그인해라');
       router.push('/');
     }
