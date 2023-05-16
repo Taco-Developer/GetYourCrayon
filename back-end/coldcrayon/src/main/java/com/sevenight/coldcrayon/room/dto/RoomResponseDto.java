@@ -14,6 +14,8 @@ import com.sevenight.coldcrayon.room.entity.RoomHash;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RoomResponseDto {
+    private String type;
+
     private String roomIdx;
     // fail, success 중에 하나,
     private String status;
