@@ -41,7 +41,7 @@ export default function Chat({
   const you = 'justify-start';
   const youMeta = 'justify-start ml-3';
   const youContent = 'justify-start bg-slate-600';
-  const admin = 'justify-center';
+  const admin = 'justify-center max-w-lg';
   const adminMeta = 'hidden';
   const adminContent = 'justify-start bg-black text-white';
 
