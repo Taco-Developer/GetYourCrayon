@@ -1,19 +1,30 @@
 package com.sevenight.coldcrayon.game.service;
 
+
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
 @Slf4j
 public class WebClientServiceImpl {
 
-    public Map<String, Object> post(String prompt) {
+    @Value("${java.file.AIAuthorization}")
+    String aIAuthorization;
+    @Value("${java.file.NaverClientID}")
+    String NaverClientID;
+    @Value("${java.file.NaverClientSecret}")
+    String NaverClientSecret;
+
+    public List<Object> AiPost(String prompt) {
         Map<String, Object> bodyMap = new HashMap<>(Map.of( "n", 4, "size", "256x256"));
         bodyMap.put("prompt", prompt);
 
@@ -23,7 +34,7 @@ public class WebClientServiceImpl {
                         .builder()
                         .baseUrl("https://api.openai.com")
                         .defaultHeaders(httpHeaders -> {
-                            httpHeaders.add("Authorization", "Bearer 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");
+                            httpHeaders.add("Authorization", aIAuthorization);
                             httpHeaders.add("Content-Type", "application/json");
                         })
                         .build();
@@ -40,8 +51,46 @@ public class WebClientServiceImpl {
                         .block();
 
         // 결과 확인
-        log.info(response.toString());
 
-        return response;
+        return (List<Object>) response.get("data");
     }
+
+    public String papagoPost(String script) {
+
+        Map<String, Object> bodyMap = new HashMap<>(Map.of( "target", "en", "source", "ko"));
+        bodyMap.put("text", script);
+
+
+        // webClient 기본 설정
+        WebClient webClient =
+            WebClient
+                .builder()
+                .baseUrl("https://naveropenapi.apigw.ntruss.com")
+                .defaultHeaders(httpHeaders -> {
+                    httpHeaders.add("X-NCP-APIGW-API-KEY-ID", NaverClientID);
+                    httpHeaders.add("X-NCP-APIGW-API-KEY", NaverClientSecret);
+                    httpHeaders.add("Content-Type", "application/json");
+                })
+                .build();
+
+
+        // api 요청
+        Map<String, Object> response =
+            webClient
+                .post()
+                .uri("/nmt/v1/translation")
+                .bodyValue(bodyMap)
+                .retrieve()
+                .bodyToMono(Map.class)
+                .block();
+
+        // 결과 확인
+
+
+        Map<String, Map> message = (Map<String, Map>) response.get("message");
+        Map<String, String> result = message.get("result");
+        return result.get("translatedText");
+    }
+
+
 }
