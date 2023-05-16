@@ -19,7 +19,8 @@ pipeline {
                         sh '''
                         cd back-end/coldcrayon/src/main/resources
                         cat application-server.yml
-                        ls -al
+                        ls -al env.properties
+                        cat 
                         '''
                     }
 		        }
