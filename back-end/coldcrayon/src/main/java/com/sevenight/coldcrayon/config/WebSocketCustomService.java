@@ -77,4 +77,12 @@ public class WebSocketCustomService {
         return gameRequestDto;
     }
 
+//    public UserDto getUserDtoByUserNickname(String userNickname) {
+//        Optional<User> user = userRepository.findByUserNickname(userNickname);
+//        if (user.isPresent()) {
+//            UserDto.of(user)
+//        }
+//
+    }
+
 }
