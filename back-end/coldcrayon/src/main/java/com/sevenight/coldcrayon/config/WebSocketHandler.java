@@ -98,6 +98,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         roomInfoMap.put("roomStatus", room.getRoomStatus());
         roomInfoMap.put("adminUserIdx", room.getAdminUserIdx());
         roomInfoMap.put("nowRound", room.getNowRound());
+        roomInfoMap.put("roomTurn", 0);
     }
 
     @Override
@@ -202,6 +203,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
             String status = roomResponseDto.getStatus();
             String message1 = roomResponseDto.getMessage();
 
+            // 실패일 때
             if (status.equals("fail")) {
                 response.put("status", status);
                 response.put("message", message1);
@@ -211,6 +213,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                         s.sendMessage(new TextMessage(jsonResponse));
                     }
                 }
+            // 성공일 때
             } else {
                 String jsonResponse = objectMapper.writeValueAsString(roomResponseDto);
                 for (WebSocketSession s : sessions) {
@@ -247,20 +250,20 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 }
             }
         }
-        // 게임 타입 변경
-        else if (type.equals("gameCategory")) {
-            String gameCategory = jsonMessage.get("gameCategory");
+        // 게임 모드 변경
+        else if (type.equals("changeGameType")) {
+            String changeGameType = jsonMessage.get("changeGameType");
 
             // 세션 데이터 변경
-            roomInfoMap.put("gameCategory", gameCategory);
+            roomInfoMap.put("changeGameType", changeGameType);
 
-            // DB에 게임 타입 저장해야 함
-            webSocketCustomService.changeGameType(gameCategory);
+            // DB에 게임 타입 저장해야 함 : 구현 안됨
+            webSocketCustomService.changeGameType(changeGameType);
 
             // 타입 설정 등
             Map<String, String> response = new HashMap<>();
-            response.put("type", "gameCategory");
-            response.put("gameCategory", gameCategory);
+            response.put("type", "changeGameType");
+            response.put("changeGameType", changeGameType);
             String jsonResponse = objectMapper.writeValueAsString(response);
 
             for (WebSocketSession s : sessions) {
@@ -269,13 +272,86 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 }
             }
         }
+
+        // playerCnt
+        else if (type.equals("playerCnt")) {
+            int playerCnt = Integer.parseInt(jsonMessage.get("playerCnt"));
+
+            roomInfoMap.put("roomNow", playerCnt);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("type", "playerCnt");
+            response.put("playerCnt", playerCnt);
+
+            String jsonResponse = objectMapper.writeValueAsString(response);
+
+            for (WebSocketSession s : sessions) {
+                if (s.isOpen()) {
+                    s.sendMessage(new TextMessage(jsonResponse));
+                }
+            }
+        }
+        // gameMode
+        else if (type.equals("gameMode")) {
+            String gameMode = jsonMessage.get("gameMode");
+
+            roomInfoMap.put("gameCategory", gameMode);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("type", "gameMode");
+            response.put("gameMode", gameMode);
+
+            String jsonResponse = objectMapper.writeValueAsString(response);
+
+            for (WebSocketSession s : sessions) {
+                if (s.isOpen()) {
+                    s.sendMessage(new TextMessage(jsonResponse));
+                }
+            }
+        }
+        // gameTime
+        else if (type.equals("gameTime")) {
+            String gameTime = jsonMessage.get("gameTime");
+
+            roomInfoMap.put("gameTime", gameTime);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("type", "gameTime");
+            response.put("roundTime", gameTime);
+
+            String jsonResponse = objectMapper.writeValueAsString(response);
+
+            for (WebSocketSession s : sessions) {
+                if (s.isOpen()) {
+                    s.sendMessage(new TextMessage(jsonResponse));
+                }
+            }
+        }
+        // gameTurn
+        else if (type.equals("gameTurn")) {
+            String gameTurn = jsonMessage.get("gameTurn");
+
+            roomInfoMap.put("gameTurn", gameTurn);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("type", "gameTurn");
+            response.put("gameTurn", gameTurn);
+
+            String jsonResponse = objectMapper.writeValueAsString(response);
+
+            for (WebSocketSession s : sessions) {
+                if (s.isOpen()) {
+                    s.sendMessage(new TextMessage(jsonResponse));
+                }
+            }
+        }
+
         // 게임 시간 설정
         else if (type.equals("roundTime")) {
             String changedRoundTime = jsonMessage.get("changedRoundTime");
 
             roomInfoMap.put("roundTime", Integer.parseInt(changedRoundTime));
         }
-
         // 게임 시작
         else if (type.equals("gameStart")) {
             // 현재 설정된 게임 타입을 받아와서 case 구분
@@ -322,7 +398,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
 //            }
         }
         // 라운드 시작
-        else if(type.equals("roundStart")) {
+        else if (type.equals("roundStart")) {
             RequestRoundDto requestRoundDto = RequestRoundDto.builder()
                     .roomIdx(roomId)
                     .build();
@@ -358,7 +434,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
             }
 
 
-
             // 경민 임의 작업 -> 수민이가 작업한걸로 변경시켜야 함
             List<UserHash> userList = roomService.getUserList(roomId);
             Map<String, Object> response = new HashMap<>();
@@ -374,7 +449,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
             }
             //-=========-//
 
-        // 게임 종료
+            // 게임 종료
         } else if (type.equals("gameOver")) {
             List<UserHash> userList = roomService.getUserList(roomId);
             Map<String, Object> response = new HashMap<>();
