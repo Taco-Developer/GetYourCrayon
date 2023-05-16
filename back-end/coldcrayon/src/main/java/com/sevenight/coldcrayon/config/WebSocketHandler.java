@@ -275,13 +275,13 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
         // playerCnt
         else if (type.equals("playerCnt")) {
-            int playerCnt = Integer.parseInt(jsonMessage.get("playerCnt"));
+            RoomResponseDto room = roomService.getRoom(roomId);
 
-            roomInfoMap.put("roomNow", playerCnt);
+            int roomNow = room.getRoomNow();
 
             Map<String, Object> response = new HashMap<>();
             response.put("type", "playerCnt");
-            response.put("playerCnt", playerCnt);
+            response.put("playerCnt", roomNow);
 
             String jsonResponse = objectMapper.writeValueAsString(response);
 
@@ -293,13 +293,12 @@ public class WebSocketHandler extends TextWebSocketHandler {
         }
         // gameMode
         else if (type.equals("gameMode")) {
-            String gameMode = jsonMessage.get("gameMode");
-
-            roomInfoMap.put("gameCategory", gameMode);
+            RoomResponseDto room = roomService.getRoom(roomId);
+            GameCategory gameCategory = room.getGameCategory();
 
             Map<String, Object> response = new HashMap<>();
             response.put("type", "gameMode");
-            response.put("gameMode", gameMode);
+            response.put("gameMode", gameCategory);
 
             String jsonResponse = objectMapper.writeValueAsString(response);
 
@@ -311,13 +310,13 @@ public class WebSocketHandler extends TextWebSocketHandler {
         }
         // gameTime
         else if (type.equals("gameTime")) {
-            String gameTime = jsonMessage.get("gameTime");
 
-            roomInfoMap.put("gameTime", gameTime);
+            int roundTime = (int) roomInfoMap.get("roundTime");
+
 
             Map<String, Object> response = new HashMap<>();
             response.put("type", "gameTime");
-            response.put("roundTime", gameTime);
+            response.put("roundTime", roundTime);
 
             String jsonResponse = objectMapper.writeValueAsString(response);
 
@@ -329,13 +328,14 @@ public class WebSocketHandler extends TextWebSocketHandler {
         }
         // gameTurn
         else if (type.equals("gameTurn")) {
-            String gameTurn = jsonMessage.get("gameTurn");
+            RoomResponseDto room = roomService.getRoom(roomId);
+            int nowRound = room.getNowRound();
 
-            roomInfoMap.put("gameTurn", gameTurn);
+            roomInfoMap.put("gameTurn", nowRound);
 
             Map<String, Object> response = new HashMap<>();
             response.put("type", "gameTurn");
-            response.put("gameTurn", gameTurn);
+            response.put("gameTurn", nowRound);
 
             String jsonResponse = objectMapper.writeValueAsString(response);
 
