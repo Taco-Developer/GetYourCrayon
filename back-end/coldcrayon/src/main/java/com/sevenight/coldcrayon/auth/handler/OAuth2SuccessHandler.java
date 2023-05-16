@@ -109,7 +109,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                 .userEmail((String) oAuth2User.getAttribute("email"))
                 .role(Role.MEMBER)
                 .userProvider(oAuth2User.getAttribute("provider"))
-                .userPoint(0)
+                .userPoint(100)
                 .userNickname("익명이" + UUID.randomUUID().toString().substring(0, 7))
                 .build());
     }
