@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
 
 import tw from 'tailwind-styled-components';
 
@@ -6,17 +7,14 @@ import { sendMessage } from '@/socket/messageSend';
 
 interface ChatPropsType {
   socket: WebSocket | null;
-  userId: string;
   room: string;
   messageList: Array<any>;
 }
 
-export default function Chat({
-  socket,
-  userId,
-  room,
-  messageList,
-}: ChatPropsType) {
+export default function Chat({ socket, room, messageList }: ChatPropsType) {
+  /** 유저 정보 */
+  const { profile } = useAppSelector((state) => state.mypageInfo);
+  const userNick = profile.userNickname;
   const [currentMessage, setCurrentMessage] = useState<string>('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -29,7 +27,10 @@ export default function Chat({
 
   const messageSubmitHandler = () => {
     if (socket !== null && currentMessage) {
-      const sendSocket: {} = { author: userId, message: currentMessage };
+      const sendSocket: {} = {
+        author: userNick,
+        message: currentMessage,
+      };
       console.log(sendSocket);
       sendMessage(socket, 'chat', sendSocket);
       setCurrentMessage('');
@@ -58,7 +59,7 @@ export default function Chat({
                 className={
                   'admin' === messageContent.author
                     ? admin
-                    : userId === messageContent.author
+                    : userNick === messageContent.author
                     ? me
                     : you
                 }
@@ -68,7 +69,7 @@ export default function Chat({
                     className={
                       'admin' === messageContent.author
                         ? adminMeta
-                        : userId === messageContent.author
+                        : userNick === messageContent.author
                         ? meMeta
                         : youMeta
                     }
@@ -79,7 +80,7 @@ export default function Chat({
                     className={
                       'admin' === messageContent.author
                         ? adminContent
-                        : userId === messageContent.author
+                        : userNick === messageContent.author
                         ? meContent
                         : youContent
                     }
