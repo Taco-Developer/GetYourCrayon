@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -23,7 +24,7 @@ public class WebClientServiceImpl {
     @Value("${java.file.NaverClientSecret}")
     String NaverClientSecret;
 
-    public Map<String, Object> AiPost(String prompt) {
+    public List<Object> AiPost(String prompt) {
         Map<String, Object> bodyMap = new HashMap<>(Map.of( "n", 4, "size", "256x256"));
         bodyMap.put("prompt", prompt);
 
@@ -50,18 +51,14 @@ public class WebClientServiceImpl {
                         .block();
 
         // 결과 확인
-        log.info(response.toString());
 
-        return response;
+        return (List<Object>) response.get("data");
     }
 
-    public Map<String, Object> papagoPost(String script) {
+    public String papagoPost(String script) {
 
         Map<String, Object> bodyMap = new HashMap<>(Map.of( "target", "en", "source", "ko"));
         bodyMap.put("text", script);
-        System.err.println(bodyMap.toString());
-        System.err.println(NaverClientID);
-        System.err.println(NaverClientSecret);
 
 
         // webClient 기본 설정
@@ -88,9 +85,11 @@ public class WebClientServiceImpl {
                 .block();
 
         // 결과 확인
-        log.info(response.toString());
 
-        return response;
+
+        Map<String, Map> message = (Map<String, Map>) response.get("message");
+        Map<String, String> result = message.get("result");
+        return result.get("translatedText");
     }
 
 

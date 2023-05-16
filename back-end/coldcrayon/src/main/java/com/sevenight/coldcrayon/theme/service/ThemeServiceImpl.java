@@ -9,6 +9,7 @@ import com.sevenight.coldcrayon.theme.repository.ThemeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -21,11 +22,17 @@ public class ThemeServiceImpl implements ThemeService {
     private final Random random = new Random();
 
     @Override
-    public String getThemeKeyword(ThemeCategory themeCategory) {
+    public List<String> getThemeKeyword(ThemeCategory themeCategory) {
+        List<String> keywordList = new ArrayList<>();
+
         List<Theme> themeList = themeRepository.findAllByTheme(themeCategory);
         List<Suffix> suffixList = suffixRepository.findAll();
         String suffix = suffixList.get(random.nextInt(suffixList.size())).getSuffix();
         String themeKeyword = themeList.get(random.nextInt(themeList.size())).getThemeKeyword();
-        return themeKeyword + suffix;
+        keywordList.add(suffix);
+        keywordList.add(themeKeyword);
+
+        System.err.println(themeKeyword + suffix);
+        return keywordList;
     }
 }
