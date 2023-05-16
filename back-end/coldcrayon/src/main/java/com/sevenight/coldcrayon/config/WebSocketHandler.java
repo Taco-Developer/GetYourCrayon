@@ -302,16 +302,25 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
             int roundTime = (int) roomInfoMap.get("roundTime");
 
-//            // 설정된 시간 감소: 테스팅 필요
-//            while (roundTime > 0) {
-//                for (WebSocketSession s : sessions) {
-//                    if (s.isOpen()) {
-//                        s.sendMessage(new TextMessage(String.valueOf(roundTime)));
-//                    }
-//                    roundTime--;
-//                    Thread.sleep(1000);
-//                }
-//            }
+            // 설정된 시간 감소: 테스팅 필요
+            while (roundTime > 0) {
+                Map<String, Object> response = new HashMap<String, Object>();
+                response.put("type", "gameTime");
+                response.put("roundTime", roundTime);
+                String jsonResponse = objectMapper.writeValueAsString(response);
+
+                for (WebSocketSession s : sessions) {
+                    if (s.isOpen()) {
+                        s.sendMessage(new TextMessage(jsonResponse));
+                    }
+                    roundTime--;
+                    Thread.sleep(1000);
+                }
+            }
+        }
+        // 라운드 시작
+        else if(type.equals("gameStart")) {
+
         }
 
         // 라운드 종료
@@ -328,6 +337,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
                     s.sendMessage(new TextMessage(jsonResponse));
                 }
             }
+
+        // 게임 종료
         } else if (type.equals("gameOver")) {
             List<UserHash> userList = roomService.getUserList(roomId);
             Map<String, Object> response = new HashMap<>();
