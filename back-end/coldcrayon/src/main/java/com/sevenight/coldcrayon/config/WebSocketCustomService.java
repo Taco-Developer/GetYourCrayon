@@ -11,6 +11,7 @@ import com.sevenight.coldcrayon.room.service.RoomService;
 import com.sevenight.coldcrayon.user.entity.User;
 import com.sevenight.coldcrayon.user.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
