@@ -1,17 +1,18 @@
-import { list } from 'postcss';
 import React, { useState, useEffect, useRef } from 'react';
+
 import tw from 'tailwind-styled-components';
-import { w3cwebsocket as W3CWebSocket } from 'websocket';
+
+import { sendMessage } from '@/socket/messageSend';
 
 interface ChatPropsType {
-  client: W3CWebSocket | null;
+  socket: WebSocket | null;
   userId: string;
   room: string;
   messageList: Array<any>;
 }
 
 export default function Chat({
-  client,
+  socket,
   userId,
   room,
   messageList,
@@ -26,10 +27,9 @@ export default function Chat({
     });
   }, [messageList]);
 
-  const sendMessage = () => {
-    if (client !== null && currentMessage) {
-      const message = { type: 'chat', author: userId, message: currentMessage };
-      client.send(JSON.stringify(message));
+  const messageSubmitHandler = () => {
+    if (socket !== null && currentMessage) {
+      sendMessage(socket, 'chat', { author: userId, message: currentMessage });
       setCurrentMessage('');
     }
   };
@@ -100,12 +100,12 @@ export default function Chat({
             setCurrentMessage(event.target.value);
           }}
           onKeyPress={(event) => {
-            event.key === 'Enter' && sendMessage();
+            event.key === 'Enter' && messageSubmitHandler();
           }}
         />
         <ChatBtn
           onClick={() => {
-            sendMessage();
+            messageSubmitHandler();
           }}
         >
           전송
