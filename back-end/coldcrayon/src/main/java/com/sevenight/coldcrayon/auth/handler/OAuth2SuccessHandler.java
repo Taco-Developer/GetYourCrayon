@@ -34,6 +34,10 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     // 체크하기 => 형들 yml 보기
     @Value("${redirect.url}")
     private String redirectUrl;
+
+    @Value("${default.image}")
+    private String defaultImg;
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
@@ -110,6 +114,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                 .role(Role.MEMBER)
                 .userProvider(oAuth2User.getAttribute("provider"))
                 .userPoint(100)
+                .userProfile(defaultImg)
                 .userNickname("익명이" + UUID.randomUUID().toString().substring(0, 7))
                 .build());
     }
