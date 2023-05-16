@@ -79,9 +79,9 @@ export const getServerSideProps: GetServerSideProps =
     });
     try {
       const re = await api.get(`/user/mypage/profile`);
-      console.log(re);
+      console.log('re->', re);
       const res = re.data.body;
-      console.log(res);
+      console.log('res->', res);
       store.dispatch(setLogin({ isLogin: true }));
       store.dispatch(setMypage(res));
       return {
