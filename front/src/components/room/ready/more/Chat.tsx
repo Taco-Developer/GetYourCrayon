@@ -29,7 +29,9 @@ export default function Chat({
 
   const messageSubmitHandler = () => {
     if (socket !== null && currentMessage) {
-      sendMessage(socket, 'chat', { author: userId, message: currentMessage });
+      const sendSocket: {} = { author: userId, message: currentMessage };
+      console.log(sendSocket);
+      sendMessage(socket, 'chat', sendSocket);
       setCurrentMessage('');
     }
   };
