@@ -1,5 +1,7 @@
 package com.sevenight.coldcrayon.theme.repository;
 
+import java.util.List;
+
 import com.sevenight.coldcrayon.room.entity.RoomHash;
 import com.sevenight.coldcrayon.theme.entity.Theme;
 import com.sevenight.coldcrayon.theme.entity.ThemeCategory;
@@ -9,9 +11,8 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ThemeRepository extends JpaRepository<Theme, Integer>,
-        QuerydslPredicateExecutor<Theme> {
+public interface ThemeRepository extends JpaRepository<Theme, Integer>{
 
-    Theme findRandom1ByTheme(ThemeCategory theme);
+    List<Theme> findAllByTheme(ThemeCategory theme);
 
 }

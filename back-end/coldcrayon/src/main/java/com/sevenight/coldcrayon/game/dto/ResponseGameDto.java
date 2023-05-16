@@ -1,5 +1,6 @@
 package com.sevenight.coldcrayon.game.dto;
 
+import com.sevenight.coldcrayon.theme.entity.ThemeCategory;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,11 +11,17 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 public class ResponseGameDto {
-    String theme;
+    String message;
+
+    String status;
+
+    ThemeCategory theme;
 
     String correct;
 
-    List<String> userList;
+    List<Object> userList;
 
-    String target;
+    Long selectedUserIdx;
+
+    List<String> urlList;
 }
