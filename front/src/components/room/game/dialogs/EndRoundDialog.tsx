@@ -1,11 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { Dialog } from '@mui/material';
 import Margin, { MarginType } from '@/components/ui/Margin';
 import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
-import { closeIsScoreCheckModalOpened } from '@/store/slice/game/aiGameDatasSlice';
+import {
+  closeIsScoreCheckModalOpened,
+  resetAiImages,
+} from '@/store/slice/game/aiGameDatasSlice';
 import { goNextRound } from '@/store/slice/game/gameRoundSlice';
 import { resetAnswer } from '@/store/slice/game/answersSlice';
+import { increase } from '@/store/slice/game/score';
+import { resetTheme } from '@/store/slice/game/gameThemeSlice';
+import { changeStatus } from '@/store/slice/game/roomStatusSlice';
 
 export default function EndRoundDialog() {
   const {
@@ -18,11 +24,19 @@ export default function EndRoundDialog() {
 
   const onDialogClose = () => {
     dispatch(closeIsScoreCheckModalOpened());
+    dispatch(resetAnswer());
+    dispatch(resetAiImages());
+    dispatch(resetTheme());
     if (gameRound.now < gameRound.total) {
       dispatch(goNextRound());
-      dispatch(resetAnswer());
+      return;
     }
+    dispatch(changeStatus('gameEnd'));
   };
+
+  useEffect(() => {
+    dispatch(increase(leftTime > 0 ? 20 : 0));
+  }, [leftTime, dispatch]);
 
   return (
     <Dialog

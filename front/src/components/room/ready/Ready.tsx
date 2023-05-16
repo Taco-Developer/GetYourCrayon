@@ -14,7 +14,6 @@ import { listenEvent, removeEvent } from '@/socket/socketEvent';
 interface RoomPropsType {
   room: string;
   setRoom: React.Dispatch<React.SetStateAction<string>>;
-  setStatus: React.Dispatch<React.SetStateAction<string>>;
   socket: WebSocket | null;
   setSocket: React.Dispatch<React.SetStateAction<WebSocket | null>>;
 }
@@ -27,7 +26,6 @@ interface MessageType {
 export default function Ready({
   room,
   setRoom,
-  setStatus,
   socket,
   setSocket,
 }: RoomPropsType) {
@@ -121,7 +119,6 @@ export default function Ready({
           <ReadyBtn
             boardId={boardId}
             setBoardId={setBoardId}
-            setStatus={setStatus}
             closeSocket={closeSocket}
           />
         </BtnDiv>

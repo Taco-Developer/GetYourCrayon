@@ -30,6 +30,7 @@ export default function Room({
   const [room, setRoom] = useState<string>('');
   const [status, setStatus] = useState<string>('ready');
   const [socket, setSocket] = useState<WebSocket | null>(null);
+  const roomStatus = useAppSelector((state) => state.roomStatus);
 
   const dispatch = useAppDispatch();
   useEffect(() => {
@@ -45,13 +46,12 @@ export default function Room({
     }
   }, [dispatch, socket, roomIdx]);
 
-  switch (status) {
+  switch (roomStatus) {
     case 'ready':
       return (
         <Ready
           room={room}
           setRoom={setRoom}
-          setStatus={setStatus}
           socket={socket}
           setSocket={setSocket}
         />

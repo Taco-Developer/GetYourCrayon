@@ -10,6 +10,7 @@ import CatchMind from '@/components/room/game/CatchMind';
 import { useAppDispatch } from '@/store/thunkhook';
 import { addInGameChat } from '@/store/slice/game/inGameChatDatasSlice';
 import { listenEvent, removeEvent } from '@/socket/socketEvent';
+import { changeTime } from '@/store/slice/game/leftTimeSlice';
 
 export default function InGameRoom({
   game,
@@ -23,10 +24,13 @@ export default function InGameRoom({
   useEffect(() => {
     const messageHandler = (message: MessageEvent) => {
       const data = JSON.parse(message.data);
-
       if (data.type === 'chat') {
         const { content, status, user } = data;
         dispatch(addInGameChat({ content, status, user }));
+      }
+      if (data.type === 'gameTime') {
+        const { roundTime } = data;
+        dispatch(changeTime(roundTime));
       }
     };
     listenEvent(socket, messageHandler);

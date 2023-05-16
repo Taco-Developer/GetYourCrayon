@@ -11,7 +11,6 @@ import {
   InGameChatDataType,
   addInGameChat,
 } from '@/store/slice/game/inGameChatDatasSlice';
-import { countDown } from '@/store/slice/game/leftTimeSlice';
 import { sendMessage } from '@/socket/messageSend';
 
 interface GameRightSidePropsType {
@@ -26,7 +25,7 @@ export default function GameRightSide({
   const {
     leftTime,
     inGameChatDatas,
-    isGameStarted,
+    gameRound: { isRoundStarted },
     userInfo: { userIdx, userNickname },
   } = useAppSelector((state) => state);
   const dispatch = useAppDispatch();
@@ -52,26 +51,6 @@ export default function GameRightSide({
     });
     setInputValue('');
   };
-
-  // 타이머 관련 상태
-  const [timerId, setTimerId] = useState<NodeJS.Timer>();
-  // 카운트 종료
-  if (leftTime <= 0) {
-    clearInterval(timerId);
-  }
-
-  useEffect(() => {
-    if (!isGameStarted) return;
-    // 카운트 다운
-    const timer = setInterval(() => {
-      dispatch(countDown());
-    }, 1000);
-    setTimerId(timer);
-
-    return () => {
-      clearInterval(timer);
-    };
-  }, [isGameStarted, dispatch]);
 
   return (
     <SideDisplay isLeft={false}>

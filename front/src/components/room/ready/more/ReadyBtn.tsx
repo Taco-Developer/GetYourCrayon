@@ -8,23 +8,25 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
 import { setRoomIdx } from '@/store/slice/game/gameRoom';
 import { setUser } from '@/store/slice/userSlice';
+import { changeStatus } from '@/store/slice/game/roomStatusSlice';
 
 interface ReadyProps {
   boardId: number | null;
   setBoardId: React.Dispatch<React.SetStateAction<number | null>>;
-  setStatus: React.Dispatch<React.SetStateAction<string>>;
   closeSocket: () => void;
 }
 
 export default function ReadyBtn({
   boardId,
   setBoardId,
-  setStatus,
   closeSocket,
 }: ReadyProps) {
   const dispatch = useAppDispatch();
   const baseUrl: string = 'https://getyourcrayon.co.kr/room/';
-  const { userNickname } = useAppSelector((state) => state.userInfo);
+  const {
+    userInfo: { userNickname },
+    roomStatus,
+  } = useAppSelector((state) => state);
   const { roomIdx } = useAppSelector((state) => state.roomIdx);
 
   /** 게임방 나가기 api */
@@ -87,7 +89,7 @@ export default function ReadyBtn({
       <GoBtn
         onClick={() => {
           deleteBorad(boardId);
-          setStatus('gameStart');
+          dispatch(changeStatus('gameStart'));
         }}
       >
         게임시작

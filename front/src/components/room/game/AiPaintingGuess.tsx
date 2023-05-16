@@ -17,11 +17,7 @@ import {
   openIsScoreCheckModalOpened,
   savePrompt,
 } from '@/store/slice/game/aiGameDatasSlice';
-import {
-  InGameChatDataType,
-  addInGameChat,
-} from '@/store/slice/game/inGameChatDatasSlice';
-import { endGame } from '@/store/slice/game/isGameStartedSlice';
+import { InGameChatDataType } from '@/store/slice/game/inGameChatDatasSlice';
 import { saveTheme } from '@/store/slice/game/gameThemeSlice';
 import {
   addInputedAnswers,
@@ -29,12 +25,15 @@ import {
 } from '@/store/slice/game/answersSlice';
 import { listenEvent, removeEvent } from '@/socket/socketEvent';
 import { sendMessage } from '@/socket/messageSend';
-import { gameAPI } from '@/api/api';
+import { resetTime } from '@/store/slice/game/leftTimeSlice';
+import { endRound, startRound } from '@/store/slice/game/gameRoundSlice';
+import { getCookie } from 'cookies-next';
+import Loading from '@/components/ui/Loading';
 
 export default function AiPaintingGuess({ socket }: { socket: WebSocket }) {
   const {
     leftTime,
-    gameTheme,
+    gameRound: { now },
     answers: { savedAnswers, inputedAnswers },
     aiGameDatas: { aiImages },
     roomIdx: { roomIdx },
@@ -75,7 +74,7 @@ export default function AiPaintingGuess({ socket }: { socket: WebSocket }) {
         savedAnswers.length === inputedAnswers.length) ||
       leftTime === 0
     ) {
-      dispatch(endGame());
+      dispatch(endRound());
       dispatch(openIsScoreCheckModalOpened());
     }
   }, [savedAnswers, inputedAnswers, leftTime, dispatch]);
@@ -85,10 +84,13 @@ export default function AiPaintingGuess({ socket }: { socket: WebSocket }) {
     const messageHandler = (event: MessageEvent) => {
       const data = JSON.parse(event.data);
       if (data.type !== 'gameDto') return;
-      dispatch(addAiImages(data.aiImages));
-      dispatch(saveTheme(data.selectedTheme));
-      dispatch(addSavedAnswers(data.answers));
-      dispatch(savePrompt(data.prompt));
+      const { correct, message, theme, urlList } = data;
+      dispatch(addAiImages(urlList));
+      dispatch(addSavedAnswers(correct));
+      dispatch(saveTheme(theme));
+      dispatch(savePrompt(message));
+      dispatch(resetTime());
+      dispatch(startRound());
     };
 
     listenEvent(socket, messageHandler);
@@ -98,24 +100,16 @@ export default function AiPaintingGuess({ socket }: { socket: WebSocket }) {
     };
   }, [socket, dispatch]);
 
+  // 시작
   useEffect(() => {
-    const dummy = async () => {
-      const response = await gameAPI.postGameStart(roomIdx!, 'AI', 4);
-      console.log(response);
-      const { correct, message, selectedUserIdx, theme, type, urlList } =
-        await response.data;
+    sendMessage(socket, 'gameStart', {
+      authorization: getCookie('accesstoken'),
+    });
+  }, [now, socket, roomIdx]);
 
-      dispatch(addAiImages(urlList));
-      dispatch(addSavedAnswers(correct));
-      dispatch(saveTheme(theme));
-      dispatch(savePrompt(message));
-    };
-    dummy();
-  }, [roomIdx, dispatch]);
-
-  // if (aiImages.length === 0) {
-  //   return <div>AI가 이미지를 만들고 있어요ㅠㅠ</div>;
-  // }
+  if (aiImages.length === 0) {
+    return <Loading />;
+  }
 
   return (
     <>
