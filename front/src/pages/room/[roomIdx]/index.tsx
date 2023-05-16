@@ -18,9 +18,11 @@ import { useRouter } from 'next/router';
 export default function Room({
   roomIdx,
   message,
+  mydata,
 }: {
-  roomIdx: string;
+  mydata: string;
   message: string;
+  roomIdx: string;
 }) {
   const router = useRouter();
   const [userId, setUserId] = useState<string>('');
@@ -31,6 +33,7 @@ export default function Room({
   const dispatch = useAppDispatch();
   useEffect(() => {
     if (message === 'notLogin') {
+      console.log(mydata);
       console.log('로그인해라');
       router.push('/');
     }
@@ -79,14 +82,13 @@ export const getServerSideProps: GetServerSideProps =
     });
     try {
       const re = await api.get(`/user/mypage/profile`);
-      console.log('re->', re);
       const res = re.data.body;
-      console.log('res->', res);
       store.dispatch(setLogin({ isLogin: true }));
       store.dispatch(setMypage(res));
       return {
         props: {
           message: 'Login',
+          mydata: 'res',
           roomIdx: context.params?.roomIdx || 'noRoom',
         },
       };
@@ -95,7 +97,8 @@ export const getServerSideProps: GetServerSideProps =
       return {
         props: {
           message: 'notLogin',
-          roomIdx: context.params?.roomIdx || 'noRoom',
+          mydata: '',
+          roomIdx: '',
         },
       };
     } finally {
