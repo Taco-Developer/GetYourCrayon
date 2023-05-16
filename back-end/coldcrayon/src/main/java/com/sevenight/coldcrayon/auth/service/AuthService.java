@@ -1,6 +1,7 @@
 package com.sevenight.coldcrayon.auth.service;
 
 import com.sevenight.coldcrayon.auth.dto.UserDto;
+import com.sevenight.coldcrayon.auth.dto.UserResponseDto;
 import com.sevenight.coldcrayon.user.entity.User;
 import com.sevenight.coldcrayon.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -84,9 +85,18 @@ public class AuthService {
     }
 
     // 본인의 모든 정보가 필요할때 사용합니다
-    public UserDto selectOneMemberAllInfo (String token){
+    public UserResponseDto selectUser (String token){
         String email = tokenservice.getEmail(token);
-        return UserDto.of(userRepository.findByUserEmail(email));
+        User realUser = userRepository.findByUserEmail(email);
+
+        UserResponseDto res = new UserResponseDto();
+
+        res.setUserIdx(realUser.getUserIdx());
+        res.setUserNickname(realUser.getUserNickname());
+        res.setUserPoint(realUser.getUserPoint());
+        res.setUserProfile(realUser.getUserProfile());
+
+        return res;
     }
 
     // 중복체크를 위해 모든 닉네임을 가져옵니다
