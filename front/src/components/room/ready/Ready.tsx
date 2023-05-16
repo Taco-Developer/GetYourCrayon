@@ -65,7 +65,7 @@ export default function Ready({
   useEffect(() => {
     /** 토큰 */
     const token = getCookie('accesstoken');
-    if (socket) {
+    if (socket && userNickname) {
       socket.onopen = () => {
         sendMessage(socket, 'userIn', { authorization: token });
         sendMessage(socket, 'chat', {
