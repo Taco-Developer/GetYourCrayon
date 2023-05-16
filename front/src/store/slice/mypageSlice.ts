@@ -9,7 +9,7 @@ import {
 interface UserProfile {
   userIdx: number;
   userNickname: string;
-  userProfile: string | null;
+  userProfile: string;
   userPoint: number;
 }
 
@@ -28,7 +28,7 @@ const initialState: MypageStateType = {
   profile: {
     userIdx: 0,
     userNickname: '',
-    userProfile: null,
+    userProfile: '',
     userPoint: 0,
   },
   gacha: [],

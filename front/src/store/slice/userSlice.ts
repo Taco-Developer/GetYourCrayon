@@ -8,15 +8,13 @@ import {
 /**유저상태를 저장 */
 export interface UserStateType {
   userIdx: number;
-  userEmail: string;
   userNickname: string;
   userPoint: number;
-  userProfile: null | string;
+  userProfile: string;
 }
 
 const initialState: UserStateType = {
   userIdx: 0,
-  userEmail: '',
   userNickname: '',
   userPoint: 0,
   userProfile: '',

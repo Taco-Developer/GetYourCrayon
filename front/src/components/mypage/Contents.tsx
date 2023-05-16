@@ -1,5 +1,7 @@
 import React from 'react';
 import tw from 'tailwind-styled-components';
+import Collection from './collection/Collection';
+import Gacha from './gacha/Gacha';
 import { useState } from 'react';
 
 /** 가챠, 컬렉션 컴포넌트 */
@@ -40,9 +42,8 @@ export default function Contents() {
           )}
         </TypeBar>
         <div className="h-full bg-board-color w-full">
-          <div className="flex justify-center items-center h-full">
-            컨텐츠영역
-          </div>
+          {typeCheck[0] && <Collection />}
+          {typeCheck[1] && <Gacha />}
         </div>
       </div>
     </ContentsDiv>
