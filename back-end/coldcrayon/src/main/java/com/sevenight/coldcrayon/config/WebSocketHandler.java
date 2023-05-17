@@ -76,7 +76,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
     public void initailizeRoomInfo(String roomIdx) {
         RoomResponseDto room = roomService.getRoom(roomIdx);
         roomInfoMap.put("roomIdx", roomIdx);
-        roomInfoMap.put("roundTime", 100);
+        roomInfoMap.put("roundTime", 20);
         roomInfoMap.put("roomNow", room.getRoomNow());
         roomInfoMap.put("roomMax", room.getRoomMax());
         roomInfoMap.put("maxRound", room.getMaxRound());
@@ -192,14 +192,18 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
         } else if (type.equals("chat")) {
             String status = jsonMessage.get("status");
+            log.error(jsonMessage.toString());
+
             if(status.equals("answer")){
                 String answer = jsonMessage.get("content");
-                System.err.println("gameInfoMap : " + gameInfoMap.toString());
-                System.err.println(answer);
-                System.err.println("jsonMessage : " + jsonMessage);
+                log.error("answer : " + answer);
+
+                log.error("gameInfoMap : " + gameInfoMap.toString());
+
+                log.error("jsonMessage (202) : " + jsonMessage);
                 if(answer.equals(gameInfoMap.get("correct")) && gameInfoMap.get("winnerIdx").equals("0")){
-                    System.err.println("gameInfoMap.get(\"correct\") : "+ gameInfoMap.get("correct"));
-                    System.err.println();
+                    log.error("gameInfoMap.get(\"correct\") : "+ gameInfoMap.get("correct"));
+
                     String userIdx = jsonMessage.get("userIdx");
                     gameInfoMap.put("winner", userIdx);
                 }
