@@ -13,6 +13,8 @@ import lombok.*;
 @ToString
 public class ResponseRoundDto {
 
+    String type;
+
     String status;
 
     String message;

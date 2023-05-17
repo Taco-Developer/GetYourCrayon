@@ -2,7 +2,6 @@ package com.sevenight.coldcrayon.game.dto;
 
 import com.sevenight.coldcrayon.room.dto.UserHashResponseDto;
 import lombok.*;
-
 import java.util.List;
 import java.util.Map;
 

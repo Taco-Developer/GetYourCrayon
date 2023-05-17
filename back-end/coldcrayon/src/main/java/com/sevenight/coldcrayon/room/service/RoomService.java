@@ -15,7 +15,7 @@ public interface RoomService {
 
     Map<String, Object> saveRoom(UserDto userDto);
 
-    RoomResponseDto joinRoom(UserDto userDto, String roomIdx);
+    Map<String, Object> joinRoom(UserDto userDto, String roomIdx);
 
     RoomResponseDto outRoom(UserDto userDto);
 
