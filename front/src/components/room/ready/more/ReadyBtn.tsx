@@ -99,7 +99,9 @@ export default function ReadyBtn({
         onClick={() => {
           deleteBorad(boardId);
           if (!socket) return;
-          sendMessage(socket, 'gameAlert', { status: 'gameStart' });
+          sendMessage(socket, 'gameAlert', {
+            status: 'gameStart',
+          });
         }}
       >
         게임시작

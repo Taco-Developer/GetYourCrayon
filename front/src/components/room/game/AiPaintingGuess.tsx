@@ -30,6 +30,7 @@ export default function AiPaintingGuess({ socket }: { socket: WebSocket }) {
     answers: { savedAnswers, inputedAnswers },
     gameDatas: { aiImages },
     userInfo: { userIdx, userNickname },
+    roomInfo: { adminUserIdx },
   } = useAppSelector((state) => state);
   const dispatch = useAppDispatch();
 
@@ -59,6 +60,7 @@ export default function AiPaintingGuess({ socket }: { socket: WebSocket }) {
   useEffect(() => {
     if (savedAnswers.length === 0) return;
     if (savedAnswers.length === inputedAnswers.length) {
+      console.log('정답!!!');
       sendMessage(socket, 'roundOver');
       dispatch(endRound());
     }
@@ -108,6 +110,7 @@ export default function AiPaintingGuess({ socket }: { socket: WebSocket }) {
 
   // 시작
   useEffect(() => {
+    // if (userIdx !== adminUserIdx) return;
     if (now === 1) {
       console.log('최초');
       sendMessage(socket, 'gameStart', {
@@ -119,7 +122,7 @@ export default function AiPaintingGuess({ socket }: { socket: WebSocket }) {
         authorization: getCookie('accesstoken'),
       });
     }
-  }, [socket, now]);
+  }, [socket, now, userIdx, adminUserIdx]);
 
   if (aiImages.length === 0) {
     return <Loading />;
