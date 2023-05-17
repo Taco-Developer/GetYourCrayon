@@ -52,8 +52,6 @@ export default function GameRightSide({
     setInputValue('');
   };
 
-  //
-
   return (
     <SideDisplay isLeft={false}>
       <div className="bg-white p-4 rounded-full">{leftTime}s</div>
@@ -72,12 +70,11 @@ export default function GameRightSide({
         <ChatForm onSubmit={chatSubmitHandler}>
           <input
             type="text"
-            name=""
-            id=""
             className="w-full bg-transparent flex-auto px-2 outline-none"
             placeholder="채팅을 입력하세요"
             value={inputValue}
             onChange={chattingChangeHandler}
+            maxLength={20}
           />
           <Button px={2} py={2} rounded="lg" color="bg-amber-300" className="">
             입력
