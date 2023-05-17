@@ -90,7 +90,7 @@ const InfoChangeDiv = tw.div`
  h-full 
  flex 
  items-baseline 
- justify-start 
+ justify-center
  lg:text-lg
  xl:text-xl
 `;

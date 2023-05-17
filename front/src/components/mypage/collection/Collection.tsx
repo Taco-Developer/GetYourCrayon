@@ -5,26 +5,30 @@ import CollectionCard from './CollectionCard';
 export default function Collection() {
   const { mypageInfo } = useAppSelector((state) => state);
   return (
-    <CollectionDiv className="max-h-96 overflow-hidden">
+    <CollectionDiv className="absolute overflow-auto scrollbar-bu">
       <div>
-        Superrare
-        <div className="grid grid-cols-5">
+        <div className=" text-2xl lg:text-4xl text-[#e759c6] m-4">
+          SuperRare
+        </div>
+        <div className="grid grid-cols-7">
           {mypageInfo.gacha[0].superRare.map((data, i) => {
             return <CollectionCard data={data} key={i} />;
           })}
         </div>
       </div>
+      <hr />
       <div>
-        Rare
-        <div className="grid grid-cols-5">
+        <div className=" text-2xl lg:text-4xl text-[#60e364] m-4">Rare</div>
+        <div className="grid grid-cols-7">
           {mypageInfo.gacha[0].rare.map((data, i) => {
             return <CollectionCard data={data} key={i} />;
           })}
         </div>
       </div>
+      <hr />
       <div>
-        Normal
-        <div className="grid grid-cols-5">
+        <div className=" text-2xl lg:text-4xl m-4">Normal</div>
+        <div className="grid grid-cols-7">
           {mypageInfo.gacha[0].normal.map((data, i) => {
             return <CollectionCard data={data} key={i} />;
           })}
@@ -37,6 +41,7 @@ export default function Collection() {
 const CollectionDiv = tw.div`
   flex
   flex-col
+  flex-auto
 
   h-full
   w-full

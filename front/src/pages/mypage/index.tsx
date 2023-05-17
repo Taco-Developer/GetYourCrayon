@@ -92,6 +92,7 @@ MyPage.getLayout = function getLayout(page: ReactElement) {
 };
 
 const Container = tw.div`
+overflow-hidden
   w-screen
   xl:w-10/12
   md:w-9/12
