@@ -7,10 +7,10 @@ import ReadyBtn from './more/ReadyBtn';
 import tw from 'tailwind-styled-components';
 import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
 import { setUser } from '@/store/slice/userSlice';
+import { setRoomInfo } from '@/store/slice/game/gameRoomInfo';
 import { getCookie } from 'cookies-next';
 import { sendMessage } from '@/socket/messageSend';
 import { listenEvent, removeEvent } from '@/socket/socketEvent';
-import { gameAPI } from '@/api/api';
 
 interface RoomPropsType {
   socket: WebSocket | null;
@@ -30,6 +30,8 @@ interface UserInType {
 }
 
 export default function Ready({ socket, setSocket }: RoomPropsType) {
+  const dispatch = useAppDispatch();
+  const { roomInfo } = useAppSelector((state) => state);
   /** 유저 정보 */
   const { userNickname } = useAppSelector((state) => state.userInfo);
   /** 유저가 생성한 방 */
@@ -39,19 +41,6 @@ export default function Ready({ socket, setSocket }: RoomPropsType) {
   const [choice, setChoice] = useState<number>(2);
   /** 게시물 번호 */
   const [boardId, setBoardId] = useState<number | null>(null);
-  /** 방정보 */
-  const [roomInfo, setRoomInfo] = useState<{}>({
-    adminUserIdx: 0,
-    gameCategory: '',
-    maxRound: 0,
-    message: '',
-    nowRound: 0,
-    roomIdx: '',
-    roomMax: 0,
-    roomNow: 0,
-    roomStatus: '',
-    status: '',
-  });
   /** 방에 유저 목록 */
   const [userList, setUserList] = useState<UserData[]>([]);
 
@@ -60,20 +49,6 @@ export default function Ready({ socket, setSocket }: RoomPropsType) {
       socket.close();
     }
   };
-
-  useEffect(() => {
-    const roomInfoFind = async (idx: string) => {
-      await gameAPI
-        .findRoom(idx)
-        .then((request) => {
-          console.log(request.data), setRoomInfo(request.data);
-        })
-        .catch((err) => console.log(err));
-    };
-    if (roomIdx) {
-      roomInfoFind(roomIdx);
-    }
-  }, [roomIdx]);
 
   useEffect(() => {
     if (roomIdx !== null) {
@@ -93,6 +68,7 @@ export default function Ready({ socket, setSocket }: RoomPropsType) {
         const data = JSON.parse(event.data);
         if (data.type !== 'userIn') return;
         setUserList(data.userList);
+        dispatch(setRoomInfo(data.roomInfo));
         console.log(data);
       };
 

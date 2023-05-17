@@ -37,6 +37,8 @@ import gameModeSliceReducer from './slice/game/gameModeSlice';
 import userRoleSliceReducer from './slice/game/userRoleSlice';
 import gameLoadingSliceReducer from './slice/game/gameLoadingSlice';
 import roomStatusSliceReducer from './slice/game/roomStatusSlice';
+import gameInfoSlice, { RoomInfotype } from './slice/game/gameRoomInfo';
+
 // import { persistReducer, persistStore } from 'redux-persist';
 // import {
 //   FLUSH,
@@ -67,6 +69,7 @@ export interface ReducerStates {
   gameMode: string;
   gameLoading: boolean;
   roomStatus: string;
+  roomInfo: RoomInfotype;
 }
 
 //HYDRATE 액션을 정의 -> 슬라이스 통함
@@ -97,6 +100,7 @@ const rootReducer = (
         gameMode: gameModeSliceReducer,
         gameLoading: gameLoadingSliceReducer,
         roomStatus: roomStatusSliceReducer,
+        roomInfo: gameInfoSlice.reducer,
       });
       return combinedReducer(state, action);
     }
