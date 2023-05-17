@@ -17,7 +17,7 @@ interface ReadyPropsType {
   userList: UserData[];
 }
 
-export default function UserList(userList: any) {
+export default function UserList(userList: [] | any) {
   const [userCnt, setUserCnt] = useState<number>(6);
   const [player, setPlayer] = useState<string[]>([
     'A도겸',
@@ -48,7 +48,7 @@ export default function UserList(userList: any) {
       </TitleDiv>
       <UserDrop setUserCnt={setUserCnt} />
       <ListDiv>
-        {userList.map((userNickname, i) => (
+        {player.map((userNickname, i) => (
           <UserDiv key={i}>
             <Profile>
               <Image
@@ -59,7 +59,7 @@ export default function UserList(userList: any) {
               />
             </Profile>
             <InnerDiv>
-              <UserName>{user}</UserName>
+              <UserName>{userNickname}</UserName>
             </InnerDiv>
           </UserDiv>
         ))}
