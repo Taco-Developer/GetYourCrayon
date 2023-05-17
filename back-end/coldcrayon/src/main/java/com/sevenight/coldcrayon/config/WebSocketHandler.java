@@ -15,6 +15,7 @@ import com.sevenight.coldcrayon.game.service.GameService;
 import com.sevenight.coldcrayon.room.dto.RoomDto;
 import com.sevenight.coldcrayon.room.dto.RoomResponseDto;
 import com.sevenight.coldcrayon.room.dto.UserHashResponseDto;
+import com.sevenight.coldcrayon.room.entity.RoomHash;
 import com.sevenight.coldcrayon.room.entity.UserHash;
 import com.sevenight.coldcrayon.room.service.RoomService;
 import com.sevenight.coldcrayon.theme.entity.ThemeCategory;
@@ -195,16 +196,10 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
             if(status.equals("answer")){
                 String answer = jsonMessage.get("content");
-                log.error("answer : " + answer);
-
-                log.error("gameInfoMap : " + gameInfoMap.toString());
-
-                log.error("jsonMessage (202) : " + jsonMessage);
-                if(answer.equals(gameInfoMap.get("correct")) && gameInfoMap.get("winnerIdx").equals("0")){
-                    log.error("gameInfoMap.get(\"correct\") : "+ gameInfoMap.get("correct"));
-
-                    String userIdx = jsonMessage.get("userIdx");
-                    gameInfoMap.put("winner", userIdx);
+                if(answer.equals(gameInfoMap.get("correct"))){
+                    Long userIdx = Long.parseLong(jsonMessage.get("userIdx"));
+                    String roomIdx = (String) roomInfoMap.get("roomIdx");
+                    roomService.CorrectUser(roomIdx, userIdx);
                 }
             }
             for (WebSocketSession s : sessions) {
@@ -515,12 +510,9 @@ public class WebSocketHandler extends TextWebSocketHandler {
         // 라운드 종료  ------- type 지정 필요 -------   // 수민: 임시로 내가 설정해서 사용하도록 함
         else if (type.equals("roundOver")) {
             gameOnGoing = false;        // 시간 감소 로직 중지
-            Long winnerIdx = Long.valueOf(jsonMessage.get("winnerIdx"));
 
-            gameInfoMap.put("winnerIdx", "0");
             RequestRoundDto requestRoundDto = RequestRoundDto.builder()
                     .roomIdx(roomId)
-                    .winner(winnerIdx)
                     .build();
 
             ResponseRoundDto responseRoundDto = gameService.endRound(requestRoundDto);
