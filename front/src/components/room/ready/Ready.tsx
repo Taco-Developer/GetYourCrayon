@@ -15,7 +15,6 @@ import { gameAPI } from '@/api/api';
 interface RoomPropsType {
   socket: WebSocket | null;
   setSocket: React.Dispatch<React.SetStateAction<WebSocket | null>>;
-  setStatus: React.Dispatch<React.SetStateAction<string>>;
 }
 
 interface MessageType {
@@ -29,7 +28,7 @@ interface UserInType {
   userList: {};
 }
 
-export default function Ready({ setStatus, socket, setSocket }: RoomPropsType) {
+export default function Ready({ socket, setSocket }: RoomPropsType) {
   /** 유저 정보 */
   const { profile } = useAppSelector((state) => state.mypageInfo);
   /** 유저가 생성한 방 */
@@ -85,34 +84,36 @@ export default function Ready({ setStatus, socket, setSocket }: RoomPropsType) {
   }, [roomIdx, setSocket]);
 
   useEffect(() => {
-    const roomInHandler = (event: any) => {
-      const data = JSON.parse(event.data);
-      if (data.type !== 'userIn') return;
-      setUserList(data.userList);
-      console.log(data);
-    };
-    /** 토큰 */
-    const token = getCookie('accesstoken');
     if (socket) {
+      /** 토큰 */
+      const token = getCookie('accesstoken');
       socket.onopen = () => {
+        const roomInHandler = (event: MessageEvent) => {
+          const data = JSON.parse(event.data);
+          if (data.type !== 'userIn') return;
+          setUserList(data.userList);
+          console.log(data);
+        };
+
+        const messageHandler = (event: MessageEvent) => {
+          const data = JSON.parse(event.data);
+          if (data.type !== 'chat') return;
+          setMessageList((prev) => [...prev, data]);
+        };
+
+        listenEvent(socket, roomInHandler);
+        listenEvent(socket, messageHandler);
+
         sendMessage(socket, 'userIn', { authorization: token });
         sendMessage(socket, 'chat', {
           author: 'admin',
           message: `${profile.userNickname}님이 입장하셨습니다 :)`,
         });
-        listenEvent(socket, roomInHandler);
-      };
 
-      const messageHandler = (event: MessageEvent) => {
-        const data = JSON.parse(event.data);
-        if (data.type !== 'chat') return;
-        setMessageList((prev) => [...prev, data]);
-      };
-      listenEvent(socket, messageHandler);
-
-      return () => {
-        removeEvent(socket, messageHandler);
-        removeEvent(socket, roomInHandler);
+        return () => {
+          removeEvent(socket, messageHandler);
+          removeEvent(socket, roomInHandler);
+        };
       };
     }
   }, [profile.userNickname, socket]);

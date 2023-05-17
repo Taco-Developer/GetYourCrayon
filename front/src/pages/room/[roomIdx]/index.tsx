@@ -24,7 +24,6 @@ export default function Room({
 }) {
   const { profile } = useAppSelector((state) => state.mypageInfo);
   const router = useRouter();
-  const [status, setStatus] = useState<string>('ready');
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const roomStatus = useAppSelector((state) => state.roomStatus);
 
