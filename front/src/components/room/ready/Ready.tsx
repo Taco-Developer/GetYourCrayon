@@ -99,7 +99,7 @@ export default function Ready({ socket, setSocket }: RoomPropsType) {
   return (
     <RoomBody>
       <UserDiv>
-        <UserList userList={userList} />
+        <UserList userList={userList} socket={socket} />
       </UserDiv>
       <MoreDiv>
         <PickDiv>

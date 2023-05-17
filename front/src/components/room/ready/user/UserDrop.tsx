@@ -2,11 +2,14 @@ import React, { useState } from 'react';
 import tw from 'tailwind-styled-components';
 import Dropdown from '../../../ui/Dropdown';
 
+import { sendMessage } from '@/socket/messageSend';
+
 interface UserListProps {
   setUserMaxCnt: React.Dispatch<React.SetStateAction<number>>;
+  socket: WebSocket | null;
 }
 
-export default function UserDrop({ setUserMaxCnt }: UserListProps) {
+export default function UserDrop({ setUserMaxCnt, socket }: UserListProps) {
   const [cntOption, setCntOption] = useState<{
     label: string;
     value: string | number;

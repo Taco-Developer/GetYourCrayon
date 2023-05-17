@@ -16,9 +16,10 @@ export interface UserData {
 
 interface ReadyPropsType {
   userList: UserData[];
+  socket: WebSocket | null;
 }
 
-export default function UserList({ userList }: ReadyPropsType) {
+export default function UserList({ userList, socket }: ReadyPropsType) {
   const [userCnt, setUserCnt] = useState<number>(0);
   const [userMaxCnt, setUserMaxCnt] = useState<number>(6);
   const { roomIdx } = useAppSelector((state) => state.roomIdx);
@@ -43,7 +44,7 @@ export default function UserList({ userList }: ReadyPropsType) {
       >
         플레이어 {userCnt}/{userMaxCnt}
       </TitleDiv>
-      <UserDrop setUserMaxCnt={setUserMaxCnt} />
+      <UserDrop setUserMaxCnt={setUserMaxCnt} socket={socket} />
       <ListDiv>
         {userList.map((user, i) => (
           <UserDiv key={i}>
