@@ -27,7 +27,7 @@ export default function UserList(userList: [] | any) {
     '갓 덕호',
     '도커경민',
   ]);
-  console.log(userList);
+  console.log(`UserList -> ${userList}`);
   const { roomIdx } = useAppSelector((state) => state.roomIdx);
 
   const roomInfo = async (idx: string) => {
