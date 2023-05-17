@@ -428,9 +428,9 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 @Override
                 public void run() {
                     if (time > 0) {
-                        Map<String, String> response = new HashMap<>();
+                        Map<String, Object> response = new HashMap<>();
                         response.put("type", "timeStart");
-                        response.put("message", String.valueOf(time));
+                        response.put("message", time);
                         String json;
                         try {
                             json = objectMapper.writeValueAsString(response);
