@@ -597,9 +597,9 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
 ///
 
-        log.info("session.getId(): {}", session.getId());
-        log.info("userInfosMap: {}", userInfosMap);
-
+//        log.info("session.getId(): {}", session.getId());
+//        log.info("userInfosMap: {}", userInfosMap);
+//
         UserInfo userInfo = (UserInfo) userInfosMap.get(session.getId());   // 세션의 Id로 유저 정보를 가져옴
         log.info("userInfo: {}", userInfo);
 

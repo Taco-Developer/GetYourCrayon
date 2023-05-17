@@ -64,19 +64,19 @@ public class GameServiceImpl implements GameService{
 
 
                 // 방에 참여하고 있는 유저를 불러와서 점수를 0점으로 만든다.
+                List<UserHashResponseDto> userHashResponseDtoList = new ArrayList<>();
+
                 List<Object> userList = joinListService.getJoinList(room.getRoomIdx());
                 for(Object userIdx : userList){
                     Optional<UserHash> userHashOptional = userHashRepository.findById(Long.parseLong(userIdx.toString()));
-                    if(userHashOptional.isEmpty()){
-                        if(userList.size() == room.getRoomNow()){
-                            room.setRoomNow(room.getRoomNow() + 1);
-                            joinListService.removeUser(room.getRoomIdx(), Long.parseLong(userIdx.toString()));
-                        }
+                    if(userHashOptional.isPresent()){
+                        UserHash userHash = userHashOptional.get();
+                        System.err.println(userHash);
+                        userHash.setUserScore(0);
+                        userHashRepository.save(userHash);
+                        userHashResponseDtoList.add(UserHashResponseDto.of(userHash));
                     }
 
-                    UserHash userHash = userHashOptional.get();
-                    userHash.setUserScore(0);
-                    userHashRepository.save(userHash);
                 }
 
 
@@ -129,7 +129,7 @@ public class GameServiceImpl implements GameService{
                 Object user = userList.get(random.nextInt(userList.size()));
 
                 responseGameDto.setSelectedUserIdx(Long.parseLong(user.toString()));
-                responseGameDto.setUserList(userList);
+                responseGameDto.setUserList(userHashResponseDtoList);
             }
         }
 
@@ -246,13 +246,25 @@ public class GameServiceImpl implements GameService{
                     default:
                         System.err.println("게임 모드 없어~~~~~~~~~~~~~~~~");
                         return null;
+
                 }
 
+                List<UserHashResponseDto> userHashResponseDtoList = new ArrayList<>();
+
+                for(Object userIdx : userList){
+                    Optional<UserHash> userHashOptional = userHashRepository.findById(Long.parseLong(userIdx.toString()));
+                    if(userHashOptional.isPresent()){
+                        UserHash userHash = userHashOptional.get();
+                        userHashRepository.save(userHash);
+                        userHashResponseDtoList.add(UserHashResponseDto.of(userHash));
+                    }
+
+                }
                 // 그림 그리는 유저 1명 지정하기
                 Object user = userList.get(random.nextInt(userList.size()));
 
                 responseGameDto.setSelectedUserIdx(Long.parseLong(user.toString()));
-                responseGameDto.setUserList(userList);
+                responseGameDto.setUserList(userHashResponseDtoList);
             }
         } else {
             message = "방이 없어요.";
