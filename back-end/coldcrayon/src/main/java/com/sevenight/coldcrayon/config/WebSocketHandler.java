@@ -455,6 +455,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
             };
 
             // 매서드 실행부
+            executorService.scheduleAtFixedRate(task, initialDelay, period, TimeUnit.SECONDS);
 
         }
 
