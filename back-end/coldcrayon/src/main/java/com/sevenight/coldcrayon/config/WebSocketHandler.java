@@ -428,7 +428,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
                 @Override
                 public void run() {
-                    if (time > 0) {
+                    if (time >= 0) {
                         Map<String, Object> response = new HashMap<>();
                         response.put("type", "timeStart");
                         response.put("message", time);
