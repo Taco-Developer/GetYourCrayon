@@ -25,7 +25,6 @@ import leftTimeSliceReducer from './slice/game/leftTimeSlice';
 import aiGameDatasSliceReducer, {
   AiGameDatasType,
 } from './slice/game/aiGameDatasSlice';
-import isGameStartedSliceReducer from './slice/game/isGameStartedSlice';
 import gameThemeSliceReducer, {
   GameThemeType,
 } from './slice/game/gameThemeSlice';
@@ -34,6 +33,8 @@ import answersSliceReducer, { AnswersType } from './slice/game/answersSlice';
 import gameRoomSlice, { RoomIdxtype } from './slice/game/gameRoom';
 import gameModeSliceReducer from './slice/game/gameModeSlice';
 import userRoleSliceReducer from './slice/game/userRoleSlice';
+import gameLoadingSliceReducer from './slice/game/gameLoadingSlice';
+import roomStatusSliceReducer from './slice/game/roomStatusSlice';
 // import { persistReducer, persistStore } from 'redux-persist';
 // import {
 //   FLUSH,
@@ -53,7 +54,6 @@ export interface ReducerStates {
   gameRound: GameRoundType;
   inGameChatDatas: InGameChatDataType[];
   aiGameDatas: AiGameDatasType;
-  isGameStarted: boolean;
   gameTheme: GameThemeType;
   userInfo: UserStateType;
   userRole: string;
@@ -63,6 +63,8 @@ export interface ReducerStates {
   answers: AnswersType;
   roomIdx: RoomIdxtype;
   gameMode: string;
+  gameLoading: boolean;
+  roomStatus: string;
 }
 
 //HYDRATE 액션을 정의 -> 슬라이스 통함
@@ -82,7 +84,6 @@ const rootReducer = (
         gameUsers: gameUsersSliceReducer,
         gameRound: gameRoundSliceReducer,
         inGameChatDatas: inGameChatDatasSliceReducer,
-        isGameStarted: isGameStartedSliceReducer,
         gameTheme: gameThemeSliceReducer,
         userInfo: userSlice.reducer,
         userRole: userRoleSliceReducer,
@@ -92,6 +93,8 @@ const rootReducer = (
         answers: answersSliceReducer,
         roomIdx: gameRoomSlice.reducer,
         gameMode: gameModeSliceReducer,
+        gameLoading: gameLoadingSliceReducer,
+        roomStatus: roomStatusSliceReducer,
       });
       return combinedReducer(state, action);
     }

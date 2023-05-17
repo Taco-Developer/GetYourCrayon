@@ -3,11 +3,10 @@ import React from 'react';
 import Drawing from './roles/Drawing';
 import Solving from './roles/Solving';
 import { useAppSelector } from '@/store/thunkhook';
+import Loading from '@/components/ui/Loading';
 
 export default function CatchMinde({ socket }: { socket: WebSocket }) {
   const { userRole } = useAppSelector((state) => state);
-
-  if (userRole === '') return <div>로딩 중!!!~~</div>;
 
   switch (userRole) {
     case 'drawing':
@@ -15,6 +14,6 @@ export default function CatchMinde({ socket }: { socket: WebSocket }) {
     case 'solving':
       return <Solving isReverseGame={false} socket={socket} />;
     default:
-      return <div>Something wrong!!!</div>;
+      return <Loading />;
   }
 }
