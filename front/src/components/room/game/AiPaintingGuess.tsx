@@ -14,7 +14,6 @@ import { Input } from '@/components/ui/Input';
 
 import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
 import { addAiImages, savePrompt } from '@/store/slice/game/gameDatasSlice';
-import { InGameChatDataType } from '@/store/slice/game/inGameChatDatasSlice';
 import { saveTheme } from '@/store/slice/game/gameThemeSlice';
 import { addSavedAnswers } from '@/store/slice/game/answersSlice';
 import { listenEvent, removeEvent } from '@/socket/socketEvent';
@@ -46,7 +45,7 @@ export default function AiPaintingGuess({ socket }: { socket: WebSocket }) {
   const answerSubmitHandler: React.FormEventHandler = (event) => {
     event.preventDefault();
     const answer = answerInputValue;
-    const chatInputValue: InGameChatDataType = {
+    const chatInputValue = {
       user: userNickname,
       status: 'answer',
       content: answer,
