@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import tw from 'tailwind-styled-components';
 import Dropdown from '../../../ui/Dropdown';
-import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
 
 interface UserListProps {
   setUserMaxCnt: React.Dispatch<React.SetStateAction<number>>;
