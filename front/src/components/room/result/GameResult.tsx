@@ -1,110 +1,141 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import Image from 'next/image';
 
 import tw from 'tailwind-styled-components';
 
 import Margin, { MarginType } from '@/components/ui/Margin';
-import { useAppSelector } from '@/store/thunkhook';
+import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
 import { Button } from '@/components/ui/Button';
+import { sendMessage } from '@/socket/messageSend';
+import { setGameUsers } from '@/store/slice/game/gameUsersSlice';
+import { listenEvent, removeEvent } from '@/socket/socketEvent';
 
-/** 결과 목록 */
-const INIT_RESULTS = [
-  {
-    user: { userid: 1, nickname: '아프리카청춘이다', profileImg: '' },
-    result:
-      'https://img.freepik.com/free-vector/cute-corgi-dog-sitting-cartoon-vector-icon-illustration-animal-nature-icon-concept-isolated-premium-vector-flat-cartoon-style_138676-4181.jpg?size=626&ext=jpg&ga=GA1.1.1340115615.1672808342&semt=sph',
-  },
-  {
-    user: { userid: 1, nickname: '아프리카청춘이다', profileImg: '' },
-    result:
-      'https://img.freepik.com/free-vector/cute-corgi-dog-sitting-cartoon-vector-icon-illustration-animal-nature-icon-concept-isolated-premium-vector-flat-cartoon-style_138676-4181.jpg?size=626&ext=jpg&ga=GA1.1.1340115615.1672808342&semt=sph',
-  },
-  {
-    user: { userid: 1, nickname: '아프리카청춘이다', profileImg: '' },
-    result:
-      'https://img.freepik.com/free-vector/cute-corgi-dog-sitting-cartoon-vector-icon-illustration-animal-nature-icon-concept-isolated-premium-vector-flat-cartoon-style_138676-4181.jpg?size=626&ext=jpg&ga=GA1.1.1340115615.1672808342&semt=sph',
-  },
-  {
-    user: { userid: 1, nickname: '아프리카청춘이다', profileImg: '' },
-    result:
-      'https://img.freepik.com/free-vector/cute-corgi-dog-sitting-cartoon-vector-icon-illustration-animal-nature-icon-concept-isolated-premium-vector-flat-cartoon-style_138676-4181.jpg?size=626&ext=jpg&ga=GA1.1.1340115615.1672808342&semt=sph',
-  },
-  {
-    user: { userid: 1, nickname: '아프리카청춘이다', profileImg: '' },
-    result:
-      'https://img.freepik.com/free-vector/cute-corgi-dog-sitting-cartoon-vector-icon-illustration-animal-nature-icon-concept-isolated-premium-vector-flat-cartoon-style_138676-4181.jpg?size=626&ext=jpg&ga=GA1.1.1340115615.1672808342&semt=sph',
-  },
-];
+interface UrlListType {
+  [key: number]: string[];
+}
 
 export default function GameResult({ socket }: { socket: WebSocket }) {
-  const { gameUsers } = useAppSelector((state) => state);
+  const {
+    gameUsers,
+    roomInfo: { maxRound, roomMax },
+  } = useAppSelector((state) => state);
+  const dispatch = useAppDispatch();
+  const [urlList, setUrlList] = useState<UrlListType>();
+  const [urlKey, setUrlKey] = useState(0);
+  const [showDatas, setShowDatas] = useState<string[][]>([]);
+
+  // socket 이벤트 등록 및 전송
+  useEffect(() => {
+    if (!socket) return;
+    const messageHandler = (event: MessageEvent) => {
+      const data = JSON.parse(event.data);
+      if (data.type !== 'gameOver') return;
+
+      console.log(data);
+
+      const { userList, urlList } = data;
+      dispatch(setGameUsers(userList));
+      setUrlList(urlList);
+    };
+
+    listenEvent(socket, messageHandler);
+
+    sendMessage(socket, 'gameOver');
+
+    return () => {
+      removeEvent(socket, messageHandler);
+    };
+  }, [socket, dispatch]);
+
+  // 1초마다 urlIdx 1 증가
+  useEffect(() => {
+    if (!urlList) return;
+    if (maxRound === urlKey) return;
+
+    const timer = setInterval(() => {
+      setUrlKey((prevKey) => prevKey + 1);
+    }, 1500);
+
+    return () => {
+      clearInterval(timer);
+    };
+  }, [urlList, maxRound, urlKey]);
+
+  // urlIdx가 증가하면 showDatas 추가
+  useEffect(() => {
+    if (urlKey < 1 || !urlList) return;
+    setShowDatas((prev) => [...prev, urlList[urlKey]]);
+  }, [urlList, urlKey]);
 
   return (
     <Container>
       <main className="flex-auto flex gap-6 overflow-hidden">
         <LeftSection>
-          <Margin type={MarginType.height} size={16} />
           <div className="flex justify-center gap-2 text-2xl">
             <h2>플레이어</h2>
-            <span>6/6</span>
+            <span>
+              {gameUsers.length} / {roomMax}
+            </span>
           </div>
           <Margin type={MarginType.height} size={40} />
           <UserList>
-            {gameUsers.map((user) => (
-              <UserItem key={user.userIdx}>
-                <UserProfile />
-                <span className="text-ellipsis">{user.userNickname}</span>
+            {gameUsers.map(({ userIdx, userNickname, userProfile }) => (
+              <UserItem key={userIdx}>
+                <UserProfile>
+                  <Image
+                    src={userProfile}
+                    alt="프로필"
+                    fill
+                    sizes="100%"
+                    priority
+                  />
+                </UserProfile>
+                <span className="text-ellipsis">{userNickname}</span>
                 <div className="flex-auto flex justify-end text-2xl"></div>
               </UserItem>
             ))}
           </UserList>
-          <Margin type={MarginType.height} size={40} />
         </LeftSection>
         <RightSection>
-          <div className="flex-auto rounded-xl bg-[#5AAEFC] p-4 overflow-y-auto">
-            <h2 className="text-2xl">결과 보기</h2>
-            <Margin type={MarginType.height} size={16} />
-            <ul className="">
-              {INIT_RESULTS.map((result, idx) => (
-                <li key={idx}>
-                  <div className="flex items-center">
-                    <UserProfile />
-                    <Margin type={MarginType.width} size={8} />
-                    <span>{result.user.nickname}</span>
-                  </div>
-                  <Margin type={MarginType.height} size={8} />
-                  <div className="flex">
-                    <Margin type={MarginType.width} size={40} />
-                    <Image
-                      src={result.result}
-                      alt="유저가 그린 그림"
-                      width={200}
-                      height={200}
-                    />
-                  </div>
-                  <Margin type={MarginType.height} size={16} />
+          <div className="h-full rounded-xl bg-[#5AAEFC] px-8 py-6">
+            <h2 className="text-2xl">게임 결과</h2>
+            <Margin type={MarginType.height} size={24} />
+            <ul className="h-full flex flex-col gap-6 overflow-y-auto">
+              {showDatas.map((url, idx) => (
+                <li key={idx} className="">
+                  <div>{url[0]}</div>
+                  <div>{url[1]}</div>
+                  <div>{url[2]}</div>
+                  <div>{url[3]}</div>
                 </li>
               ))}
             </ul>
+            <div></div>
           </div>
           <div className="flex justify-center">
             <Button
-              px={6}
+              px={8}
               py={2}
               rounded="2xl"
               color="bg-[#5AAEFC]"
               className="text-xl text-white"
+              onClick={() => {
+                sendMessage(socket, 'gameAlert', { status: 'ready' });
+              }}
             >
-              나가기
+              대기방
             </Button>
             <Margin type={MarginType.width} size={40} />
             <Button
-              px={6}
+              px={8}
               py={2}
               color="bg-amber-500"
               rounded="2xl"
               className="text-xl"
+              onClick={() => {
+                sendMessage(socket, 'gameAlert', { status: 'gameStart' });
+              }}
             >
               다시하기
             </Button>
@@ -133,6 +164,8 @@ const Container = tw.div`
 const LeftSection = tw.div`
     w-1/4 
     
+    p-6
+
     bg-[#5AAEFC] 
     rounded-xl 
 
@@ -151,16 +184,13 @@ const RightSection = tw.div`
 const UserList = tw.ul`
     flex-auto
     
-    px-2 
-    
     flex 
     flex-col 
     justify-around
+    gap-6
 `;
 
 const UserItem = tw.li`
-    w-full
-
     p-2
 
     flex
@@ -168,15 +198,17 @@ const UserItem = tw.li`
     gap-2
 
     outline
-    outline-1
+    outline-2
     outline-white
     rounded-l-full
 `;
 
 const UserProfile = tw.div`
-    w-[40px] 
-    h-[40px] 
+    w-[48px] 
+    h-[48px] 
 
     bg-white 
     rounded-full
+
+    relative
 `;

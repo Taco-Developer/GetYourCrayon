@@ -77,7 +77,7 @@ export default function MyPage({ message }: { message: string }) {
     if (message === 'notLogin') {
       setOpen(true);
     }
-  }, []);
+  }, [message]);
   return (
     <Container>
       <UserInfo />
