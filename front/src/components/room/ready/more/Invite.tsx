@@ -24,7 +24,7 @@ const CustomDialogTitle = (props: any) => {
 
   useEffect(() => {
     if (userInfo.userIdx === roomInfo.adminUserIdx) {
-      setBtnAdmin(true);
+      setBtnAdmin(false);
     }
   }, [roomInfo.adminUserIdx]);
 
