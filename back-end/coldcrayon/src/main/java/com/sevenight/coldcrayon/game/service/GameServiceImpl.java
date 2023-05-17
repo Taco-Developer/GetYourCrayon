@@ -279,13 +279,11 @@ public class GameServiceImpl implements GameService{
         GameEndDto gameEndDto = new GameEndDto();
 
         List<Object> userList = joinListService.getJoinList(roomIdx);
-        System.err.println("userList" +"\n" + userList);
         Optional<RoomHash> optionalRoomHash = roomRepository.findById(roomIdx);
         if (optionalRoomHash.isPresent()) {
             List<UserHashResponseDto> userHashResponseDtoList = new ArrayList<>();
 
             RoomHash roomHash = optionalRoomHash.get();
-            System.err.println("roomHash" +"\n" + roomHash);
 
             gameEndDto.setMessage("게임 끝");
             gameEndDto.setStatus("success");
@@ -303,6 +301,8 @@ public class GameServiceImpl implements GameService{
                     userHashRepository.save(userHash);
                 }
             }
+
+            Collections.sort(userHashResponseDtoList);
 
             Map<Integer, List<String>> urlMap = new LinkedHashMap<>();
             String topDir = "/getchacrayon/image/history/" + roomHash.getRoomIdx() + "/" + roomHash.getGameCnt();
