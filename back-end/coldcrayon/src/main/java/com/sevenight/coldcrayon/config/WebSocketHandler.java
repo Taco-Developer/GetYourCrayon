@@ -160,7 +160,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
         /// chat, draw, userId, {userScore} //
 
         // userIn:유저가 들어올 때 userData: (유저Id, 기본점수)
-        Long userIdx;
         if (type.equals("userIn")) {
             String authorization = jsonMessage.get("authorization");
             UserDto userDto = authService.selectOneMember(HeaderUtil.getAccessTokenString(authorization));
