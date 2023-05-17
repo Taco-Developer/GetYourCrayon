@@ -6,10 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.openid.connect.sdk.claims.UserInfo;
 import com.sevenight.coldcrayon.auth.dto.UserDto;
 import com.sevenight.coldcrayon.auth.service.AuthService;
-import com.sevenight.coldcrayon.game.dto.GameRequestDto;
-import com.sevenight.coldcrayon.game.dto.RequestRoundDto;
-import com.sevenight.coldcrayon.game.dto.ResponseGameDto;
-import com.sevenight.coldcrayon.game.dto.ResponseRoundDto;
+import com.sevenight.coldcrayon.game.dto.*;
 import com.sevenight.coldcrayon.game.entity.GameCategory;
 import com.sevenight.coldcrayon.game.service.GameService;
 import com.sevenight.coldcrayon.room.dto.RoomDto;
@@ -571,6 +568,18 @@ public class WebSocketHandler extends TextWebSocketHandler {
             response.put("sortedList", sortedList);
 
             String jsonResponse = objectMapper.writeValueAsString(response);
+            for (WebSocketSession s : sessions) {
+                if (s.isOpen()) {
+                    s.sendMessage(new TextMessage(jsonResponse));
+                }
+            }
+        }
+        else if(type.equals("gameOver")){
+
+            GameEndDto gameEndDto = gameService.endGame(roomId);
+
+
+            String jsonResponse = objectMapper.writeValueAsString(gameEndDto);
             for (WebSocketSession s : sessions) {
                 if (s.isOpen()) {
                     s.sendMessage(new TextMessage(jsonResponse));
