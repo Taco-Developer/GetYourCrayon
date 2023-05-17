@@ -56,7 +56,6 @@ public class GameServiceImpl implements GameService{
                 status = "success";
 
                 room.setRoomStatus(RoomStatus.Playing);
-                room.setMaxRound(gameRequestDto.getMaxRound());
                 room.setGameCnt(room.getGameCnt() + 1);
                 room.setGameCategory(gameRequestDto.getGameCategory());
                 room.setNowRound(1);
@@ -171,6 +170,8 @@ public class GameServiceImpl implements GameService{
             }
             System.err.println("여기까지 통과1");
             responseRoundDto.setUserList(userHashResponseDtoList);
+            responseRoundDto.setDefualtScore(3);
+            responseRoundDto.setWinnerScore(3);
             System.err.println("여기까지 통과2");
         } else{
             message = "조회한 방이 없습니다.";
