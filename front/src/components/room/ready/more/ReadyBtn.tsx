@@ -95,6 +95,7 @@ export default function ReadyBtn({
         <Invite copyAction={handleCopyClick} createAction={creatBaseUrl} />
       </ModalBtn>
       <GoBtn
+        className={btnAdmin ? 'bg-slate-500 hover:bg-slate-500' : ''}
         disabled={btnAdmin}
         onClick={() => {
           deleteBorad(boardId);
