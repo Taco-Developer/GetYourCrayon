@@ -39,11 +39,11 @@ export default function InGameRoom({
         // 정답 입력 처리
         if (
           status === 'answer' &&
-          (savedAnswers.indexOf(content) === -1 ||
-            inputedAnswers.indexOf(content) !== -1)
-        )
-          return;
-        dispatch(addInputedAnswers(content));
+          savedAnswers.indexOf(content) !== -1 &&
+          inputedAnswers.indexOf(content) === -1
+        ) {
+          dispatch(addInputedAnswers(content));
+        }
       }
 
       // 시간
@@ -55,6 +55,8 @@ export default function InGameRoom({
       // 라운드 종료
       if (data.type === 'roundOver') {
         const { winnerUserIdx, userList } = data;
+        console.log(data);
+        console.log('userList: ', userList, 'winnerIdx: ', winnerUserIdx);
         dispatch(setWinner(winnerUserIdx));
         dispatch(setGameUsers(userList));
         dispatch(openIsScoreCheckModalOpened());
