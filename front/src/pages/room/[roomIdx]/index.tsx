@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from 'react';
+import { getCookie } from 'cookies-next';
+import { useRouter } from 'next/router';
+
+import axios from 'axios';
+
+import { gameAPI } from '@/api/api';
+
 import Ready from '@/components/room/ready/Ready';
 import InGameRoom from '@/components/room/game/InGameRoom';
 import GameResult from '@/components/room/result/GameResult';
 import { useAppDispatch } from '@/store/thunkhook';
 import { setRoomIdx } from '@/store/slice/game/gameRoom';
-import { getCookie } from 'cookies-next';
-import axios from 'axios';
-import { gameAPI, memberAPI } from '@/api/api';
 import type { GetServerSideProps } from 'next';
 import wrapper from '@/store';
 import { useAppSelector } from '@/store/thunkhook';
 import { setLogin } from '@/store/slice/loginSlice';
-import { useRouter } from 'next/router';
 import { setUser } from '@/store/slice/userSlice';
 import { changeStatus } from '@/store/slice/game/roomStatusSlice';
 import { listenEvent, removeEvent } from '@/socket/socketEvent';
@@ -73,7 +76,6 @@ export default function Room({
       return <Ready socket={socket} setSocket={setSocket} />;
     case 'gameStart':
       return <InGameRoom game={gameCategory!} socket={socket as WebSocket} />;
-    // return <InGameRoom game="AiPainting" socket={socket as WebSocket} />;
     case 'gameEnd':
       return <GameResult socket={socket as WebSocket} />;
     default:
