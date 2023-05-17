@@ -1,6 +1,6 @@
-import { useAppSelector } from '@/store/thunkhook';
 import { useEffect, useState } from 'react';
 import tw from 'tailwind-styled-components';
+import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
 
 type Option = {
   label: string;
@@ -21,9 +21,9 @@ export default function Dropdown({
   Option,
 }: DropdownProps) {
   const { roomInfo, userInfo } = useAppSelector((state) => state);
-  const [btnAdmin, setBtnAdmin] = useState<boolean>(false);
+  const [btnAdmin, setBtnAdmin] = useState<boolean>(true);
 
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -50,9 +50,7 @@ export default function Dropdown({
         {Option ? Option.label : base.label}
         <DropdownButton
           className={btnAdmin ? '' : 'hidden'}
-          onClick={() => {
-            toggleDropdown();
-          }}
+          onClick={toggleDropdown}
         >
           {'<'}
         </DropdownButton>
