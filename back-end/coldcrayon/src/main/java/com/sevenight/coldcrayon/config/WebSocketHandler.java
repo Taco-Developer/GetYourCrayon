@@ -13,6 +13,7 @@ import com.sevenight.coldcrayon.game.entity.GameCategory;
 import com.sevenight.coldcrayon.game.service.GameService;
 import com.sevenight.coldcrayon.room.dto.RoomDto;
 import com.sevenight.coldcrayon.room.dto.RoomResponseDto;
+import com.sevenight.coldcrayon.room.dto.UserHashResponseDto;
 import com.sevenight.coldcrayon.room.entity.UserHash;
 import com.sevenight.coldcrayon.room.service.RoomService;
 import com.sevenight.coldcrayon.theme.entity.ThemeCategory;
@@ -44,6 +45,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
     // 방정보를 담을 Map타입으로 하나 만들어서 해당 정보로 공유하자
     private Map<String, Object> roomInfoMap = new ConcurrentHashMap<>();
+    private Map<Long, Integer> userScoreMap = new ConcurrentHashMap<>();
 
 
     // 외부 서비스 주입
@@ -175,7 +177,9 @@ public class WebSocketHandler extends TextWebSocketHandler {
             userInfo.setUserIdx(userDto.getUserIdx());
 
             userList.add(userInfo);
+            // 세션 기록
             userInfosMap.put(session.getId(), userList);
+            userScoreMap.put(userDto.getUserIdx(), 0);      // Long 타입, 기본 0으로 설정
             
             // 방 입장 로직 수행
             Map<String, Object> joinRoomResponse = roomService.joinRoom(userDto, roomId);    // 수민 로직 추가 예정: 타입을 ReponseDto로 정상일 때 ResponseDto 정보, 오류일 때 state를 포함한 정보
@@ -387,6 +391,10 @@ public class WebSocketHandler extends TextWebSocketHandler {
             ResponseGameDto responseGameDto = gameService.startGame(userDto, gameRequestDto);
             String json = objectMapper.writeValueAsString(responseGameDto);
 
+            // 세션에 저장
+            ////////
+
+
             // 게임 정보
             for (WebSocketSession s : sessions) {
                 if (s.isOpen()) {
@@ -490,6 +498,15 @@ public class WebSocketHandler extends TextWebSocketHandler {
             responseRoundDto.setType("gameDto");
             String json = objectMapper.writeValueAsString(responseRoundDto);
 
+            // 세션에 기록
+            List<UserHashResponseDto> userList = responseRoundDto.getUserList();
+            for (UserHashResponseDto userHashResponseDto : userList) {
+                Long userIdx = userHashResponseDto.getUserIdx();
+                int userScore = userHashResponseDto.getUserScore();
+                userScoreMap.put(userIdx, userScore);
+            }
+
+
             for (WebSocketSession s : sessions) {
                 if (s.isOpen()) {
                     s.sendMessage(new TextMessage(json));
@@ -508,6 +525,20 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
             // 소켓 정보 변경
             roomInfoMap.put("roomStatus", "Ready");
+
+            // 소켓 유저 점수 정렬해서 보여줘야 함
+            List<Map.Entry<Long, Integer>> sortedEntries = new ArrayList<>(userScoreMap.entrySet());
+
+            Collections.sort(sortedEntries, new Comparator<Map.Entry<Long, Integer>>() {
+                public int compare(Map.Entry<Long, Integer> entry1, Map.Entry<Long, Integer> entry2) {
+                    return entry1.getValue().compareTo(entry2.getValue());  // Integer 값을 기준으로 비교
+                }
+            });
+
+            for (Map.Entry<Long, Integer> entry : sortedEntries) {
+                Long userIdx = entry.getKey();
+                Integer score = entry.getValue()
+            }
 
             for (WebSocketSession s : sessions) {
                 if (s.isOpen()) {
@@ -582,7 +613,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         log.info("session.getId(): {}", session.getId());
         log.info("userInfosMap: {}", userInfosMap);
 
-        UserInfo userInfo = (UserInfo) userInfosMap.get(session.getId());   // 세션의 Id로 유저 정보를 가져옴
+        List<UserInfo> userInfos = userInfosMap.get(session.getId());// 세션의 Id로 유저 정보를 가져옴
         log.info("userInfo: {}", userInfo);
 
         String userNickname = userInfo.getNickname();   // userInfo에서 닉네임 가져오기 -> 나간 사람 표시
