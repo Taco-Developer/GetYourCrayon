@@ -14,12 +14,14 @@ import com.sevenight.coldcrayon.theme.entity.ThemeCategory;
 import com.sevenight.coldcrayon.theme.service.ThemeService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class GameServiceImpl implements GameService{
@@ -159,6 +161,9 @@ public class GameServiceImpl implements GameService{
 
                     if(!roomHash.getCorrectUser().equals(0L)){
                         userHash.setUserScore(userHash.getUserScore() + 3);
+
+                        log.debug(roomHash.getCorrectUser().toString());
+
                         if(userHash.getUserIdx().equals(roomHash.getCorrectUser())){
                             userHash.setUserScore(userHash.getUserScore() + 3);
                             responseRoundDto.setWinnerUserIdx(userHash.getUserIdx());
@@ -168,6 +173,7 @@ public class GameServiceImpl implements GameService{
                     userHashResponseDtoList.add(UserHashResponseDto.of(userHash));
                 }
             }
+
             roomHash.setCorrectUser(0L);
             roomRepository.save(roomHash);
 

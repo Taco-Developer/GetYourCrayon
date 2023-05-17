@@ -45,7 +45,7 @@ public class RoomServiceImpl implements RoomService{
                     .gameCategory(GameCategory.AiPainting)
                     .gameCnt(0)
                     .nowRound(0)
-                    .maxRound(6)
+                    .maxRound(4)
                     .roomStatus(RoomStatus.Ready)
                     .roomMax(6)
                     .roomNow(1)
@@ -80,6 +80,8 @@ public class RoomServiceImpl implements RoomService{
         Optional<RoomHash> roomHashOptional = roomRepository.findById(roomIdx);
         if(roomHashOptional.isPresent()){
             RoomHash roomHash = roomHashOptional.get();
+            log.debug("roomHash.getCorrectUser() : " + roomHash.getCorrectUser().toString());
+            log.debug("userIdx : " + userIdx.toString());
             if (roomHash.getCorrectUser().equals(-1L)){
                 roomHash.setCorrectUser(userIdx);
                 roomRepository.save(roomHash);
