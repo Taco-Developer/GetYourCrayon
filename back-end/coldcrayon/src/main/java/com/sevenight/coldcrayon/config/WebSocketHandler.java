@@ -175,7 +175,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
             userInfo.setScore(0);
             userInfo.setToken(authorization);
             userInfo.setUserIdx(userDto.getUserIdx());
-            userScoreMap.put(userDto.getUserIdx(), 0);      // Long 타입, 기본 0으로 설정
+            userScoreMap.put(userDto.getUserIdx(), userInfo);      // Long 타입, 기본 0으로 설정
 
             // 방 입장 로직 수행
             Map<String, Object> joinRoomResponse = roomService.joinRoom(userDto, roomId);    // 수민 로직 추가 예정: 타입을 ReponseDto로 정상일 때 ResponseDto 정보, 오류일 때 state를 포함한 정보
@@ -499,7 +499,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
             for (UserHashResponseDto userHashResponseDto : userList) {
                 Long userIdx = userHashResponseDto.getUserIdx();
                 int userScore = userHashResponseDto.getUserScore();
-                userScoreMap.put(userIdx, userScore);
+                userInfoMap.get(userIdx).score = userScore;
             }
 
 
@@ -513,9 +513,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
             // 게임 종료
         } else if (type.equals("gameOver")) {
             List<UserHash> userList = roomService.getUserList(roomId);
-            Map<String, Object> response = new HashMap<>();
-            response.put("type", "gameOver");
-            response.put("userList", userList);
 
             String json = objectMapper.writeValueAsString(userList);
 
@@ -527,18 +524,36 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
             Collections.sort(sortedEntries, new Comparator<Map.Entry<Long, Integer>>() {
                 public int compare(Map.Entry<Long, Integer> entry1, Map.Entry<Long, Integer> entry2) {
-                    return entry1.getValue().compareTo(entry2.getValue());  // Integer 값을 기준으로 비교
+                    return entry2.getValue().compareTo(entry1.getValue());  // Integer 값을 기준으로 내림차순 정렬
                 }
             });
 
+            List<Long> sortedUserIds = new ArrayList<>();
             for (Map.Entry<Long, Integer> entry : sortedEntries) {
-                Long userIdx = entry.getKey();
-                Integer score = entry.getValue();
+                sortedUserIds.add(entry.getKey());
             }
 
+            // sortedUserIds는 내림차순으로 정렬된 Long 값들을 담고 있는 리스트입니다.
+
+            List<Object> sortedList = new ArrayList<>();
+            for (Long userIdx : sortedUserIds) {
+
+                Map<String, Integer> user = new HashMap<>();
+                String nickname = userInfoMap.get(userIdx).nickname;
+                int score = userInfoMap.get(userIdx).getScore();
+
+                user.put(nickname, score);
+                sortedList.add(user);
+            }
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("type", "gameOver");
+            response.put("sortedList", sortedList);
+
+            String jsonResponse = objectMapper.writeValueAsString(response);
             for (WebSocketSession s : sessions) {
                 if (s.isOpen()) {
-                    s.sendMessage(new TextMessage(json));
+                    s.sendMessage(new TextMessage(jsonResponse));
                 }
             }
         }
