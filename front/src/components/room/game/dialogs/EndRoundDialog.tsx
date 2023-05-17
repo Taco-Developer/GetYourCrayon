@@ -19,7 +19,7 @@ export default function EndRoundDialog({ socket }: { socket: WebSocket }) {
   const {
     score: { defaultScore, winnerScore },
     gameRound: { now, total, winnerIdx },
-    gameDatas: { isScoreCheckModalOpened },
+    gameDatas: { isScoreCheckModalOpened, prompt },
     gameUsers,
     userInfo: { userIdx },
   } = useAppSelector((state) => state);
@@ -64,6 +64,10 @@ export default function EndRoundDialog({ socket }: { socket: WebSocket }) {
             {userIdx === winnerIdx ? winnerScore + defaultScore : defaultScore}
             점
           </h1>
+          <Margin type={MarginType.height} size={32} />
+          <h2 className="text-3xl">AI 제작 문장</h2>
+          <Margin type={MarginType.height} size={16} />
+          <p>{prompt}</p>
         </main>
       </div>
     </Dialog>
