@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Dialog } from '@mui/material';
 
 import Margin, { MarginType } from '@/components/ui/Margin';
-import { GameUser } from '@/store/slice/game/gameUsersSlice';
+import { GameUserType } from '@/store/slice/game/gameUsersSlice';
 import { useAppSelector } from '@/store/thunkhook';
 
 export default function LierSelectDialog({
@@ -15,14 +15,14 @@ export default function LierSelectDialog({
 }) {
   const { gameUsers } = useAppSelector((state) => state);
 
-  const [selectedUser, setSelectedUser] = useState<GameUser | null>(null);
+  const [selectedUser, setSelectedUser] = useState<GameUserType | null>(null);
 
   const dialogCloseHandler = (_: object, reason: string) => {
     if (reason === 'backdropClick') return;
     onDialogClose();
   };
 
-  const onUserClickHandler = (user: GameUser) => {
+  const onUserClickHandler = (user: GameUserType) => {
     setSelectedUser((prev) => {
       if (prev === user) return null;
       return user;

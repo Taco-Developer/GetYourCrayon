@@ -7,6 +7,7 @@ import ReadyBtn from './more/ReadyBtn';
 import tw from 'tailwind-styled-components';
 import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
 import { setUser } from '@/store/slice/userSlice';
+import { setRoomInfo } from '@/store/slice/game/gameRoomInfo';
 import { getCookie } from 'cookies-next';
 import { sendMessage } from '@/socket/messageSend';
 import { listenEvent, removeEvent } from '@/socket/socketEvent';
@@ -31,7 +32,7 @@ interface UserInType {
 
 export default function Ready({ socket, setSocket }: RoomPropsType) {
   /** 유저 정보 */
-  const { profile } = useAppSelector((state) => state.mypageInfo);
+  const { userNickname } = useAppSelector((state) => state.userInfo);
   /** 유저가 생성한 방 */
   const { roomIdx } = useAppSelector((state) => state.roomIdx);
 
@@ -39,21 +40,13 @@ export default function Ready({ socket, setSocket }: RoomPropsType) {
   const [choice, setChoice] = useState<number>(2);
   /** 게시물 번호 */
   const [boardId, setBoardId] = useState<number | null>(null);
-  /** 방정보 */
-  const [roomInfo, setRoomInfo] = useState<{}>({
-    adminUserIdx: 0,
-    gameCategory: '',
-    maxRound: 0,
-    message: '',
-    nowRound: 0,
-    roomIdx: '',
-    roomMax: 0,
-    roomNow: 0,
-    roomStatus: '',
-    status: '',
-  });
+  /** 방장 */
+  const [roomAdmin, setRoomAdmin] = useState<number>(0);
+
   /** 방에 유저 목록 */
   const [userList, setUserList] = useState<UserData[]>([]);
+
+  const dispatch = useAppDispatch();
 
   const closeSocket = () => {
     if (socket) {
@@ -61,19 +54,20 @@ export default function Ready({ socket, setSocket }: RoomPropsType) {
     }
   };
 
-  useEffect(() => {
-    const roomInfoFind = async (idx: string) => {
-      await gameAPI
-        .findRoom(idx)
-        .then((request) => {
-          console.log(request.data), setRoomInfo(request.data);
-        })
-        .catch((err) => console.log(err));
-    };
-    if (roomIdx) {
-      roomInfoFind(roomIdx);
-    }
-  }, [roomIdx]);
+  // useEffect(() => {
+  //   const roomInfoFind = async (idx: string) => {
+  //     await gameAPI
+  //       .findRoom(idx)
+  //       .then((request) => {
+  //         console.log(request.data),
+  //           setRoomAdmin(request.data.adminUserIdx);
+  //       })
+  //       .catch((err) => console.log(err));
+  //   };
+  //   if (roomIdx) {
+  //     roomInfoFind(roomIdx);
+  //   }
+  // }, [roomIdx]);
 
   useEffect(() => {
     if (roomIdx !== null) {
@@ -93,6 +87,7 @@ export default function Ready({ socket, setSocket }: RoomPropsType) {
         const data = JSON.parse(event.data);
         if (data.type !== 'userIn') return;
         setUserList(data.userList);
+        dispatch(setRoomInfo(data.roomInfo));
         console.log(data);
       };
 
@@ -109,7 +104,7 @@ export default function Ready({ socket, setSocket }: RoomPropsType) {
         sendMessage(socket, 'userIn', { authorization: token });
         sendMessage(socket, 'chat', {
           author: 'admin',
-          message: `${profile.userNickname}님이 입장하셨습니다 :)`,
+          message: `${userNickname}님이 입장하셨습니다 :)`,
           status: 'chatting',
         });
       };
@@ -119,7 +114,7 @@ export default function Ready({ socket, setSocket }: RoomPropsType) {
         removeEvent(socket, roomInHandler);
       };
     }
-  }, [profile.userNickname, socket]);
+  }, [userNickname, socket]);
 
   return (
     <RoomBody>

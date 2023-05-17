@@ -4,6 +4,7 @@ export interface InGameChatDataType {
   user: string;
   status: string;
   content: string;
+  userIdx: number;
 }
 
 const initialState: InGameChatDataType[] = [];
