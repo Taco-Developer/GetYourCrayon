@@ -113,8 +113,12 @@ public class RoomServiceImpl implements RoomService{
         RoomResponseDto roomResponseDto = RoomResponseDto.of(optionalRoomHash, status, message);
 
         joinRoomResponse.put("type", "userIn");
+        Map<String, Object> roomData = new HashMap();
+        roomData.put("roomInfo",roomResponseDto);
+        roomData.put("userList",userHashList);
+
         joinRoomResponse.put("roomInfo",roomResponseDto);
-        joinRoomResponse.put("userList",userHashList);
+        joinRoomResponse.put("roomData",roomData);
 
         return joinRoomResponse;
     }
