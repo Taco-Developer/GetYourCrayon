@@ -45,7 +45,7 @@ public class RoomServiceImpl implements RoomService{
                     .gameCategory(GameCategory.AI)
                     .gameCnt(0)
                     .nowRound(0)
-                    .maxRound(0)
+                    .maxRound(6)
                     .roomStatus(RoomStatus.Ready)
                     .roomMax(6)
                     .roomNow(1)
