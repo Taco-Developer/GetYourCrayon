@@ -19,6 +19,8 @@ public class UserHashResponseDto {
 
     private String userNickname;
 
+    private String userProfile;
+
     private int userPoint; // 가챠 할 수 있는 포인트
 
     private int userScore; // 게임 시작하고 얻은 점수
@@ -28,6 +30,7 @@ public class UserHashResponseDto {
         userHashResponseDto.userIdx = userHash.getUserIdx();
         userHashResponseDto.roomIdx = userHash.getRoomIdx();
         userHashResponseDto.userNickname = userHash.getUserNickname();
+        userHashResponseDto.userProfile = userHash.getUserProfile();
         userHashResponseDto.userPoint = userHash.getUserPoint();
         userHashResponseDto.userScore = userHash.getUserScore();
 
