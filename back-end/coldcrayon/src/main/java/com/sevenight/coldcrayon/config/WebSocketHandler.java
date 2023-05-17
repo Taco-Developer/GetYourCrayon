@@ -45,6 +45,9 @@ public class WebSocketHandler extends TextWebSocketHandler {
     // 방정보를 담을 Map타입으로 하나 만들어서 해당 정보로 공유하자
     private Map<String, Object> roomInfoMap = new ConcurrentHashMap<>();
 
+    // 게임 정보를 담을 Map타입으로 하나 만들어서 해당 정보로 공유하자
+    private Map<String, String> gameInfoMap = new ConcurrentHashMap<>();
+
 
     // 외부 서비스 주입
     private final WebSocketCustomService webSocketCustomService;
@@ -192,6 +195,14 @@ public class WebSocketHandler extends TextWebSocketHandler {
             }
 
         } else if (type.equals("chat")) {
+            String status = jsonMessage.get("status");
+            if(status.equals("answer")){
+                String answer = jsonMessage.get("answer");
+                if(answer.equals(gameInfoMap.get("correct")) && gameInfoMap.get("winnerIdx").equals("0")){
+                    String userIdx = jsonMessage.get("userIdx");
+                    gameInfoMap.put("winner", userIdx);
+                }
+            }
             for (WebSocketSession s : sessions) {
                 if (s.isOpen()) {
                     s.sendMessage(message);
@@ -385,6 +396,10 @@ public class WebSocketHandler extends TextWebSocketHandler {
                     .roomIdx(roomId)
                     .build();
             ResponseGameDto responseGameDto = gameService.startGame(userDto, gameRequestDto);
+
+            gameInfoMap.put("correct", responseGameDto.getCorrect());
+            gameInfoMap.put("winnerIdx", "0");
+
             String json = objectMapper.writeValueAsString(responseGameDto);
 
             // 게임 정보
@@ -466,6 +481,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
                     .build();
 
             ResponseGameDto responseGameDto = gameService.nextRound(requestRoundDto);      // type: gameDto로 기본 설정되어 있음
+            gameInfoMap.put("correct", responseGameDto.getCorrect());
+            gameInfoMap.put("winnerIdx", "0");
             String json = objectMapper.writeValueAsString(responseGameDto);
 
             for (WebSocketSession s : sessions) {
@@ -479,7 +496,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
         // 라운드 종료  ------- type 지정 필요 -------   // 수민: 임시로 내가 설정해서 사용하도록 함
         else if (type.equals("roundOver")) {
-            Long winnerIdx = Long.valueOf(jsonMessage.get("winnerIdx"));
+
+            Long winnerIdx = Long.valueOf(gameInfoMap.get("winnerIdx"));
 
             RequestRoundDto requestRoundDto = RequestRoundDto.builder()
                     .roomIdx(roomId)
@@ -649,10 +667,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
             this.userIdx = userIdx;
         }
     }
-
-
-
-
 
 
 }
