@@ -45,7 +45,7 @@ public class RoomServiceImpl implements RoomService{
                     .gameCategory(GameCategory.AI)
                     .gameCnt(0)
                     .nowRound(0)
-                    .maxRound(0)
+                    .maxRound(6)
                     .roomStatus(RoomStatus.Ready)
                     .roomMax(6)
                     .roomNow(1)
@@ -112,9 +112,14 @@ public class RoomServiceImpl implements RoomService{
         }
         RoomResponseDto roomResponseDto = RoomResponseDto.of(optionalRoomHash, status, message);
 
+//        Map<String, Object> roomData = new HashMap();
+//        roomData.put("roomInfo",roomResponseDto);
+//        roomData.put("userList",userHashList);
+//        joinRoomResponse.put("roomData",roomData);
+
         joinRoomResponse.put("type", "userIn");
+        joinRoomResponse.put("userList", userHashList);
         joinRoomResponse.put("roomInfo",roomResponseDto);
-        joinRoomResponse.put("userList",userHashList);
 
         return joinRoomResponse;
     }

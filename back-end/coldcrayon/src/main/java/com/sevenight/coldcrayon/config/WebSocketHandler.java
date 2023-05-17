@@ -50,6 +50,9 @@ public class WebSocketHandler extends TextWebSocketHandler {
     // 방정보를 담을 Map타입으로 하나 만들어서 해당 정보로 공유하자
     private Map<String, Object> roomInfoMap = new ConcurrentHashMap<>();
 
+    // 게임 정보를 담을 Map타입으로 하나 만들어서 해당 정보로 공유하자
+    private Map<String, String> gameInfoMap = new ConcurrentHashMap<>();
+
 
     // 외부 서비스 주입
     private final WebSocketCustomService webSocketCustomService;
@@ -160,7 +163,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
         /// chat, draw, userId, {userScore} //
 
         // userIn:유저가 들어올 때 userData: (유저Id, 기본점수)
-        Long userIdx;
         if (type.equals("userIn")) {
             String authorization = jsonMessage.get("authorization");
             UserDto userDto = authService.selectOneMember(HeaderUtil.getAccessTokenString(authorization));
@@ -191,6 +193,23 @@ public class WebSocketHandler extends TextWebSocketHandler {
             }
 
         } else if (type.equals("chat")) {
+            String status = jsonMessage.get("status");
+            log.error(jsonMessage.toString());
+
+            if(status.equals("answer")){
+                String answer = jsonMessage.get("content");
+                log.error("answer : " + answer);
+
+                log.error("gameInfoMap : " + gameInfoMap.toString());
+
+                log.error("jsonMessage (202) : " + jsonMessage);
+                if(answer.equals(gameInfoMap.get("correct")) && gameInfoMap.get("winnerIdx").equals("0")){
+                    log.error("gameInfoMap.get(\"correct\") : "+ gameInfoMap.get("correct"));
+
+                    String userIdx = jsonMessage.get("userIdx");
+                    gameInfoMap.put("winner", userIdx);
+                }
+            }
             for (WebSocketSession s : sessions) {
                 if (s.isOpen()) {
                     s.sendMessage(message);
@@ -383,7 +402,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
             String authorization = jsonMessage.get("authorization");
 
             // 소켓 정보 변경
-            roomInfoMap.put("roomStatus", "Playing");
+
 
             // userDto, gameRequestDto(roomIdx, gameCategory, maxRound) 필요
             UserDto userDto = authService.selectOneMember(HeaderUtil.getAccessTokenString(authorization));
@@ -393,6 +412,13 @@ public class WebSocketHandler extends TextWebSocketHandler {
                     .roomIdx(roomId)
                     .build();
             ResponseGameDto responseGameDto = gameService.startGame(userDto, gameRequestDto);
+
+            if(responseGameDto.getStatus().equals("success")){
+                roomInfoMap.put("roomStatus", "Playing");
+                gameInfoMap.put("correct", responseGameDto.getCorrect());
+                gameInfoMap.put("winnerIdx", "0");
+            }
+
             String json = objectMapper.writeValueAsString(responseGameDto);
 
             // 게임 정보
@@ -475,6 +501,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
                     .build();
 
             ResponseGameDto responseGameDto = gameService.nextRound(requestRoundDto);      // type: gameDto로 기본 설정되어 있음
+            gameInfoMap.put("correct", responseGameDto.getCorrect());
+            gameInfoMap.put("winnerIdx", "0");
             String json = objectMapper.writeValueAsString(responseGameDto);
 
             for (WebSocketSession s : sessions) {
@@ -491,13 +519,14 @@ public class WebSocketHandler extends TextWebSocketHandler {
             gameOnGoing = false;        // 시간 감소 로직 중지
             Long winnerIdx = Long.valueOf(jsonMessage.get("winnerIdx"));
 
+            gameInfoMap.put("winnerIdx", "0");
             RequestRoundDto requestRoundDto = RequestRoundDto.builder()
                     .roomIdx(roomId)
                     .winner(winnerIdx)
                     .build();
 
             ResponseRoundDto responseRoundDto = gameService.endRound(requestRoundDto);
-            responseRoundDto.setType("gameDto");
+            responseRoundDto.setType("roundOver");
             String json = objectMapper.writeValueAsString(responseRoundDto);
 
             // 세션에 기록
@@ -644,10 +673,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
             this.userIdx = userIdx;
         }
     }
-
-
-
-
 
 
 }
