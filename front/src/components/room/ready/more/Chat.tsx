@@ -119,7 +119,7 @@ export default function Chat({ socket, messageList }: ChatPropsType) {
 
 const OutDiv = tw.div`h-90 w-90 bg-white bg-opacity-50 rounded-xl flex flex-col items-center justify-center p-5`;
 const ChatDiv = tw.div`h-90 w-full flex items-center justify-center relative px-3`;
-const ChatBody = tw.div`h-full w-full overflow-y-scroll overflow-x-hidden scrollbar-ssibal`;
+const ChatBody = tw.div`h-full w-full overflow-y-scroll overflow-x-hidden scrollbar-bu`;
 const MessageBody = tw.div`max-w-xs`;
 const Message = tw.div`h-auto flex`;
 const MessageContent = tw.div`h-auto w-auto rounded-xl bg-white text-white text-xl font-bold flex items-center mb-4 p-2`;
