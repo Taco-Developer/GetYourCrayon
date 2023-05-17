@@ -57,6 +57,7 @@ module.exports = {
         'navbar-profile': '88px',
         'effect-gif': '20vw',
         'gacha-result': '50vh',
+        'colle-img': '7vw',
       },
       width: {
         'profile-img': '17vw',
@@ -64,6 +65,7 @@ module.exports = {
         'navbar-profile': '88px',
         'effect-gif': '20vw',
         'gacha-result': '65vw',
+        'colle-img': '7vw',
       },
       zIndex: {
         100: 100,
@@ -100,7 +102,7 @@ module.exports = {
   plugins: [
     plugin(function ({ addUtilities }) {
       addUtilities({
-        '.scrollbar-ssibal': {
+        '.scrollbar-bu': {
           '-ms-overflow-style': 'none',
           'scrollbar-width': 'none',
           '&::-webkit-scrollbar': {
