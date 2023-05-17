@@ -65,9 +65,9 @@ public class WebSocketCustomService {
         return userDto;
     }
 
-//    public void changeGameType(String changedGameType) {
-//
-//    }
+    public void changeGameType(String changedGameType) {
+
+    }
 
     public GameRequestDto getGameRequestDto(String roomIdx, int gameIdx) {
         int maxRound = roomService.getRoom(roomIdx).getMaxRound();
