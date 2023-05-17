@@ -117,13 +117,13 @@ public class GameServiceImpl implements GameService{
 
                         responseGameDto.setUrlList(dests);
                         break;
-                    case LIAR:
+                    case Lier:
                         break;
-                    case CATCH:
+                    case CatchMind:
                         break;
-                    case RELAY:
+                    case RelayPainting:
                         break;
-                    case REVERSE:
+                    case ReverseCatchMind:
                         break;
                     default:
                         System.err.println("게임 모드 없어~~~~~~~~~~~~~~~~");
@@ -242,13 +242,13 @@ public class GameServiceImpl implements GameService{
 
                         responseGameDto.setUrlList(dests);
                         break;
-                    case LIAR:
+                    case Lier:
                         break;
-                    case CATCH:
+                    case CatchMind:
                         break;
-                    case RELAY:
+                    case RelayPainting:
                         break;
-                    case REVERSE:
+                    case ReverseCatchMind:
                         break;
                     default:
                         System.err.println("게임 모드 없어~~~~~~~~~~~~~~~~");
