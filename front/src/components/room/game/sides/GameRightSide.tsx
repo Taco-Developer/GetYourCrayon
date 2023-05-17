@@ -21,15 +21,15 @@ export default function GameRightSide({
   const {
     leftTime,
     inGameChatDatas,
-    gameRound: { isRoundStarted },
     userInfo: { userIdx, userNickname },
   } = useAppSelector((state) => state);
-  const dispatch = useAppDispatch();
 
   // 채팅 입력값
   const [inputValue, setInputValue] = useState<string>('');
   // 채팅 입력
-  const onChattingChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const chattingChangeHandler = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     setInputValue(event.target.value);
   };
   // 채팅 전송
@@ -69,7 +69,7 @@ export default function GameRightSide({
             className="w-full bg-transparent flex-auto px-2 outline-none"
             placeholder="채팅을 입력하세요"
             value={inputValue}
-            onChange={onChattingChange}
+            onChange={chattingChangeHandler}
           />
           <Button px={2} py={2} rounded="lg" color="bg-amber-300" className="">
             입력

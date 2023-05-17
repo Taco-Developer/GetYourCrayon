@@ -35,7 +35,6 @@ const gameRoundSlice = createSlice({
 
     /** 라운드 종료 */
     endRound(state) {
-      state.winnerIdx = 0;
       state.isRoundStarted = false;
     },
 

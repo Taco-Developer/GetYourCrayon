@@ -57,15 +57,21 @@ export default function AiPaintingGuess({ socket }: { socket: WebSocket }) {
 
   // 정답 비교
   useEffect(() => {
-    if (
-      (savedAnswers.length > 0 &&
-        savedAnswers.length === inputedAnswers.length) ||
-      leftTime === 0
-    ) {
-      dispatch(endRound());
+    if (savedAnswers.length === 0) return;
+    if (savedAnswers.length === inputedAnswers.length) {
       sendMessage(socket, 'roundOver');
+      dispatch(endRound());
     }
-  }, [savedAnswers, inputedAnswers, leftTime, dispatch, socket]);
+  }, [savedAnswers, inputedAnswers, dispatch, socket]);
+
+  // 시간 초과
+  useEffect(() => {
+    console.log('남은 시간: ', leftTime);
+    if (leftTime === 0) {
+      sendMessage(socket, 'roundOver');
+      dispatch(endRound());
+    }
+  }, [leftTime, dispatch, socket]);
 
   // socket 통신
   useEffect(() => {
@@ -121,7 +127,7 @@ export default function AiPaintingGuess({ socket }: { socket: WebSocket }) {
 
   return (
     <>
-      <EndRoundDialog />
+      <EndRoundDialog socket={socket} />
       <GameLeftSide isPainting={false} />
       <GameCenter>
         <PaintingView>
