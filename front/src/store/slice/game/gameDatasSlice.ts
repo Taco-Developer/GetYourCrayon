@@ -1,21 +1,19 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-export interface AiGameDatasType {
+export interface GameDatasType {
   aiImages: string[];
   isScoreCheckModalOpened: boolean;
   prompt: string;
 }
 
-const INIT_AI_GAME_DATAS: AiGameDatasType = {
+const initialState: GameDatasType = {
   aiImages: [],
   isScoreCheckModalOpened: false,
   prompt: '',
 };
 
-const initialState = INIT_AI_GAME_DATAS;
-
-const aiGameDatasSlice = createSlice({
-  name: 'aiGameDatas',
+const gameDatasSlice = createSlice({
+  name: 'gameDatas',
   initialState,
   reducers: {
     /** 점수 확인 모달 열기 */
@@ -56,5 +54,5 @@ export const {
   resetAiImages,
   resetPrompt,
   savePrompt,
-} = aiGameDatasSlice.actions;
-export default aiGameDatasSlice.reducer;
+} = gameDatasSlice.actions;
+export default gameDatasSlice.reducer;
