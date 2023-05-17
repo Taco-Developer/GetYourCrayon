@@ -5,7 +5,7 @@ import UserDrop from './UserDrop';
 import { gameAPI } from '@/api/api';
 import { useAppSelector } from '@/store/thunkhook';
 
-interface UserData {
+export interface UserData {
   roomIdx: string | null;
   userIdx: number;
   userNickname: string;
@@ -17,17 +17,9 @@ interface ReadyPropsType {
   userList: UserData[];
 }
 
-export default function UserList(userList: [] | any) {
-  const [userCnt, setUserCnt] = useState<number>(6);
-  const [player, setPlayer] = useState<string[]>([
-    'A도겸',
-    'B수민',
-    '알루상현',
-    'n트도영',
-    '갓 덕호',
-    '도커경민',
-  ]);
-  console.log(`UserList -> ${userList}`);
+export default function UserList({ userList }: ReadyPropsType) {
+  const [userCnt, setUserCnt] = useState<number>(0);
+  const [userMaxCnt, setUserMaxCnt] = useState<number>(6);
   const { roomIdx } = useAppSelector((state) => state.roomIdx);
 
   const roomInfo = async (idx: string) => {
@@ -36,6 +28,11 @@ export default function UserList(userList: [] | any) {
       .then((request) => console.log(request.data))
       .catch((err) => console.log(err));
   };
+  console.log(userList);
+
+  useEffect(() => {
+    setUserCnt(userList.length);
+  }, [userList]);
 
   return (
     <UserBody>
@@ -44,11 +41,11 @@ export default function UserList(userList: [] | any) {
           roomInfo(roomIdx!);
         }}
       >
-        플레이어 1/{userCnt}
+        플레이어 {userCnt}/{userMaxCnt}
       </TitleDiv>
-      <UserDrop setUserCnt={setUserCnt} />
+      <UserDrop setUserMaxCnt={setUserMaxCnt} />
       <ListDiv>
-        {player.map((userNickname, i) => (
+        {userList.map((user, i) => (
           <UserDiv key={i}>
             <Profile>
               <Image
@@ -59,7 +56,7 @@ export default function UserList(userList: [] | any) {
               />
             </Profile>
             <InnerDiv>
-              <UserName>{userNickname}</UserName>
+              <UserName>{user.userNickname}</UserName>
             </InnerDiv>
           </UserDiv>
         ))}

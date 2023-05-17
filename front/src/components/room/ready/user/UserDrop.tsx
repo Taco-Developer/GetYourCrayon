@@ -3,10 +3,10 @@ import tw from 'tailwind-styled-components';
 import Dropdown from '../../../ui/Dropdown';
 
 interface UserListProps {
-  setUserCnt: React.Dispatch<React.SetStateAction<number>>;
+  setUserMaxCnt: React.Dispatch<React.SetStateAction<number>>;
 }
 
-export default function UserDrop({ setUserCnt }: UserListProps) {
+export default function UserDrop({ setUserMaxCnt }: UserListProps) {
   const [cntOption, setCntOption] = useState<{
     label: string;
     value: string | number;
@@ -18,7 +18,7 @@ export default function UserDrop({ setUserCnt }: UserListProps) {
     setCntOption(option);
     if (typeof option.value === 'number') {
       let cnt = option.value;
-      setUserCnt(cnt);
+      setUserMaxCnt(cnt);
     }
   };
 
