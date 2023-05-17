@@ -40,7 +40,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
     private final Map<String, List<WebSocketSession>> sessionsMap = new ConcurrentHashMap<>();
 
     // 참여자 정보 리스트
-    private final LinkedHashMap<String, UserInfo> userInfoMap = new LinkedHashMap<>();
+    private final Map<String, List<UserInfo>> userInfosMap = new ConcurrentHashMap<>();
 
     // 방정보를 담을 Map타입으로 하나 만들어서 해당 정보로 공유하자
     private Map<String, Object> roomInfoMap = new ConcurrentHashMap<>();
@@ -120,11 +120,16 @@ public class WebSocketHandler extends TextWebSocketHandler {
             log.info("접속하는 유저의 닉네임: {}, 소켓 아이디(roomId): {}", userDto.getUserNickname(), roomId);
 
             // 세션에 기록: 입장하려는 유저 인스턴스 생성
-            UserInfo userInfo = userInfoMap.computeIfAbsent(session.getId(), key -> new UserInfo());
+            List<UserInfo> userList = userInfosMap.computeIfAbsent(session.getId(), key -> new ArrayList<>());
+
+            UserInfo userInfo = new UserInfo();
             userInfo.setNickname(userDto.getUserNickname());
             userInfo.setScore(0);
             userInfo.setToken(authorization);
-            userInfoMap.put(session.getId(), userInfo);
+            userInfo.setUserIdx(userDto.getUserIdx());
+
+            userList.add(userInfo);
+            userInfosMap.put(session.getId(), userList);
             
             // 방 입장 로직 수행
             RoomResponseDto roomResponseDto = roomService.joinRoom(userDto, roomId);    // 수민 로직 추가 예정: 타입을 ReponseDto로 정상일 때 ResponseDto 정보, 오류일 때 state를 포함한 정보
@@ -357,21 +362,22 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
             int roundTime = (int) roomInfoMap.get("roundTime");
 
-//            // 설정된 시간 감소: 테스팅 필요
-//            while (roundTime > 0) {
-//                Map<String, Object> response = new HashMap<String, Object>();
-//                response.put("type", "gameTime");
-//                response.put("roundTime", roundTime);
-//                String jsonResponse = objectMapper.writeValueAsString(response);
-//
-//                for (WebSocketSession s : sessions) {
-//                    if (s.isOpen()) {
-//                        s.sendMessage(new TextMessage(jsonResponse));
-//                    }
-//                    roundTime--;
-//                    Thread.sleep(1000);
-//                }
-//            }
+            // roundTime 감소 스레드 실행
+            executor
+            while (roundTime > 0) {
+                Map<String, Object> response = new HashMap<String, Object>();
+                response.put("type", "gameTime");
+                response.put("roundTime", roundTime);
+                String jsonResponse = objectMapper.writeValueAsString(response);
+
+                for (WebSocketSession s : sessions) {
+                    if (s.isOpen()) {
+                        s.sendMessage(new TextMessage(jsonResponse));
+                    }
+                    roundTime--;
+                    Thread.sleep(1000);
+                }
+            }
         }
 
         // 라운드 시작
@@ -435,15 +441,83 @@ public class WebSocketHandler extends TextWebSocketHandler {
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         String roomId = extractRoomId(session);
 
-        List<WebSocketSession> sessions = sessionsMap.getOrDefault(roomId, Collections.emptyList());
 
-        UserInfo userInfo = userInfoMap.get(session.getId());   // 세션의 Id로 유저 정보를 가져옴
+        // 1안: 로그로 모조리 찍어보기
+//        userInfosMap.get(session.getId()).get
+
+
+///
+//        userInfosMap.get(session.getId())
+//        List<UserInfo> userInfos = userInfosMap.get(session.getId());
+//        boolean check = false;
+//
+//        for (UserInfo ui : userInfos) {
+//            if (ui.nickname.equals()) {
+//
+//            }
+//        }
+//
+//
+//
+//        List<WebSocketSession> sessions = sessionsMap.getOrDefault(roomId, Collections.emptyList());
+
+//        int initialDelay = 0;   //처음시작할땐 딜레이 없음
+//        int period = 1;           // 1초마다 실행
+//        int roundTime = 10;
+//
+//        ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+//        Runnable task = new Runnable() {
+//            int time = roundTime;
+//            @Override
+//            public void run() {     /////여기 run() 메서드 안에 실행할 논리 작성
+//                if (time > 0) {
+//                    Map<String, String> jsonMessage2 = new HashMap<>();
+//                    jsonMessage2.put("author", "점수알리미");
+//                    jsonMessage2.put("message", String.valueOf(time));
+//                    String json;
+//                    try {
+//                        ObjectMapper objectMapper = new ObjectMapper();
+//                        json = objectMapper.writeValueAsString(jsonMessage2);
+//                        for (WebSocketSession s : sessions) {
+//                            if (s.isOpen()) {
+//                                s.sendMessage(new TextMessage(json));
+//                            }
+//                        }
+//                    } catch (IOException e) {
+//                        // 예외 처리
+//                        System.out.println("e = " + e);
+//                    }
+//                    time--;
+//                } else {
+//                    executorService.shutdown();
+//                }
+//            }
+//        };
+
+//        executorService.scheduleAtFixedRate(task, initialDelay, period, TimeUnit.SECONDS)
+
+
+///
+
+        UserInfo userInfo = (UserInfo) userInfosMap.get(session.getId());   // 세션의 Id로 유저 정보를 가져옴
+        log.info("userInfo: {}", userInfo);
 
         String userNickname = userInfo.getNickname();   // userInfo에서 닉네임 가져오기 -> 나간 사람 표시
+        log.info("userNickname: {}", userNickname);
         String userToken = userInfo.getToken();     // userInfo에서 토큰 값 가져오기
+        log.info("userToken: {}", userToken);
         UserDto user = authService.findUser(userToken);     // 토큰으로 유저 Dto 가져오기
+        log.info("user: {}", user);
 
-        roomService.outRoom(user);      // user가 DB에서 제거될 수 있도록 처리
+        RoomResponseDto roomResponseDto = roomService.outRoom(user);// user가 DB에서 제거될 수 있도록 처리
+        log.info("roomResponseDto: {}", roomResponseDto);
+
+        // usernicknama을 통해 유저 정보를 조회 -> redis에서 정보 삭제해야 함
+
+
+
+
+        List<WebSocketSession> sessions = sessionsMap.getOrDefault(roomId, Collections.emptyList());
 
         sessions.remove(session);       // 세션 제거
 
@@ -482,12 +556,20 @@ public class WebSocketHandler extends TextWebSocketHandler {
         private String nickname;
         private int score;
         private String token;
+        private Long userIdx;
 
         public UserInfo() {};
-        public UserInfo(String nickname, int score, String token) {
+        public UserInfo(String nickname, int score, String token, Long userIdx) {
             this.nickname = nickname;
             this.score = score;
             this.token = token;
+            this.userIdx = userIdx;
         }
     }
+
+
+
+
+
+
 }
