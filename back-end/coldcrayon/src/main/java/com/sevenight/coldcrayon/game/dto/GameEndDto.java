@@ -18,7 +18,7 @@ public class GameEndDto {
 
     String message;
 
-    List<UserHashResponseDto> userHashResponseDtoList;
+    List<UserHashResponseDto> userList;
 
     Map<Integer, List<String>> urlList;
 }

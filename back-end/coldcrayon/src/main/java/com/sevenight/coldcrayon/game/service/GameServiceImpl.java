@@ -326,7 +326,7 @@ public class GameServiceImpl implements GameService{
                 System.err.println(urlMap.toString());
             }
             gameEndDto.setUrlList(urlMap);
-            gameEndDto.setUserHashResponseDtoList(userHashResponseDtoList);
+            gameEndDto.setUserList(userHashResponseDtoList);
 
         } else {
             gameEndDto.setMessage("방이 없어요.");
