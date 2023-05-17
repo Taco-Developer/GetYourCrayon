@@ -555,6 +555,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         String roomId = extractRoomId(session);
         UserInfo userInfo = userInfoMap.get(session.getId());   // 세션의 Id로 유저 정보를 가져옴
+        log.info("userInfo: {}", userInfo);
 
         /// 5/17: DG
         // 나가기 실행 시 (나가기 방식 말고)
@@ -562,9 +563,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
         UserDto userDtoByUserIdx = webSocketCustomService.getUserDtoByUserIdx(userIdx);
         roomService.outRoom(userDtoByUserIdx);
-
-
-        log.info("userInfo: {}", userInfo);
 
         String userNickname = userInfo.getNickname();   // userInfo에서 닉네임 가져오기 -> 나간 사람 표시
         log.info("userNickname: {}", userNickname);

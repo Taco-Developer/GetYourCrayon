@@ -85,7 +85,9 @@ public class WebSocketCustomService {
 //        }
 //
     public UserDto getUserDtoByUserIdx(Long userIdx) {
+        log.info("userIdx: {}", userIdx);
         Optional<User> byUserIdx = userRepository.findByUserIdx(userIdx);
+        log.info("byUserIdx: {}", byUserIdx);
         if (byUserIdx.isEmpty()) {
             log.info("byUserIdx가 비어있습니다");
             return null;
