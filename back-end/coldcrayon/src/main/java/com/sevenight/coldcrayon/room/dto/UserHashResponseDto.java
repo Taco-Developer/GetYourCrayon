@@ -6,9 +6,9 @@ import lombok.*;
 import org.springframework.data.annotation.Id;
 
 @ToString
-@Builder
-@Getter
 @Setter
+@Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserHashResponseDto {
@@ -19,16 +19,18 @@ public class UserHashResponseDto {
 
     private String userNickname;
 
-    private int userPoint;
+    private String userProfile;
 
-    private int userScore;
+    private int userPoint; // 가챠 할 수 있는 포인트
 
+    private int userScore; // 게임 시작하고 얻은 점수
 
     public static UserHashResponseDto of(UserHash userHash){
         UserHashResponseDto userHashResponseDto = new UserHashResponseDto();
         userHashResponseDto.userIdx = userHash.getUserIdx();
         userHashResponseDto.roomIdx = userHash.getRoomIdx();
         userHashResponseDto.userNickname = userHash.getUserNickname();
+        userHashResponseDto.userProfile = userHash.getUserProfile();
         userHashResponseDto.userPoint = userHash.getUserPoint();
         userHashResponseDto.userScore = userHash.getUserScore();
 
