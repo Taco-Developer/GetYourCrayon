@@ -12,8 +12,8 @@ import type { GetServerSideProps } from 'next';
 import wrapper from '@/store';
 import { useAppSelector } from '@/store/thunkhook';
 import { setLogin } from '@/store/slice/loginSlice';
-import { setMypage } from '@/store/slice/mypageSlice';
 import { useRouter } from 'next/router';
+import { setUser } from '@/store/slice/userSlice';
 
 export default function Room({
   roomIdx,
@@ -22,7 +22,6 @@ export default function Room({
   message: string;
   roomIdx: string;
 }) {
-  const { profile } = useAppSelector((state) => state.mypageInfo);
   const router = useRouter();
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const roomStatus = useAppSelector((state) => state.roomStatus);
@@ -77,10 +76,10 @@ export const getServerSideProps: GetServerSideProps =
       },
     });
     try {
-      const re = await api.get(`/user/mypage/profile`);
-      const res = re.data.body;
+      const re = await api.get(`/member/myinfo`);
+      const res = re.data;
       store.dispatch(setLogin({ isLogin: true }));
-      store.dispatch(setMypage(res));
+      store.dispatch(setUser(res));
       return {
         props: {
           message: 'Login',

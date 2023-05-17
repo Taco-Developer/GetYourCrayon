@@ -13,18 +13,20 @@ import mypageSlice, { MypageStateType } from './slice/mypageSlice';
 import loginSlice, { LoginStateType } from './slice/loginSlice';
 import userSlice, { UserStateType } from './slice/userSlice';
 import navbarSlice, { NavbarStateType } from './slice/navbarSlice';
-import scoreSliceReducer from './slice/game/score';
+import scoreSliceReducer, { ScoreType } from './slice/game/score';
 import inGameChatDatasSliceReducer, {
   InGameChatDataType,
 } from './slice/game/inGameChatDatasSlice';
 import gameRoundSliceReducer, {
   GameRoundType,
 } from './slice/game/gameRoundSlice';
-import gameUsersSliceReducer, { GameUser } from './slice/game/gameUsersSlice';
+import gameUsersSliceReducer, {
+  GameUserType,
+} from './slice/game/gameUsersSlice';
 import leftTimeSliceReducer from './slice/game/leftTimeSlice';
-import aiGameDatasSliceReducer, {
-  AiGameDatasType,
-} from './slice/game/aiGameDatasSlice';
+import gameDatasSliceReducer, {
+  GameDatasType,
+} from './slice/game/gameDatasSlice';
 import gameThemeSliceReducer, {
   GameThemeType,
 } from './slice/game/gameThemeSlice';
@@ -48,12 +50,12 @@ import roomStatusSliceReducer from './slice/game/roomStatusSlice';
 
 export interface ReducerStates {
   navbarPath: NavbarStateType;
-  score: number;
+  score: ScoreType;
   leftTime: number;
-  gameUsers: GameUser[];
+  gameUsers: GameUserType[];
   gameRound: GameRoundType;
   inGameChatDatas: InGameChatDataType[];
-  aiGameDatas: AiGameDatasType;
+  gameDatas: GameDatasType;
   gameTheme: GameThemeType;
   userInfo: UserStateType;
   userRole: string;
@@ -78,7 +80,7 @@ const rootReducer = (
     default: {
       const combinedReducer = combineReducers({
         navbarPath: navbarSlice.reducer,
-        aiGameDatas: aiGameDatasSliceReducer,
+        gameDatas: gameDatasSliceReducer,
         score: scoreSliceReducer,
         leftTime: leftTimeSliceReducer,
         gameUsers: gameUsersSliceReducer,
