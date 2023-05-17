@@ -4,7 +4,6 @@ export interface GameUserType {
   userIdx: number;
   roomIdx: string;
   userNickname: string;
-  userPoint: number;
   userScore: number;
   userProfile: string;
 }
