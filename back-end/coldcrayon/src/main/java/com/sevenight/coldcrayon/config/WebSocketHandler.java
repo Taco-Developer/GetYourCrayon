@@ -492,48 +492,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
         // timeStart: 시간이 줄어드는 매서드
         else if (type.equals("timeStart")) {
 
-            //== 매서드 선언부 ==//
-            //시간관련 설정들
-            gameOnGoing = true;
-            int initialDelay = 1;
-            int period = 1;
-            int roundTime = (int) roomInfoMap.get("roundTime");
-
-            //예약한 작업을 실행할 주체
-            ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-
-            //예약한 작업
-            Runnable task = new Runnable() {
-                int time = roundTime;
-
-                @Override
-                public void run() {
-                    if (time >= 0 && gameOnGoing == true) {
-                        Map<String, Object> response = new HashMap<>();
-                        response.put("type", "timeStart");
-                        response.put("message", time);
-                        String json;
-                        try {
-                            json = objectMapper.writeValueAsString(response);
-                            for (WebSocketSession s : sessions) {
-                                if (s.isOpen()) {
-                                    s.sendMessage(new TextMessage(json));
-                                }
-                            }
-                        } catch (IOException e) {
-                            // 예외 처리
-                            System.out.println("e = " + e);
-                        }
-                        time--;
-                    } else {
-                        gameOnGoing = false;
-                        executorService.shutdown();
-                    }
-                }
-            };
-
-            // 매서드 실행부
-            executorService.scheduleAtFixedRate(task, initialDelay, period, TimeUnit.SECONDS);
         }
 
         // 라운드 시작
