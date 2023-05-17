@@ -505,7 +505,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                     .build();
 
             ResponseRoundDto responseRoundDto = gameService.endRound(requestRoundDto);
-            responseRoundDto.setType("gameDto");
+            responseRoundDto.setType("roundOver");
             String json = objectMapper.writeValueAsString(responseRoundDto);
 
             // 세션에 기록
