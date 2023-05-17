@@ -188,14 +188,14 @@ public class WebSocketHandler extends TextWebSocketHandler {
             }
 
         } else if (type.equals("chat")) {
-            String status = jsonMessage.get("status");
-            if(status.equals("answer")){
-                String answer = jsonMessage.get("content");
-                if(answer.equals(gameInfoMap.get("correct")) && gameInfoMap.get("winnerIdx").equals("0")){
-                    String userIdx = jsonMessage.get("userIdx");
-                    gameInfoMap.put("winner", userIdx);
-                }
-            }
+//            String status = jsonMessage.get("status");
+//            if(status.equals("answer")){
+//                String answer = jsonMessage.get("content");
+//                if(answer.equals(gameInfoMap.get("correct")) && gameInfoMap.get("winnerIdx").equals("0")){
+//                    String userIdx = jsonMessage.get("userIdx");
+//                    gameInfoMap.put("winner", userIdx);
+//                }
+//            }
             for (WebSocketSession s : sessions) {
                 if (s.isOpen()) {
                     s.sendMessage(message);
