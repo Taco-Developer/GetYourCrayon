@@ -27,6 +27,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -366,6 +367,15 @@ public class WebSocketHandler extends TextWebSocketHandler {
             roomInfoMap.put("roundTime", Integer.parseInt(changedRoundTime));
         }
 
+        // 게임 알림
+        else if (type.equals("gameAlert")) {
+            for (WebSocketSession s : sessions) {
+                if (s.isOpen()) {
+                    s.sendMessage(message);
+                }
+            }
+        }
+
         // 게임 시작
         else if (type.equals("gameStart")) {
             // 현재 설정된 게임 타입을 받아와서 case 구분
@@ -559,7 +569,11 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
         /// 5/17: DG
         // 나가기 실행 시 (나가기 방식 말고)
+        log.info("userInfoMap: {}", userInfoMap);
+        log.info("userInfoMap.get(session.getId()): {}", userInfoMap.get(session.getId()));
         Long userIdx = userInfoMap.get(session.getId()).userIdx;
+        log.info("userIdx: {}", userIdx);
+
 
         UserDto userDtoByUserIdx = webSocketCustomService.getUserDtoByUserIdx(userIdx);
         roomService.outRoom(userDtoByUserIdx);
