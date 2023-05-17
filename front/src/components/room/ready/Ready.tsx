@@ -13,7 +13,6 @@ import { listenEvent, removeEvent } from '@/socket/socketEvent';
 import { gameAPI } from '@/api/api';
 
 interface RoomPropsType {
-  setStatus: React.Dispatch<React.SetStateAction<string>>;
   socket: WebSocket | null;
   setSocket: React.Dispatch<React.SetStateAction<WebSocket | null>>;
 }
@@ -24,12 +23,13 @@ interface MessageType {
 }
 
 interface UserInType {
-  type: string;
-  roomInfo: {};
-  userList: {};
+  roomData: {
+    roomInfo: {};
+    userList: {};
+  };
 }
 
-export default function Ready({ setStatus, socket, setSocket }: RoomPropsType) {
+export default function Ready({ socket, setSocket }: RoomPropsType) {
   /** 유저 정보 */
   const { profile } = useAppSelector((state) => state.mypageInfo);
   /** 유저가 생성한 방 */
@@ -53,7 +53,7 @@ export default function Ready({ setStatus, socket, setSocket }: RoomPropsType) {
     status: '',
   });
   /** 방에 유저 목록 */
-  const [userList, setUserList] = useState<[]>([]);
+  const [userList, setUserList] = useState<{}>({});
 
   const closeSocket = () => {
     if (socket) {
@@ -85,22 +85,13 @@ export default function Ready({ setStatus, socket, setSocket }: RoomPropsType) {
   }, [roomIdx, setSocket]);
 
   useEffect(() => {
-    const roomInHandler = (event: any) => {
-      const data = JSON.parse(event.data);
-      if (data.type !== 'userIn') return;
-      setUserList(data.userList.userList);
-      console.log(data);
-    };
-    /** 토큰 */
-    const token = getCookie('accesstoken');
     if (socket) {
-      socket.onopen = () => {
-        sendMessage(socket, 'userIn', { authorization: token });
-        sendMessage(socket, 'chat', {
-          author: 'admin',
-          message: `${profile.userNickname}님이 입장하셨습니다 :)`,
-        });
-        listenEvent(socket, roomInHandler);
+      /** 토큰 */
+      const token = getCookie('accesstoken');
+      const roomInHandler = (event: MessageEvent) => {
+        const data = JSON.parse(event.data);
+        if (data.type !== 'userIn') return;
+        console.log(`Ready -> ${data}`);
       };
 
       const messageHandler = (event: MessageEvent) => {
@@ -108,7 +99,17 @@ export default function Ready({ setStatus, socket, setSocket }: RoomPropsType) {
         if (data.type !== 'chat') return;
         setMessageList((prev) => [...prev, data]);
       };
+
+      listenEvent(socket, roomInHandler);
       listenEvent(socket, messageHandler);
+
+      socket.onopen = () => {
+        sendMessage(socket, 'userIn', { authorization: token });
+        sendMessage(socket, 'chat', {
+          author: 'admin',
+          message: `${profile.userNickname}님이 입장하셨습니다 :)`,
+        });
+      };
 
       return () => {
         removeEvent(socket, messageHandler);
@@ -157,7 +158,6 @@ export default function Ready({ setStatus, socket, setSocket }: RoomPropsType) {
           <ReadyBtn
             boardId={boardId}
             setBoardId={setBoardId}
-            setStatus={setStatus}
             closeSocket={closeSocket}
           />
         </BtnDiv>

@@ -1,14 +1,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-const initialState: number = 60;
+const initialState: number = 1000;
 
 const leftTimeSlice = createSlice({
   name: 'leftTime',
   initialState,
   reducers: {
     /** 카운트 다운 */
-    countDown(state) {
-      return (state -= 1);
+    changeTime(state, action: PayloadAction<number>) {
+      return action.payload;
     },
 
     /** 시간 리셋 */
@@ -18,5 +18,5 @@ const leftTimeSlice = createSlice({
   },
 });
 
-export const { countDown, resetTime } = leftTimeSlice.actions;
+export const { changeTime, resetTime } = leftTimeSlice.actions;
 export default leftTimeSlice.reducer;
