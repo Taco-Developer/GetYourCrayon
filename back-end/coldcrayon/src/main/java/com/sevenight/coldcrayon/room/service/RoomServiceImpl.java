@@ -42,7 +42,7 @@ public class RoomServiceImpl implements RoomService{
 
             RoomHash roomHash = RoomHash.builder()
                     .roomIdx(roomIdx)
-                    .gameCategory(GameCategory.AI)
+                    .gameCategory(GameCategory.AiPainting)
                     .gameCnt(0)
                     .nowRound(0)
                     .maxRound(6)
@@ -240,6 +240,13 @@ public class RoomServiceImpl implements RoomService{
 
         return RoomResponseDto.of(optionalRoomHash, status, message);
     }
+
+    // 방 설정 변경하기
+    /*
+    플레이어 명수
+
+
+     */
 
     // 참여 인원 조회하기
     public List<UserHash> getUserList(String roomIdx){
