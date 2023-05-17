@@ -151,7 +151,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
 
         /// chat, draw, userId, {userScore} //
-
+        boolean gameOnGoing;
         // userIn:유저가 들어올 때 userData: (유저Id, 기본점수)
         if (type.equals("userIn")) {
             String authorization = jsonMessage.get("authorization");
