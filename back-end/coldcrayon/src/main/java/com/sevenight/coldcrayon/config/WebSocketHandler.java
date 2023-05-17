@@ -72,6 +72,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
     // flag 변수
     private boolean flag = false;   // 웹 소켓이 생성되기 전: false, 한 번 생성되고 난 후: true
+    private boolean gameOnGoing;
 
     // roomTitle을 가져와야 할까요??
     public void initailizeRoomInfo(String roomIdx) {
@@ -451,6 +452,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
             //== 매서드 선언부 ==//
             //시간관련 설정들
+            gameOnGoing = true;
             int initialDelay = 1;
             int period = 1;
             int roundTime = (int) roomInfoMap.get("roundTime");
@@ -464,7 +466,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
                 @Override
                 public void run() {
-                    if (time >= 0) {
+                    if (time >= 0 && gameOnGoing == true) {
                         Map<String, Object> response = new HashMap<>();
                         response.put("type", "timeStart");
                         response.put("message", time);
@@ -514,8 +516,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
         // 라운드 종료  ------- type 지정 필요 -------   // 수민: 임시로 내가 설정해서 사용하도록 함
         else if (type.equals("roundOver")) {
-            System.err.println("이거 디버깅 용도 : roundOver에 진입했음.");
-            Long winnerIdx = Long.parseLong(gameInfoMap.get("winnerIdx"));
+            gameOnGoing = false;        // 시간 감소 로직 중지
+            Long winnerIdx = Long.valueOf(jsonMessage.get("winnerIdx"));
 
             gameInfoMap.put("winnerIdx", "0");
             RequestRoundDto requestRoundDto = RequestRoundDto.builder()
@@ -536,13 +538,11 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 userScoreMap.put(userIdx1, userScore);
             }
 
-
             for (WebSocketSession s : sessions) {
                 if (s.isOpen()) {
                     s.sendMessage(new TextMessage(json));
                 }
             }
-
 
             // 게임 종료
         } else if (type.equals("gameOver")) {
