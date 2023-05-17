@@ -494,8 +494,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
                     .build();
 
             ResponseGameDto responseGameDto = gameService.nextRound(requestRoundDto);      // type: gameDto로 기본 설정되어 있음
-            gameInfoMap.put("correct", responseGameDto.getCorrect());
-            gameInfoMap.put("winnerIdx", "0");
             String json = objectMapper.writeValueAsString(responseGameDto);
 
             for (WebSocketSession s : sessions) {
