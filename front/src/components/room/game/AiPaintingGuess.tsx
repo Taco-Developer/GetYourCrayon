@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import Image from 'next/image';
+import { getCookie } from 'cookies-next';
 
 import tw from 'tailwind-styled-components';
 
@@ -12,31 +13,23 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 
 import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
-import {
-  addAiImages,
-  openIsScoreCheckModalOpened,
-  savePrompt,
-} from '@/store/slice/game/aiGameDatasSlice';
-import { InGameChatDataType } from '@/store/slice/game/inGameChatDatasSlice';
+import { addAiImages, savePrompt } from '@/store/slice/game/gameDatasSlice';
 import { saveTheme } from '@/store/slice/game/gameThemeSlice';
-import {
-  addInputedAnswers,
-  addSavedAnswers,
-} from '@/store/slice/game/answersSlice';
+import { addSavedAnswers } from '@/store/slice/game/answersSlice';
 import { listenEvent, removeEvent } from '@/socket/socketEvent';
 import { sendMessage } from '@/socket/messageSend';
-import { resetTime } from '@/store/slice/game/leftTimeSlice';
 import { endRound, startRound } from '@/store/slice/game/gameRoundSlice';
-import { getCookie } from 'cookies-next';
 import Loading from '@/components/ui/Loading';
+import { setDefaultScore, setWinnerScore } from '@/store/slice/game/score';
+import { setGameUsers } from '@/store/slice/game/gameUsersSlice';
 
 export default function AiPaintingGuess({ socket }: { socket: WebSocket }) {
   const {
     leftTime,
     gameRound: { now },
     answers: { savedAnswers, inputedAnswers },
-    aiGameDatas: { aiImages },
-    roomIdx: { roomIdx },
+    gameDatas: { aiImages },
+    userInfo: { userIdx, userNickname },
   } = useAppSelector((state) => state);
   const dispatch = useAppDispatch();
 
@@ -52,19 +45,14 @@ export default function AiPaintingGuess({ socket }: { socket: WebSocket }) {
   const answerSubmitHandler: React.FormEventHandler = (event) => {
     event.preventDefault();
     const answer = answerInputValue;
-    const chatInputValue: InGameChatDataType = {
-      user: '아프리카청춘이다',
+    const chatInputValue = {
+      user: userNickname,
       status: 'answer',
       content: answer,
+      userIdx,
     };
-    sendMessage(socket, 'chat', { ...chatInputValue });
+    sendMessage(socket, 'chat', chatInputValue);
     setAnswerInputValue('');
-    if (
-      savedAnswers.indexOf(answer) === -1 ||
-      inputedAnswers.indexOf(answer) !== -1
-    )
-      return;
-    dispatch(addInputedAnswers(answer));
   };
 
   // 정답 비교
@@ -75,9 +63,9 @@ export default function AiPaintingGuess({ socket }: { socket: WebSocket }) {
       leftTime === 0
     ) {
       dispatch(endRound());
-      dispatch(openIsScoreCheckModalOpened());
+      sendMessage(socket, 'roundOver');
     }
-  }, [savedAnswers, inputedAnswers, leftTime, dispatch]);
+  }, [savedAnswers, inputedAnswers, leftTime, dispatch, socket]);
 
   // socket 통신
   useEffect(() => {
@@ -85,12 +73,22 @@ export default function AiPaintingGuess({ socket }: { socket: WebSocket }) {
       const data = JSON.parse(event.data);
       if (data.type !== 'gameDto') return;
       console.log(data);
-      const { correct, message, theme, urlList } = data;
+      const {
+        correct,
+        message,
+        theme,
+        urlList,
+        winnerScore,
+        defualtScore,
+        userList,
+      } = data;
+      dispatch(setWinnerScore(winnerScore));
+      dispatch(setDefaultScore(defualtScore));
       dispatch(addAiImages(urlList));
+      dispatch(setGameUsers(userList));
       dispatch(addSavedAnswers(correct));
       dispatch(saveTheme(theme));
       dispatch(savePrompt(message));
-      dispatch(resetTime());
       dispatch(startRound());
       sendMessage(socket, 'timeStart');
     };
@@ -105,10 +103,12 @@ export default function AiPaintingGuess({ socket }: { socket: WebSocket }) {
   // 시작
   useEffect(() => {
     if (now === 1) {
+      console.log('최초');
       sendMessage(socket, 'gameStart', {
         authorization: getCookie('accesstoken'),
       });
     } else {
+      console.log('다음');
       sendMessage(socket, 'nextRound', {
         authorization: getCookie('accesstoken'),
       });
