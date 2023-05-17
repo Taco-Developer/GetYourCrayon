@@ -13,13 +13,17 @@ import lombok.*;
 @ToString
 public class ResponseRoundDto {
 
-    String type;
+    String type = "roundOver";
 
     String status;
 
     String message;
 
     Long winnerUserIdx;
+
+    int defualtScore;
+
+    int winnerScore;
 
     List<UserHashResponseDto> userList;
 
