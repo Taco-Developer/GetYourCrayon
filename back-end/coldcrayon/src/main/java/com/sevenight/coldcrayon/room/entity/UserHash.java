@@ -21,6 +21,8 @@ public class UserHash {
 
     private String userNickname;
 
+    private String userProfile;
+
     private int userPoint;
 
     private int userScore;
