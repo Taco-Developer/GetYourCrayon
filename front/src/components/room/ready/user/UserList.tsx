@@ -9,6 +9,7 @@ export interface UserData {
   roomIdx: string | null;
   userIdx: number;
   userNickname: string;
+  userProfile: string;
   userPoint: number;
   userScore: number;
 }
@@ -49,10 +50,11 @@ export default function UserList({ userList }: ReadyPropsType) {
           <UserDiv key={i}>
             <Profile>
               <Image
-                src="/profile/001.png"
-                alt="poket"
-                width={512}
-                height={512}
+                src={user.userProfile}
+                alt="no_img"
+                priority
+                fill
+                sizes="100%"
               />
             </Profile>
             <InnerDiv>
@@ -69,7 +71,7 @@ const UserBody = tw.div`w-90 h-full bg-white bg-opacity-50 rounded-2xl flex flex
 const TitleDiv = tw.div`w-full h-10 font-bold text-3xl xl:text-5xl m-2 flex items-center justify-center`;
 const ListDiv = tw.div`w-90 h-80 m-2 grid grid-rows-6`;
 const UserDiv = tw.div`w-90 h-90 m-auto p-1 border-white border-2 rounded-l-3xl rounded-r-xl flex items-center justify-between`;
-const Profile = tw.div`h-full border-white border-2 rounded-full bg-slate-100 block w-30`;
+const Profile = tw.div`h-16 w-16 border-white border-1 rounded-full bg-slate-100 block relative overflow-hidden`;
 const InnerDiv = tw.div`h-full w-full flex items-center justify-between`;
 const UserName = tw.div`text-sm xl:text-2xl m-4`;
 const CtrlDiv = tw.div`flex items-center justify-center`;
