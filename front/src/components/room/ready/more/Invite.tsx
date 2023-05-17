@@ -1,6 +1,6 @@
-import { useState, forwardRef } from 'react';
+import { useState, forwardRef, useEffect } from 'react';
 import tw from 'tailwind-styled-components';
-import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
+import { useAppSelector } from '@/store/thunkhook';
 
 //mui 관련 import
 import Dialog from '@mui/material/Dialog';
@@ -50,6 +50,15 @@ interface ReadyProps {
 }
 
 export default function Invite({ copyAction, createAction }: ReadyProps) {
+  const { roomInfo, userInfo } = useAppSelector((state) => state);
+  const [btnAdmin, setBtnAdmin] = useState<boolean>(true);
+
+  useEffect(() => {
+    if (userInfo.userIdx === roomInfo.adminUserIdx) {
+      setBtnAdmin(false);
+    }
+  }, [roomInfo.adminUserIdx]);
+
   /** 유저가 생성한 방 */
   const { roomIdx } = useAppSelector((state) => state.roomIdx);
   const [open, setOpen] = useState(false);
@@ -64,6 +73,8 @@ export default function Invite({ copyAction, createAction }: ReadyProps) {
   return (
     <OutDiv>
       <GoBtn
+        className={btnAdmin ? 'bg-slate-500 hover:bg-slate-500' : ''}
+        disabled={btnAdmin}
         onClick={() => {
           ClickOpen();
         }}
