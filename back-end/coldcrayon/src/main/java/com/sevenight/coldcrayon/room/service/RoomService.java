@@ -30,8 +30,7 @@ public interface RoomService {
     // 게임 정답을 가장 먼저 맞힌 사람정보를 들고 온다.
     void CorrectUser(String roomIdx, Long userIdx);
 
-    // 3-3 유저 차단
-//    String banUser(String roomIdx, String adminUserIdx, String banUserIdx);
+    int changeRoomOption(String type, String option, String roomIdx);
 
 
 }

@@ -280,12 +280,29 @@ public class RoomServiceImpl implements RoomService{
         return RoomResponseDto.of(optionalRoomHash, status, message);
     }
 
-    // 방 설정 변경하기
-    /*
-    플레이어 명수
+    public int changeRoomOption(String type, String option, String roomIdx) {
+        Optional<RoomHash> optionalRoomHash = roomRepository.findById(roomIdx);
 
+        if (optionalRoomHash.isPresent()) {
+            RoomHash roomHash = optionalRoomHash.get();
 
-     */
+            if (type.equals("roomUserCnt")) {
+                if (roomHash.getRoomNow() > Integer.parseInt(option)) {
+                    return 0;
+                } else {
+                    roomHash.setRoomMax(Integer.parseInt(option));
+                }
+
+            } else if (type.equals("gameMode")) {
+                roomHash.setGameCategory(GameCategory.valueOf(option));
+
+            } else {
+                roomHash.setMaxRound(Integer.parseInt(option));
+            }
+        }
+        return 1;
+    }
+
 
     // 참여 인원 조회하기
     public List<UserHash> getUserList(String roomIdx){
