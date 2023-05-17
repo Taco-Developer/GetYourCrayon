@@ -12,7 +12,7 @@ import { addInGameChat } from '@/store/slice/game/inGameChatDatasSlice';
 import { listenEvent, removeEvent } from '@/socket/socketEvent';
 import { changeTime } from '@/store/slice/game/leftTimeSlice';
 import { addInputedAnswers } from '@/store/slice/game/answersSlice';
-import { setWinner } from '@/store/slice/game/gameRoundSlice';
+import { setTotalRound, setWinner } from '@/store/slice/game/gameRoundSlice';
 import { setGameUsers } from '@/store/slice/game/gameUsersSlice';
 import { openIsScoreCheckModalOpened } from '@/store/slice/game/gameDatasSlice';
 
@@ -25,8 +25,13 @@ export default function InGameRoom({
 }) {
   const {
     answers: { savedAnswers, inputedAnswers },
+    roomInfo: { maxRound },
   } = useAppSelector((state) => state);
   const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(setTotalRound(maxRound));
+  }, [dispatch, maxRound]);
 
   useEffect(() => {
     const messageHandler = (message: MessageEvent) => {
