@@ -7,11 +7,10 @@ import { sendMessage } from '@/socket/messageSend';
 
 interface ChatPropsType {
   socket: WebSocket | null;
-  room: string;
   messageList: Array<any>;
 }
 
-export default function Chat({ socket, room, messageList }: ChatPropsType) {
+export default function Chat({ socket, messageList }: ChatPropsType) {
   /** 유저 정보 */
   const { profile } = useAppSelector((state) => state.mypageInfo);
   const userNick = profile.userNickname;

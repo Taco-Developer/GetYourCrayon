@@ -5,7 +5,7 @@ import UserDrop from './UserDrop';
 import { gameAPI } from '@/api/api';
 import { useAppSelector } from '@/store/thunkhook';
 
-export default function UserList() {
+export default function UserList(userList: any) {
   const [userCnt, setUserCnt] = useState<number>(6);
   const [player, setPlayer] = useState<string[]>([
     'A도겸',
@@ -15,6 +15,7 @@ export default function UserList() {
     '갓 덕호',
     '도커경민',
   ]);
+  console.log(userList);
   const { roomIdx } = useAppSelector((state) => state.roomIdx);
 
   const roomInfo = async (idx: string) => {
