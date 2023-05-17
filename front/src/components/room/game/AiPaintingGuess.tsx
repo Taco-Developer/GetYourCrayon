@@ -84,6 +84,7 @@ export default function AiPaintingGuess({ socket }: { socket: WebSocket }) {
     const messageHandler = (event: MessageEvent) => {
       const data = JSON.parse(event.data);
       if (data.type !== 'gameDto') return;
+      console.log(data);
       const { correct, message, theme, urlList } = data;
       dispatch(addAiImages(urlList));
       dispatch(addSavedAnswers(correct));
@@ -91,6 +92,7 @@ export default function AiPaintingGuess({ socket }: { socket: WebSocket }) {
       dispatch(savePrompt(message));
       dispatch(resetTime());
       dispatch(startRound());
+      sendMessage(socket, 'timeStart');
     };
 
     listenEvent(socket, messageHandler);
@@ -102,10 +104,16 @@ export default function AiPaintingGuess({ socket }: { socket: WebSocket }) {
 
   // 시작
   useEffect(() => {
-    sendMessage(socket, 'gameStart', {
-      authorization: getCookie('accesstoken'),
-    });
-  }, [now, socket, roomIdx]);
+    if (now === 1) {
+      sendMessage(socket, 'gameStart', {
+        authorization: getCookie('accesstoken'),
+      });
+    } else {
+      sendMessage(socket, 'nextRound', {
+        authorization: getCookie('accesstoken'),
+      });
+    }
+  }, [socket, now]);
 
   if (aiImages.length === 0) {
     return <Loading />;

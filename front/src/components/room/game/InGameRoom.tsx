@@ -28,9 +28,9 @@ export default function InGameRoom({
         const { content, status, user } = data;
         dispatch(addInGameChat({ content, status, user }));
       }
-      if (data.type === 'gameTime') {
-        const { roundTime } = data;
-        dispatch(changeTime(roundTime));
+      if (data.type === 'timeStart') {
+        const { message } = data;
+        dispatch(changeTime(message));
       }
     };
     listenEvent(socket, messageHandler);
