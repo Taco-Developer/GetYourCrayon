@@ -76,6 +76,17 @@ public class RoomServiceImpl implements RoomService{
         return RoomResponseDto.of(roomHashOptional, "fail", "요청하신 방의 정보가 없습니다.");
     }
 
+    public void CorrectUser(String roomIdx, Long userIdx){
+        Optional<RoomHash> roomHashOptional = roomRepository.findById(roomIdx);
+        if(roomHashOptional.isPresent()){
+            RoomHash roomHash = roomHashOptional.get();
+            if (roomHash.getCorrectUser().equals(0L)){
+                roomHash.setCorrectUser(userIdx);
+                roomRepository.save(roomHash);
+            }
+        }
+    }
+
     // 방에 참여하기
     public Map<String, Object> joinRoom(UserDto userDto, String roomIdx){
 

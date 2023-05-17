@@ -13,10 +13,10 @@ import java.util.Map;
 @Setter
 @Getter
 @Builder
+@RequiredArgsConstructor
 @NoArgsConstructor
 @AllArgsConstructor
 public class RoomHash {
-
     @Id
     private String roomIdx;
 
@@ -38,4 +38,5 @@ public class RoomHash {
 
     private LocalDateTime roomCreateTime;
 
+    private Long correctUser = 0L;
 }
