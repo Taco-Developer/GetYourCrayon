@@ -40,7 +40,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
     private final Map<String, List<WebSocketSession>> sessionsMap = new ConcurrentHashMap<>();
 
     // 참여자 정보 리스트
-    private final Map<String, List<UserInfo>> userInfosMap = new ConcurrentHashMap<>();
+    private final LinkedHashMap<String, UserInfo> userInfoMap = new LinkedHashMap<>();
+
 
     // 방정보를 담을 Map타입으로 하나 만들어서 해당 정보로 공유하자
     private Map<String, Object> roomInfoMap = new ConcurrentHashMap<>();
@@ -169,16 +170,12 @@ public class WebSocketHandler extends TextWebSocketHandler {
             log.info("접속하는 유저의 닉네임: {}, 소켓 아이디(roomId): {}", userDto.getUserNickname(), roomId);
 
             // 세션에 기록: 입장하려는 유저 인스턴스 생성
-            List<UserInfo> userList = userInfosMap.computeIfAbsent(session.getId(), key -> new ArrayList<>());
+            UserInfo userInfo = userInfoMap.computeIfAbsent(session.getId(), key -> new UserInfo());
 
-            UserInfo userInfo = new UserInfo();
             userInfo.setNickname(userDto.getUserNickname());
             userInfo.setScore(0);
             userInfo.setToken(authorization);
-            userInfo.setUserIdx(userDto.getUserIdx());
-
-            userList.add(userInfo);
-            userInfosMap.put(session.getId(), userList);
+            userInfoMap.put(session.getId(), userInfo);
             
             // 방 입장 로직 수행
             Map<String, Object> joinRoomResponse = roomService.joinRoom(userDto, roomId);    // 수민 로직 추가 예정: 타입을 ReponseDto로 정상일 때 ResponseDto 정보, 오류일 때 state를 포함한 정보
@@ -597,10 +594,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
 ///
 
-        log.info("session.getId(): {}", session.getId());
-        log.info("userInfosMap: {}", userInfosMap);
 
-        UserInfo userInfo = (UserInfo) userInfosMap.get(session.getId());   // 세션의 Id로 유저 정보를 가져옴
+        UserInfo userInfo = userInfoMap.get(session.getId());   // 세션의 Id로 유저 정보를 가져옴
         log.info("userInfo: {}", userInfo);
 
         String userNickname = userInfo.getNickname();   // userInfo에서 닉네임 가져오기 -> 나간 사람 표시
