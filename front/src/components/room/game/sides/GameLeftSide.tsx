@@ -135,6 +135,8 @@ const Profile = tw.div`
   rounded-full
 
   flex-none
+
+  relative
 `;
 
 const MemberStatus = tw.div`

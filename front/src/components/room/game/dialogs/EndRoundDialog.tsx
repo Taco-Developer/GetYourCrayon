@@ -52,7 +52,7 @@ export default function EndRoundDialog() {
           <Margin type={MarginType.height} size={16} />
           <p className="text-xl text-amber-300">
             총점 :{' '}
-            {gameUsers.find((user) => user.userIdx === userIdx)!.userScore}점
+            {gameUsers.find((user) => user.userIdx === userIdx)?.userScore}점
           </p>
         </header>
         <Margin type={MarginType.height} size={16} />
@@ -60,7 +60,8 @@ export default function EndRoundDialog() {
           <h3 className="text-2xl">이번 라운드 획득 점수</h3>
           <Margin type={MarginType.height} size={16} />
           <h1 className="text-4xl text-green-600">
-            {userIdx === winnerIdx ? winnerScore : defaultScore}점
+            {userIdx === winnerIdx ? winnerScore + defaultScore : defaultScore}
+            점
           </h1>
         </main>
       </div>
