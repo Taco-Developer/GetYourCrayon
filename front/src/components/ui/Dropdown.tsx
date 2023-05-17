@@ -49,7 +49,7 @@ export default function Dropdown({
       <DropDiv>
         {Option ? Option.label : base.label}
         <DropdownButton
-          className={btnAdmin ? '' : 'hidden'}
+          className={btnAdmin ? 'hidden' : ''}
           onClick={toggleDropdown}
         >
           {'<'}
