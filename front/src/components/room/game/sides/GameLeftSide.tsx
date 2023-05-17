@@ -133,6 +133,7 @@ const Profile = tw.div`
   w-5
   h-5
   rounded-full
+  overflow-hidden
 
   flex-none
 
