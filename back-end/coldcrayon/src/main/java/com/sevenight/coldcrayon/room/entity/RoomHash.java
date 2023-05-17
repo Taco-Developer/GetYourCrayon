@@ -14,7 +14,6 @@ import java.util.Map;
 @Getter
 @Builder
 @RequiredArgsConstructor
-@NoArgsConstructor
 @AllArgsConstructor
 public class RoomHash {
     @Id
