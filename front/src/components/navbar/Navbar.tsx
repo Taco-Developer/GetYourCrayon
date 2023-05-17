@@ -27,7 +27,7 @@ export default function Navbar({ children }: NavbarPropsType) {
   const navbarPath = useSelector((state: RootState) => state.navbarPath);
   const { roomIdx } = useAppSelector((state) => state.roomIdx);
   const dispatch = useDispatch<AppDispatch>();
-
+  console.log(isLogin);
   const enterRoom = async () => {
     await gameAPI
       .createRoom()
@@ -85,7 +85,7 @@ export default function Navbar({ children }: NavbarPropsType) {
         </LogoDiv>
 
         <LoginDiv>
-          {isLogin ? (
+          {isLogin.isLogin ? (
             <MyProfile isClick={isClick} setIsClick={setIsClick} />
           ) : (
             <div>

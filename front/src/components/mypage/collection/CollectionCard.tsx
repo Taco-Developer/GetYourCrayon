@@ -3,11 +3,17 @@ import CardContent from '@mui/material/CardContent';
 import Image from 'next/image';
 import { styled } from '@mui/material';
 import { useEffect, useState } from 'react';
+import CollectionImageModal from './imagemodal/ImageModal';
+import { setPriority } from 'os';
 
-interface PropsTypes {
+export interface PropsTypes {
   gachaIdx: number;
   gachaImg: string;
 }
+
+const ColleCard = styled(Card)(`
+  width : 7vw;
+`);
 
 const CardContentNoPadding = styled(CardContent)(`
   padding: 0;
@@ -24,12 +30,16 @@ export default function CollectionCard({
   key: number;
 }) {
   return (
-    <Card className="flex flex-col items-center relative" sx={{ margin: 1 }}>
+    <ColleCard
+      className="flex flex-col items-center relative"
+      sx={{ margin: 1 }}
+    >
       <CardContentNoPadding>
-        <div className="w-bomul-img h-bomul-img relative ">
+        <div className="w-colle-img h-colle-img relative ">
           <Image src={data.gachaImg} alt="no_img" priority fill sizes="100%" />
         </div>
       </CardContentNoPadding>
-    </Card>
+      <CollectionImageModal data={data} />
+    </ColleCard>
   );
 }
