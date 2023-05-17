@@ -7,11 +7,10 @@ import Paging from '@/components/board/Paging';
 import { setCookie, getCookie } from 'cookies-next';
 
 export interface Board {
-  id: number;
-  title: string;
-  content: string;
-  create_time: string;
-  update_time: string;
+  boardTitle: string;
+  boardContent: string;
+  boardCreateTime: string;
+  boardUpdateTime: string;
 }
 
 interface Pageable {
@@ -47,25 +46,18 @@ export interface BoardPaginationType {
 
 export async function getServerSideProps({ req, res }: any) {
   let cookie = getCookie('accesstoken', { req, res });
-  console.log(cookie);
   try {
     const re = await boardAPI.getBoard(0);
     const res: BoardPaginationType = re.data;
-    return { props: { res, cookie } };
+    return { props: { res } };
   } catch (e) {
     return { props: {} };
   }
 }
 
-export default function Board({
-  res,
-  cookie,
-}: {
-  res: BoardPaginationType;
-  cookie: string;
-}) {
+export default function Board({ res }: { res: BoardPaginationType }) {
   const [boardData, setBoardData] = useState(res);
-  console.log(cookie);
+  console.log(res);
   return (
     <Container>
       <div className="text-xl md:text-2xl lg:text-3xl text-center mb-4 ">
