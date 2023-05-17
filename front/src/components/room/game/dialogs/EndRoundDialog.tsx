@@ -51,7 +51,7 @@ export default function EndRoundDialog() {
           <h2 className=" text-3xl">라운드 종료</h2>
           <Margin type={MarginType.height} size={16} />
           <p className="text-xl text-amber-300">
-            총점 :{' '}
+            총점 :
             {gameUsers.find((user) => user.userIdx === userIdx)?.userScore}점
           </p>
         </header>
