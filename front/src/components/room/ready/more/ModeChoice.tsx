@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import tw from 'tailwind-styled-components';
+import { useAppSelector } from '@/store/thunkhook';
 
 export default function ModeChoice() {
+  const { roomInfo, userInfo } = useAppSelector((state) => state);
+  const [btnAdmin, setBtnAdmin] = useState<boolean>(true);
+
   const [choiceMode, setChoiceMode] = useState<number>(0);
   const gameList: string[] = [
     'AI',
@@ -12,7 +16,9 @@ export default function ModeChoice() {
   ];
 
   const pickMode = (i: number) => {
-    setChoiceMode(i);
+    if (userInfo.userIdx === roomInfo.adminUserIdx) {
+      setChoiceMode(i);
+    }
   };
 
   return (
