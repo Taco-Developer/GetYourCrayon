@@ -476,7 +476,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
         }
 
-        // 라운드 종료  ------- type 지정 필요 -------   // 수민: gameDto에 responseRoundDto type 속성 설정 필요
+        // 라운드 종료  ------- type 지정 필요 -------   // 수민: 임시로 내가 설정해서 사용하도록 함
         else if (type.equals("roundOver")) {
             Long winnerIdx = Long.valueOf(jsonMessage.get("winnerIdx"));
 
@@ -486,6 +486,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                     .build();
 
             ResponseRoundDto responseRoundDto = gameService.endRound(requestRoundDto);
+            responseRoundDto.setType("gameDto");
             String json = objectMapper.writeValueAsString(responseRoundDto);
 
             for (WebSocketSession s : sessions) {
