@@ -20,6 +20,7 @@ import com.sevenight.coldcrayon.room.service.RoomService;
 import com.sevenight.coldcrayon.theme.entity.ThemeCategory;
 import com.sevenight.coldcrayon.user.dto.ResponseDto;
 import com.sevenight.coldcrayon.user.entity.User;
+import com.sevenight.coldcrayon.user.repository.UserRepository;
 import com.sevenight.coldcrayon.user.service.UserService;
 import com.sevenight.coldcrayon.util.HeaderUtil;
 import lombok.Getter;
@@ -553,67 +554,16 @@ public class WebSocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         String roomId = extractRoomId(session);
-
-
-        // 1안: 로그로 모조리 찍어보기
-//        userInfosMap.get(session.getId()).get
-
-
-///
-//        userInfosMap.get(session.getId())
-//        List<UserInfo> userInfos = userInfosMap.get(session.getId());
-//        boolean check = false;
-//
-//        for (UserInfo ui : userInfos) {
-//            if (ui.nickname.equals()) {
-//
-//            }
-//        }
-//
-//
-//
-//        List<WebSocketSession> sessions = sessionsMap.getOrDefault(roomId, Collections.emptyList());
-
-//        int initialDelay = 0;   //처음시작할땐 딜레이 없음
-//        int period = 1;           // 1초마다 실행
-//        int roundTime = 10;
-//
-//        ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-//        Runnable task = new Runnable() {
-//            int time = roundTime;
-//            @Override
-//            public void run() {     /////여기 run() 메서드 안에 실행할 논리 작성
-//                if (time > 0) {
-//                    Map<String, String> jsonMessage2 = new HashMap<>();
-//                    jsonMessage2.put("author", "점수알리미");
-//                    jsonMessage2.put("message", String.valueOf(time));
-//                    String json;
-//                    try {
-//                        ObjectMapper objectMapper = new ObjectMapper();
-//                        json = objectMapper.writeValueAsString(jsonMessage2);
-//                        for (WebSocketSession s : sessions) {
-//                            if (s.isOpen()) {
-//                                s.sendMessage(new TextMessage(json));
-//                            }
-//                        }
-//                    } catch (IOException e) {
-//                        // 예외 처리
-//                        System.out.println("e = " + e);
-//                    }
-//                    time--;
-//                } else {
-//                    executorService.shutdown();
-//                }
-//            }
-//        };
-
-//        executorService.scheduleAtFixedRate(task, initialDelay, period, TimeUnit.SECONDS)
-
-
-///
-
-
         UserInfo userInfo = userInfoMap.get(session.getId());   // 세션의 Id로 유저 정보를 가져옴
+
+        /// 5/17: DG
+        // 나가기 실행 시 (나가기 방식 말고)
+        Long userIdx = userInfoMap.get(session.getId()).userIdx;
+
+        UserDto userDtoByUserIdx = webSocketCustomService.getUserDtoByUserIdx(userIdx);
+        roomService.outRoom(userDtoByUserIdx);
+
+
         log.info("userInfo: {}", userInfo);
 
         String userNickname = userInfo.getNickname();   // userInfo에서 닉네임 가져오기 -> 나간 사람 표시
@@ -648,6 +598,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 Map<String, String> jsonMessage = new HashMap<>();
                 jsonMessage.put("type", "chat");
                 jsonMessage.put("author", "admin");
+                jsonMessage.put("status", "chatting");
                 jsonMessage.put("message", userNickname+ "님이 나갔습니다");
                 String json = objectMapper.writeValueAsString(jsonMessage);
 
