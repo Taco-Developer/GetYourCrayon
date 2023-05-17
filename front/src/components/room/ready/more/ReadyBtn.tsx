@@ -55,7 +55,7 @@ export default function ReadyBtn({
       } else {
         defaultTitle = title;
       }
-      await boardAPI.postBoard(defaultTitle, baseUrl + url).then((request) => {
+      await boardAPI.postBoard(defaultTitle, `/room/${url}`).then((request) => {
         setBoardId(request.data.id);
       });
     } else {
