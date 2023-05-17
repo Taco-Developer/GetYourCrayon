@@ -1,10 +1,7 @@
 package com.sevenight.coldcrayon.game.service;
 
 import com.sevenight.coldcrayon.auth.dto.UserDto;
-import com.sevenight.coldcrayon.game.dto.GameRequestDto;
-import com.sevenight.coldcrayon.game.dto.RequestRoundDto;
-import com.sevenight.coldcrayon.game.dto.ResponseGameDto;
-import com.sevenight.coldcrayon.game.dto.ResponseRoundDto;
+import com.sevenight.coldcrayon.game.dto.*;
 import com.sevenight.coldcrayon.game.repository.GameRepository;
 import com.sevenight.coldcrayon.joinlist.service.JoinListService;
 import com.sevenight.coldcrayon.room.dto.UserHashResponseDto;
@@ -59,7 +56,6 @@ public class GameServiceImpl implements GameService{
                 status = "success";
 
                 room.setRoomStatus(RoomStatus.Playing);
-                room.setMaxRound(gameRequestDto.getMaxRound());
                 room.setGameCnt(room.getGameCnt() + 1);
                 room.setGameCategory(gameRequestDto.getGameCategory());
                 room.setNowRound(1);
@@ -174,6 +170,8 @@ public class GameServiceImpl implements GameService{
             }
             System.err.println("여기까지 통과1");
             responseRoundDto.setUserList(userHashResponseDtoList);
+            responseRoundDto.setDefualtScore(3);
+            responseRoundDto.setWinnerScore(3);
             System.err.println("여기까지 통과2");
         } else{
             message = "조회한 방이 없습니다.";
@@ -266,47 +264,66 @@ public class GameServiceImpl implements GameService{
         return responseGameDto;
     }
 
-//    public void endGame(){
-//
-//        GameEndDto gameEndDto = new GameEndDto();
-//
-////        List<Object> userList = joinListService.getJoinList(requestRoundDto.getRoomIdx());
-////        Optional<RoomHash> optionalRoomHash = roomRepository.findById(requestRoundDto.getRoomIdx());
-//        if(optionalRoomHash.isPresent()) {
-//            List<UserHashResponseDto> userHashResponseDtoList = new ArrayList<>();
-//
-//            RoomHash roomHash = optionalRoomHash.get();
-//
-//            gameEndDto.setMessage("게임 끝");
-//            gameEndDto.setStatus("success");
-//            roomHash.setRoomStatus(RoomStatus.Ready);
-//            roomRepository.save(roomHash);
-//
-//            for(Object user: userList){
-//                Optional<UserHash> optionalUserHash = userHashRepository.findById(Long.parseLong(user.toString()));
-//                if(optionalUserHash.isPresent()){
-//                    UserHash userHash = optionalUserHash.get();
-//                    userHash.setUserPoint(userHash.getUserScore() + userHash.getUserPoint());
-//                    userHashResponseDtoList.add(UserHashResponseDto.of(userHash));
-//
-//                    userHash.setUserScore(0);
-//                    userHashRepository.save(userHash);
-//                }
-//            }
-//            String topDir = "/getchacrayon/image/history/"+ roomHash.getRoomIdx() + roomHash.getGameCnt();
-//            File dir = new File(topDir);
-//            File subdirs[] = dir.listFiles();
-//            for(int i=0; i<subdirs.length; i++){
-////                File
-//            }
-//
-//            gameEndDto.setUserHashResponseDtoList(userHashResponseDtoList);
-//
-//        } else {
-//            gameEndDto.setMessage("방이 없어요.");
-//        }
+    public GameEndDto endGame(String roomIdx) {
 
+        GameEndDto gameEndDto = new GameEndDto();
 
+        List<Object> userList = joinListService.getJoinList(roomIdx);
+        System.err.println("userList" +"\n" + userList);
+        Optional<RoomHash> optionalRoomHash = roomRepository.findById(roomIdx);
+        if (optionalRoomHash.isPresent()) {
+            List<UserHashResponseDto> userHashResponseDtoList = new ArrayList<>();
+
+            RoomHash roomHash = optionalRoomHash.get();
+            System.err.println("roomHash" +"\n" + roomHash);
+
+            gameEndDto.setMessage("게임 끝");
+            gameEndDto.setStatus("success");
+            roomHash.setRoomStatus(RoomStatus.Ready);
+            roomRepository.save(roomHash);
+
+            for (Object user : userList) {
+                Optional<UserHash> optionalUserHash = userHashRepository.findById(Long.parseLong(user.toString()));
+                if (optionalUserHash.isPresent()) {
+                    UserHash userHash = optionalUserHash.get();
+                    userHash.setUserPoint(userHash.getUserScore() + userHash.getUserPoint());
+                    userHashResponseDtoList.add(UserHashResponseDto.of(userHash));
+
+                    userHash.setUserScore(0);
+                    userHashRepository.save(userHash);
+                }
+            }
+
+            Map<Integer, List<String>> urlMap = new LinkedHashMap<>();
+            String topDir = "/getchacrayon/image/history/" + roomHash.getRoomIdx() + "/" + roomHash.getGameCnt();
+
+            File dir = new File(topDir);
+            File subDirs[] = dir.listFiles();
+            String[] dirNames = dir.list();
+
+            System.err.println("topDir" + topDir);
+            System.err.println("Arrays.toString(subDirs) : " + Arrays.toString(subDirs));
+            System.err.println("Arrays.toString(dirNames) : " + Arrays.toString(dirNames));
+
+            for (int i = 0; i < subDirs.length; i++) {
+                File files[] = subDirs[i].listFiles();
+                System.err.println("Arrays.toString(files) : " + Arrays.toString(files));
+                List<String> urlList = new ArrayList<>();
+                for (File file : files) {
+                    urlList.add(file.getPath());
+                }
+                urlMap.put(Integer.parseInt(dirNames[i]), urlList);
+                System.err.println(urlMap.toString());
+            }
+            gameEndDto.setUrlList(urlMap);
+            gameEndDto.setUserHashResponseDtoList(userHashResponseDtoList);
+
+        } else {
+            gameEndDto.setMessage("방이 없어요.");
+        }
+
+        return gameEndDto;
+    }
 }
 
 

@@ -21,6 +21,8 @@ public class UserHash {
 
     private String userNickname;
 
+    private String userProfile;
+
     private int userPoint;
 
     private int userScore;
@@ -29,6 +31,7 @@ public class UserHash {
        return UserHash.builder()
                .userIdx(userDto.getUserIdx())
                .userNickname(userDto.getUserNickname())
+               .userProfile(userDto.getUserProfile())
                .userPoint(userDto.getUserPoint())
                .userScore(10)
                .roomIdx(roomIdx)
