@@ -178,29 +178,16 @@ public class WebSocketHandler extends TextWebSocketHandler {
             userInfosMap.put(session.getId(), userList);
             
             // 방 입장 로직 수행
-            RoomResponseDto roomResponseDto = roomService.joinRoom(userDto, roomId);    // 수민 로직 추가 예정: 타입을 ReponseDto로 정상일 때 ResponseDto 정보, 오류일 때 state를 포함한 정보
-            roomResponseDto.setType("userIn");
-            String status = roomResponseDto.getStatus();
-            String message1 = roomResponseDto.getMessage();
-            
-            if (status.equals("fail")) {    // 실패했을 때
-                Map<String, String> response = new HashMap<>();
-                response.put("status", status);
-                response.put("message", message1);
-            
-                String jsonResponse = objectMapper.writeValueAsString(response);
-                for (WebSocketSession s : sessions) {
-                    if (s.isOpen()) {
-                        s.sendMessage(new TextMessage(jsonResponse));       // json(status, message) 전달
-                    }
-                }
-            } else {    // 성공했을 때
-                String jsonResponse = objectMapper.writeValueAsString(roomResponseDto);    // 방에 접속한 유저 목록
+            Map<String, Object> joinRoomResponse = roomService.joinRoom(userDto, roomId);    // 수민 로직 추가 예정: 타입을 ReponseDto로 정상일 때 ResponseDto 정보, 오류일 때 state를 포함한 정보
+            RoomResponseDto roomInfo = (RoomResponseDto) joinRoomResponse.get("roomInfo");
+            String status = roomInfo.getStatus();
+            String message1 = roomInfo.getMessage();
 
-                for (WebSocketSession s : sessions) {
-                    if (s.isOpen()) {
-                        s.sendMessage(new TextMessage(jsonResponse));       // room, userList 전달
-                    }
+            String jsonResponse = objectMapper.writeValueAsString(joinRoomResponse);    // 방에 접속한 유저 목록
+
+            for (WebSocketSession s : sessions) {
+                if (s.isOpen()) {
+                    s.sendMessage(new TextMessage(jsonResponse));       // room, userList 전달
                 }
             }
 
