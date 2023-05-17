@@ -52,7 +52,7 @@ export default function Ready({ socket, setSocket }: RoomPropsType) {
     status: '',
   });
   /** 방에 유저 목록 */
-  const [userList, setUserList] = useState<{}>({});
+  const [userList, setUserList] = useState<[]>([]);
 
   const closeSocket = () => {
     if (socket) {
@@ -91,7 +91,7 @@ export default function Ready({ socket, setSocket }: RoomPropsType) {
         const roomInHandler = (event: MessageEvent) => {
           const data = JSON.parse(event.data);
           if (data.type !== 'userIn') return;
-          setUserList(data.userList);
+          setUserList(data.userList.userList);
           console.log(data);
         };
 
