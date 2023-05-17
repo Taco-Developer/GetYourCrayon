@@ -94,7 +94,7 @@ public class GameServiceImpl implements GameService{
 
 
                 switch(gameRequestDto.getGameCategory()) {
-                    case AI:
+                    case AiPainting:
                         List<Object> dalEResponse = webClientService.AiPost(translateScript);
 
                         Long i = 0L;
@@ -218,7 +218,7 @@ public class GameServiceImpl implements GameService{
 
 
                 switch (roomHash.getGameCategory()) {
-                    case AI:
+                    case AiPainting:
                         List<Object> dalEResponse = webClientService.AiPost(translateScript);
 
                         Long i = 0L;
