@@ -158,12 +158,13 @@ public class GameServiceImpl implements GameService{
                 if(optionalUserHash.isPresent()){
                     UserHash userHash = optionalUserHash.get();
                     System.err.println(userHash);
-                    userHash.setUserScore(userHash.getUserScore() + 3);
-                    if(userHash.getUserIdx().equals(requestRoundDto.getWinner())){
+                    if(!requestRoundDto.getWinner().equals(0L)){
                         userHash.setUserScore(userHash.getUserScore() + 3);
-                        responseRoundDto.setWinnerUserIdx(userHash.getUserIdx());
+                        if(userHash.getUserIdx().equals(requestRoundDto.getWinner())){
+                            userHash.setUserScore(userHash.getUserScore() + 3);
+                            responseRoundDto.setWinnerUserIdx(userHash.getUserIdx());
+                        }
                     }
-
                     userHashRepository.save(userHash);
                     userHashResponseDtoList.add(UserHashResponseDto.of(userHash));
                 }
