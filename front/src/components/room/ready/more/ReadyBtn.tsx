@@ -1,25 +1,27 @@
-import React, { useState } from 'react';
+import React from 'react';
 import tw from 'tailwind-styled-components';
 import Link from 'next/link';
 import Invite from './Invite';
 
 import { gameAPI, boardAPI } from '@/api/api';
-import { useDispatch, useSelector } from 'react-redux';
+
 import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
 import { setRoomIdx } from '@/store/slice/game/gameRoom';
-import { setUser } from '@/store/slice/userSlice';
-import { changeStatus } from '@/store/slice/game/roomStatusSlice';
+
+import { sendMessage } from '@/socket/messageSend';
 
 interface ReadyProps {
   boardId: number | null;
   setBoardId: React.Dispatch<React.SetStateAction<number | null>>;
   closeSocket: () => void;
+  socket: WebSocket | null;
 }
 
 export default function ReadyBtn({
   boardId,
   setBoardId,
   closeSocket,
+  socket,
 }: ReadyProps) {
   const dispatch = useAppDispatch();
   const { roomInfo } = useAppSelector((state) => state);
@@ -91,7 +93,8 @@ export default function ReadyBtn({
       <GoBtn
         onClick={() => {
           deleteBorad(boardId);
-          dispatch(changeStatus('gameStart'));
+          if (!socket) return;
+          sendMessage(socket, 'gameAlert');
         }}
       >
         게임시작
