@@ -26,7 +26,7 @@ public class BoardDetailDto {
 
     public BoardDetailDto(Board board) {
         this.boardTitle = board.getBoardTitle();
-        this.boardContent = board.getBoardTitle();
+        this.boardContent = board.getBoardContent();
         this.boardCreateTime = DateToString(board.getBoardCreateTime());
         this.boardUpdateTime = DateToString(board.getBoardUpdateTime());
     }
