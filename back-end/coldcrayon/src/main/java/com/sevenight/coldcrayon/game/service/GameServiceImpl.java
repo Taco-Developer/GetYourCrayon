@@ -59,7 +59,7 @@ public class GameServiceImpl implements GameService{
                 room.setGameCnt(room.getGameCnt() + 1);
                 room.setGameCategory(gameRequestDto.getGameCategory());
                 room.setNowRound(1);
-
+                room.setCorrectUser(-1L);
                 roomRepository.save(room);
 
 
@@ -159,7 +159,7 @@ public class GameServiceImpl implements GameService{
 
                     if(!roomHash.getCorrectUser().equals(0L)){
                         userHash.setUserScore(userHash.getUserScore() + 3);
-                        if(userHash.getUserIdx().equals(requestRoundDto.getWinner())){
+                        if(userHash.getUserIdx().equals(roomHash.getCorrectUser())){
                             userHash.setUserScore(userHash.getUserScore() + 3);
                             responseRoundDto.setWinnerUserIdx(userHash.getUserIdx());
                         }
@@ -200,7 +200,7 @@ public class GameServiceImpl implements GameService{
             } else {
                 message = "다음 라운드 정보";
                 status = "success";
-
+                roomHash.setCorrectUser(-1L);
                 roomRepository.save(roomHash);
 
                 ThemeCategory[] themeCategories = ThemeCategory.values();

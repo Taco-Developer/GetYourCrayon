@@ -37,5 +37,5 @@ public class RoomHash {
 
     private LocalDateTime roomCreateTime;
 
-    private Long correctUser = 0L;
+    private Long correctUser = -1L;
 }
