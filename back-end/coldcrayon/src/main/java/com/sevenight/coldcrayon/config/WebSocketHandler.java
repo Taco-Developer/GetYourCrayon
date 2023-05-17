@@ -72,7 +72,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
     // flag 변수
     private boolean flag = false;   // 웹 소켓이 생성되기 전: false, 한 번 생성되고 난 후: true
-    private boolean gameOnGoing;
+    private volatile boolean gameOnGoing;
 
     // roomTitle을 가져와야 할까요??
     public void initailizeRoomInfo(String roomIdx) {
@@ -484,6 +484,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                         }
                         time--;
                     } else {
+                        gameOnGoing = false;
                         executorService.shutdown();
                     }
                 }
