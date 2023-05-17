@@ -75,7 +75,7 @@ export default function ReadyBtn({
 
   useEffect(() => {
     if (userInfo.userIdx === roomInfo.adminUserIdx) {
-      setBtnAdmin(true);
+      setBtnAdmin(false);
     }
   }, [roomInfo.adminUserIdx]);
 
