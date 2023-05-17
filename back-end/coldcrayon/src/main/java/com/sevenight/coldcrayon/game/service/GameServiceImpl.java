@@ -144,21 +144,20 @@ public class GameServiceImpl implements GameService{
         String message;
         ResponseRoundDto responseRoundDto = new ResponseRoundDto();
         Optional<RoomHash> optionalRoomHash = roomRepository.findById(requestRoundDto.getRoomIdx());
-        System.err.println("서비스 진입");
+
         if(optionalRoomHash.isPresent()){
             RoomHash roomHash = optionalRoomHash.get();
             status = "success";
             message = "유저 포인트 변경 내역입니다.";
             List<Object> userList = joinListService.getJoinList(roomHash.getRoomIdx());
-            System.err.println("if문 진입");
             List<UserHashResponseDto> userHashResponseDtoList = new ArrayList<>();
 
             for(Object user: userList){
                 Optional<UserHash> optionalUserHash = userHashRepository.findById(Long.parseLong(user.toString()));
                 if(optionalUserHash.isPresent()){
                     UserHash userHash = optionalUserHash.get();
-                    System.err.println(userHash);
-                    if(!requestRoundDto.getWinner().equals(0L)){
+
+                    if(!roomHash.getCorrectUser().equals(0L)){
                         userHash.setUserScore(userHash.getUserScore() + 3);
                         if(userHash.getUserIdx().equals(requestRoundDto.getWinner())){
                             userHash.setUserScore(userHash.getUserScore() + 3);
@@ -169,19 +168,17 @@ public class GameServiceImpl implements GameService{
                     userHashResponseDtoList.add(UserHashResponseDto.of(userHash));
                 }
             }
-            System.err.println("여기까지 통과1");
+            roomHash.setCorrectUser(0L);
+            roomRepository.save(roomHash);
+
             responseRoundDto.setUserList(userHashResponseDtoList);
             responseRoundDto.setDefualtScore(3);
             responseRoundDto.setWinnerScore(3);
-            System.err.println("여기까지 통과2");
         } else{
             message = "조회한 방이 없습니다.";
         }
-        System.err.println("여기까지 통과3");
         responseRoundDto.setMessage(message);
-        System.err.println("여기까지 통과4");
         responseRoundDto.setStatus(status);
-        System.err.println("여기까지 통과5");
         return responseRoundDto;
     }
 
