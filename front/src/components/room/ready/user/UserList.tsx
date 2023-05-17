@@ -29,7 +29,6 @@ export default function UserList({ userList }: ReadyPropsType) {
       .then((request) => console.log(request.data))
       .catch((err) => console.log(err));
   };
-  console.log(userList);
 
   useEffect(() => {
     setUserCnt(userList.length);
