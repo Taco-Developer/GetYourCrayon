@@ -110,7 +110,7 @@ export default function AiPaintingGuess({ socket }: { socket: WebSocket }) {
 
   // 시작
   useEffect(() => {
-    // if (userIdx !== adminUserIdx) return;
+    if (userIdx !== adminUserIdx) return;
     if (now === 1) {
       console.log('최초');
       sendMessage(socket, 'gameStart', {
