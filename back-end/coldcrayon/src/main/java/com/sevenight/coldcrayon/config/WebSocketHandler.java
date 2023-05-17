@@ -13,6 +13,7 @@ import com.sevenight.coldcrayon.game.entity.GameCategory;
 import com.sevenight.coldcrayon.game.service.GameService;
 import com.sevenight.coldcrayon.room.dto.RoomDto;
 import com.sevenight.coldcrayon.room.dto.RoomResponseDto;
+import com.sevenight.coldcrayon.room.dto.UserHashResponseDto;
 import com.sevenight.coldcrayon.room.entity.UserHash;
 import com.sevenight.coldcrayon.room.service.RoomService;
 import com.sevenight.coldcrayon.theme.entity.ThemeCategory;
@@ -45,6 +46,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
     // 방정보를 담을 Map타입으로 하나 만들어서 해당 정보로 공유하자
     private Map<String, Object> roomInfoMap = new ConcurrentHashMap<>();
+    private Map<Long, Integer> userScoreMap = new ConcurrentHashMap<>();
 
     // 게임 정보를 담을 Map타입으로 하나 만들어서 해당 정보로 공유하자
     private Map<String, String> gameInfoMap = new ConcurrentHashMap<>();
@@ -175,8 +177,9 @@ public class WebSocketHandler extends TextWebSocketHandler {
             userInfo.setNickname(userDto.getUserNickname());
             userInfo.setScore(0);
             userInfo.setToken(authorization);
-            userInfoMap.put(session.getId(), userInfo);
-            
+            userInfo.setUserIdx(userDto.getUserIdx());
+            userScoreMap.put(userDto.getUserIdx(), userInfo);      // Long 타입, 기본 0으로 설정
+
             // 방 입장 로직 수행
             Map<String, Object> joinRoomResponse = roomService.joinRoom(userDto, roomId);    // 수민 로직 추가 예정: 타입을 ReponseDto로 정상일 때 ResponseDto 정보, 오류일 때 state를 포함한 정보
             RoomResponseDto roomInfo = (RoomResponseDto) joinRoomResponse.get("roomInfo");
@@ -399,6 +402,10 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
             String json = objectMapper.writeValueAsString(responseGameDto);
 
+            // 세션에 저장
+            ////////
+
+
             // 게임 정보
             for (WebSocketSession s : sessions) {
                 if (s.isOpen()) {
@@ -505,6 +512,15 @@ public class WebSocketHandler extends TextWebSocketHandler {
             responseRoundDto.setType("gameDto");
             String json = objectMapper.writeValueAsString(responseRoundDto);
 
+            // 세션에 기록
+            List<UserHashResponseDto> userList = responseRoundDto.getUserList();
+            for (UserHashResponseDto userHashResponseDto : userList) {
+                Long userIdx = userHashResponseDto.getUserIdx();
+                int userScore = userHashResponseDto.getUserScore();
+                userInfoMap.get(userIdx).score = userScore;
+            }
+
+
             for (WebSocketSession s : sessions) {
                 if (s.isOpen()) {
                     s.sendMessage(new TextMessage(json));
@@ -515,18 +531,47 @@ public class WebSocketHandler extends TextWebSocketHandler {
             // 게임 종료
         } else if (type.equals("gameOver")) {
             List<UserHash> userList = roomService.getUserList(roomId);
-            Map<String, Object> response = new HashMap<>();
-            response.put("type", "gameOver");
-            response.put("userList", userList);
 
             String json = objectMapper.writeValueAsString(userList);
 
             // 소켓 정보 변경
             roomInfoMap.put("roomStatus", "Ready");
 
+            // 소켓 유저 점수 정렬해서 보여줘야 함
+            List<Map.Entry<Long, Integer>> sortedEntries = new ArrayList<>(userScoreMap.entrySet());
+
+            Collections.sort(sortedEntries, new Comparator<Map.Entry<Long, Integer>>() {
+                public int compare(Map.Entry<Long, Integer> entry1, Map.Entry<Long, Integer> entry2) {
+                    return entry2.getValue().compareTo(entry1.getValue());  // Integer 값을 기준으로 내림차순 정렬
+                }
+            });
+
+            List<Long> sortedUserIds = new ArrayList<>();
+            for (Map.Entry<Long, Integer> entry : sortedEntries) {
+                sortedUserIds.add(entry.getKey());
+            }
+
+            // sortedUserIds는 내림차순으로 정렬된 Long 값들을 담고 있는 리스트입니다.
+
+            List<Object> sortedList = new ArrayList<>();
+            for (Long userIdx : sortedUserIds) {
+
+                Map<String, Integer> user = new HashMap<>();
+                String nickname = userInfoMap.get(userIdx).nickname;
+                int score = userInfoMap.get(userIdx).getScore();
+
+                user.put(nickname, score);
+                sortedList.add(user);
+            }
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("type", "gameOver");
+            response.put("sortedList", sortedList);
+
+            String jsonResponse = objectMapper.writeValueAsString(response);
             for (WebSocketSession s : sessions) {
                 if (s.isOpen()) {
-                    s.sendMessage(new TextMessage(json));
+                    s.sendMessage(new TextMessage(jsonResponse));
                 }
             }
         }
