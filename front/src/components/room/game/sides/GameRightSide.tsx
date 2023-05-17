@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 
 import tw from 'tailwind-styled-components';
 
@@ -7,10 +7,6 @@ import { Button } from '@/components/ui/Button';
 import Margin, { MarginType } from '@/components/ui/Margin';
 
 import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
-import {
-  InGameChatDataType,
-  addInGameChat,
-} from '@/store/slice/game/inGameChatDatasSlice';
 import { sendMessage } from '@/socket/messageSend';
 
 interface GameRightSidePropsType {
@@ -41,7 +37,7 @@ export default function GameRightSide({
     event.preventDefault();
     const chat = inputValue.trim();
     if (!chat) return;
-    const chatInput: InGameChatDataType = {
+    const chatInput = {
       user: userNickname,
       status: 'chatting',
       content: chat,
