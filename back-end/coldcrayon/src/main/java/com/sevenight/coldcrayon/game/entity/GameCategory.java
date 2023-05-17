@@ -6,5 +6,5 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum GameCategory {
-	RELAY, CATCH, AI,  LIAR, REVERSE
+	RELAY, CATCH, AiPainting,  LIAR, REVERSE
 }
