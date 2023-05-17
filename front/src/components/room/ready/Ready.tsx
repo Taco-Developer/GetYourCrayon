@@ -6,7 +6,6 @@ import Chat from './more/Chat';
 import ReadyBtn from './more/ReadyBtn';
 import tw from 'tailwind-styled-components';
 import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
-import { setUser } from '@/store/slice/userSlice';
 import { setRoomInfo } from '@/store/slice/game/gameRoomInfo';
 import { getCookie } from 'cookies-next';
 import { sendMessage } from '@/socket/messageSend';
@@ -95,7 +94,7 @@ export default function Ready({ socket, setSocket }: RoomPropsType) {
         removeEvent(socket, roomInHandler);
       };
     }
-  }, [userNickname, socket]);
+  }, [userNickname, socket, dispatch]);
 
   return (
     <RoomBody>
@@ -138,6 +137,7 @@ export default function Ready({ socket, setSocket }: RoomPropsType) {
             boardId={boardId}
             setBoardId={setBoardId}
             closeSocket={closeSocket}
+            socket={socket}
           />
         </BtnDiv>
       </MoreDiv>
