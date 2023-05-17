@@ -386,7 +386,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
             String authorization = jsonMessage.get("authorization");
 
             // 소켓 정보 변경
-            roomInfoMap.put("roomStatus", "Playing");
+
 
             // userDto, gameRequestDto(roomIdx, gameCategory, maxRound) 필요
             UserDto userDto = authService.selectOneMember(HeaderUtil.getAccessTokenString(authorization));
@@ -397,8 +397,11 @@ public class WebSocketHandler extends TextWebSocketHandler {
                     .build();
             ResponseGameDto responseGameDto = gameService.startGame(userDto, gameRequestDto);
 
-            gameInfoMap.put("correct", responseGameDto.getCorrect());
-            gameInfoMap.put("winnerIdx", "0");
+            if(responseGameDto.getStatus().equals("success")){
+                roomInfoMap.put("roomStatus", "Playing");
+                gameInfoMap.put("correct", responseGameDto.getCorrect());
+                gameInfoMap.put("winnerIdx", "0");
+            }
 
             String json = objectMapper.writeValueAsString(responseGameDto);
 
@@ -499,7 +502,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
             System.err.println("이거 디버깅 용도 : roundOver에 진입했음.");
             Long winnerIdx = Long.valueOf(gameInfoMap.get("winnerIdx"));
 
-            gameInfoMap.put("winnerIdx", "0");
+            gameInfoMap.put("winnerIdx", "0L");
             RequestRoundDto requestRoundDto = RequestRoundDto.builder()
                     .roomIdx(roomId)
                     .winner(winnerIdx)
