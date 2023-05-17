@@ -3,6 +3,7 @@ package com.sevenight.coldcrayon.config;
 import com.amazonaws.Request;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nimbusds.openid.connect.sdk.claims.UserInfo;
 import com.sevenight.coldcrayon.auth.dto.UserDto;
 import com.sevenight.coldcrayon.auth.service.AuthService;
 import com.sevenight.coldcrayon.game.dto.GameRequestDto;
@@ -13,6 +14,7 @@ import com.sevenight.coldcrayon.game.entity.GameCategory;
 import com.sevenight.coldcrayon.game.service.GameService;
 import com.sevenight.coldcrayon.room.dto.RoomDto;
 import com.sevenight.coldcrayon.room.dto.RoomResponseDto;
+import com.sevenight.coldcrayon.room.dto.UserHashResponseDto;
 import com.sevenight.coldcrayon.room.entity.UserHash;
 import com.sevenight.coldcrayon.room.service.RoomService;
 import com.sevenight.coldcrayon.theme.entity.ThemeCategory;
@@ -39,8 +41,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
     // ConcurrentHashMap: 여러 스레드가 동시에 접근해도 안전하게 동작
     private final Map<String, List<WebSocketSession>> sessionsMap = new ConcurrentHashMap<>();
 
-    // 참여자 정보 리스트
-    private final LinkedHashMap<String, UserInfo> userInfoMap = new LinkedHashMap<>();
+    private final LinkedHashMap<String, UserInfo> userInfoMap = new LinkedHashMap<>();      // session.id, userInfo
+    private Map<Long, Integer> userScoreMap = new ConcurrentHashMap<>();
 
 
     // 방정보를 담을 Map타입으로 하나 만들어서 해당 정보로 공유하자
@@ -155,10 +157,10 @@ public class WebSocketHandler extends TextWebSocketHandler {
 //        //==========================================//
 
 
-
         /// chat, draw, userId, {userScore} //
 
         // userIn:유저가 들어올 때 userData: (유저Id, 기본점수)
+        Long userIdx;
         if (type.equals("userIn")) {
             String authorization = jsonMessage.get("authorization");
             UserDto userDto = authService.selectOneMember(HeaderUtil.getAccessTokenString(authorization));
@@ -171,8 +173,9 @@ public class WebSocketHandler extends TextWebSocketHandler {
             userInfo.setNickname(userDto.getUserNickname());
             userInfo.setScore(0);
             userInfo.setToken(authorization);
-            userInfoMap.put(session.getId(), userInfo);
-            
+
+            userScoreMap.put(userDto.getUserIdx(), 0);      // Long 타입, 기본 0으로 설정
+
             // 방 입장 로직 수행
             Map<String, Object> joinRoomResponse = roomService.joinRoom(userDto, roomId);    // 수민 로직 추가 예정: 타입을 ReponseDto로 정상일 때 ResponseDto 정보, 오류일 때 state를 포함한 정보
             RoomResponseDto roomInfo = (RoomResponseDto) joinRoomResponse.get("roomInfo");
@@ -234,7 +237,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                         s.sendMessage(new TextMessage(jsonResponse));
                     }
                 }
-            // 성공일 때
+                // 성공일 때
             } else {
                 String jsonResponse = objectMapper.writeValueAsString(roomResponseDto);
                 for (WebSocketSession s : sessions) {
@@ -501,6 +504,16 @@ public class WebSocketHandler extends TextWebSocketHandler {
             responseRoundDto.setType("gameDto");
             String json = objectMapper.writeValueAsString(responseRoundDto);
 
+            // 세션에 기록
+            List<UserHashResponseDto> userList = responseRoundDto.getUserList();
+            for (UserHashResponseDto userHashResponseDto : userList) {
+                Long userIdx1 = userHashResponseDto.getUserIdx();
+                int userScore = userHashResponseDto.getUserScore();
+
+                userScoreMap.put(userIdx1, userScore);
+            }
+
+
             for (WebSocketSession s : sessions) {
                 if (s.isOpen()) {
                     s.sendMessage(new TextMessage(json));
@@ -511,18 +524,45 @@ public class WebSocketHandler extends TextWebSocketHandler {
             // 게임 종료
         } else if (type.equals("gameOver")) {
             List<UserHash> userList = roomService.getUserList(roomId);
-            Map<String, Object> response = new HashMap<>();
-            response.put("type", "gameOver");
-            response.put("userList", userList);
 
             String json = objectMapper.writeValueAsString(userList);
 
             // 소켓 정보 변경
             roomInfoMap.put("roomStatus", "Ready");
 
+            // 소켓 유저 점수 정렬해서 보여줘야 함
+            List<Map.Entry<Long, Integer>> sortedEntries = new ArrayList<>(userScoreMap.entrySet());
+
+            Collections.sort(sortedEntries, new Comparator<Map.Entry<Long, Integer>>() {
+                public int compare(Map.Entry<Long, Integer> entry1, Map.Entry<Long, Integer> entry2) {
+                    return entry2.getValue().compareTo(entry1.getValue());  // Integer 값을 기준으로 내림차순 정렬
+                }
+            });
+
+            List<Object> sortedList = new ArrayList<>();
+
+            // 정렬된 결과를 사용하여 작업을 수행
+            for (Map.Entry<Long, Integer> entry : sortedEntries) {
+                Long key = entry.getKey();
+                Integer value = entry.getValue();
+
+                // 정렬된 값을 이용한 작업 수행
+                Map<String, Integer> user = new HashMap<>();            
+
+                // Long키를 가지고 유저 닉네임을 전해줘야 함
+                String nickname = userInfoMap.get(session.getId()).getNickname();
+                user.put(nickname, value);
+                sortedList.add(user);
+            }
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("type", "gameOver");
+            response.put("sortedList", sortedList);
+
+            String jsonResponse = objectMapper.writeValueAsString(response);
             for (WebSocketSession s : sessions) {
                 if (s.isOpen()) {
-                    s.sendMessage(new TextMessage(json));
+                    s.sendMessage(new TextMessage(jsonResponse));
                 }
             }
         }
