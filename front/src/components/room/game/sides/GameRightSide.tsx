@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 import tw from 'tailwind-styled-components';
 
@@ -6,7 +6,7 @@ import SideDisplay from './SideDisplay';
 import { Button } from '@/components/ui/Button';
 import Margin, { MarginType } from '@/components/ui/Margin';
 
-import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
+import { useAppSelector } from '@/store/thunkhook';
 import { sendMessage } from '@/socket/messageSend';
 
 interface GameRightSidePropsType {
@@ -23,6 +23,11 @@ export default function GameRightSide({
     inGameChatDatas,
     userInfo: { userIdx, userNickname },
   } = useAppSelector((state) => state);
+
+  const chatViewRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    chatViewRef.current?.scrollIntoView({ behavior: 'auto', block: 'end' });
+  }, [inGameChatDatas]);
 
   // 채팅 입력값
   const [inputValue, setInputValue] = useState<string>('');
@@ -47,6 +52,8 @@ export default function GameRightSide({
     setInputValue('');
   };
 
+  //
+
   return (
     <SideDisplay isLeft={false}>
       <div className="bg-white p-4 rounded-full">{leftTime}s</div>
@@ -60,6 +67,7 @@ export default function GameRightSide({
               className={status === 'answer' ? 'bg-amber-300' : ''}
             >{`${user} : ${content}`}</li>
           ))}
+          <div ref={chatViewRef} />
         </ChatView>
         <ChatForm onSubmit={chatSubmitHandler}>
           <input
@@ -122,6 +130,7 @@ const ChatView = tw.ul`
   p-4
 
   overflow-y-auto
+  scrollbar-bu
 `;
 
 const ChatForm = tw.form`
