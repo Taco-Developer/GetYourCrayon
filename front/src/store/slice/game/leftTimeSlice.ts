@@ -1,12 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-const initialState = 60;
+const initialState = 20;
 
 const leftTimeSlice = createSlice({
   name: 'leftTime',
   initialState,
   reducers: {
-    /** 카운트 다운 */
+    /** 시간 변경 */
     changeTime(state, action: PayloadAction<number>) {
       return action.payload;
     },
