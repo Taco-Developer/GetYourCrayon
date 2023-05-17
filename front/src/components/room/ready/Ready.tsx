@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import UserList from './user/UserList';
+import UserList, { UserData } from './user/UserList';
 import ModeChoice from './more/ModeChoice';
 import Setting from './more/Setting';
 import Chat from './more/Chat';
@@ -53,7 +53,7 @@ export default function Ready({ socket, setSocket }: RoomPropsType) {
     status: '',
   });
   /** 방에 유저 목록 */
-  const [userList, setUserList] = useState<{}>({});
+  const [userList, setUserList] = useState<UserData[]>([]);
 
   const closeSocket = () => {
     if (socket) {
@@ -88,10 +88,12 @@ export default function Ready({ socket, setSocket }: RoomPropsType) {
     if (socket) {
       /** 토큰 */
       const token = getCookie('accesstoken');
+
       const roomInHandler = (event: MessageEvent) => {
         const data = JSON.parse(event.data);
         if (data.type !== 'userIn') return;
-        console.log(`Ready -> ${data}`);
+        setUserList(data.userList);
+        console.log(data);
       };
 
       const messageHandler = (event: MessageEvent) => {
