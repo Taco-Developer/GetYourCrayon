@@ -365,23 +365,49 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 }
             }
         }
-        // gameMode
-        else if (type.equals("gameMode")) {
-            RoomResponseDto room = roomService.getRoom(roomId);
-            GameCategory gameCategory = room.getGameCategory();
+        else if (type.equals("roomUserCnt")) {
 
-            Map<String, Object> response = new HashMap<>();
-            response.put("type", "gameMode");
-            response.put("gameMode", gameCategory);
+            // 여기를 로직에 추가한다.
+            String roomCnt = jsonMessage.get("roomCnt");
+            int num = roomService.changeRoomOption(type, roomCnt, roomId);
+            if(num==0){
+                Map<String, Object> response = new HashMap<>();
+                response.put("type", "roomUserCnt");
+                response.put("roomCnt", 0);
+                message = new TextMessage(objectMapper.writeValueAsString(response));
 
-            String jsonResponse = objectMapper.writeValueAsString(response);
-
+            }
             for (WebSocketSession s : sessions) {
                 if (s.isOpen()) {
-                    s.sendMessage(new TextMessage(jsonResponse));
+                    s.sendMessage(message);
                 }
             }
         }
+        else if (type.equals("gameMode")) {
+
+            // 여기를 로직에 추가한다.
+            String gameMode = jsonMessage.get("gameMode");
+            roomService.changeRoomOption(type, gameMode, roomId);
+
+            for (WebSocketSession s : sessions) {
+                if (s.isOpen()) {
+                    s.sendMessage(message);
+                }
+            }
+        }
+        else if (type.equals("gameTurn")) {
+
+            // 여기를 로직에 추가한다.
+            String gameTurn = jsonMessage.get("gameTurn");
+            roomService.changeRoomOption(type, gameTurn, roomId);
+
+            for (WebSocketSession s : sessions) {
+                if (s.isOpen()) {
+                    s.sendMessage(message);
+                }
+            }
+        }
+
         // gameTime
         else if (type.equals("gameTime")) {
 
@@ -399,25 +425,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 }
             }
         }
-        // gameTurn
-        else if (type.equals("gameTurn")) {
-            RoomResponseDto room = roomService.getRoom(roomId);
-            int nowRound = room.getNowRound();
 
-            roomInfoMap.put("gameTurn", nowRound);
-
-            Map<String, Object> response = new HashMap<>();
-            response.put("type", "gameTurn");
-            response.put("gameTurn", nowRound);
-
-            String jsonResponse = objectMapper.writeValueAsString(response);
-
-            for (WebSocketSession s : sessions) {
-                if (s.isOpen()) {
-                    s.sendMessage(new TextMessage(jsonResponse));
-                }
-            }
-        }
 
         // 게임 시간 설정
         else if (type.equals("roundTime")) {
@@ -566,13 +574,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
         /// 5/17: DG
         // 나가기 실행 시 (나가기 방식 말고)
-
-
-
-
-
-
-
 
 
         log.info("userInfoMap: {}", userInfoMap);
