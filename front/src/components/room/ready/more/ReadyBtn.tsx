@@ -24,10 +24,11 @@ export default function ReadyBtn({
   const dispatch = useAppDispatch();
   const baseUrl: string = 'https://getyourcrayon.co.kr/room/';
   const {
-    userInfo: { userNickname },
+    userInfo: { userIdx, userNickname },
     roomStatus,
   } = useAppSelector((state) => state);
   const { roomIdx } = useAppSelector((state) => state.roomIdx);
+  console.log(`--->${userIdx}`);
 
   /** 게임방 나가기 api */
   const gameOut = async () => {
