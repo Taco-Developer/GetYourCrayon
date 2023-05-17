@@ -37,7 +37,7 @@ const initialState: MypageStateType = {
     userProfile: '',
     userPoint: 0,
   },
-  gacha: [],
+  gacha: [{ event: [], normal: [], rare: [], superRare: [] }],
 };
 
 const mypageSlice = createSlice({
