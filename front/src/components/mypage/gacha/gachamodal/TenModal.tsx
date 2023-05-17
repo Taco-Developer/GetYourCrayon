@@ -42,11 +42,19 @@ export default function TenModal({
           </div>
         </DialogTitle>
         <DialogContent>
-          <div className="grid grid-cols-5 gap-4 justify-center items-center  border-y-8 border-y-apple-yellow  overflow-hidden ">
-            {gachaData.map((data, i) => {
-              return <BasicCard key={i} data={data} />;
-            })}
-          </div>
+          {gachaData.length === 1 ? (
+            <div className="flex flex-col justify-center items-center border-y-8 border-y-apple-yellow overflow-hidden">
+              {gachaData.map((data, i) => {
+                return <BasicCard key={i} data={data} />;
+              })}
+            </div>
+          ) : (
+            <div className="grid grid-cols-5 gap-4 justify-center items-center  border-y-8 border-y-apple-yellow  overflow-hidden ">
+              {gachaData.map((data, i) => {
+                return <BasicCard key={i} data={data} />;
+              })}
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>

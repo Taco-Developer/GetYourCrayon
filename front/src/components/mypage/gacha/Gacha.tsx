@@ -87,7 +87,7 @@ export default function Gacha() {
               try {
                 const gacha = await gatchaAPI.oneGacha();
                 console.log(gacha);
-                // setGachaData(gacha.data.body.nGacha);
+                setGachaData(gacha.data.body.nGacha);
                 const request = await memberAPI.getUserInfo();
                 dispatch(setMypage(request.data.body));
                 setTimeout(() => {

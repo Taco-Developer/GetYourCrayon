@@ -38,28 +38,30 @@ export default function CollectionImageModal({ data }: ImagePropsTypes) {
               sizes="100%"
             />
           </div>
-          <button
-            onClick={() => {
-              const changeImage = async () => {
-                try {
-                  await memberAPI.changeProfile(data.gachaIdx);
-                  const request = await memberAPI.getUserInfo();
-                  dispatch(setMypage(request.data.body));
-                  dispatch(setUser(request.data.body.profile));
-                } catch (e) {
-                  console.log(e);
-                } finally {
-                  setTimeout(() => {
-                    setImageOpen(false);
-                  }, 200);
-                }
-              };
-              changeImage();
-            }}
-          >
-            이미지변경
-          </button>
-          <button onClick={ClickClose}>닫기</button>
+          <div className="flex flex-col justify-center items-end">
+            <button
+              onClick={() => {
+                const changeImage = async () => {
+                  try {
+                    await memberAPI.changeProfile(data.gachaIdx);
+                    const request = await memberAPI.getUserInfo();
+                    dispatch(setMypage(request.data.body));
+                    dispatch(setUser(request.data.body.profile));
+                  } catch (e) {
+                    console.log(e);
+                  } finally {
+                    setTimeout(() => {
+                      setImageOpen(false);
+                    }, 200);
+                  }
+                };
+                changeImage();
+              }}
+            >
+              이미지변경
+            </button>
+            <button onClick={ClickClose}>닫기</button>
+          </div>
         </DialogContent>
       </Dialog>
     </>
