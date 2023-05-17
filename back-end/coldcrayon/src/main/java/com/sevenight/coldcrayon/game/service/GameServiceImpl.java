@@ -15,6 +15,7 @@ import com.sevenight.coldcrayon.theme.service.ThemeService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -35,6 +36,8 @@ public class GameServiceImpl implements GameService{
     private final WebClientServiceImpl webClientService;
     private final SaveImageServiceImpl saveImageService;
 
+    @Value("${java.file.homeUrl}")
+    String HomeUrl;
 
     public ResponseGameDto startGame(UserDto userDto, GameRequestDto gameRequestDto) throws IOException {
         ResponseGameDto responseGameDto = new ResponseGameDto();
@@ -326,7 +329,7 @@ public class GameServiceImpl implements GameService{
                 System.err.println("Arrays.toString(files) : " + Arrays.toString(files));
                 List<String> urlList = new ArrayList<>();
                 for (File file : files) {
-                    urlList.add(file.getPath());
+                    urlList.add(HomeUrl+file.getPath());
                 }
                 urlMap.put(Integer.parseInt(dirNames[i]), urlList);
                 System.err.println(urlMap.toString());
