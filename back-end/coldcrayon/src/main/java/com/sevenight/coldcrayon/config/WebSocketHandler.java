@@ -499,6 +499,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
             System.err.println("이거 디버깅 용도 : roundOver에 진입했음.");
             Long winnerIdx = Long.valueOf(gameInfoMap.get("winnerIdx"));
 
+            gameInfoMap.put("winnerIdx", "0");
             RequestRoundDto requestRoundDto = RequestRoundDto.builder()
                     .roomIdx(roomId)
                     .winner(winnerIdx)
