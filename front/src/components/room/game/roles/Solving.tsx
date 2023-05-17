@@ -37,9 +37,10 @@ export default function Solving({
     INIT_BG_COLOR,
     selectedTool,
   } = useAppSelector((state) => state.draw);
-  const { inputedAnswers, savedAnswers } = useAppSelector(
-    (state) => state.answers,
-  );
+  const {
+    answers: { inputedAnswers, savedAnswers },
+    userInfo: { userIdx },
+  } = useAppSelector((state) => state);
   const dispatch = useAppDispatch();
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -62,6 +63,7 @@ export default function Solving({
       user: '아프리카청춘이다',
       status: 'answer',
       content: answer,
+      userIdx,
     };
     dispatch(addInGameChat(chatInputValue));
     setAnswerInputValue('');
@@ -232,22 +234,6 @@ export default function Solving({
     setCtx(context);
   }, [canvasRef]);
 
-  // 도구 변경
-  useEffect(() => {
-    if (!ctx) return;
-
-    switch (selectedTool) {
-      case 'erase':
-        ctx.fillStyle = canvasBgColor;
-        ctx.strokeStyle = canvasBgColor;
-        break;
-      default:
-        ctx.strokeStyle = paletteColor;
-        ctx.fillStyle = paletteColor;
-        break;
-    }
-  }, [ctx, selectedTool, canvasBgColor, paletteColor]);
-
   // 소켓 메시지 수신
   useEffect(() => {
     const messageHandler = (event: MessageEvent) => {
@@ -327,6 +313,22 @@ export default function Solving({
     startDraw,
     fillCanvas,
   ]);
+
+  // 도구 변경
+  useEffect(() => {
+    if (!ctx) return;
+
+    switch (selectedTool) {
+      case 'erase':
+        ctx.fillStyle = canvasBgColor;
+        ctx.strokeStyle = canvasBgColor;
+        break;
+      default:
+        ctx.strokeStyle = paletteColor;
+        ctx.fillStyle = paletteColor;
+        break;
+    }
+  }, [ctx, selectedTool, canvasBgColor, paletteColor]);
 
   // 색 변경 적용
   useEffect(() => {

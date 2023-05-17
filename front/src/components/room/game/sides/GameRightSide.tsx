@@ -42,13 +42,12 @@ export default function GameRightSide({
     const chat = inputValue.trim();
     if (!chat) return;
     const chatInput: InGameChatDataType = {
-      user: '아프리카청춘이다',
+      user: userNickname,
       status: 'chatting',
       content: chat,
+      userIdx,
     };
-    sendMessage(socket, 'chat', {
-      ...chatInput,
-    });
+    sendMessage(socket, 'chat', chatInput);
     setInputValue('');
   };
 

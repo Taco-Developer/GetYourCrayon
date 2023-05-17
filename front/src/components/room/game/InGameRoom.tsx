@@ -7,10 +7,14 @@ import ReverseCatchMind from '@/components/room/game/ReverseCatchMind';
 import AiPaintingGuess from '@/components/room/game/AiPaintingGuess';
 import RelayPainting from '@/components/room/game/RelayPainting';
 import CatchMind from '@/components/room/game/CatchMind';
-import { useAppDispatch } from '@/store/thunkhook';
+import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
 import { addInGameChat } from '@/store/slice/game/inGameChatDatasSlice';
 import { listenEvent, removeEvent } from '@/socket/socketEvent';
 import { changeTime } from '@/store/slice/game/leftTimeSlice';
+import { addInputedAnswers } from '@/store/slice/game/answersSlice';
+import { setWinner } from '@/store/slice/game/gameRoundSlice';
+import { setGameUsers } from '@/store/slice/game/gameUsersSlice';
+import { openIsScoreCheckModalOpened } from '@/store/slice/game/gameDatasSlice';
 
 export default function InGameRoom({
   game,
@@ -19,26 +23,52 @@ export default function InGameRoom({
   game: string;
   socket: WebSocket;
 }) {
+  const {
+    answers: { savedAnswers, inputedAnswers },
+  } = useAppSelector((state) => state);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     const messageHandler = (message: MessageEvent) => {
       const data = JSON.parse(message.data);
+      // 채팅
       if (data.type === 'chat') {
-        const { content, status, user } = data;
-        dispatch(addInGameChat({ content, status, user }));
+        const { content, status, user, userIdx } = data;
+        dispatch(addInGameChat({ content, status, user, userIdx }));
+
+        // 정답 입력 처리
+        if (
+          status === 'answer' &&
+          (savedAnswers.indexOf(content) === -1 ||
+            inputedAnswers.indexOf(content) !== -1)
+        )
+          return;
+        dispatch(addInputedAnswers(content));
       }
+
+      // 시간
       if (data.type === 'timeStart') {
         const { message } = data;
         dispatch(changeTime(message));
       }
+
+      // 라운드 종료
+      if (data.type === 'roundOver') {
+        const { winnerUserIdx, userList } = data;
+        dispatch(setWinner(winnerUserIdx));
+        dispatch(setGameUsers(userList));
+        dispatch(openIsScoreCheckModalOpened());
+      }
     };
+
+    // 등록
     listenEvent(socket, messageHandler);
 
+    // 해제
     return () => {
       removeEvent(socket, messageHandler);
     };
-  }, [dispatch, socket]);
+  }, [dispatch, socket, inputedAnswers, savedAnswers]);
 
   return (
     <>

@@ -5,6 +5,7 @@ import tw from 'tailwind-styled-components';
 import SideDisplay from './SideDisplay';
 import Margin, { MarginType } from '@/components/ui/Margin';
 import { useAppSelector } from '@/store/thunkhook';
+import Image from 'next/image';
 
 export default function GameLeftSide({
   isPainting,
@@ -72,10 +73,18 @@ export default function GameLeftSide({
         <h2>참가자 목록</h2>
         <Margin type={MarginType.height} size={16} />
         <MemberList>
-          {gameUsers.map(({ userIdx, userNickname }) => {
+          {gameUsers.map(({ userIdx, userNickname, userProfile }) => {
             return (
               <MemberItem key={userIdx}>
-                <Profile />
+                <Profile>
+                  <Image
+                    src={userProfile}
+                    alt="프로필"
+                    fill
+                    priority
+                    sizes="100%"
+                  />
+                </Profile>
                 <span className="truncate flex-auto">{userNickname}</span>
               </MemberItem>
             );
@@ -126,7 +135,8 @@ const Profile = tw.div`
   rounded-full
 
   flex-none
-  bg-white
+
+  relative
 `;
 
 const MemberStatus = tw.div`

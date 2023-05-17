@@ -4,12 +4,14 @@ export interface GameRoundType {
   now: number;
   total: number;
   isRoundStarted: boolean;
+  winnerIdx: number;
 }
 
 const initialState: GameRoundType = {
   now: 1,
   total: 4,
   isRoundStarted: false,
+  winnerIdx: 0,
 };
 
 const gameRoundSlice = createSlice({
@@ -33,11 +35,16 @@ const gameRoundSlice = createSlice({
 
     /** 라운드 종료 */
     endRound(state) {
+      state.winnerIdx = 0;
       state.isRoundStarted = false;
+    },
+
+    setWinner(state, action: PayloadAction<number>) {
+      state.winnerIdx = action.payload;
     },
   },
 });
 
-export const { goNextRound, endRound, setTotalRound, startRound } =
+export const { goNextRound, endRound, setTotalRound, startRound, setWinner } =
   gameRoundSlice.actions;
 export default gameRoundSlice.reducer;
