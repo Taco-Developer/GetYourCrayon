@@ -1,4 +1,4 @@
-import { useState, forwardRef } from 'react';
+import { useState, forwardRef, useEffect } from 'react';
 import tw from 'tailwind-styled-components';
 import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
 
@@ -19,12 +19,22 @@ const Transition = forwardRef(function Transition(
 
 const CustomDialogTitle = (props: any) => {
   const { children, onClose, ...other } = props;
+  const { roomInfo, userInfo } = useAppSelector((state) => state);
+  const [btnAdmin, setBtnAdmin] = useState<boolean>(true);
+
+  useEffect(() => {
+    if (userInfo.userIdx === roomInfo.adminUserIdx) {
+      setBtnAdmin(true);
+    }
+  }, [roomInfo.adminUserIdx]);
 
   return (
     <DialogTitle sx={{ m: 0, p: 4 }} {...other}>
       {children}
       {onClose ? (
         <IconButton
+          className={btnAdmin ? 'bg-slate-500 hover:bg-slate-500' : ''}
+          disabled={btnAdmin}
           aria-label="close"
           onClick={() => {
             onClose();
