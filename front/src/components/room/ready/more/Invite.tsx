@@ -1,5 +1,6 @@
 import { useState, forwardRef } from 'react';
 import tw from 'tailwind-styled-components';
+import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
 
 //mui 관련 import
 import Dialog from '@mui/material/Dialog';
@@ -49,6 +50,8 @@ interface ReadyProps {
 }
 
 export default function Invite({ copyAction, createAction }: ReadyProps) {
+  /** 유저가 생성한 방 */
+  const { roomIdx } = useAppSelector((state) => state.roomIdx);
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState<string>('');
   const ClickOpen = () => {
@@ -101,7 +104,7 @@ export default function Invite({ copyAction, createAction }: ReadyProps) {
               </ModalBtn>
               <ModalBtn
                 onClick={() => {
-                  createAction(title, 'url');
+                  createAction(title, roomIdx!);
                   ClickClose();
                 }}
               >
