@@ -29,8 +29,9 @@ export default function Chat({ socket, messageList }: ChatPropsType) {
       const sendSocket: {} = {
         author: userNick,
         message: currentMessage,
+        status: 'chatting',
       };
-      console.log(sendSocket);
+      // console.log(sendSocket);
       sendMessage(socket, 'chat', sendSocket);
       setCurrentMessage('');
     }
