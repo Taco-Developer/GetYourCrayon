@@ -9,7 +9,7 @@ import Margin, { MarginType } from '@/components/ui/Margin';
 import { Button } from '@/components/ui/Button';
 import LierSelectDialog from '../dialogs/LierSelectDialog';
 
-export default function Selecting() {
+export default function Selecting({ socket }: { socket: WebSocket }) {
   const [isSelectDialogOpened, setIsSelectDialogOpened] =
     useState<boolean>(false);
 
@@ -61,7 +61,7 @@ export default function Selecting() {
           </div>
         </Option>
       </GameCenter>
-      <GameRightSide isPainting={false} />
+      <GameRightSide isPainting={false} socket={socket} />
     </>
   );
 }

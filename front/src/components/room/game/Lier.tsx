@@ -12,9 +12,9 @@ export default function Lier({ socket }: { socket: WebSocket }) {
     case 'drawing':
       return <Drawing socket={socket} />;
     case 'watching':
-      return <Watching />;
+      return <Watching socket={socket} />;
     case 'selecting':
-      return <Selecting />;
+      return <Selecting socket={socket} />;
     default:
       return <div>Something wrong!!</div>;
   }

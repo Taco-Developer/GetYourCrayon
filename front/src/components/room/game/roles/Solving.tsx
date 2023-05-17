@@ -390,7 +390,7 @@ export default function Solving({
           </AnswerForm>
         </GameCenter>
       )}
-      <GameRightSide isPainting={false} />
+      <GameRightSide isPainting={false} socket={socket} />
     </>
   );
 }

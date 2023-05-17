@@ -11,16 +11,23 @@ import {
   InGameChatDataType,
   addInGameChat,
 } from '@/store/slice/game/inGameChatDatasSlice';
-import { countDown } from '@/store/slice/game/leftTimeSlice';
+import { sendMessage } from '@/socket/messageSend';
 
 interface GameRightSidePropsType {
   isPainting: boolean;
+  socket: WebSocket;
 }
 
-export default function GameRightSide({ isPainting }: GameRightSidePropsType) {
-  const { leftTime, inGameChatDatas, isGameStarted } = useAppSelector(
-    (state) => state,
-  );
+export default function GameRightSide({
+  isPainting,
+  socket,
+}: GameRightSidePropsType) {
+  const {
+    leftTime,
+    inGameChatDatas,
+    gameRound: { isRoundStarted },
+    userInfo: { userIdx, userNickname },
+  } = useAppSelector((state) => state);
   const dispatch = useAppDispatch();
 
   // 채팅 입력값
@@ -39,29 +46,11 @@ export default function GameRightSide({ isPainting }: GameRightSidePropsType) {
       status: 'chatting',
       content: chat,
     };
-    dispatch(addInGameChat(chatInput));
+    sendMessage(socket, 'chat', {
+      ...chatInput,
+    });
     setInputValue('');
   };
-
-  // 타이머 관련 상태
-  const [timerId, setTimerId] = useState<NodeJS.Timer>();
-  // 카운트 종료
-  if (leftTime <= 0) {
-    clearInterval(timerId);
-  }
-
-  useEffect(() => {
-    if (!isGameStarted) return;
-    // 카운트 다운
-    const timer = setInterval(() => {
-      dispatch(countDown());
-    }, 1000);
-    setTimerId(timer);
-
-    return () => {
-      clearInterval(timer);
-    };
-  }, [isGameStarted, dispatch]);
 
   return (
     <SideDisplay isLeft={false}>
@@ -124,7 +113,7 @@ const InGameChat = tw.div`
   items-center
   gap-4
 
-  overflow-hidden
+  overflow-y-hidden
 `;
 
 const ChatView = tw.ul`
