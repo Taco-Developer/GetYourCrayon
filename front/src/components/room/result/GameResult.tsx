@@ -7,35 +7,7 @@ import tw from 'tailwind-styled-components';
 import Margin, { MarginType } from '@/components/ui/Margin';
 import { useAppSelector } from '@/store/thunkhook';
 import { Button } from '@/components/ui/Button';
-
-/** 결과 목록 */
-const INIT_RESULTS = [
-  {
-    user: { userid: 1, nickname: '아프리카청춘이다', profileImg: '' },
-    result:
-      'https://img.freepik.com/free-vector/cute-corgi-dog-sitting-cartoon-vector-icon-illustration-animal-nature-icon-concept-isolated-premium-vector-flat-cartoon-style_138676-4181.jpg?size=626&ext=jpg&ga=GA1.1.1340115615.1672808342&semt=sph',
-  },
-  {
-    user: { userid: 1, nickname: '아프리카청춘이다', profileImg: '' },
-    result:
-      'https://img.freepik.com/free-vector/cute-corgi-dog-sitting-cartoon-vector-icon-illustration-animal-nature-icon-concept-isolated-premium-vector-flat-cartoon-style_138676-4181.jpg?size=626&ext=jpg&ga=GA1.1.1340115615.1672808342&semt=sph',
-  },
-  {
-    user: { userid: 1, nickname: '아프리카청춘이다', profileImg: '' },
-    result:
-      'https://img.freepik.com/free-vector/cute-corgi-dog-sitting-cartoon-vector-icon-illustration-animal-nature-icon-concept-isolated-premium-vector-flat-cartoon-style_138676-4181.jpg?size=626&ext=jpg&ga=GA1.1.1340115615.1672808342&semt=sph',
-  },
-  {
-    user: { userid: 1, nickname: '아프리카청춘이다', profileImg: '' },
-    result:
-      'https://img.freepik.com/free-vector/cute-corgi-dog-sitting-cartoon-vector-icon-illustration-animal-nature-icon-concept-isolated-premium-vector-flat-cartoon-style_138676-4181.jpg?size=626&ext=jpg&ga=GA1.1.1340115615.1672808342&semt=sph',
-  },
-  {
-    user: { userid: 1, nickname: '아프리카청춘이다', profileImg: '' },
-    result:
-      'https://img.freepik.com/free-vector/cute-corgi-dog-sitting-cartoon-vector-icon-illustration-animal-nature-icon-concept-isolated-premium-vector-flat-cartoon-style_138676-4181.jpg?size=626&ext=jpg&ga=GA1.1.1340115615.1672808342&semt=sph',
-  },
-];
+import { sendMessage } from '@/socket/messageSend';
 
 export default function GameResult({ socket }: { socket: WebSocket }) {
   const { gameUsers } = useAppSelector((state) => state);
@@ -51,10 +23,18 @@ export default function GameResult({ socket }: { socket: WebSocket }) {
           </div>
           <Margin type={MarginType.height} size={40} />
           <UserList>
-            {gameUsers.map((user) => (
-              <UserItem key={user.userIdx}>
-                <UserProfile />
-                <span className="text-ellipsis">{user.userNickname}</span>
+            {gameUsers.map(({ userIdx, userNickname, userProfile }) => (
+              <UserItem key={userIdx}>
+                <UserProfile>
+                  <Image
+                    src={userProfile}
+                    alt="프로필"
+                    fill
+                    sizes="100%"
+                    priority
+                  />
+                </UserProfile>
+                <span className="text-ellipsis">{userNickname}</span>
                 <div className="flex-auto flex justify-end text-2xl"></div>
               </UserItem>
             ))}
@@ -66,26 +46,27 @@ export default function GameResult({ socket }: { socket: WebSocket }) {
             <h2 className="text-2xl">결과 보기</h2>
             <Margin type={MarginType.height} size={16} />
             <ul className="">
-              {INIT_RESULTS.map((result, idx) => (
-                <li key={idx}>
-                  <div className="flex items-center">
-                    <UserProfile />
-                    <Margin type={MarginType.width} size={8} />
-                    <span>{result.user.nickname}</span>
-                  </div>
-                  <Margin type={MarginType.height} size={8} />
-                  <div className="flex">
-                    <Margin type={MarginType.width} size={40} />
-                    <Image
-                      src={result.result}
-                      alt="유저가 그린 그림"
-                      width={200}
-                      height={200}
-                    />
-                  </div>
-                  <Margin type={MarginType.height} size={16} />
-                </li>
-              ))}
+              {gameUsers.map(
+                ({ userProfile, userNickname, userScore, userIdx }) => (
+                  <li key={userIdx}>
+                    <div className="flex items-center">
+                      <UserProfile>
+                        <Image
+                          src={userProfile}
+                          alt="프로필"
+                          fill
+                          sizes="100%"
+                          priority
+                        />
+                      </UserProfile>
+                      <Margin type={MarginType.width} size={8} />
+                      <span>{userNickname}</span>
+                      <Margin type={MarginType.width} size={16} />
+                      <span className="text-2xl">{userScore}</span>
+                    </div>
+                  </li>
+                ),
+              )}
             </ul>
           </div>
           <div className="flex justify-center">
@@ -95,8 +76,11 @@ export default function GameResult({ socket }: { socket: WebSocket }) {
               rounded="2xl"
               color="bg-[#5AAEFC]"
               className="text-xl text-white"
+              onClick={() => {
+                sendMessage(socket, 'gameAlert', { status: 'ready' });
+              }}
             >
-              나가기
+              대기방
             </Button>
             <Margin type={MarginType.width} size={40} />
             <Button
@@ -105,6 +89,9 @@ export default function GameResult({ socket }: { socket: WebSocket }) {
               color="bg-amber-500"
               rounded="2xl"
               className="text-xl"
+              onClick={() => {
+                sendMessage(socket, 'gameAlert', { status: 'gameStart' });
+              }}
             >
               다시하기
             </Button>
