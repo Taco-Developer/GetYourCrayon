@@ -39,6 +39,10 @@ export const gameAPI = {
 };
 
 export const memberAPI = {
+  /**유저 프로필 변경 */
+  changeProfile: (idx: number) =>
+    api.put(`/user/mypage/profile/changeprofileimg/${idx}`),
+
   /**닉네임 변경 */
   changeName: (name: string) =>
     api.put(`/member/nickname`, { userNickname: name }),

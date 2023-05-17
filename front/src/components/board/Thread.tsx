@@ -1,5 +1,6 @@
 import tw from 'tailwind-styled-components';
 import type { Board } from '@/pages/board';
+import Link from 'next/link';
 
 interface PropsTypes {
   data: Board;
@@ -8,9 +9,11 @@ interface PropsTypes {
 export default function ThreadList({ data }: PropsTypes) {
   return (
     <Thread>
-      <Title>{data.title}</Title>
-      <Content>{data.content} </Content>
-      <Time>{data.update_time}</Time>
+      <Title>{data.boardTitle}</Title>
+      <Content>
+        <Link href={data.boardContent}>{data.boardContent}</Link>{' '}
+      </Content>
+      <Time>{data.boardUpdateTime}</Time>
     </Thread>
   );
 }
@@ -34,7 +37,7 @@ const Title = tw.div`
     text-lg
 `;
 const Content = tw.div`
-    
+    underline
     text-custom-gray
 `;
 const Time = tw.div`

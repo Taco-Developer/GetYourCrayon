@@ -14,7 +14,6 @@ interface isClickType {
 const MyProfile = ({ isClick, setIsClick }: isClickType) => {
   const ref = useRef<HTMLDivElement>(null);
   const { userInfo } = useAppSelector((state) => state);
-  console.log(userInfo, 123);
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (ref.current && !ref.current.contains(e.target as Node)) {

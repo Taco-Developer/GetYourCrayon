@@ -1,4 +1,3 @@
-import { Backdrop } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -32,7 +31,7 @@ export default function TenModal({
       <Dialog
         open={isOpenTen}
         onClose={handleClose}
-        maxWidth="lg"
+        maxWidth={false}
         PaperProps={{
           style: { backgroundColor: 'transparent', boxShadow: 'none' },
         }}
@@ -43,11 +42,19 @@ export default function TenModal({
           </div>
         </DialogTitle>
         <DialogContent>
-          <div className="h-gacha-result w-gacha-result border-y-8 border-y-apple-yellow flex flex-row justify-center items-center flex-wrap overflow-hidden ">
-            {gachaData.map((data, i) => {
-              return <BasicCard key={i} data={data} />;
-            })}
-          </div>
+          {gachaData.length === 1 ? (
+            <div className="flex flex-col justify-center items-center border-y-8 border-y-apple-yellow overflow-hidden">
+              {gachaData.map((data, i) => {
+                return <BasicCard key={i} data={data} />;
+              })}
+            </div>
+          ) : (
+            <div className="grid grid-cols-5 gap-4 justify-center items-center  border-y-8 border-y-apple-yellow  overflow-hidden ">
+              {gachaData.map((data, i) => {
+                return <BasicCard key={i} data={data} />;
+              })}
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>
