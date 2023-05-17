@@ -36,7 +36,16 @@ export default function CollectionCard({
     >
       <CardContentNoPadding>
         <div className="w-colle-img h-colle-img relative ">
-          <Image src={data.gachaImg} alt="no_img" priority fill sizes="100%" />
+          <Image
+            src={data.gachaImg}
+            alt="no_img"
+            priority
+            fill
+            sizes="100%"
+            quality={25}
+            placeholder="blur"
+            blurDataURL="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
+          />
         </div>
       </CardContentNoPadding>
       <CollectionImageModal data={data} />
