@@ -110,6 +110,7 @@ export default function Ready({ socket, setSocket }: RoomPropsType) {
         sendMessage(socket, 'chat', {
           author: 'admin',
           message: `${profile.userNickname}님이 입장하셨습니다 :)`,
+          status: 'chatting',
         });
       };
 
