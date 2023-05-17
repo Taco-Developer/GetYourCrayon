@@ -485,11 +485,14 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
 ///
 
-        log.info("session.getId(): {}", session.getId());
-        log.info("userInfosMap: {}", userInfosMap);
+        log.info("session.getId(): {}", session.getId());       // 얘는 나옴
+        log.info("userInfosMap: {}", userInfosMap.get(session.getId()));             // 확인중
 
         UserInfo userInfo = (UserInfo) userInfosMap.get(session.getId());   // 세션의 Id로 유저 정보를 가져옴
         log.info("userInfo: {}", userInfo);
+
+
+        Object o = roomInfoMap.get(roomId);
 
         String userNickname = userInfo.getNickname();   // userInfo에서 닉네임 가져오기 -> 나간 사람 표시
         log.info("userNickname: {}", userNickname);
