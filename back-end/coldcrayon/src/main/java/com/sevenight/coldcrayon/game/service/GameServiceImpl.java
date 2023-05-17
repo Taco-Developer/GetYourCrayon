@@ -19,6 +19,7 @@ import com.sevenight.coldcrayon.theme.service.ThemeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
@@ -38,7 +39,6 @@ public class GameServiceImpl implements GameService{
 
     public ResponseGameDto startGame(UserDto userDto, GameRequestDto gameRequestDto) throws IOException {
         ResponseGameDto responseGameDto = new ResponseGameDto();
-        System.err.println(gameRequestDto);
         String message;
         String status = "fail";
         Optional<RoomHash> optionalRoomHash = roomRepository.findById(gameRequestDto.getRoomIdx());
@@ -52,39 +52,38 @@ public class GameServiceImpl implements GameService{
                 message = "방장이 아니에요.";
             } else if (room.getRoomNow() < 1) {
                 message = "최소 3명의 인원이 필요합니다.";
-            } else if(!room.getRoomStatus().equals(RoomStatus.Ready)){
-                message = "방이 게임중인 상태인가요?";
+            } else if(room.getRoomStatus().equals(RoomStatus.Playing)){
+                message = "게임중인 방입니다.";
             } else {
                 // 게임 방 설정 변경
-                System.err.println("방을 만듭니다.");
                 status = "success";
 
                 room.setRoomStatus(RoomStatus.Playing);
+                room.setMaxRound(gameRequestDto.getMaxRound());
                 room.setGameCnt(room.getGameCnt() + 1);
                 room.setGameCategory(gameRequestDto.getGameCategory());
-                room.setMaxRound(gameRequestDto.getMaxRound());
+                room.setNowRound(1);
+
+                roomRepository.save(room);
+
 
                 // 방에 참여하고 있는 유저를 불러와서 점수를 0점으로 만든다.
                 List<Object> userList = joinListService.getJoinList(room.getRoomIdx());
-
                 for(Object userIdx : userList){
                     Optional<UserHash> userHashOptional = userHashRepository.findById(Long.parseLong(userIdx.toString()));
                     if(userHashOptional.isEmpty()){
                         if(userList.size() == room.getRoomNow()){
-                            System.err.println(userIdx + " 삭제 함");
                             room.setRoomNow(room.getRoomNow() + 1);
                             joinListService.removeUser(room.getRoomIdx(), Long.parseLong(userIdx.toString()));
                         }
-                        System.err.println("유저가 없는데요?");
                     }
 
                     UserHash userHash = userHashOptional.get();
                     userHash.setUserScore(0);
                     userHashRepository.save(userHash);
-                    System.err.println(userHashRepository.findById(Long.parseLong(userIdx.toString())).get());
                 }
 
-                roomRepository.save(room);
+
                 // 어딘가에 게임 테마랑 방 정보를 저장해둬야 한다.
 
                 ThemeCategory[] themeCategories = ThemeCategory.values();

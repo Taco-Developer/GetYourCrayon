@@ -1,11 +1,14 @@
 package com.sevenight.coldcrayon.config;
 
+import com.amazonaws.Request;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sevenight.coldcrayon.auth.dto.UserDto;
 import com.sevenight.coldcrayon.auth.service.AuthService;
 import com.sevenight.coldcrayon.game.dto.GameRequestDto;
+import com.sevenight.coldcrayon.game.dto.RequestRoundDto;
 import com.sevenight.coldcrayon.game.dto.ResponseGameDto;
+import com.sevenight.coldcrayon.game.dto.ResponseRoundDto;
 import com.sevenight.coldcrayon.game.entity.GameCategory;
 import com.sevenight.coldcrayon.game.service.GameService;
 import com.sevenight.coldcrayon.room.dto.RoomDto;
@@ -37,7 +40,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
     private final Map<String, List<WebSocketSession>> sessionsMap = new ConcurrentHashMap<>();
 
     // 참여자 정보 리스트
-    private final LinkedHashMap<String, UserInfo> userInfoMap = new LinkedHashMap<>();
+    private final Map<String, List<UserInfo>> userInfosMap = new ConcurrentHashMap<>();
 
     // 방정보를 담을 Map타입으로 하나 만들어서 해당 정보로 공유하자
     private Map<String, Object> roomInfoMap = new ConcurrentHashMap<>();
@@ -62,27 +65,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
     // flag 변수
     private boolean flag = false;   // 웹 소켓이 생성되기 전: false, 한 번 생성되고 난 후: true
 
-    //=============temp==================//
-
-    //
-//            if (status.equals("fail")) {    // 실패했을 때
-//                for (WebSocketSession s : sessions) {
-//                    if (s.isOpen()) {
-//                        s.sendMessage(new TextMessage(roomResponseDto.getMessage()));
-//                    }
-//                }
-//            } else {    // 성공했을 때
-//                String roomDtoJson = objectMapper.writeValueAsString(roomResponseDto);
-//                for (WebSocketSession s : sessions) {
-//                    if (s.isOpen()) {
-//                        s.sendMessage(new TextMessage(roomDtoJson));
-//                    }
-//                }
-//            }
-    //
-    //========================================//
-
-
     // roomTitle을 가져와야 할까요??
     public void initailizeRoomInfo(String roomIdx) {
         RoomResponseDto room = roomService.getRoom(roomIdx);
@@ -95,6 +77,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         roomInfoMap.put("roomStatus", room.getRoomStatus());
         roomInfoMap.put("adminUserIdx", room.getAdminUserIdx());
         roomInfoMap.put("nowRound", room.getNowRound());
+        roomInfoMap.put("roomTurn", 0);
     }
 
     @Override
@@ -137,11 +120,16 @@ public class WebSocketHandler extends TextWebSocketHandler {
             log.info("접속하는 유저의 닉네임: {}, 소켓 아이디(roomId): {}", userDto.getUserNickname(), roomId);
 
             // 세션에 기록: 입장하려는 유저 인스턴스 생성
-            UserInfo userInfo = userInfoMap.computeIfAbsent(session.getId(), key -> new UserInfo());
+            List<UserInfo> userList = userInfosMap.computeIfAbsent(session.getId(), key -> new ArrayList<>());
+
+            UserInfo userInfo = new UserInfo();
             userInfo.setNickname(userDto.getUserNickname());
             userInfo.setScore(0);
             userInfo.setToken(authorization);
-            userInfoMap.put(session.getId(), userInfo);
+            userInfo.setUserIdx(userDto.getUserIdx());
+
+            userList.add(userInfo);
+            userInfosMap.put(session.getId(), userList);
             
             // 방 입장 로직 수행
             Map<String, Object> joinRoomResponse = roomService.joinRoom(userDto, roomId);    // 수민 로직 추가 예정: 타입을 ReponseDto로 정상일 때 ResponseDto 정보, 오류일 때 state를 포함한 정보
@@ -186,6 +174,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
             String status = roomResponseDto.getStatus();
             String message1 = roomResponseDto.getMessage();
 
+            // 실패일 때
             if (status.equals("fail")) {
                 response.put("status", status);
                 response.put("message", message1);
@@ -195,6 +184,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                         s.sendMessage(new TextMessage(jsonResponse));
                     }
                 }
+            // 성공일 때
             } else {
                 String jsonResponse = objectMapper.writeValueAsString(roomResponseDto);
                 for (WebSocketSession s : sessions) {
@@ -231,20 +221,20 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 }
             }
         }
-        // 게임 타입 변경
-        else if (type.equals("gameCategory")) {
-            String gameCategory = jsonMessage.get("gameCategory");
+        // 게임 모드 변경
+        else if (type.equals("changeGameType")) {
+            String changeGameType = jsonMessage.get("changeGameType");
 
             // 세션 데이터 변경
-            roomInfoMap.put("gameCategory", gameCategory);
+            roomInfoMap.put("changeGameType", changeGameType);
 
-            // DB에 게임 타입 저장해야 함
-            webSocketCustomService.changeGameType(gameCategory);
+            // DB에 게임 타입 저장해야 함 : 구현 안됨
+            webSocketCustomService.changeGameType(changeGameType);
 
             // 타입 설정 등
             Map<String, String> response = new HashMap<>();
-            response.put("type", "gameCategory");
-            response.put("gameCategory", gameCategory);
+            response.put("type", "changeGameType");
+            response.put("changeGameType", changeGameType);
             String jsonResponse = objectMapper.writeValueAsString(response);
 
             for (WebSocketSession s : sessions) {
@@ -253,19 +243,89 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 }
             }
         }
+
+        // playerCnt
+        else if (type.equals("playerCnt")) {
+            RoomResponseDto room = roomService.getRoom(roomId);
+
+            int roomNow = room.getRoomNow();
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("type", "playerCnt");
+            response.put("playerCnt", roomNow);
+
+            String jsonResponse = objectMapper.writeValueAsString(response);
+
+            for (WebSocketSession s : sessions) {
+                if (s.isOpen()) {
+                    s.sendMessage(new TextMessage(jsonResponse));
+                }
+            }
+        }
+        // gameMode
+        else if (type.equals("gameMode")) {
+            RoomResponseDto room = roomService.getRoom(roomId);
+            GameCategory gameCategory = room.getGameCategory();
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("type", "gameMode");
+            response.put("gameMode", gameCategory);
+
+            String jsonResponse = objectMapper.writeValueAsString(response);
+
+            for (WebSocketSession s : sessions) {
+                if (s.isOpen()) {
+                    s.sendMessage(new TextMessage(jsonResponse));
+                }
+            }
+        }
+        // gameTime
+        else if (type.equals("gameTime")) {
+
+            int roundTime = (int) roomInfoMap.get("roundTime");
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("type", "gameTime");
+            response.put("roundTime", roundTime);
+
+            String jsonResponse = objectMapper.writeValueAsString(response);
+
+            for (WebSocketSession s : sessions) {
+                if (s.isOpen()) {
+                    s.sendMessage(new TextMessage(jsonResponse));
+                }
+            }
+        }
+        // gameTurn
+        else if (type.equals("gameTurn")) {
+            RoomResponseDto room = roomService.getRoom(roomId);
+            int nowRound = room.getNowRound();
+
+            roomInfoMap.put("gameTurn", nowRound);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("type", "gameTurn");
+            response.put("gameTurn", nowRound);
+
+            String jsonResponse = objectMapper.writeValueAsString(response);
+
+            for (WebSocketSession s : sessions) {
+                if (s.isOpen()) {
+                    s.sendMessage(new TextMessage(jsonResponse));
+                }
+            }
+        }
+
         // 게임 시간 설정
         else if (type.equals("roundTime")) {
             String changedRoundTime = jsonMessage.get("changedRoundTime");
 
             roomInfoMap.put("roundTime", Integer.parseInt(changedRoundTime));
         }
-
         // 게임 시작
         else if (type.equals("gameStart")) {
             // 현재 설정된 게임 타입을 받아와서 case 구분
-            log.info("여기좀 확인해봐 제발");
             String authorization = jsonMessage.get("authorization");
-            log.info("로그로그 authorization: {}", authorization);
 
             // 소켓 정보 변경
             roomInfoMap.put("roomStatus", "Playing");
@@ -289,7 +349,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
             int roundTime = (int) roomInfoMap.get("roundTime");
 
-//            // 설정된 시간 감소: 테스팅 필요
+//            // roundTime 감소 스레드 실행
 //            while (roundTime > 0) {
 //                Map<String, Object> response = new HashMap<String, Object>();
 //                response.put("type", "gameTime");
@@ -305,27 +365,45 @@ public class WebSocketHandler extends TextWebSocketHandler {
 //                }
 //            }
         }
+
         // 라운드 시작
-        else if(type.equals("gameStart")) {
+        else if (type.equals("roundStart")) {
+            RequestRoundDto requestRoundDto = RequestRoundDto.builder()
+                    .roomIdx(roomId)
+                    .build();
 
-        }
-
-        // 라운드 종료
-        else if (type.equals("roundOver")) {
-            List<UserHash> userList = roomService.getUserList(roomId);
-            Map<String, Object> response = new HashMap<>();
-            response.put("type", "roundOver");
-            response.put("userList", userList);
-
-            String jsonResponse = objectMapper.writeValueAsString(response);
+            ResponseGameDto responseGameDto = gameService.nextRound(requestRoundDto);      // type: gameDto로 기본 설정되어 있음
+            String json = objectMapper.writeValueAsString(responseGameDto);
 
             for (WebSocketSession s : sessions) {
                 if (s.isOpen()) {
-                    s.sendMessage(new TextMessage(jsonResponse));
+                    s.sendMessage(new TextMessage(json));
                 }
             }
 
-        // 게임 종료
+
+        }
+
+        // 라운드 종료  ------- type 지정 필요 -------   // 수민: gameDto에 responseRoundDto type 속성 설정 필요
+        else if (type.equals("roundOver")) {
+            Long winnerIdx = Long.valueOf(jsonMessage.get("winnerIdx"));
+
+            RequestRoundDto requestRoundDto = RequestRoundDto.builder()
+                    .roomIdx(roomId)
+                    .winner(winnerIdx)
+                    .build();
+
+            ResponseRoundDto responseRoundDto = gameService.endRound(requestRoundDto);
+            String json = objectMapper.writeValueAsString(responseRoundDto);
+
+            for (WebSocketSession s : sessions) {
+                if (s.isOpen()) {
+                    s.sendMessage(new TextMessage(json));
+                }
+            }
+
+
+            // 게임 종료
         } else if (type.equals("gameOver")) {
             List<UserHash> userList = roomService.getUserList(roomId);
             Map<String, Object> response = new HashMap<>();
@@ -349,15 +427,86 @@ public class WebSocketHandler extends TextWebSocketHandler {
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         String roomId = extractRoomId(session);
 
-        List<WebSocketSession> sessions = sessionsMap.getOrDefault(roomId, Collections.emptyList());
 
-        UserInfo userInfo = userInfoMap.get(session.getId());   // 세션의 Id로 유저 정보를 가져옴
+        // 1안: 로그로 모조리 찍어보기
+//        userInfosMap.get(session.getId()).get
+
+
+///
+//        userInfosMap.get(session.getId())
+//        List<UserInfo> userInfos = userInfosMap.get(session.getId());
+//        boolean check = false;
+//
+//        for (UserInfo ui : userInfos) {
+//            if (ui.nickname.equals()) {
+//
+//            }
+//        }
+//
+//
+//
+//        List<WebSocketSession> sessions = sessionsMap.getOrDefault(roomId, Collections.emptyList());
+
+//        int initialDelay = 0;   //처음시작할땐 딜레이 없음
+//        int period = 1;           // 1초마다 실행
+//        int roundTime = 10;
+//
+//        ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+//        Runnable task = new Runnable() {
+//            int time = roundTime;
+//            @Override
+//            public void run() {     /////여기 run() 메서드 안에 실행할 논리 작성
+//                if (time > 0) {
+//                    Map<String, String> jsonMessage2 = new HashMap<>();
+//                    jsonMessage2.put("author", "점수알리미");
+//                    jsonMessage2.put("message", String.valueOf(time));
+//                    String json;
+//                    try {
+//                        ObjectMapper objectMapper = new ObjectMapper();
+//                        json = objectMapper.writeValueAsString(jsonMessage2);
+//                        for (WebSocketSession s : sessions) {
+//                            if (s.isOpen()) {
+//                                s.sendMessage(new TextMessage(json));
+//                            }
+//                        }
+//                    } catch (IOException e) {
+//                        // 예외 처리
+//                        System.out.println("e = " + e);
+//                    }
+//                    time--;
+//                } else {
+//                    executorService.shutdown();
+//                }
+//            }
+//        };
+
+//        executorService.scheduleAtFixedRate(task, initialDelay, period, TimeUnit.SECONDS)
+
+
+///
+
+        log.info("session.getId(): {}", session.getId());
+        log.info("userInfosMap: {}", userInfosMap);
+
+        UserInfo userInfo = (UserInfo) userInfosMap.get(session.getId());   // 세션의 Id로 유저 정보를 가져옴
+        log.info("userInfo: {}", userInfo);
 
         String userNickname = userInfo.getNickname();   // userInfo에서 닉네임 가져오기 -> 나간 사람 표시
+        log.info("userNickname: {}", userNickname);
         String userToken = userInfo.getToken();     // userInfo에서 토큰 값 가져오기
+        log.info("userToken: {}", userToken);
         UserDto user = authService.findUser(userToken);     // 토큰으로 유저 Dto 가져오기
+        log.info("user: {}", user);
 
-        roomService.outRoom(user);      // user가 DB에서 제거될 수 있도록 처리
+        RoomResponseDto roomResponseDto = roomService.outRoom(user);// user가 DB에서 제거될 수 있도록 처리
+        log.info("roomResponseDto: {}", roomResponseDto);
+
+        // usernicknama을 통해 유저 정보를 조회 -> redis에서 정보 삭제해야 함
+
+
+
+
+        List<WebSocketSession> sessions = sessionsMap.getOrDefault(roomId, Collections.emptyList());
 
         sessions.remove(session);       // 세션 제거
 
@@ -396,12 +545,20 @@ public class WebSocketHandler extends TextWebSocketHandler {
         private String nickname;
         private int score;
         private String token;
+        private Long userIdx;
 
         public UserInfo() {};
-        public UserInfo(String nickname, int score, String token) {
+        public UserInfo(String nickname, int score, String token, Long userIdx) {
             this.nickname = nickname;
             this.score = score;
             this.token = token;
+            this.userIdx = userIdx;
         }
     }
+
+
+
+
+
+
 }

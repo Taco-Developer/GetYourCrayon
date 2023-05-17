@@ -3,6 +3,8 @@ package com.sevenight.coldcrayon.game.controller;
 import com.sevenight.coldcrayon.auth.dto.UserDto;
 import com.sevenight.coldcrayon.auth.service.AuthService;
 import com.sevenight.coldcrayon.game.dto.GameRequestDto;
+import com.sevenight.coldcrayon.game.dto.RequestRoundDto;
+import com.sevenight.coldcrayon.game.dto.ResponseRoundDto;
 import com.sevenight.coldcrayon.game.service.GameService;
 import com.sevenight.coldcrayon.game.service.SaveImageServiceImpl;
 import com.sevenight.coldcrayon.game.service.WebClientServiceImpl;
@@ -36,18 +38,19 @@ public class GameController {
     }
 
 
-    @PostMapping("startRound")
-    public ResponseEntity<String> getKeyword(@RequestHeader String Authorization, @RequestBody ThemeCategory theme){
+    @PostMapping("/nextRound")
+    public ResponseEntity<?> getKeyword(@RequestHeader String Authorization, @RequestBody RequestRoundDto requestRoundDto) throws IOException {
         UserDto user = authService.selectOneMember(HeaderUtil.getAccessTokenString(Authorization));
-
-        return null;
+        return ResponseEntity.ok().body(gameService.nextRound(requestRoundDto));
     }
 
 
 
     @PostMapping("/end-round")
-    public ResponseEntity<?> endRound(){
-        return null;
+    public ResponseEntity<ResponseRoundDto> endRound(@RequestHeader String Authorization, @RequestBody RequestRoundDto requestRoundDto){
+        ResponseRoundDto responseRoundDto = gameService.endRound(requestRoundDto);
+
+        return ResponseEntity.ok().body(responseRoundDto);
     }
 
     @PostMapping("/end-game")
