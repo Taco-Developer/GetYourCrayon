@@ -42,7 +42,7 @@ public class RoomServiceImpl implements RoomService{
 
             RoomHash roomHash = RoomHash.builder()
                     .roomIdx(roomIdx)
-                    .gameCategory(GameCategory.AI)
+                    .gameCategory(GameCategory.AiPainting)
                     .gameCnt(0)
                     .nowRound(0)
                     .maxRound(6)
@@ -74,6 +74,17 @@ public class RoomServiceImpl implements RoomService{
             return RoomResponseDto.of(roomHashOptional, "success", "방 정보입니다.");
         }
         return RoomResponseDto.of(roomHashOptional, "fail", "요청하신 방의 정보가 없습니다.");
+    }
+
+    public void CorrectUser(String roomIdx, Long userIdx){
+        Optional<RoomHash> roomHashOptional = roomRepository.findById(roomIdx);
+        if(roomHashOptional.isPresent()){
+            RoomHash roomHash = roomHashOptional.get();
+            if (roomHash.getCorrectUser().equals(-1L)){
+                roomHash.setCorrectUser(userIdx);
+                roomRepository.save(roomHash);
+            }
+        }
     }
 
     // 방에 참여하기
@@ -124,6 +135,32 @@ public class RoomServiceImpl implements RoomService{
         return joinRoomResponse;
     }
 
+    public Map<String, Object> firstRoom(UserDto userDto, String roomIdx){
+        Map<String, Object> joinRoomResponse = new HashMap<>();
+        List<UserHash> userHashList = new ArrayList<>();
+
+        Optional<RoomHash> optionalRoomHash = roomRepository.findById(roomIdx);
+        String status = "fail";
+        String message;
+        if(optionalRoomHash.isEmpty()){
+            message = "조회하신 방이 없습니다.";
+        } else {
+
+            RoomHash roomHash = optionalRoomHash.get();
+            status = "success";
+            message = "방의 정보 입니다.";
+            userHashList = this.getUserList(roomIdx);
+        }
+
+        RoomResponseDto roomResponseDto = RoomResponseDto.of(optionalRoomHash, status, message);
+
+        joinRoomResponse.put("type", "userIn");
+        joinRoomResponse.put("userList", userHashList);
+        joinRoomResponse.put("roomInfo",roomResponseDto);
+
+        return joinRoomResponse;
+
+    }
     // 방에서 나가기
     public RoomResponseDto outRoom(UserDto userDto){
         // 방 정보 가지고 오기
@@ -240,6 +277,13 @@ public class RoomServiceImpl implements RoomService{
 
         return RoomResponseDto.of(optionalRoomHash, status, message);
     }
+
+    // 방 설정 변경하기
+    /*
+    플레이어 명수
+
+
+     */
 
     // 참여 인원 조회하기
     public List<UserHash> getUserList(String roomIdx){

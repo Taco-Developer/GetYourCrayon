@@ -12,15 +12,13 @@ import java.util.Map;
 @NoArgsConstructor
 @ToString
 public class GameEndDto {
-    String type = "gameEnd";
+    String type = "gameOver";
 
     String status = "fail";
 
     String message;
 
-    List<UserHashResponseDto> userHashResponseDtoList;
-
-    int maxRound;
+    List<UserHashResponseDto> userList;
 
     Map<Integer, List<String>> urlList;
 }

@@ -11,7 +11,7 @@ import org.springframework.data.annotation.Id;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserHashResponseDto {
+public class UserHashResponseDto implements Comparable<UserHashResponseDto>{
 
     private Long userIdx;
 
@@ -21,8 +21,6 @@ public class UserHashResponseDto {
 
     private String userProfile;
 
-    private int userPoint; // 가챠 할 수 있는 포인트
-
     private int userScore; // 게임 시작하고 얻은 점수
 
     public static UserHashResponseDto of(UserHash userHash){
@@ -31,9 +29,13 @@ public class UserHashResponseDto {
         userHashResponseDto.roomIdx = userHash.getRoomIdx();
         userHashResponseDto.userNickname = userHash.getUserNickname();
         userHashResponseDto.userProfile = userHash.getUserProfile();
-        userHashResponseDto.userPoint = userHash.getUserPoint();
         userHashResponseDto.userScore = userHash.getUserScore();
 
         return userHashResponseDto;
+    }
+
+    @Override
+    public int compareTo(UserHashResponseDto o) {
+        return o.getUserScore() - getUserScore();
     }
 }
