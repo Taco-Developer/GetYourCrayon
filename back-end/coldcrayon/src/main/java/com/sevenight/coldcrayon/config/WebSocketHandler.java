@@ -166,20 +166,27 @@ public class WebSocketHandler extends TextWebSocketHandler {
         if (type.equals("userIn")) {
             String authorization = jsonMessage.get("authorization");
             UserDto userDto = authService.selectOneMember(HeaderUtil.getAccessTokenString(authorization));
+            Map<String, Object> joinRoomResponse;
             // 닉네임, 소켓 아이디을 터미너스에서 확인할 수 있도록 설정: 5/16 DG
             log.info("접속하는 유저의 닉네임: {}, 소켓 아이디(roomId): {}", userDto.getUserNickname(), roomId);
 
-            // 세션에 기록: 입장하려는 유저 인스턴스 생성
             UserInfo userInfo = userInfoMap.computeIfAbsent(session.getId(), key -> new UserInfo());
 
             userInfo.setNickname(userDto.getUserNickname());
             userInfo.setScore(0);
             userInfo.setToken(authorization);
+            if(userDto.getUserIdx().equals(roomInfoMap.get("adminUserIdx"))){
+                joinRoomResponse = roomService.firstRoom(userDto, roomId);
+
+            } else {
+                joinRoomResponse = roomService.joinRoom(userDto, roomId);
+            }
+            // 세션에 기록: 입장하려는 유저 인스턴스 생성
 
             userScoreMap.put(userDto.getUserIdx(), 0);      // Long 타입, 기본 0으로 설정
 
             // 방 입장 로직 수행
-            Map<String, Object> joinRoomResponse = roomService.joinRoom(userDto, roomId);    // 수민 로직 추가 예정: 타입을 ReponseDto로 정상일 때 ResponseDto 정보, 오류일 때 state를 포함한 정보
+                // 수민 로직 추가 예정: 타입을 ReponseDto로 정상일 때 ResponseDto 정보, 오류일 때 state를 포함한 정보
             RoomResponseDto roomInfo = (RoomResponseDto) joinRoomResponse.get("roomInfo");
             String status = roomInfo.getStatus();
             String message1 = roomInfo.getMessage();
@@ -406,28 +413,30 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
             // userDto, gameRequestDto(roomIdx, gameCategory, maxRound) 필요
             UserDto userDto = authService.selectOneMember(HeaderUtil.getAccessTokenString(authorization));
-            GameRequestDto gameRequestDto = GameRequestDto.builder()
-                    .gameCategory((GameCategory) roomInfoMap.get("gameCategory"))
-                    .maxRound((Integer) roomInfoMap.get("maxRound"))
-                    .roomIdx(roomId)
-                    .build();
-            ResponseGameDto responseGameDto = gameService.startGame(userDto, gameRequestDto);
+            if(!userDto.getUserIdx().equals(roomInfoMap.get("adminUserIdx"))) {
 
-            if(responseGameDto.getStatus().equals("success")){
-                roomInfoMap.put("roomStatus", "Playing");
-                gameInfoMap.put("correct", responseGameDto.getCorrect());
-                gameInfoMap.put("winnerIdx", "0");
-            }
+                GameRequestDto gameRequestDto = GameRequestDto.builder()
+                        .gameCategory((GameCategory) roomInfoMap.get("gameCategory"))
+                        .maxRound((Integer) roomInfoMap.get("maxRound"))
+                        .roomIdx(roomId)
+                        .build();
+                ResponseGameDto responseGameDto = gameService.startGame(userDto, gameRequestDto);
 
-            String json = objectMapper.writeValueAsString(responseGameDto);
+                if (responseGameDto.getStatus().equals("success")) {
+                    roomInfoMap.put("roomStatus", "Playing");
+                    gameInfoMap.put("correct", responseGameDto.getCorrect());
+                    gameInfoMap.put("winnerIdx", "0");
+                }
 
-            // 게임 정보
-            for (WebSocketSession s : sessions) {
-                if (s.isOpen()) {
-                    s.sendMessage(new TextMessage(json));
+                String json = objectMapper.writeValueAsString(responseGameDto);
+
+                // 게임 정보
+                for (WebSocketSession s : sessions) {
+                    if (s.isOpen()) {
+                        s.sendMessage(new TextMessage(json));
+                    }
                 }
             }
-
 //            int roundTime = (int) roomInfoMap.get("roundTime");
 
 //            // roundTime 감소 스레드 실행

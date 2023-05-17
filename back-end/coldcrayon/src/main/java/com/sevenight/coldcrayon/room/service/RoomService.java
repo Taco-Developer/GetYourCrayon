@@ -25,6 +25,8 @@ public interface RoomService {
 
     List<UserHash> getUserList(String roomIdx);
 
+    Map<String, Object> firstRoom(UserDto userDto, String roomIdx);
+
     // 3-3 유저 차단
 //    String banUser(String roomIdx, String adminUserIdx, String banUserIdx);
 
