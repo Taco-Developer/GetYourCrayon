@@ -546,55 +546,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
             // 게임 종료
         } else if (type.equals("gameOver")) {
-
-
-            List<UserHash> userList = roomService.getUserList(roomId);
-
-            String json = objectMapper.writeValueAsString(userList);
-
-            // 소켓 정보 변경
-            roomInfoMap.put("roomStatus", "Ready");
-
-            // 소켓 유저 점수 정렬해서 보여줘야 함
-            List<Map.Entry<Long, Integer>> sortedEntries = new ArrayList<>(userScoreMap.entrySet());
-
-            Collections.sort(sortedEntries, new Comparator<Map.Entry<Long, Integer>>() {
-                public int compare(Map.Entry<Long, Integer> entry1, Map.Entry<Long, Integer> entry2) {
-                    return entry2.getValue().compareTo(entry1.getValue());  // Integer 값을 기준으로 내림차순 정렬
-                }
-            });
-
-            List<Object> sortedList = new ArrayList<>();
-
-            // 정렬된 결과를 사용하여 작업을 수행
-            for (Map.Entry<Long, Integer> entry : sortedEntries) {
-                Long key = entry.getKey();
-                Integer value = entry.getValue();
-
-                // 정렬된 값을 이용한 작업 수행
-                Map<String, Integer> user = new HashMap<>();            
-
-                // Long키를 가지고 유저 닉네임을 전해줘야 함
-                String nickname = userInfoMap.get(session.getId()).getNickname();
-                user.put(nickname, value);
-                sortedList.add(user);
-            }
-
-            Map<String, Object> response = new HashMap<>();
-            response.put("type", "gameOver");
-            response.put("sortedList", sortedList);
-
-            String jsonResponse = objectMapper.writeValueAsString(response);
-            for (WebSocketSession s : sessions) {
-                if (s.isOpen()) {
-                    s.sendMessage(new TextMessage(jsonResponse));
-                }
-            }
-        }
-        else if(type.equals("gameOver")){
-
             GameEndDto gameEndDto = gameService.endGame(roomId);
-
 
             String jsonResponse = objectMapper.writeValueAsString(gameEndDto);
             for (WebSocketSession s : sessions) {
@@ -603,6 +555,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 }
             }
         }
+
     }
 
     @Override
