@@ -45,6 +45,9 @@ public class WebSocketHandler extends TextWebSocketHandler {
     // 방정보를 담을 Map타입으로 하나 만들어서 해당 정보로 공유하자
     private Map<String, Object> roomInfoMap = new ConcurrentHashMap<>();
 
+    // 게임 정보를 담을 Map타입으로 하나 만들어서 해당 정보로 공유하자
+    private Map<String, String> gameInfoMap = new ConcurrentHashMap<>();
+
 
     // 외부 서비스 주입
     private final WebSocketCustomService webSocketCustomService;
@@ -110,6 +113,52 @@ public class WebSocketHandler extends TextWebSocketHandler {
         });
         String type = jsonMessage.get("type");
 
+        //==========================================//
+        //시간관련 설정들
+//        int initialDelay = 0;
+//        int period = 1;
+//        int roundTime = 60;
+
+//        //예약한 작업을 실행할 주체
+//        ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+//
+//        //예약한 작업
+//        Runnable task = new Runnable() {
+//            int time = roundTime;
+//
+//            @Override
+//            public void run() {
+//                if (time > 0) {
+//                    Map<String, String> jsonMessage2 = new HashMap<>();
+//                    jsonMessage2.put("type", "timeStart");
+//                    jsonMessage2.put("author", "점수알리미");
+//                    jsonMessage2.put("message", String.valueOf(time));
+//                    String json;
+//                    try {
+//                        json = objectMapper.writeValueAsString(jsonMessage2);
+//                        for (WebSocketSession s : sessions) {
+//                            if (s.isOpen()) {
+//                                s.sendMessage(new TextMessage(json));
+//                            }
+//                        }
+//                    } catch (IOException e) {
+//                        // 예외 처리
+//                        System.out.println("e = " + e);
+//                    }
+//                    time--;
+//                } else {
+//                    executorService.shutdown();
+//                }
+//            }
+//        };
+//        //==========================================//
+
+
+
+
+
+
+
         /// chat, draw, userId, {userScore} //
 
         // userIn:유저가 들어올 때 userData: (유저Id, 기본점수)
@@ -146,6 +195,14 @@ public class WebSocketHandler extends TextWebSocketHandler {
             }
 
         } else if (type.equals("chat")) {
+            String status = jsonMessage.get("status");
+            if(status.equals("answer")){
+                String answer = jsonMessage.get("answer");
+                if(answer.equals(gameInfoMap.get("correct")) && gameInfoMap.get("winnerIdx").equals("0")){
+                    String userIdx = jsonMessage.get("userIdx");
+                    gameInfoMap.put("winner", userIdx);
+                }
+            }
             for (WebSocketSession s : sessions) {
                 if (s.isOpen()) {
                     s.sendMessage(message);
@@ -322,6 +379,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
             roomInfoMap.put("roundTime", Integer.parseInt(changedRoundTime));
         }
+
         // 게임 시작
         else if (type.equals("gameStart")) {
             // 현재 설정된 게임 타입을 받아와서 case 구분
@@ -338,6 +396,10 @@ public class WebSocketHandler extends TextWebSocketHandler {
                     .roomIdx(roomId)
                     .build();
             ResponseGameDto responseGameDto = gameService.startGame(userDto, gameRequestDto);
+
+            gameInfoMap.put("correct", responseGameDto.getCorrect());
+            gameInfoMap.put("winnerIdx", "0");
+
             String json = objectMapper.writeValueAsString(responseGameDto);
 
             // 게임 정보
@@ -347,7 +409,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 }
             }
 
-            int roundTime = (int) roomInfoMap.get("roundTime");
+//            int roundTime = (int) roomInfoMap.get("roundTime");
 
 //            // roundTime 감소 스레드 실행
 //            while (roundTime > 0) {
@@ -366,13 +428,61 @@ public class WebSocketHandler extends TextWebSocketHandler {
 //            }
         }
 
+        // timeStart: 시간이 줄어드는 매서드
+        else if (type.equals("timeStart")) {
+
+            //== 매서드 선언부 ==//
+            //시간관련 설정들
+            int initialDelay = 1;
+            int period = 1;
+            int roundTime = (int) roomInfoMap.get("roundTime");
+
+            //예약한 작업을 실행할 주체
+            ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+
+            //예약한 작업
+            Runnable task = new Runnable() {
+                int time = roundTime;
+
+                @Override
+                public void run() {
+                    if (time > 0) {
+                        Map<String, String> response = new HashMap<>();
+                        response.put("type", "timeStart");
+                        response.put("message", String.valueOf(time));
+                        String json;
+                        try {
+                            json = objectMapper.writeValueAsString(response);
+                            for (WebSocketSession s : sessions) {
+                                if (s.isOpen()) {
+                                    s.sendMessage(new TextMessage(json));
+                                }
+                            }
+                        } catch (IOException e) {
+                            // 예외 처리
+                            System.out.println("e = " + e);
+                        }
+                        time--;
+                    } else {
+                        executorService.shutdown();
+                    }
+                }
+            };
+
+            // 매서드 실행부
+            executorService.scheduleAtFixedRate(task, initialDelay, period, TimeUnit.SECONDS);
+
+        }
+
         // 라운드 시작
-        else if (type.equals("roundStart")) {
+        else if (type.equals("nextRound")) {
             RequestRoundDto requestRoundDto = RequestRoundDto.builder()
                     .roomIdx(roomId)
                     .build();
 
             ResponseGameDto responseGameDto = gameService.nextRound(requestRoundDto);      // type: gameDto로 기본 설정되어 있음
+            gameInfoMap.put("correct", responseGameDto.getCorrect());
+            gameInfoMap.put("winnerIdx", "0");
             String json = objectMapper.writeValueAsString(responseGameDto);
 
             for (WebSocketSession s : sessions) {
@@ -384,9 +494,10 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
         }
 
-        // 라운드 종료  ------- type 지정 필요 -------   // 수민: gameDto에 responseRoundDto type 속성 설정 필요
+        // 라운드 종료  ------- type 지정 필요 -------   // 수민: 임시로 내가 설정해서 사용하도록 함
         else if (type.equals("roundOver")) {
-            Long winnerIdx = Long.valueOf(jsonMessage.get("winnerIdx"));
+
+            Long winnerIdx = Long.valueOf(gameInfoMap.get("winnerIdx"));
 
             RequestRoundDto requestRoundDto = RequestRoundDto.builder()
                     .roomIdx(roomId)
@@ -394,6 +505,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                     .build();
 
             ResponseRoundDto responseRoundDto = gameService.endRound(requestRoundDto);
+            responseRoundDto.setType("gameDto");
             String json = objectMapper.writeValueAsString(responseRoundDto);
 
             for (WebSocketSession s : sessions) {
@@ -555,10 +667,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
             this.userIdx = userIdx;
         }
     }
-
-
-
-
 
 
 }
