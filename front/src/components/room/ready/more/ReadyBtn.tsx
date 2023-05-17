@@ -22,13 +22,14 @@ export default function ReadyBtn({
   closeSocket,
 }: ReadyProps) {
   const dispatch = useAppDispatch();
+  const { roomInfo } = useAppSelector((state) => state);
   const baseUrl: string = 'https://getyourcrayon.co.kr/room/';
   const {
     userInfo: { userIdx, userNickname },
     roomStatus,
   } = useAppSelector((state) => state);
   const { roomIdx } = useAppSelector((state) => state.roomIdx);
-  console.log(`--->${userIdx}`);
+  console.log(`--->${userIdx} ${roomInfo.adminUserIdx}`);
 
   /** 게임방 나가기 api */
   const gameOut = async () => {
