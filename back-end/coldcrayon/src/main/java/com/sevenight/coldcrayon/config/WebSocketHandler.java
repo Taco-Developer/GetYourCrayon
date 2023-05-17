@@ -504,9 +504,9 @@ public class WebSocketHandler extends TextWebSocketHandler {
         // 라운드 종료  ------- type 지정 필요 -------   // 수민: 임시로 내가 설정해서 사용하도록 함
         else if (type.equals("roundOver")) {
             System.err.println("이거 디버깅 용도 : roundOver에 진입했음.");
-            Long winnerIdx = Long.valueOf(gameInfoMap.get("winnerIdx"));
+            Long winnerIdx = Long.parseLong(gameInfoMap.get("winnerIdx"));
 
-            gameInfoMap.put("winnerIdx", "0L");
+            gameInfoMap.put("winnerIdx", "0");
             RequestRoundDto requestRoundDto = RequestRoundDto.builder()
                     .roomIdx(roomId)
                     .winner(winnerIdx)
