@@ -2,10 +2,7 @@ package com.sevenight.coldcrayon.board.controller;
 import com.sevenight.coldcrayon.auth.dto.UserDto;
 import com.sevenight.coldcrayon.auth.service.AuthService;
 import com.sevenight.coldcrayon.auth.service.TokenService;
-import com.sevenight.coldcrayon.board.dto.ArticleDto;
-import com.sevenight.coldcrayon.board.dto.CreateArticleRequest;
-import com.sevenight.coldcrayon.board.dto.CreateArticleResponse;
-import com.sevenight.coldcrayon.board.dto.Result;
+import com.sevenight.coldcrayon.board.dto.*;
 import com.sevenight.coldcrayon.board.entity.Board;
 import com.sevenight.coldcrayon.board.service.BoardService;
 import com.sevenight.coldcrayon.user.entity.User;
@@ -113,9 +110,8 @@ public class BoardController {
         if (pageNum < 0 || pageSize <= 0) {
             return ResponseEntity.badRequest().body("페이지번호, 페이지 사이즈가 유효하지 않습니다.");
         }
-        Page<Board> articles = boardService.getArticles(pageNum, pageSize);
-        Page<ArticleDto> toMap = articles.map(a -> new ArticleDto(a.getBoardId(), a.getBoardTitle(), a.getBoardContent(), a.getBoardCreateTime(), a.getBoardUpdateTime()));
-        return ResponseEntity.ok().body(toMap);
+        Page<BoardDetailDto> articles = boardService.pageBoard(pageNum, pageSize);
+        return ResponseEntity.ok().body(articles);
     }
 
     @DeleteMapping("/delete/{boardIdx}")

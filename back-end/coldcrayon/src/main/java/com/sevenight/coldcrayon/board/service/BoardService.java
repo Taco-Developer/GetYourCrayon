@@ -1,6 +1,7 @@
 package com.sevenight.coldcrayon.board.service;
 
 import com.sevenight.coldcrayon.auth.dto.UserDto;
+import com.sevenight.coldcrayon.board.dto.BoardDetailDto;
 import com.sevenight.coldcrayon.board.entity.Board;
 import com.sevenight.coldcrayon.board.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
@@ -55,6 +56,18 @@ public class BoardService {
         } else {
             return "잘못된 삭제 요청 입니다";
         }
+    }
+
+    public Page<BoardDetailDto> pageBoard(int pageNum, int pageSize) {
+
+        Pageable pageable = PageRequest.of(pageNum, pageSize, Sort.by("boardUpdateTime").descending());
+        Page<Board> page = boardRepository.findAll(pageable);
+
+        Page<BoardDetailDto> res = page.map(BoardDetailDto::new);
+        return res;
+//        return res.stream().map(BoardDetailDto::new);
+
+//        return boardRepository.findAll(pageable);
     }
 
 }
