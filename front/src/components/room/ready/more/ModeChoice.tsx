@@ -4,7 +4,7 @@ import tw from 'tailwind-styled-components';
 export default function ModeChoice() {
   const [choiceMode, setChoiceMode] = useState<number>(0);
   const gameList: string[] = [
-    'ai',
+    'AI',
     '라이어',
     '캐치마인드',
     '리버스캐치마인드',
