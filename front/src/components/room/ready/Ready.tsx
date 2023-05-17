@@ -87,33 +87,33 @@ export default function Ready({ socket, setSocket }: RoomPropsType) {
     if (socket) {
       /** 토큰 */
       const token = getCookie('accesstoken');
+      const roomInHandler = (event: MessageEvent) => {
+        const data = JSON.parse(event.data);
+        if (data.type !== 'userIn') return;
+        setUserList(data.userList.userList);
+        console.log(data);
+      };
+
+      const messageHandler = (event: MessageEvent) => {
+        const data = JSON.parse(event.data);
+        if (data.type !== 'chat') return;
+        setMessageList((prev) => [...prev, data]);
+      };
+
+      listenEvent(socket, roomInHandler);
+      listenEvent(socket, messageHandler);
+
       socket.onopen = () => {
-        const roomInHandler = (event: MessageEvent) => {
-          const data = JSON.parse(event.data);
-          if (data.type !== 'userIn') return;
-          setUserList(data.userList.userList);
-          console.log(data);
-        };
-
-        const messageHandler = (event: MessageEvent) => {
-          const data = JSON.parse(event.data);
-          if (data.type !== 'chat') return;
-          setMessageList((prev) => [...prev, data]);
-        };
-
-        listenEvent(socket, roomInHandler);
-        listenEvent(socket, messageHandler);
-
         sendMessage(socket, 'userIn', { authorization: token });
         sendMessage(socket, 'chat', {
           author: 'admin',
           message: `${profile.userNickname}님이 입장하셨습니다 :)`,
         });
+      };
 
-        return () => {
-          removeEvent(socket, messageHandler);
-          removeEvent(socket, roomInHandler);
-        };
+      return () => {
+        removeEvent(socket, messageHandler);
+        removeEvent(socket, roomInHandler);
       };
     }
   }, [profile.userNickname, socket]);

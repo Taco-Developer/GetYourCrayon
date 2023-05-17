@@ -41,6 +41,13 @@ export default function Room({
     }
   }, [dispatch, socket, roomIdx]);
 
+  useEffect(() => {
+    if (!socket) return;
+    return () => {
+      socket.close();
+    };
+  }, [socket]);
+
   switch (roomStatus) {
     case 'ready':
       return <Ready socket={socket} setSocket={setSocket} />;
