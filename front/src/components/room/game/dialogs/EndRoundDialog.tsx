@@ -13,8 +13,9 @@ import { goNextRound } from '@/store/slice/game/gameRoundSlice';
 import { resetAnswer } from '@/store/slice/game/answersSlice';
 import { resetTheme } from '@/store/slice/game/gameThemeSlice';
 import { changeStatus } from '@/store/slice/game/roomStatusSlice';
+import { sendMessage } from '@/socket/messageSend';
 
-export default function EndRoundDialog() {
+export default function EndRoundDialog({ socket }: { socket: WebSocket }) {
   const {
     score: { defaultScore, winnerScore },
     gameRound: { now, total, winnerIdx },
@@ -36,13 +37,13 @@ export default function EndRoundDialog() {
         dispatch(goNextRound());
         return;
       }
-      dispatch(changeStatus('gameEnd'));
+      sendMessage(socket, 'gameAlert', { status: 'gameEnd' });
     }, 1500);
 
     return () => {
       clearTimeout(timer);
     };
-  }, [dispatch, now, total, isScoreCheckModalOpened]);
+  }, [dispatch, now, total, isScoreCheckModalOpened, socket]);
 
   return (
     <Dialog open={isScoreCheckModalOpened} maxWidth="xs" fullWidth>

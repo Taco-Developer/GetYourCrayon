@@ -127,7 +127,7 @@ export default function AiPaintingGuess({ socket }: { socket: WebSocket }) {
 
   return (
     <>
-      <EndRoundDialog />
+      <EndRoundDialog socket={socket} />
       <GameLeftSide isPainting={false} />
       <GameCenter>
         <PaintingView>

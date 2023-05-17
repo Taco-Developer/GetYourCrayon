@@ -58,7 +58,7 @@ export default function Room({
     const gameAlertHandler = (event: MessageEvent) => {
       const data = JSON.parse(event.data);
       if (data.type !== 'gameAlert') return;
-      dispatch(changeStatus('gameStart'));
+      dispatch(changeStatus(data.status));
     };
 
     listenEvent(socket, gameAlertHandler);
