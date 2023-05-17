@@ -9,8 +9,8 @@ export default function Contents() {
   const [typeCheck, setTypeCheck] = useState([true, false]);
 
   return (
-    <ContentsDiv>
-      <div className="flex flex-col justify-center items-center h-full">
+    <ContentsDiv className="overflow-hidden">
+      <div className="flex flex-col justify-center items-center h-full overflow-hidden">
         <TypeBar>
           {typeCheck[0] === true ? (
             <TypeBtnOn className="me-1">
@@ -41,7 +41,7 @@ export default function Contents() {
             </TypeBtnOff>
           )}
         </TypeBar>
-        <div className="h-full bg-board-color w-full">
+        <div className="h-full bg-board-color w-full overflow-hidden flex flex-col relative">
           {typeCheck[0] && <Collection />}
           {typeCheck[1] && <Gacha />}
         </div>
