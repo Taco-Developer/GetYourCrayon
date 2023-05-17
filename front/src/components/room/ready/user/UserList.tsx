@@ -5,7 +5,19 @@ import UserDrop from './UserDrop';
 import { gameAPI } from '@/api/api';
 import { useAppSelector } from '@/store/thunkhook';
 
-export default function UserList(userList: any) {
+interface UserData {
+  roomIdx: string | null;
+  userIdx: number;
+  userNickname: string;
+  userPoint: number;
+  userScore: number;
+}
+
+interface ReadyPropsType {
+  userList: UserData[];
+}
+
+export default function UserList(userList: [] | any) {
   const [userCnt, setUserCnt] = useState<number>(6);
   const [player, setPlayer] = useState<string[]>([
     'A도겸',
@@ -36,7 +48,7 @@ export default function UserList(userList: any) {
       </TitleDiv>
       <UserDrop setUserCnt={setUserCnt} />
       <ListDiv>
-        {player.map((user, i) => (
+        {player.map((userNickname, i) => (
           <UserDiv key={i}>
             <Profile>
               <Image
@@ -47,7 +59,7 @@ export default function UserList(userList: any) {
               />
             </Profile>
             <InnerDiv>
-              <UserName>{user}</UserName>
+              <UserName>{userNickname}</UserName>
             </InnerDiv>
           </UserDiv>
         ))}
