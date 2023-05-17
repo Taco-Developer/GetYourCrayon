@@ -403,30 +403,29 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
             // userDto, gameRequestDto(roomIdx, gameCategory, maxRound) 필요
             UserDto userDto = authService.selectOneMember(HeaderUtil.getAccessTokenString(authorization));
-            if(!userDto.getUserIdx().equals(roomInfoMap.get("adminUserIdx"))) {
 
-                GameRequestDto gameRequestDto = GameRequestDto.builder()
-                        .gameCategory((GameCategory) roomInfoMap.get("gameCategory"))
-                        .maxRound((Integer) roomInfoMap.get("maxRound"))
-                        .roomIdx(roomId)
-                        .build();
-                ResponseGameDto responseGameDto = gameService.startGame(userDto, gameRequestDto);
+            GameRequestDto gameRequestDto = GameRequestDto.builder()
+                    .gameCategory((GameCategory) roomInfoMap.get("gameCategory"))
+                    .maxRound((Integer) roomInfoMap.get("maxRound"))
+                    .roomIdx(roomId)
+                    .build();
+            ResponseGameDto responseGameDto = gameService.startGame(userDto, gameRequestDto);
 
-                if (responseGameDto.getStatus().equals("success")) {
-                    roomInfoMap.put("roomStatus", "Playing");
-                    gameInfoMap.put("correct", responseGameDto.getCorrect());
-                    gameInfoMap.put("winnerIdx", "0");
-                }
+            if (responseGameDto.getStatus().equals("success")) {
+                roomInfoMap.put("roomStatus", "Playing");
+                gameInfoMap.put("correct", responseGameDto.getCorrect());
+                gameInfoMap.put("winnerIdx", "0");
+            }
 
-                String json = objectMapper.writeValueAsString(responseGameDto);
+            String json = objectMapper.writeValueAsString(responseGameDto);
 
-                // 게임 정보
-                for (WebSocketSession s : sessions) {
-                    if (s.isOpen()) {
-                        s.sendMessage(new TextMessage(json));
-                    }
+            // 게임 정보
+            for (WebSocketSession s : sessions) {
+                if (s.isOpen()) {
+                    s.sendMessage(new TextMessage(json));
                 }
             }
+
 //            int roundTime = (int) roomInfoMap.get("roundTime");
 
 //            // roundTime 감소 스레드 실행
