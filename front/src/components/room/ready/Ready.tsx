@@ -90,7 +90,7 @@ export default function Ready({ socket, setSocket }: RoomPropsType) {
       const roomInHandler = (event: MessageEvent) => {
         const data = JSON.parse(event.data);
         if (data.type !== 'userIn') return;
-        setUserList(data.userList.userList);
+        setUserList(data.userList);
         console.log(data);
       };
 
