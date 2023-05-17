@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import tw from 'tailwind-styled-components';
 import Link from 'next/link';
 import Invite from './Invite';
@@ -7,7 +7,6 @@ import { gameAPI, boardAPI } from '@/api/api';
 import { useDispatch, useSelector } from 'react-redux';
 import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
 import { setRoomIdx } from '@/store/slice/game/gameRoom';
-import { setUser } from '@/store/slice/userSlice';
 import { changeStatus } from '@/store/slice/game/roomStatusSlice';
 
 interface ReadyProps {
@@ -22,14 +21,10 @@ export default function ReadyBtn({
   closeSocket,
 }: ReadyProps) {
   const dispatch = useAppDispatch();
-  const { roomInfo } = useAppSelector((state) => state);
-  const baseUrl: string = 'https://getyourcrayon.co.kr/room/';
-  const {
-    userInfo: { userIdx, userNickname },
-    roomStatus,
-  } = useAppSelector((state) => state);
+  const { roomInfo, userInfo } = useAppSelector((state) => state);
   const { roomIdx } = useAppSelector((state) => state.roomIdx);
-  console.log(`--->${userIdx} ${roomInfo.adminUserIdx}`);
+  console.log(`접속유저: ${userInfo.userIdx} - 방장: ${roomInfo.adminUserIdx}`);
+  const [btnAdmin, setBtnAdmin] = useState<boolean>(true);
 
   /** 게임방 나가기 api */
   const gameOut = async () => {
@@ -42,7 +37,9 @@ export default function ReadyBtn({
 
   /** url 카피하는 함수 */
   const handleCopyClick = () => {
-    navigator.clipboard.writeText(baseUrl + roomIdx);
+    navigator.clipboard.writeText(
+      `https://getyourcrayon.co.kr/room/${roomIdx}`,
+    );
   };
   /**게시글 작성 및 업데이트*/
   const creatBaseUrl = async (title: string, url: string) => {
@@ -73,6 +70,12 @@ export default function ReadyBtn({
     }
   };
 
+  useEffect(() => {
+    if (userInfo.userIdx === roomInfo.adminUserIdx) {
+      setBtnAdmin(false);
+    }
+  }, [roomInfo.adminUserIdx]);
+
   return (
     <OutDiv>
       <Link
@@ -89,6 +92,7 @@ export default function ReadyBtn({
         <Invite copyAction={handleCopyClick} createAction={creatBaseUrl} />
       </ModalBtn>
       <GoBtn
+        disabled={btnAdmin}
         onClick={() => {
           deleteBorad(boardId);
           dispatch(changeStatus('gameStart'));
