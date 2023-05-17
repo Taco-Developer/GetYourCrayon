@@ -68,9 +68,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
         this.gameService = gameService;
     }
 
-    // flag 변수
-    private boolean flag = false;   // 웹 소켓이 생성되기 전: false, 한 번 생성되고 난 후: true
-
     // roomTitle을 가져와야 할까요??
     public void initailizeRoomInfo(String roomIdx) {
         RoomResponseDto room = roomService.getRoom(roomIdx);
@@ -93,16 +90,10 @@ public class WebSocketHandler extends TextWebSocketHandler {
         sessions.add(session);
         log.info(session.getId());
 
-        if (flag == false) {        // 아직 웹 소켓 연결이 시도된 적이 없을 때: 첫 번째로 시도할 때
-            log.info("flag가 false여서 실행");
-
-            // 소켓에 정보 저장
-            initailizeRoomInfo(roomId);
-
-            // 1번만 실행될 수 있도록 true(이미 실행됨)으로 변경
-            flag = true;
-        }
+        // 소켓에 정보 저장
+        initailizeRoomInfo(roomId);
     }
+
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
