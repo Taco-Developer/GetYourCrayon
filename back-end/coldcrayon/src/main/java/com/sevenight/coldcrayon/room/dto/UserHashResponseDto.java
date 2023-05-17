@@ -6,9 +6,9 @@ import lombok.*;
 import org.springframework.data.annotation.Id;
 
 @ToString
-@Builder
-@Getter
 @Setter
+@Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserHashResponseDto {
