@@ -3,6 +3,7 @@ package com.sevenight.coldcrayon.config;
 import com.amazonaws.Request;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nimbusds.openid.connect.sdk.claims.UserInfo;
 import com.sevenight.coldcrayon.auth.dto.UserDto;
 import com.sevenight.coldcrayon.auth.service.AuthService;
 import com.sevenight.coldcrayon.game.dto.GameRequestDto;
@@ -40,13 +41,12 @@ public class WebSocketHandler extends TextWebSocketHandler {
     // ConcurrentHashMap: 여러 스레드가 동시에 접근해도 안전하게 동작
     private final Map<String, List<WebSocketSession>> sessionsMap = new ConcurrentHashMap<>();
 
-    // 참여자 정보 리스트
-    private final LinkedHashMap<String, UserInfo> userInfoMap = new LinkedHashMap<>();
+    private final LinkedHashMap<String, UserInfo> userInfoMap = new LinkedHashMap<>();      // session.id, userInfo
+    private Map<Long, Integer> userScoreMap = new ConcurrentHashMap<>();
 
 
     // 방정보를 담을 Map타입으로 하나 만들어서 해당 정보로 공유하자
     private Map<String, Object> roomInfoMap = new ConcurrentHashMap<>();
-    private Map<Long, Integer> userScoreMap = new ConcurrentHashMap<>();
 
 
     // 외부 서비스 주입
@@ -154,14 +154,10 @@ public class WebSocketHandler extends TextWebSocketHandler {
 //        //==========================================//
 
 
-
-
-
-
-
         /// chat, draw, userId, {userScore} //
 
         // userIn:유저가 들어올 때 userData: (유저Id, 기본점수)
+        Long userIdx;
         if (type.equals("userIn")) {
             String authorization = jsonMessage.get("authorization");
             UserDto userDto = authService.selectOneMember(HeaderUtil.getAccessTokenString(authorization));
@@ -174,8 +170,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
             userInfo.setNickname(userDto.getUserNickname());
             userInfo.setScore(0);
             userInfo.setToken(authorization);
-            userInfo.setUserIdx(userDto.getUserIdx());
-            userScoreMap.put(userDto.getUserIdx(), userInfo);      // Long 타입, 기본 0으로 설정
+
+            userScoreMap.put(userDto.getUserIdx(), 0);      // Long 타입, 기본 0으로 설정
 
             // 방 입장 로직 수행
             Map<String, Object> joinRoomResponse = roomService.joinRoom(userDto, roomId);    // 수민 로직 추가 예정: 타입을 ReponseDto로 정상일 때 ResponseDto 정보, 오류일 때 state를 포함한 정보
@@ -230,7 +226,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                         s.sendMessage(new TextMessage(jsonResponse));
                     }
                 }
-            // 성공일 때
+                // 성공일 때
             } else {
                 String jsonResponse = objectMapper.writeValueAsString(roomResponseDto);
                 for (WebSocketSession s : sessions) {
@@ -387,10 +383,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
             ResponseGameDto responseGameDto = gameService.startGame(userDto, gameRequestDto);
             String json = objectMapper.writeValueAsString(responseGameDto);
 
-            // 세션에 저장
-            ////////
-
-
             // 게임 정보
             for (WebSocketSession s : sessions) {
                 if (s.isOpen()) {
@@ -497,9 +489,10 @@ public class WebSocketHandler extends TextWebSocketHandler {
             // 세션에 기록
             List<UserHashResponseDto> userList = responseRoundDto.getUserList();
             for (UserHashResponseDto userHashResponseDto : userList) {
-                Long userIdx = userHashResponseDto.getUserIdx();
+                Long userIdx1 = userHashResponseDto.getUserIdx();
                 int userScore = userHashResponseDto.getUserScore();
-                userInfoMap.get(userIdx).score = userScore;
+
+                userScoreMap.put(userIdx1, userScore);
             }
 
 
@@ -528,21 +521,19 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 }
             });
 
-            List<Long> sortedUserIds = new ArrayList<>();
-            for (Map.Entry<Long, Integer> entry : sortedEntries) {
-                sortedUserIds.add(entry.getKey());
-            }
-
-            // sortedUserIds는 내림차순으로 정렬된 Long 값들을 담고 있는 리스트입니다.
-
             List<Object> sortedList = new ArrayList<>();
-            for (Long userIdx : sortedUserIds) {
 
-                Map<String, Integer> user = new HashMap<>();
-                String nickname = userInfoMap.get(userIdx).nickname;
-                int score = userInfoMap.get(userIdx).getScore();
+            // 정렬된 결과를 사용하여 작업을 수행
+            for (Map.Entry<Long, Integer> entry : sortedEntries) {
+                Long key = entry.getKey();
+                Integer value = entry.getValue();
 
-                user.put(nickname, score);
+                // 정렬된 값을 이용한 작업 수행
+                Map<String, Integer> user = new HashMap<>();            
+
+                // Long키를 가지고 유저 닉네임을 전해줘야 함
+                String nickname = userInfoMap.get(session.getId()).getNickname();
+                user.put(nickname, value);
                 sortedList.add(user);
             }
 
