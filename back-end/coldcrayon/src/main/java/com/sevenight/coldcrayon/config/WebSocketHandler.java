@@ -73,7 +73,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
     public void initailizeRoomInfo(String roomIdx) {
         RoomResponseDto room = roomService.getRoom(roomIdx);
         roomInfoMap.put("roomIdx", roomIdx);
-        roomInfoMap.put("roundTime", 100);
+        roomInfoMap.put("roundTime", 20);
         roomInfoMap.put("roomNow", room.getRoomNow());
         roomInfoMap.put("roomMax", room.getRoomMax());
         roomInfoMap.put("maxRound", room.getMaxRound());
