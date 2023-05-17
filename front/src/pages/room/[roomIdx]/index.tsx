@@ -7,7 +7,7 @@ import { useAppDispatch } from '@/store/thunkhook';
 import { setRoomIdx } from '@/store/slice/game/gameRoom';
 import { getCookie } from 'cookies-next';
 import axios from 'axios';
-import { memberAPI } from '@/api/api';
+import { gameAPI, memberAPI } from '@/api/api';
 import type { GetServerSideProps } from 'next';
 import wrapper from '@/store';
 import { useAppSelector } from '@/store/thunkhook';
@@ -24,8 +24,8 @@ export default function Room({
 }) {
   const { profile } = useAppSelector((state) => state.mypageInfo);
   const router = useRouter();
-  const [status, setStatus] = useState<string>('ready');
   const [socket, setSocket] = useState<WebSocket | null>(null);
+  const roomStatus = useAppSelector((state) => state.roomStatus);
 
   const dispatch = useAppDispatch();
   useEffect(() => {
@@ -41,13 +41,21 @@ export default function Room({
     }
   }, [dispatch, socket, roomIdx]);
 
-  switch (status) {
+  useEffect(() => {
+    if (!socket) return;
+    console.log('게임 입장 되어있음');
+    return () => {
+      console.log('게임 나가짐');
+      gameAPI.outRoom();
+      socket.close();
+    };
+  }, [socket]);
+
+  switch (roomStatus) {
     case 'ready':
-      return (
-        <Ready setStatus={setStatus} socket={socket} setSocket={setSocket} />
-      );
+      return <Ready socket={socket} setSocket={setSocket} />;
     case 'gameStart':
-      return <InGameRoom game="CatchMind" socket={socket as WebSocket} />;
+      return <InGameRoom game="AiPainting" socket={socket as WebSocket} />;
     case 'gameEnd':
       return <GameResult socket={socket as WebSocket} />;
     default:

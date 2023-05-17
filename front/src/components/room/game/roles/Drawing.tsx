@@ -357,7 +357,7 @@ export default function Drawing({ socket }: { socket: WebSocket }) {
           </Tools>
         </CanvasOptions>
       </GameCenter>
-      <GameRightSide isPainting={true} />
+      <GameRightSide isPainting={true} socket={socket} />
     </>
   );
 }

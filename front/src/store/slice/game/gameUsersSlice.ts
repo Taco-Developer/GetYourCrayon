@@ -8,50 +8,7 @@ export interface GameUser {
   userScore: number;
 }
 
-const initialState: GameUser[] = [
-  {
-    roomIdx: 'asdf123',
-    userIdx: 1,
-    userNickname: '아프리카청춘이다',
-    userPoint: 0,
-    userScore: 0,
-  },
-  {
-    roomIdx: 'asdf123',
-    userIdx: 2,
-    userNickname: '벼랑위의당뇨',
-    userPoint: 0,
-    userScore: 0,
-  },
-  {
-    roomIdx: 'asdf123',
-    userIdx: 3,
-    userNickname: '넌내게목욕값을줬어',
-    userPoint: 0,
-    userScore: 0,
-  },
-  {
-    roomIdx: 'asdf123',
-    userIdx: 4,
-    userNickname: '돈들어손내놔',
-    userPoint: 0,
-    userScore: 0,
-  },
-  {
-    roomIdx: 'asdf123',
-    userIdx: 5,
-    userNickname: '헬리콥터와마법사의똥',
-    userPoint: 0,
-    userScore: 0,
-  },
-  {
-    roomIdx: 'asdf123',
-    userIdx: 6,
-    userNickname: '아무리생강캐도난마늘',
-    userPoint: 0,
-    userScore: 0,
-  },
-];
+const initialState: GameUser[] = [];
 
 const gameUsersSlice = createSlice({
   name: 'gameUsers',

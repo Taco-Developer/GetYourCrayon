@@ -17,9 +17,12 @@ const answersSlice = createSlice({
   initialState,
   reducers: {
     /** 랜덤 정답 추가 */
-    addSavedAnswers(state, action: PayloadAction<string[]>) {
-      state.savedAnswers = action.payload;
+    addSavedAnswers(state, action: PayloadAction<string>) {
+      state.savedAnswers.push(action.payload);
     },
+    // addSavedAnswers(state, action: PayloadAction<string[]>) {
+    //   state.savedAnswers = action.payload;
+    // },
 
     /** 정답 입력 */
     addInputedAnswers(state, action: PayloadAction<string>) {
