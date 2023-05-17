@@ -1,4 +1,3 @@
-'use client';
 import React, { useState, useEffect } from 'react';
 import Ready from '@/components/room/ready/Ready';
 import InGameRoom from '@/components/room/game/InGameRoom';
@@ -14,6 +13,8 @@ import { useAppSelector } from '@/store/thunkhook';
 import { setLogin } from '@/store/slice/loginSlice';
 import { useRouter } from 'next/router';
 import { setUser } from '@/store/slice/userSlice';
+import { changeStatus } from '@/store/slice/game/roomStatusSlice';
+import { listenEvent, removeEvent } from '@/socket/socketEvent';
 
 export default function Room({
   roomIdx,
@@ -25,6 +26,7 @@ export default function Room({
   const router = useRouter();
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const roomStatus = useAppSelector((state) => state.roomStatus);
+  const { gameCategory } = useAppSelector((state) => state.roomInfo);
 
   const dispatch = useAppDispatch();
   useEffect(() => {
@@ -50,11 +52,27 @@ export default function Room({
     };
   }, [socket]);
 
+  useEffect(() => {
+    if (!socket) return;
+
+    const gameAlertHandler = (event: MessageEvent) => {
+      const data = JSON.parse(event.data);
+      if (data.type !== 'gameAlert') return;
+      dispatch(changeStatus(data.status));
+    };
+
+    listenEvent(socket, gameAlertHandler);
+
+    return () => {
+      removeEvent(socket, gameAlertHandler);
+    };
+  });
+
   switch (roomStatus) {
     case 'ready':
       return <Ready socket={socket} setSocket={setSocket} />;
     case 'gameStart':
-      return <InGameRoom game="AiPainting" socket={socket as WebSocket} />;
+      return <InGameRoom game={gameCategory!} socket={socket as WebSocket} />;
     case 'gameEnd':
       return <GameResult socket={socket as WebSocket} />;
     default:
