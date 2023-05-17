@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-const initialState: number = 1000;
+const initialState = 60;
 
 const leftTimeSlice = createSlice({
   name: 'leftTime',

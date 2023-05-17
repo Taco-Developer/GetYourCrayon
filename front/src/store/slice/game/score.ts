@@ -1,22 +1,30 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-const initialState: number = 0;
+export interface ScoreType {
+  winnerScore: number;
+  defaultScore: number;
+}
+
+const initialState: ScoreType = {
+  winnerScore: 0,
+  defaultScore: 0,
+};
 
 const scoreSlice = createSlice({
   name: 'score',
   initialState,
   reducers: {
-    /** 점수 증가 */
-    increase(state, action: PayloadAction<number>) {
-      return (state += action.payload);
+    /** 기본 점수 등록 */
+    setDefaultScore(state, action: PayloadAction<number>) {
+      state.defaultScore = action.payload;
     },
 
-    /** 점수 감소 */
-    decrease(state, action: PayloadAction<number>) {
-      return (state -= action.payload);
+    /** 승리 점수 등록 */
+    setWinnerScore(state, action: PayloadAction<number>) {
+      state.winnerScore = action.payload;
     },
   },
 });
 
-export const { increase, decrease } = scoreSlice.actions;
+export const { setDefaultScore, setWinnerScore } = scoreSlice.actions;
 export default scoreSlice.reducer;
