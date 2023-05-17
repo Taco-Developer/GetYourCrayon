@@ -193,7 +193,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         } else if (type.equals("chat")) {
             String status = jsonMessage.get("status");
             if(status.equals("answer")){
-                String answer = jsonMessage.get("answer");
+                String answer = jsonMessage.get("content");
                 if(answer.equals(gameInfoMap.get("correct")) && gameInfoMap.get("winnerIdx").equals("0")){
                     String userIdx = jsonMessage.get("userIdx");
                     gameInfoMap.put("winner", userIdx);
@@ -492,7 +492,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
         // 라운드 종료  ------- type 지정 필요 -------   // 수민: 임시로 내가 설정해서 사용하도록 함
         else if (type.equals("roundOver")) {
-
+            System.err.println("이거 디버깅 용도 : roundOver에 진입했음.");
             Long winnerIdx = Long.valueOf(gameInfoMap.get("winnerIdx"));
 
             RequestRoundDto requestRoundDto = RequestRoundDto.builder()
