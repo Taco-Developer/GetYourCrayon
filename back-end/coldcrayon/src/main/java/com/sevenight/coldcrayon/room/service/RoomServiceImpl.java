@@ -80,7 +80,7 @@ public class RoomServiceImpl implements RoomService{
         Optional<RoomHash> roomHashOptional = roomRepository.findById(roomIdx);
         if(roomHashOptional.isPresent()){
             RoomHash roomHash = roomHashOptional.get();
-            if (roomHash.getCorrectUser().equals(0L)){
+            if (roomHash.getCorrectUser().equals(-1L)){
                 roomHash.setCorrectUser(userIdx);
                 roomRepository.save(roomHash);
             }
