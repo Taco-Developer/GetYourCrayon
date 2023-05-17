@@ -23,9 +23,10 @@ interface MessageType {
 }
 
 interface UserInType {
-  type: string;
-  roomInfo: {};
-  userList: {};
+  roomData: {
+    roomInfo: {};
+    userList: {};
+  };
 }
 
 export default function Ready({ socket, setSocket }: RoomPropsType) {
@@ -52,7 +53,7 @@ export default function Ready({ socket, setSocket }: RoomPropsType) {
     status: '',
   });
   /** 방에 유저 목록 */
-  const [userList, setUserList] = useState<[]>([]);
+  const [userList, setUserList] = useState<{}>({});
 
   const closeSocket = () => {
     if (socket) {
@@ -90,8 +91,7 @@ export default function Ready({ socket, setSocket }: RoomPropsType) {
       const roomInHandler = (event: MessageEvent) => {
         const data = JSON.parse(event.data);
         if (data.type !== 'userIn') return;
-        setUserList(data.userList);
-        console.log(data);
+        console.log(`Ready -> ${data}`);
       };
 
       const messageHandler = (event: MessageEvent) => {
