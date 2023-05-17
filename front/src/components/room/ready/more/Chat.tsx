@@ -98,6 +98,7 @@ export default function Chat({ socket, messageList }: ChatPropsType) {
           type="text"
           value={currentMessage}
           placeholder="메시지..."
+          maxLength={100}
           onChange={(event) => {
             setCurrentMessage(event.target.value);
           }}
@@ -122,7 +123,7 @@ const ChatDiv = tw.div`h-90 w-full flex items-center justify-center relative px-
 const ChatBody = tw.div`h-full w-full overflow-y-scroll overflow-x-hidden scrollbar-bu`;
 const MessageBody = tw.div`max-w-xs`;
 const Message = tw.div`h-auto flex`;
-const MessageContent = tw.div`h-auto w-auto rounded-xl bg-white text-white text-xl font-bold flex items-center mb-4 p-2`;
+const MessageContent = tw.div`h-auto w-auto rounded-xl bg-white text-white text-xl font-bold flex items-center mb-4 p-2 break-all`;
 const YouMeMeta = tw.p`ml-1 mb-1`;
 const InputDiv = tw.div`h-10 w-full flex items-center justify-around`;
 const ChatInput = tw.input`h-full w-70 text-2xl bg-white rounded-xl flex items-center justify-center px-5`;
