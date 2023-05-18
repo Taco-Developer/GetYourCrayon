@@ -7,13 +7,13 @@ import Margin, { MarginType } from '@/components/ui/Margin';
 import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
 import {
   closeIsScoreCheckModalOpened,
-  resetAiImages,
   resetGameDatas,
 } from '@/store/slice/game/gameDatasSlice';
 import { goNextRound, setWinner } from '@/store/slice/game/gameRoundSlice';
 import { resetAnswer } from '@/store/slice/game/answersSlice';
 import { resetTheme } from '@/store/slice/game/gameThemeSlice';
 import { sendMessage } from '@/socket/messageSend';
+import { changeRole } from '@/store/slice/game/userRoleSlice';
 
 export default function EndRoundDialog({ socket }: { socket: WebSocket }) {
   const {
@@ -34,6 +34,7 @@ export default function EndRoundDialog({ socket }: { socket: WebSocket }) {
       dispatch(resetTheme());
       dispatch(setWinner(0));
       dispatch(closeIsScoreCheckModalOpened());
+      dispatch(changeRole(''));
       if (now < total) {
         dispatch(goNextRound());
         return;
