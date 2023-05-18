@@ -2,7 +2,13 @@ import React, { useState } from 'react';
 import tw from 'tailwind-styled-components';
 import Dropdown from '../../../ui/Dropdown';
 
-export default function Setting() {
+import { sendMessage } from '@/socket/messageSend';
+
+interface ReadyProps {
+  socket: WebSocket | null;
+}
+
+export default function Setting({ socket }: ReadyProps) {
   const [timeOption, setTimeOption] = useState<{
     label: string;
     value: string | number;
@@ -38,6 +44,11 @@ export default function Setting() {
     value: string | number;
   }) => {
     setTurnOption(option);
+    if (socket !== null) {
+      const sendSocket = option.value;
+      console.log(sendSocket);
+      sendMessage(socket, 'gameTurn', { gameTurn: sendSocket });
+    }
   };
 
   return (
