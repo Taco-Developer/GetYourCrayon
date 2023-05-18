@@ -426,8 +426,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 RoomHash roomHash = roomHashOptional.get();
 
                 String destinationPath = roomHash.getRoomIdx() + roomHash.getGameCnt() + roomHash.getNowRound();
-                String imgData = jsonMessage.get("img");
-                saveImageService.saveCatchMind(imgData, destinationPath,1L);
+//                String imgData = jsonMessage.get("img");
+//                saveImageService.saveCatchMind(imgData, destinationPath,1L);
             }
         }
 
