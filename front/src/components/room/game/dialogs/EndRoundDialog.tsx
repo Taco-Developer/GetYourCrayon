@@ -14,6 +14,7 @@ import { resetAnswer } from '@/store/slice/game/answersSlice';
 import { resetTheme } from '@/store/slice/game/gameThemeSlice';
 import { sendMessage } from '@/socket/messageSend';
 import { changeRole } from '@/store/slice/game/userRoleSlice';
+import { resetTime } from '@/store/slice/game/leftTimeSlice';
 
 export default function EndRoundDialog({ socket }: { socket: WebSocket }) {
   const {
@@ -36,6 +37,7 @@ export default function EndRoundDialog({ socket }: { socket: WebSocket }) {
       dispatch(setWinner(0));
       dispatch(closeIsScoreCheckModalOpened());
       dispatch(changeRole(''));
+      dispatch(resetTime());
       if (now < total) {
         dispatch(goNextRound());
         return;
