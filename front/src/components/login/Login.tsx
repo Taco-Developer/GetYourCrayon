@@ -68,17 +68,17 @@ export default function Login({ open, setOpen }: LoginPropsType) {
         keepMounted
         PaperProps={{
           style: {
-            backgroundImage: "url('/images/loopy3.jpg')",
+            backgroundImage: "url('/images/login.jpeg')",
             backgroundSize: 'cover',
-            width: '35vw',
-            height: '70vh',
+            width: '30vw',
+            height: '60vh',
           },
         }}
       >
         <CustomDialogTitle onClose={ClickClose} />
         <DialogContent>
-          <LoginDiv id="neon">
-            프로젝트 완성 하고 싶어요
+          <LoginDiv>
+            <div className="font-[ErrFont] text-7xl">Login</div>
             <ImageDiv
               onClick={() => {
                 if (!KAKAO_URL) {
