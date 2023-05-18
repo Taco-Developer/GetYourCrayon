@@ -18,6 +18,8 @@ import {
 
 import { listenEvent, removeEvent } from '@/socket/socketEvent';
 import { sendMessage } from '@/socket/messageSend';
+import { endRound } from '@/store/slice/game/gameRoundSlice';
+import EndRoundDialog from '../dialogs/EndRoundDialog';
 
 export default function Solving({
   isReverseGame,
@@ -35,6 +37,8 @@ export default function Solving({
   } = useAppSelector((state) => state.draw);
   const {
     userInfo: { userIdx, userNickname },
+    answers: { savedAnswers, inputedAnswers },
+    leftTime,
   } = useAppSelector((state) => state);
   const dispatch = useAppDispatch();
 
@@ -63,6 +67,25 @@ export default function Solving({
     sendMessage(socket, 'chat', chatInputValue);
     setAnswerInputValue('');
   };
+
+  // 정답 비교
+  useEffect(() => {
+    if (savedAnswers.length === 0) return;
+    if (savedAnswers.length === inputedAnswers.length) {
+      sendMessage(socket, 'roundOver');
+      setAnswerInputValue('');
+      dispatch(endRound());
+    }
+  }, [savedAnswers, inputedAnswers, dispatch, socket]);
+
+  // 시간 초과
+  useEffect(() => {
+    if (leftTime === 0) {
+      sendMessage(socket, 'roundOver');
+      setAnswerInputValue('');
+      dispatch(endRound());
+    }
+  }, [leftTime, dispatch, socket]);
 
   // 그리는 사람 캔버스와 보는 사람 캔버스 비율 구하기
   const saveRatio = (width: number, height: number) => {
@@ -227,6 +250,7 @@ export default function Solving({
   useEffect(() => {
     const messageHandler = (event: MessageEvent) => {
       const data = JSON.parse(event.data);
+      console.log(data);
       if (data.type !== 'draw') return;
       switch (data.action) {
         // 비율 저장
@@ -334,6 +358,7 @@ export default function Solving({
 
   return (
     <>
+      <EndRoundDialog socket={socket} />
       <GameLeftSide isPainting={false} />
       {isReverseGame && (
         <GameCenter>

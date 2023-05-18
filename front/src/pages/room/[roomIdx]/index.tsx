@@ -46,15 +46,15 @@ export default function Room({
     }
   }, [dispatch, socket, roomIdx]);
 
-  useEffect(() => {
-    if (!socket) return;
-    console.log('게임 입장 되어있음');
-    return () => {
-      console.log('게임 나가짐');
-      gameAPI.outRoom();
-      socket.close();
-    };
-  }, [socket]);
+  // useEffect(() => {
+  //   if (!socket) return;
+  //   console.log('게임 입장 되어있음');
+  //   return () => {
+  //     console.log('게임 나가짐');
+  //     gameAPI.outRoom();
+  //     socket.close();
+  //   };
+  // }, [socket]);
 
   useEffect(() => {
     if (!socket) return;

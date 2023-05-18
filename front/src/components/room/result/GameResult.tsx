@@ -114,7 +114,10 @@ export default function GameResult({ socket }: { socket: WebSocket }) {
                   <Margin type={MarginType.height} size={16} />
                   <div className="w-full grid grid-cols-2 grid-rows-2 gap-4">
                     {[0, 1, 2, 3].map((idx) => (
-                      <div key={idx} className="w-4/5 h-[200px] relative">
+                      <div
+                        key={idx}
+                        className="w-4/5 h-[200px] relative rounded-lg"
+                      >
                         <Image
                           src={url[idx]}
                           alt="AI 제작 이미지"
@@ -228,6 +231,8 @@ const UserProfile = tw.div`
 
     bg-white 
     rounded-full
+
+    overflow-hidden
 
     relative
 `;
