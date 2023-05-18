@@ -24,7 +24,7 @@ const MyProfile = ({ isClick, setIsClick }: isClickType) => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [ref]);
+  }, [setIsClick]);
   return (
     <div className="w-28 " ref={ref}>
       <div

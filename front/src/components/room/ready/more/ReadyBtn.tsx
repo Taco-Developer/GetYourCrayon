@@ -77,7 +77,7 @@ export default function ReadyBtn({
     if (userInfo.userIdx === roomInfo.adminUserIdx) {
       setBtnAdmin(false);
     }
-  }, [roomInfo.adminUserIdx]);
+  }, [roomInfo.adminUserIdx, userInfo.userIdx]);
 
   return (
     <OutDiv>

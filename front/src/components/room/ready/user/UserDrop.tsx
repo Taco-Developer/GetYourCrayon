@@ -44,7 +44,7 @@ export default function UserDrop({ socket }: UserListProps) {
     return () => {
       removeEvent(socket, roomInHandler);
     };
-  }, [socket]);
+  }, [socket, dispatch]);
 
   const cntOptions = [
     { label: '3명', value: 3 },
