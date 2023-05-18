@@ -4,7 +4,7 @@ import Margin, { MarginType } from './Margin';
 
 export default function Loading() {
   return (
-    <div className="col-span-12 h-full bg-white flex flex-col justify-center items-center z-50">
+    <div className="col-span-12 h-full bg-white flex flex-col justify-center items-center z-50 rounded-xl">
       <Image
         src="/images/bean_eater_400.gif"
         alt="been eater"
