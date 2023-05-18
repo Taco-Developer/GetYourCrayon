@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import tw from 'tailwind-styled-components';
 import Dropdown from '../../../ui/Dropdown';
-
 import { sendMessage } from '@/socket/messageSend';
-import { setRoomInfo } from '@/store/slice/game/gameRoomInfo';
-import { listenEvent, removeEvent } from '@/socket/socketEvent';
+import { useAppSelector } from '@/store/thunkhook';
 
 interface UserListProps {
   socket: WebSocket | null;
 }
 
 export default function UserDrop({ socket }: UserListProps) {
+  const { roomInfo, userInfo } = useAppSelector((state) => state);
+  const [memberCnt, setMemberCnt] = useState<string>('6명');
   const [cntOption, setCntOption] = useState<{
     label: string;
     value: string | number;
@@ -27,6 +27,10 @@ export default function UserDrop({ socket }: UserListProps) {
     }
   };
 
+  useEffect(() => {
+    setMemberCnt(`${roomInfo.roomMax}명`);
+  }, [roomInfo.roomMax]);
+
   const cntOptions = [
     { label: '3명', value: 3 },
     { label: '4명', value: 4 },
@@ -36,14 +40,19 @@ export default function UserDrop({ socket }: UserListProps) {
 
   return (
     <OutDiv>
-      <Dropdown
-        base={cntOptions[3]}
-        options={cntOptions}
-        onChange={cntOptionChange}
-        Option={cntOption}
-      />
+      {roomInfo.adminUserIdx === userInfo.userIdx ? (
+        <Dropdown
+          base={cntOptions[3]}
+          options={cntOptions}
+          onChange={cntOptionChange}
+          Option={cntOption}
+        />
+      ) : (
+        <OuterDiv>{memberCnt}</OuterDiv>
+      )}
     </OutDiv>
   );
 }
 
 const OutDiv = tw.div`w-80 h-10 font-bold text-xl xl:text-3xl flex items-center justify-start border-white border-2 rounded-xl`;
+const OuterDiv = tw.div`mx-10 font-bold text-xl xl:text-3xl`;
