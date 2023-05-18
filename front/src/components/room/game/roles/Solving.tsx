@@ -15,13 +15,9 @@ import {
   changePaletteColor,
   changeSelectedTool,
 } from '@/store/slice/game/drawSlice';
-import {
-  InGameChatDataType,
-  addInGameChat,
-} from '@/store/slice/game/inGameChatDatasSlice';
 
-import { addInputedAnswers } from '@/store/slice/game/answersSlice';
 import { listenEvent, removeEvent } from '@/socket/socketEvent';
+import { sendMessage } from '@/socket/messageSend';
 
 export default function Solving({
   isReverseGame,
@@ -38,8 +34,7 @@ export default function Solving({
     selectedTool,
   } = useAppSelector((state) => state.draw);
   const {
-    answers: { inputedAnswers, savedAnswers },
-    userInfo: { userIdx },
+    userInfo: { userIdx, userNickname },
   } = useAppSelector((state) => state);
   const dispatch = useAppDispatch();
 
@@ -59,20 +54,14 @@ export default function Solving({
   const answerSubmitHandler: React.FormEventHandler = (event) => {
     event.preventDefault();
     const answer = answerInputValue;
-    const chatInputValue: InGameChatDataType = {
-      user: '아프리카청춘이다',
+    const chatInputValue = {
+      user: userNickname,
       status: 'answer',
       content: answer,
       userIdx,
     };
-    dispatch(addInGameChat(chatInputValue));
+    sendMessage(socket, 'chat', chatInputValue);
     setAnswerInputValue('');
-    if (
-      savedAnswers.indexOf(answer) === -1 ||
-      inputedAnswers.indexOf(answer) !== -1
-    )
-      return;
-    dispatch(addInputedAnswers(answer));
   };
 
   // 그리는 사람 캔버스와 보는 사람 캔버스 비율 구하기
