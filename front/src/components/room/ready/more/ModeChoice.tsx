@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import tw from 'tailwind-styled-components';
 import { useAppSelector } from '@/store/thunkhook';
 import { sendMessage } from '@/socket/messageSend';
@@ -10,7 +10,7 @@ interface ReadyProps {
 export default function ModeChoice({ socket }: ReadyProps) {
   const { roomInfo, userInfo } = useAppSelector((state) => state);
 
-  const [choiceMode, setChoiceMode] = useState<number>(0);
+  const [choiceMode, setChoiceMode] = useState<number>();
   const gameList: string[] = [
     'AI',
     '라이어',
@@ -33,6 +33,20 @@ export default function ModeChoice({ socket }: ReadyProps) {
       sendMessage(socket, 'gameMode', { gameMode: sendMode });
     }
   };
+
+  useEffect(() => {
+    if (roomInfo.gameCategory === 'AiPainting') {
+      setChoiceMode(0);
+    } else if (roomInfo.gameCategory === 'Lier') {
+      setChoiceMode(1);
+    } else if (roomInfo.gameCategory === 'CatchMind') {
+      setChoiceMode(2);
+    } else if (roomInfo.gameCategory === 'ReverseCatchMind') {
+      setChoiceMode(3);
+    } else if (roomInfo.gameCategory === 'RelayPainting') {
+      setChoiceMode(4);
+    }
+  }, [roomInfo]);
 
   return (
     <OutDiv>
