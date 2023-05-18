@@ -5,14 +5,12 @@ import com.sevenight.coldcrayon.game.dto.GameRequestDto;
 import com.sevenight.coldcrayon.game.entity.GameCategory;
 import com.sevenight.coldcrayon.game.repository.GameRepository;
 import com.sevenight.coldcrayon.game.service.GameService;
-import com.sevenight.coldcrayon.room.dto.RoomDto;
 import com.sevenight.coldcrayon.room.repository.RoomRepository;
 import com.sevenight.coldcrayon.room.service.RoomService;
 import com.sevenight.coldcrayon.user.entity.User;
 import com.sevenight.coldcrayon.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;

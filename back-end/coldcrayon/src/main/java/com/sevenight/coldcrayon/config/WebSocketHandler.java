@@ -1,31 +1,22 @@
 package com.sevenight.coldcrayon.config;
 
-import com.amazonaws.Request;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nimbusds.openid.connect.sdk.claims.UserInfo;
 import com.sevenight.coldcrayon.auth.dto.UserDto;
 import com.sevenight.coldcrayon.auth.service.AuthService;
 import com.sevenight.coldcrayon.game.dto.*;
 import com.sevenight.coldcrayon.game.entity.GameCategory;
 import com.sevenight.coldcrayon.game.service.GameService;
-import com.sevenight.coldcrayon.room.dto.RoomDto;
 import com.sevenight.coldcrayon.room.dto.RoomResponseDto;
 import com.sevenight.coldcrayon.room.dto.UserHashResponseDto;
 import com.sevenight.coldcrayon.room.entity.RoomHash;
-import com.sevenight.coldcrayon.room.entity.UserHash;
+import com.sevenight.coldcrayon.room.repository.RoomRepository;
 import com.sevenight.coldcrayon.room.service.RoomService;
-import com.sevenight.coldcrayon.theme.entity.ThemeCategory;
-import com.sevenight.coldcrayon.user.dto.ResponseDto;
-import com.sevenight.coldcrayon.user.entity.User;
-import com.sevenight.coldcrayon.user.repository.UserRepository;
 import com.sevenight.coldcrayon.user.service.UserService;
 import com.sevenight.coldcrayon.util.HeaderUtil;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -34,7 +25,6 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 public class WebSocketHandler extends TextWebSocketHandler {
@@ -45,8 +35,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
     private Map<Long, Integer> userScoreMap = new ConcurrentHashMap<>();
 
 
-    // 방정보를 담을 Map타입으로 하나 만들어서 해당 정보로 공유하자
-    private Map<String, Object> roomInfoMap = new ConcurrentHashMap<>();
 
     // 게임 정보를 담을 Map타입으로 하나 만들어서 해당 정보로 공유하자
     private Map<String, String> gameInfoMap = new ConcurrentHashMap<>();
@@ -61,40 +49,53 @@ public class WebSocketHandler extends TextWebSocketHandler {
     private final UserService userService;
     private final GameService gameService;
     private final AuthService authService;
+    private final RoomRepository roomRepository;
 
 
-    public WebSocketHandler(WebSocketCustomService webSocketCustomService, RoomService roomService, UserService userService, GameService gameService, AuthService authService) {
+    public WebSocketHandler(WebSocketCustomService webSocketCustomService, RoomService roomService,
+                            UserService userService, GameService gameService, AuthService authService,
+                            RoomRepository roomRepository
+    ) {
         this.authService = authService;
         this.roomService = roomService;
         this.webSocketCustomService = webSocketCustomService;
         this.userService = userService;
         this.gameService = gameService;
+        this.roomRepository = roomRepository;
     }
 
     // flag 변수
-    private boolean flag = false;   // 웹 소켓이 생성되기 전: false, 한 번 생성되고 난 후: true
     public volatile boolean gameOnGoing = false;
 
     // roomTitle을 가져와야 할까요??
-    public void initailizeRoomInfo(String roomIdx) {
-        RoomResponseDto room = roomService.getRoom(roomIdx);
-        roomInfoMap.put("roomIdx", roomIdx);
-        roomInfoMap.put("roundTime", 20);
-        roomInfoMap.put("roomNow", room.getRoomNow());
-        roomInfoMap.put("roomMax", room.getRoomMax());
-        roomInfoMap.put("maxRound", room.getMaxRound());
-        roomInfoMap.put("gameCategory", room.getGameCategory());
-        roomInfoMap.put("roomStatus", room.getRoomStatus());
-        roomInfoMap.put("adminUserIdx", room.getAdminUserIdx());
-        roomInfoMap.put("nowRound", room.getNowRound());
-        roomInfoMap.put("roomTurn", 0);
+
+    public Map<String, Object> initailizeRoomInfo(String roomIdx) {
+        Optional<RoomHash> roomHashOptional = roomRepository.findById(roomIdx);
+        Map<String, Object> roomInfoMap = new ConcurrentHashMap<>();
+        if(roomHashOptional.isPresent()){
+            RoomHash roomHash = roomHashOptional.get();
+            roomInfoMap.put("roomIdx", roomIdx);
+            roomInfoMap.put("roundTime", 20);
+            roomInfoMap.put("answer", roomHash.getAnswer());
+            roomInfoMap.put("roomNow", roomHash.getRoomNow());
+            roomInfoMap.put("roomMax", roomHash.getRoomMax());
+            roomInfoMap.put("maxRound", roomHash.getMaxRound());
+            roomInfoMap.put("gameCategory", roomHash.getGameCategory());
+            roomInfoMap.put("roomStatus", roomHash.getRoomStatus());
+            roomInfoMap.put("adminUserIdx", roomHash.getAdminUserIdx());
+            roomInfoMap.put("nowRound", roomHash.getNowRound());
+            roomInfoMap.put("roomTurn", 0);
+        };
+        return roomInfoMap;
     }
 
     public void timer(List<WebSocketSession> sessions, String roomIdx){
 
         int initialDelay = 1;
         int period = 1;
-        int roundTime = (int) roomInfoMap.get("roundTime");
+//        int roundTime = (int) roomInfoMap.get("roundTime");
+        int roundTime = 20;
+
 
         //예약한 작업을 실행할 주체
         ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
@@ -137,11 +138,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         String roomId = extractRoomId(session);
         List<WebSocketSession> sessions = sessionsMap.computeIfAbsent(roomId, key -> new CopyOnWriteArrayList<>());
-        sessions.add(session);
-        log.info(session.getId());
 
-        // 소켓에 정보 저장
-        initailizeRoomInfo(roomId);
+        sessions.add(session);
     }
 
 
@@ -149,6 +147,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         String roomId = extractRoomId(session);
         List<WebSocketSession> sessions = sessionsMap.getOrDefault(roomId, Collections.emptyList());
+
+        Map<String, Object> roomInfoMap = initailizeRoomInfo(roomId);
 
         // JSON 파싱을 위한 ObjectMapper 객체 생성
         ObjectMapper objectMapper = new ObjectMapper();
