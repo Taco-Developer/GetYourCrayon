@@ -16,6 +16,7 @@ import com.sevenight.coldcrayon.room.dto.UserHashResponseDto;
 import com.sevenight.coldcrayon.room.entity.RoomHash;
 import com.sevenight.coldcrayon.room.entity.UserHash;
 import com.sevenight.coldcrayon.room.repository.RoomRepository;
+import com.sevenight.coldcrayon.room.repository.UserHashRepository;
 import com.sevenight.coldcrayon.room.service.RoomService;
 import com.sevenight.coldcrayon.theme.entity.ThemeCategory;
 import com.sevenight.coldcrayon.user.dto.ResponseDto;
@@ -65,10 +66,12 @@ public class WebSocketHandler extends TextWebSocketHandler {
     private final AuthService authService;
     private final RoomRepository roomRepository;
     private final SaveImageServiceImpl saveImageService;
+    private final UserHashRepository userHashRepository;
 
 
     public WebSocketHandler(WebSocketCustomService webSocketCustomService, RoomService roomService, UserService userService, GameService gameService,
-                            AuthService authService, RoomRepository roomRepository, SaveImageServiceImpl saveImageService) {
+                            AuthService authService, RoomRepository roomRepository, SaveImageServiceImpl saveImageService, UserHashRepository userHashRepository
+    ) {
         this.authService = authService;
         this.roomService = roomService;
         this.webSocketCustomService = webSocketCustomService;
@@ -76,6 +79,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         this.gameService = gameService;
         this.roomRepository = roomRepository;
         this.saveImageService = saveImageService;
+        this.userHashRepository = userHashRepository;
     }
 
     // flag 변수
@@ -101,7 +105,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
         int initialDelay = 1;
         int period = 1;
-        int roundTime = (int) roomInfoMap.get("roundTime");
+//        int roundTime = (int) roomInfoMap.get("roundTime");
+        int roundTime = 7;
 
         //예약한 작업을 실행할 주체
         ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
@@ -178,12 +183,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
         Optional<RoomHash> roomHashOptional = roomRepository.findById(roomId);
 
         // userIn:유저가 들어올 때 userData: (유저Id, 기본점수)
-        log.error("");
-        log.error("#############################################################");
-        log.error("message.toString() : "+message.toString());
-        log.error("type : " + type);
-        log.error("#############################################################");
-        log.error("");
 
         if (type.equals("userIn")) {
             if(roomHashOptional.isPresent()){

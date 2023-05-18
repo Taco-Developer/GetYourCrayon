@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -66,7 +67,7 @@ public class GameController {
     }
 
     @PostMapping("/saveImg")
-    public void saveImg(@RequestHeader String Authorization, @RequestBody ImgDto imgDto) throws IOException {
+    public void saveImg(@RequestHeader String Authorization, @RequestBody ImgDto imgDto, @RequestParam("img") MultipartFile img) throws IOException {
 
         Optional<RoomHash> roomHashOptional = roomRepository.findById(imgDto.getRoomIdx());
 

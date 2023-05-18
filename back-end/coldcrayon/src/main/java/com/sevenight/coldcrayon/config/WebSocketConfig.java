@@ -4,6 +4,7 @@ import com.sevenight.coldcrayon.auth.service.AuthService;
 import com.sevenight.coldcrayon.game.service.GameService;
 import com.sevenight.coldcrayon.game.service.SaveImageServiceImpl;
 import com.sevenight.coldcrayon.room.repository.RoomRepository;
+import com.sevenight.coldcrayon.room.repository.UserHashRepository;
 import com.sevenight.coldcrayon.room.service.RoomService;
 import com.sevenight.coldcrayon.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -27,12 +28,12 @@ public class WebSocketConfig implements WebSocketConfigurer {
     private final AuthService authService;
     private final RoomRepository roomRepository;
     private final SaveImageServiceImpl saveImageService;
-
+    private final UserHashRepository userHashRepository;
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         WebSocketHandler webSocketHandler = new WebSocketHandler(webSocketCustomService, roomService, userService,
                 gameService, authService, roomRepository,
-                saveImageService
+                saveImageService, userHashRepository
         );
         registry.addHandler(webSocketHandler, "/{roomId}").setAllowedOrigins("*").addInterceptors(new HandShakeInterceptor(webSocketHandler));
     }
