@@ -3,7 +3,7 @@ import { getCookie } from 'cookies-next';
 import { useRouter } from 'next/router';
 
 import axios from 'axios';
-
+import { gameAPI } from '@/api/api';
 import Ready from '@/components/room/ready/Ready';
 import InGameRoom from '@/components/room/game/InGameRoom';
 import GameResult from '@/components/room/result/GameResult';
@@ -50,16 +50,6 @@ export default function Room({
     }
   }, [dispatch, socket, roomIdx]);
 
-  // useEffect(() => {
-  //   if (!socket) return;
-  //   console.log('게임 입장 되어있음');
-  //   return () => {
-  //     console.log('게임 나가짐');
-  //     gameAPI.outRoom();
-  //     socket.close();
-  //   };
-  // }, [socket]);
-
   useEffect(() => {
     if (!socket) return;
 
@@ -92,6 +82,18 @@ export default function Room({
 export const getServerSideProps: GetServerSideProps =
   wrapper.getServerSideProps((store) => async (context: any) => {
     const { req, res } = context;
+    const getRoomInfo = async () => {
+      await gameAPI
+        .findRoom(context.params?.roomIdx)
+        .then((request) => {
+          console.log('여기보면됨====>');
+          console.log(request.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
+    getRoomInfo();
     let refreshtoken = getCookie('refreshtoken', { req, res });
     let accesstoken = getCookie('accesstoken', { req, res });
     const api = axios.create({
