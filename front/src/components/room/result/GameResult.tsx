@@ -19,7 +19,8 @@ interface UrlListType {
 export default function GameResult({ socket }: { socket: WebSocket }) {
   const {
     gameUsers,
-    roomInfo: { maxRound, roomMax },
+    roomInfo: { maxRound, roomMax, adminUserIdx },
+    userInfo: { userIdx },
   } = useAppSelector((state) => state);
   const dispatch = useAppDispatch();
   const [urlList, setUrlList] = useState<UrlListType>();
@@ -43,12 +44,12 @@ export default function GameResult({ socket }: { socket: WebSocket }) {
 
     listenEvent(socket, messageHandler);
 
-    sendMessage(socket, 'gameOver');
+    if (userIdx === adminUserIdx) sendMessage(socket, 'gameOver');
 
     return () => {
       removeEvent(socket, messageHandler);
     };
-  }, [socket, dispatch]);
+  }, [socket, dispatch, userIdx, adminUserIdx]);
 
   // 1초마다 urlIdx 1 증가
   useEffect(() => {
@@ -134,34 +135,36 @@ export default function GameResult({ socket }: { socket: WebSocket }) {
             </ul>
             <div></div>
           </div>
-          <div className="flex justify-center">
-            <Button
-              px={8}
-              py={2}
-              rounded="2xl"
-              color="bg-[#5AAEFC]"
-              className="text-xl text-white"
-              onClick={() => {
-                dispatch(resetRound());
-                sendMessage(socket, 'gameAlert', { status: 'ready' });
-              }}
-            >
-              대기방
-            </Button>
-            <Margin type={MarginType.width} size={40} />
-            <Button
-              px={8}
-              py={2}
-              color="bg-amber-500"
-              rounded="2xl"
-              className="text-xl"
-              onClick={() => {
-                sendMessage(socket, 'gameAlert', { status: 'gameStart' });
-              }}
-            >
-              다시하기
-            </Button>
-          </div>
+          {userIdx === adminUserIdx && (
+            <div className="flex justify-center">
+              <Button
+                px={8}
+                py={2}
+                rounded="2xl"
+                color="bg-[#5AAEFC]"
+                className="text-xl text-white"
+                onClick={() => {
+                  dispatch(resetRound());
+                  sendMessage(socket, 'gameAlert', { status: 'ready' });
+                }}
+              >
+                대기방
+              </Button>
+              <Margin type={MarginType.width} size={40} />
+              <Button
+                px={8}
+                py={2}
+                color="bg-amber-500"
+                rounded="2xl"
+                className="text-xl"
+                onClick={() => {
+                  sendMessage(socket, 'gameAlert', { status: 'gameStart' });
+                }}
+              >
+                다시하기
+              </Button>
+            </div>
+          )}
         </RightSection>
       </main>
     </Container>

@@ -21,6 +21,7 @@ export default function AiPaintingGuess({ socket }: { socket: WebSocket }) {
     answers: { savedAnswers, inputedAnswers },
     gameDatas: { aiImages },
     userInfo: { userIdx, userNickname },
+    roomInfo: { adminUserIdx },
   } = useAppSelector((state) => state);
   const dispatch = useAppDispatch();
 
@@ -50,20 +51,20 @@ export default function AiPaintingGuess({ socket }: { socket: WebSocket }) {
   useEffect(() => {
     if (savedAnswers.length === 0) return;
     if (savedAnswers.length === inputedAnswers.length) {
-      sendMessage(socket, 'roundOver');
+      if (userIdx === adminUserIdx) sendMessage(socket, 'roundOver');
       setAnswerInputValue('');
       dispatch(endRound());
     }
-  }, [savedAnswers, inputedAnswers, dispatch, socket]);
+  }, [savedAnswers, inputedAnswers, dispatch, socket, userIdx, adminUserIdx]);
 
   // 시간 초과
   useEffect(() => {
     if (leftTime === 0) {
-      sendMessage(socket, 'roundOver');
+      if (userIdx === adminUserIdx) sendMessage(socket, 'roundOver');
       setAnswerInputValue('');
       dispatch(endRound());
     }
-  }, [leftTime, dispatch, socket]);
+  }, [leftTime, dispatch, socket, userIdx, adminUserIdx]);
 
   if (aiImages.length === 0) {
     return <Loading />;

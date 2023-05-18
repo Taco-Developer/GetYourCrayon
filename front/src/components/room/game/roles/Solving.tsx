@@ -41,6 +41,7 @@ export default function Solving({
     gameDatas: { selectedUserIdx },
     gameUsers,
     leftTime,
+    roomInfo: { adminUserIdx },
   } = useAppSelector((state) => state);
   const dispatch = useAppDispatch();
 
@@ -69,7 +70,7 @@ export default function Solving({
     console.log(chatInputValue);
     sendMessage(socket, 'chat', chatInputValue);
     console.log('제출');
-    setAnswerInputValue(() => '');
+    setAnswerInputValue('');
   };
 
   // 정답 입력
@@ -78,29 +79,6 @@ export default function Solving({
   ) => {
     setAnswerInputValue(event.target.value);
   };
-
-  // 정답 비교
-  useEffect(() => {
-    if (savedAnswers.length === 0) return;
-    if (savedAnswers.length === inputedAnswers.length) {
-      sendMessage(socket, 'roundOver');
-      setAnswerInputValue('');
-      dispatch(endRound());
-      const canvas = canvasRef.current!;
-      ctx!.clearRect(0, 0, canvas.width, canvas.height);
-    }
-  }, [savedAnswers, inputedAnswers, dispatch, socket, ctx]);
-
-  // 시간 초과
-  useEffect(() => {
-    if (leftTime === 0) {
-      sendMessage(socket, 'roundOver');
-      setAnswerInputValue('');
-      dispatch(endRound());
-      const canvas = canvasRef.current!;
-      ctx!.clearRect(0, 0, canvas.width, canvas.height);
-    }
-  }, [leftTime, dispatch, socket, ctx]);
 
   // 그리는 사람 캔버스와 보는 사람 캔버스 비율 구하기
   const saveRatio = (width: number, height: number) => {
@@ -371,7 +349,35 @@ export default function Solving({
     ctx.lineWidth = brushWidth;
   }, [ctx, brushWidth]);
 
-  console.log(inputedAnswers);
+  // 정답 비교
+  useEffect(() => {
+    if (savedAnswers.length === 0) return;
+    if (savedAnswers.length === inputedAnswers.length) {
+      clearCanvas();
+      if (userIdx === adminUserIdx) sendMessage(socket, 'roundOver');
+      setAnswerInputValue('');
+      dispatch(endRound());
+    }
+  }, [
+    savedAnswers,
+    inputedAnswers,
+    dispatch,
+    socket,
+    ctx,
+    clearCanvas,
+    userIdx,
+    adminUserIdx,
+  ]);
+
+  // 시간 초과
+  useEffect(() => {
+    if (leftTime === 0) {
+      clearCanvas();
+      if (userIdx === adminUserIdx) sendMessage(socket, 'roundOver');
+      setAnswerInputValue('');
+      dispatch(endRound());
+    }
+  }, [leftTime, dispatch, socket, ctx, clearCanvas, userIdx, adminUserIdx]);
 
   return (
     <>

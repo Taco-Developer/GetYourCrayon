@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import GameCenter from '../sides/GameCenter';
 import GameLeftSide from '../sides/GameLeftSide';
@@ -15,14 +15,6 @@ import { sendMessage } from '@/socket/messageSend';
 import CanvasOptions from './drawing/CanvasOptions';
 import EndRoundDialog from '../dialogs/EndRoundDialog';
 
-const BRUSH_WIDTH_LIST = [
-  [4, 'bg-black rounded-full w-[4px] h-[4px]'],
-  [8, 'bg-black rounded-full w-[8px] h-[8px]'],
-  [12, 'bg-black rounded-full w-[12px] h-[12px]'],
-  [16, 'bg-black rounded-full w-[16px] h-[16px]'],
-  [24, 'bg-black rounded-full w-[24px] h-[24px]'],
-];
-
 export default function Drawing({ socket }: { socket: WebSocket }) {
   const {
     brushWidth,
@@ -31,6 +23,7 @@ export default function Drawing({ socket }: { socket: WebSocket }) {
     INIT_BG_COLOR,
     selectedTool,
   } = useAppSelector((state) => state.draw);
+  const { isRoundStarted } = useAppSelector((state) => state.gameRound);
   const dispatch = useAppDispatch();
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -123,7 +116,7 @@ export default function Drawing({ socket }: { socket: WebSocket }) {
   };
 
   // 캔버스 초기화
-  const clearCanvas = () => {
+  const clearCanvas = useCallback(() => {
     const canavs = canvasRef.current;
     if (!ctx || !canavs) return;
 
@@ -132,7 +125,7 @@ export default function Drawing({ socket }: { socket: WebSocket }) {
     ctx.fillRect(0, 0, canavs.width, canavs.height);
     ctx.fillStyle = paletteColor;
     dispatch(changeBgColor(INIT_BG_COLOR));
-  };
+  }, [INIT_BG_COLOR, ctx, dispatch, paletteColor]);
 
   // 뒤로 가기 클릭
   const prevClickHandler = () => {
@@ -246,6 +239,12 @@ export default function Drawing({ socket }: { socket: WebSocket }) {
     }
     sendMessage(socket, 'draw', { action: 'changeTool', selectedTool });
   }, [selectedTool, ctx, paletteColor, canvasBgColor, socket]);
+
+  useEffect(() => {
+    if (isRoundStarted && ctx) {
+      clearCanvas();
+    }
+  }, [isRoundStarted, clearCanvas, ctx]);
 
   return (
     <>
