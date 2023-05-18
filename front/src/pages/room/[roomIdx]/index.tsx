@@ -48,7 +48,7 @@ export default function Room({
         router.push('/');
       }
     }
-  }, [dispatch, socket, roomIdx]);
+  }, [dispatch, socket, roomIdx, roomInfo.roomMax, roomInfo.roomNow, router]);
 
   // useEffect(() => {
   //   if (!socket) return;
