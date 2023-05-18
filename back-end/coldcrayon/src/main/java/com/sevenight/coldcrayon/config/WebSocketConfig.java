@@ -2,6 +2,7 @@ package com.sevenight.coldcrayon.config;
 
 import com.sevenight.coldcrayon.auth.service.AuthService;
 import com.sevenight.coldcrayon.game.service.GameService;
+import com.sevenight.coldcrayon.room.repository.RoomRepository;
 import com.sevenight.coldcrayon.room.service.RoomService;
 import com.sevenight.coldcrayon.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -23,11 +24,11 @@ public class WebSocketConfig implements WebSocketConfigurer {
     private final UserService userService;
     private final GameService gameService;
     private final AuthService authService;
-
+    private final RoomRepository roomRepository;
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        WebSocketHandler webSocketHandler = new WebSocketHandler(webSocketCustomService, roomService, userService, gameService, authService);
+        WebSocketHandler webSocketHandler = new WebSocketHandler(webSocketCustomService, roomService, userService, gameService, authService, roomRepository);
         registry.addHandler(webSocketHandler, "/{roomId}").setAllowedOrigins("*").addInterceptors(new HandShakeInterceptor(webSocketHandler));
     }
 
