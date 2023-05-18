@@ -21,8 +21,8 @@ export default function Collection() {
               현재 뽑은 슈퍼레어가 없습니다.
             </div>
           ) : (
-            mypageInfo.gacha[0].superRare.map((data, i) => {
-              return <CollectionCard data={data} key={i} />;
+            mypageInfo.gacha[0].superRare.map((data) => {
+              return <CollectionCard data={data} key={data.gachaIdx} />;
             })
           )}
         </div>
@@ -40,8 +40,8 @@ export default function Collection() {
               현재 뽑은 레어가 없습니다.
             </div>
           ) : (
-            mypageInfo.gacha[0].rare.map((data, i) => {
-              return <CollectionCard data={data} key={i} />;
+            mypageInfo.gacha[0].rare.map((data) => {
+              return <CollectionCard data={data} key={data.gachaIdx} />;
             })
           )}
         </div>
@@ -59,8 +59,8 @@ export default function Collection() {
               현재 뽑은 노멀이 없습니다.
             </div>
           ) : (
-            mypageInfo.gacha[0].normal.map((data, i) => {
-              return <CollectionCard data={data} key={i} />;
+            mypageInfo.gacha[0].normal.map((data) => {
+              return <CollectionCard data={data} key={data.gachaIdx} />;
             })
           )}
         </div>
