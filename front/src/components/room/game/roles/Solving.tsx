@@ -38,6 +38,8 @@ export default function Solving({
   const {
     userInfo: { userIdx, userNickname },
     answers: { savedAnswers, inputedAnswers },
+    gameDatas: { selectedUserIdx },
+    gameUsers,
     leftTime,
   } = useAppSelector((state) => state);
   const dispatch = useAppDispatch();
@@ -69,6 +71,13 @@ export default function Solving({
     setAnswerInputValue('');
   };
 
+  // 정답 입력
+  const answerChangeHandler: React.ChangeEventHandler<HTMLInputElement> = (
+    event,
+  ) => {
+    setAnswerInputValue(event.target.value);
+  };
+
   // 정답 비교
   useEffect(() => {
     if (savedAnswers.length === 0) return;
@@ -76,8 +85,10 @@ export default function Solving({
       sendMessage(socket, 'roundOver');
       setAnswerInputValue('');
       dispatch(endRound());
+      const canvas = canvasRef.current!;
+      ctx!.clearRect(0, 0, canvas.width, canvas.height);
     }
-  }, [savedAnswers, inputedAnswers, dispatch, socket]);
+  }, [savedAnswers, inputedAnswers, dispatch, socket, ctx]);
 
   // 시간 초과
   useEffect(() => {
@@ -85,8 +96,10 @@ export default function Solving({
       sendMessage(socket, 'roundOver');
       setAnswerInputValue('');
       dispatch(endRound());
+      const canvas = canvasRef.current!;
+      ctx!.clearRect(0, 0, canvas.width, canvas.height);
     }
-  }, [leftTime, dispatch, socket]);
+  }, [leftTime, dispatch, socket, ctx]);
 
   // 그리는 사람 캔버스와 보는 사람 캔버스 비율 구하기
   const saveRatio = (width: number, height: number) => {
@@ -357,6 +370,8 @@ export default function Solving({
     ctx.lineWidth = brushWidth;
   }, [ctx, brushWidth]);
 
+  console.log(inputedAnswers);
+
   return (
     <>
       <EndRoundDialog socket={socket} />
@@ -373,9 +388,7 @@ export default function Solving({
               type="text"
               placeholder="그림에 해당하는 제시어를 입력해주세요."
               value={answerInputValue}
-              onChange={(event) => {
-                setAnswerInputValue(event.target.value);
-              }}
+              onChange={answerChangeHandler}
             />
             <Margin type={MarginType.width} size={16} />
             <Button px={4} py={2} rounded="lg" color="bg-blue-300">
@@ -387,7 +400,14 @@ export default function Solving({
       {!isReverseGame && (
         <GameCenter>
           <PaintingInfo>
-            <p>현재 참가자5님이 그리는 중입니다.</p>
+            <p>
+              현재{' '}
+              {
+                gameUsers.filter((user) => user.userIdx === selectedUserIdx)[0]
+                  .userNickname
+              }
+              님이 그리는 중입니다.
+            </p>
           </PaintingInfo>
           <Margin type={MarginType.height} size={16} />
           <canvas
@@ -400,6 +420,7 @@ export default function Solving({
               type="text"
               placeholder="그림에 해당하는 제시어를 입력해주세요."
               autoFocus
+              onChange={answerChangeHandler}
             />
             <Margin type={MarginType.width} size={16} />
             <Button px={4} py={2} rounded="lg" color="bg-blue-300">
