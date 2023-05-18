@@ -282,23 +282,27 @@ public class RoomServiceImpl implements RoomService{
 
     public int changeRoomOption(String type, String option, String roomIdx) {
         Optional<RoomHash> optionalRoomHash = roomRepository.findById(roomIdx);
-
         if (optionalRoomHash.isPresent()) {
             RoomHash roomHash = optionalRoomHash.get();
+            System.err.println(roomHash);
 
             if (type.equals("roomUserCnt")) {
                 if (roomHash.getRoomNow() > Integer.parseInt(option)) {
+                    System.err.println("roomUserCnt 못 넣음 : " + option);
                     return 0;
                 } else {
                     roomHash.setRoomMax(Integer.parseInt(option));
+                    System.err.println("roomUserCnt 넣음 : " + option);
                 }
 
             } else if (type.equals("gameMode")) {
                 roomHash.setGameCategory(GameCategory.valueOf(option));
-
+                System.err.println("gameMode 넣음 : " + option);
             } else {
                 roomHash.setMaxRound(Integer.parseInt(option));
+                System.err.println("faefafaefawf 넣음 : " + option);
             }
+            roomRepository.save(roomHash);
         }
         return 1;
     }
