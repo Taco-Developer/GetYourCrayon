@@ -65,14 +65,6 @@ public class GameServiceImpl implements GameService{
                 // 게임 방 설정 변경
                 status = "success";
 
-                room.setRoomStatus(RoomStatus.Playing);
-                room.setGameCnt(room.getGameCnt() + 1);
-                room.setGameCategory(gameRequestDto.getGameCategory());
-                room.setNowRound(1);
-                room.setCorrectUser(-1L);
-                roomRepository.save(room);
-
-
                 // 방에 참여하고 있는 유저를 불러와서 점수를 0점으로 만든다.
                 List<UserHashResponseDto> userHashResponseDtoList = new ArrayList<>();
 
@@ -98,6 +90,14 @@ public class GameServiceImpl implements GameService{
                 message = keywords.get(1) + keywords.get(0);
                 String translateScript = webClientService.papagoPost(message);
                 //             game 모드가 AI라면,,,
+
+                room.setRoomStatus(RoomStatus.Playing);
+                room.setGameCnt(room.getGameCnt() + 1);
+                room.setGameCategory(gameRequestDto.getGameCategory());
+                room.setNowRound(1);
+                room.setCorrectUser(-1L);
+                room.setCorrect(keywords.get(1));
+                roomRepository.save(room);
 
                 responseGameDto.setTheme(themeCategory);
                 responseGameDto.setCorrect(keywords.get(1));
@@ -216,7 +216,7 @@ public class GameServiceImpl implements GameService{
                 status = "success";
                 roomHash.setCorrectUser(-1L);
 
-                roomRepository.save(roomHash);
+
 
                 ThemeCategory[] themeCategories = ThemeCategory.values();
                 ThemeCategory themeCategory = themeCategories[random.nextInt(themeCategories.length)];
@@ -225,6 +225,8 @@ public class GameServiceImpl implements GameService{
                 String translateScript = webClientService.papagoPost(message);
                 //             game 모드가 AI라면,,,
 
+                roomHash.setCorrect(keywords.get(1));
+                roomRepository.save(roomHash);
                 responseGameDto.setTheme(themeCategory);
                 responseGameDto.setCorrect(keywords.get(1));
 
