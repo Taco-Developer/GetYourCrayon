@@ -45,7 +45,14 @@ export default function BasicCard({ data }: PropsTypes) {
     >
       <CardContentNoPadding>
         <div className="w-bomul-img h-bomul-img relative ">
-          <Image src={data.gachaImg} alt="no_img" priority fill sizes="100%" />
+          <Image
+            src={data.gachaImg}
+            alt="no_img"
+            priority
+            fill
+            sizes="100%"
+            quality={10}
+          />
         </div>
         {data.existGacha && (
           <div

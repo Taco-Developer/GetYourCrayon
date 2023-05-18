@@ -32,52 +32,69 @@ export default function MainCarousel() {
           <div className="flex items-center justify-center">
             <div className="relative h-96 w-full">
               <Image
-                src="/images/loopy.jpg"
+                src="/images/carr6.png"
                 alt="no_img"
                 priority
                 fill
                 sizes="100%"
               />
             </div>
+            <div className="absolute top-4 left-2 text-xl lg:text-3xl bg-gray-100 bg-opacity-40 ">
+              <div>친구들과 같이 게임을 해보아요</div>
+              <div>어떤단어를 가지고 </div>
+              <div>이 이미지를 만들었을까요?</div>
+            </div>
           </div>
         </SwiperSlide>
+
         <SwiperSlide>
           <div className="flex items-center justify-center">
-            <div className="relative h-96 w-1/2">
+            <div className="relative h-96 w-full">
               <Image
-                src="/images/loopy2.jpg"
+                src="/images/carr5.png"
                 alt="no_img"
                 priority
                 fill
                 sizes="100%"
               />
             </div>
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="flex items-center justify-center">
-            <div className="relative h-96 w-1/2">
-              <Image
-                src="/images/loopy3.jpg"
-                alt="no_img"
-                priority
-                fill
-                sizes="100%"
-              />
+            <div className="absolute top-4 left-2 text-xl lg:text-3xl bg-gray-100 bg-opacity-60">
+              <div>게임을 통해 얻은 포인트로</div>
+              <div>뽑기를 해보세요!</div>
             </div>
           </div>
         </SwiperSlide>
         <SwiperSlide>
           <div className="flex items-center justify-center">
             {' '}
-            <div className="relative h-96 w-1/2">
+            <div className="relative h-96 w-full">
               <Image
-                src="/images/loopy4.jpg"
+                src="/images/carr3.png"
                 alt="no_img"
                 priority
                 fill
                 sizes="100%"
               />
+            </div>
+            <div className="absolute top-4 left-2 text-xl lg:text-3xl bg-gray-100 bg-opacity-60 ">
+              <div>나만의 컬렉션을 완성해요</div>
+              <div>프로필 이미지로 설정해보세요!</div>
+            </div>
+          </div>
+        </SwiperSlide>
+        <SwiperSlide>
+          <div className="flex items-center justify-center">
+            <div className="relative h-96 w-full">
+              <Image
+                src="/images/carr1.png"
+                alt="no_img"
+                priority
+                fill
+                sizes="100%"
+              />
+            </div>
+            <div className="absolute top-4 left-2 text-xl lg:text-3xl bg-gray-100 bg-opacity-60 ">
+              <div>시간에 따라 바뀌는 3가지 배경</div>
             </div>
           </div>
         </SwiperSlide>
