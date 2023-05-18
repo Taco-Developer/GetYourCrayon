@@ -97,7 +97,7 @@ export const getServerSideProps: GetServerSideProps =
     try {
       const one = await api.get(`/room/${context.params?.roomIdx}`);
       const two = one.data;
-      if (two.roomMax === two.roomNow) {
+      if (two.roomMax !== 0 && two.roomMax === two.roomNow) {
         return {
           props: {
             message: 'getOut',
