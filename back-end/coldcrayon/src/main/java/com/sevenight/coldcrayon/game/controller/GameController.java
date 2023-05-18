@@ -3,11 +3,14 @@ package com.sevenight.coldcrayon.game.controller;
 import com.sevenight.coldcrayon.auth.dto.UserDto;
 import com.sevenight.coldcrayon.auth.service.AuthService;
 import com.sevenight.coldcrayon.game.dto.GameRequestDto;
+import com.sevenight.coldcrayon.game.dto.ImgDto;
 import com.sevenight.coldcrayon.game.dto.RequestRoundDto;
 import com.sevenight.coldcrayon.game.dto.ResponseRoundDto;
 import com.sevenight.coldcrayon.game.service.GameService;
 import com.sevenight.coldcrayon.game.service.SaveImageServiceImpl;
 import com.sevenight.coldcrayon.game.service.WebClientServiceImpl;
+import com.sevenight.coldcrayon.room.entity.RoomHash;
+import com.sevenight.coldcrayon.room.repository.RoomRepository;
 import com.sevenight.coldcrayon.theme.entity.ThemeCategory;
 import com.sevenight.coldcrayon.util.HeaderUtil;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +20,7 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -28,6 +32,7 @@ public class GameController {
     final AuthService authService;
     final WebClientServiceImpl webClientService;
     final SaveImageServiceImpl saveImageService;
+    final RoomRepository roomRepository;
 
     @PostMapping("/start")
     public ResponseEntity<?> gameStart(@RequestHeader String Authorization, @RequestBody GameRequestDto gameRequestDto) throws IOException {
@@ -60,6 +65,20 @@ public class GameController {
         return null;
     }
 
+    @PostMapping("/saveImg")
+    public void saveImg(@RequestHeader String Authorization, @RequestBody ImgDto imgDto) throws IOException {
+
+        Optional<RoomHash> roomHashOptional = roomRepository.findById(imgDto.getRoomIdx());
+
+        if(roomHashOptional.isPresent()) {
+            RoomHash roomHash = roomHashOptional.get();
+            String destinationPath = roomHash.getRoomIdx() + roomHash.getGameCnt() + roomHash.getNowRound();
+
+            // public void saveCatchMind(byte[] base64Data, String destinationPath, Long idx) throws IOException
+            saveImageService.saveCatchMind(imgDto.getImg(), destinationPath, 1L);
+        }
+
+    }
 
     @PostMapping("/settle")
     public ResponseEntity<int[]> settle(@RequestBody String roomIdx){
