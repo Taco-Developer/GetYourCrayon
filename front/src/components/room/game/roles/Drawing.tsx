@@ -252,21 +252,15 @@ export default function Drawing({ socket }: { socket: WebSocket }) {
   useEffect(() => {
     if (savedAnswers.length === 0 || !isRoundStarted) return;
     if (savedAnswers.length !== inputedAnswers.length) return;
-    const endDrawing = async () => {
-      // const canvas = canvasRef.current!;
-      // canvas.toBlob(async (blob) => {
-      // const formData = new FormData();
-      // formData.append('img', blob!);
-      // formData.append('roomIdx', roomIdx);
-      // await gameAPI.postCanvasImage(formData);
-      // await gameAPI.postCanvasImage({ roomIdx, img: blob! });
-      // });
-      clearCanvas();
-      if (userIdx === adminUserIdx) sendMessage(socket, 'roundOver');
-      dispatch(endRound());
-    };
-
-    endDrawing();
+    const canvas = canvasRef.current;
+    const dataUrl = canvas?.toDataURL()!;
+    const formData = new FormData();
+    formData.append('roomIdx', roomIdx);
+    formData.append('img', dataUrl);
+    gameAPI.postCanvasImage(formData);
+    clearCanvas();
+    if (userIdx === adminUserIdx) sendMessage(socket, 'roundOver');
+    dispatch(endRound());
   }, [
     roomIdx,
     isRoundStarted,
@@ -274,7 +268,6 @@ export default function Drawing({ socket }: { socket: WebSocket }) {
     inputedAnswers,
     dispatch,
     socket,
-    ctx,
     clearCanvas,
     userIdx,
     adminUserIdx,
@@ -283,25 +276,20 @@ export default function Drawing({ socket }: { socket: WebSocket }) {
   // 시간 초과
   useEffect(() => {
     if (leftTime > 0 || !isRoundStarted) return;
-    const endDrawing = async () => {
-      // const canvas = canvasRef.current!;
-      // canvas.toBlob(async (blob) => {
-      // const formData = new FormData();
-      // formData.append('img', blob!);
-      // formData.append('roomIdx', roomIdx);
-      //   await gameAPI.postCanvasImage({ roomIdx, img: blob! });
-      // });
-      clearCanvas();
-      if (userIdx === adminUserIdx) sendMessage(socket, 'roundOver');
-      dispatch(endRound());
-    };
-    endDrawing();
+    const canvas = canvasRef.current;
+    const dataUrl = canvas?.toDataURL()!;
+    const formData = new FormData();
+    formData.append('roomIdx', roomIdx);
+    formData.append('img', dataUrl);
+    gameAPI.postCanvasImage(formData);
+    clearCanvas();
+    if (userIdx === adminUserIdx) sendMessage(socket, 'roundOver');
+    dispatch(endRound());
   }, [
     roomIdx,
     leftTime,
     dispatch,
     socket,
-    ctx,
     clearCanvas,
     userIdx,
     adminUserIdx,
