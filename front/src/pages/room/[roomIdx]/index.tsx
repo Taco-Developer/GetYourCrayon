@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getCookie } from 'cookies-next';
-import { useRouter } from 'next/router';
+import router, { useRouter } from 'next/router';
 
 import axios from 'axios';
 import { gameAPI } from '@/api/api';
@@ -86,8 +86,10 @@ export const getServerSideProps: GetServerSideProps =
       await gameAPI
         .findRoom(context.params?.roomIdx)
         .then((request) => {
-          console.log('여기보면됨====>');
           console.log(request.data);
+          if (request.data.roomMax === request.data.roomNow) {
+            router.push('/');
+          }
         })
         .catch((err) => {
           console.log(err);
