@@ -59,6 +59,7 @@ export default function InGameRoom({
   useEffect(() => {
     const messageHandler = (message: MessageEvent) => {
       const data = JSON.parse(message.data);
+      console.log(data);
       // 채팅
       if (data.type === 'chat') {
         const { content, status, user, userIdx } = data;
@@ -133,8 +134,10 @@ export default function InGameRoom({
     const accesstoken = getCookie('accesstoken');
     let type;
     if (now === 1) {
+      console.log('시작');
       type = 'gameStart';
     } else {
+      console.log('다음');
       type = 'nextRound';
     }
     sendMessage(socket, type, {

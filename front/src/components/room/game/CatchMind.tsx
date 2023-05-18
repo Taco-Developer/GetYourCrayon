@@ -15,6 +15,7 @@ export default function CatchMinde({ socket }: { socket: WebSocket }) {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
+    if (!selectedUserIdx) return;
     let role;
     if (selectedUserIdx === userIdx) {
       role = 'drawing';
