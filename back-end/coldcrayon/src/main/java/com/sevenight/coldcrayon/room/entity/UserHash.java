@@ -23,8 +23,6 @@ public class UserHash {
 
     private String userProfile;
 
-    private int userPoint;
-
     private int userScore;
 
     public static UserHash createUserHash(UserDto userDto, String roomIdx){
@@ -32,7 +30,6 @@ public class UserHash {
                .userIdx(userDto.getUserIdx())
                .userNickname(userDto.getUserNickname())
                .userProfile(userDto.getUserProfile())
-               .userPoint(userDto.getUserPoint())
                .userScore(10)
                .roomIdx(roomIdx)
                .build();
