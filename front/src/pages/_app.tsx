@@ -17,7 +17,6 @@ type AppPropsWithLayoutType = AppProps & {
   Component: NextPageWithLayout;
   bgTheme: string;
 };
-
 function App({ Component, pageProps }: AppPropsWithLayoutType) {
   const { store, props } = wrapper.useWrappedStore(pageProps);
   /** getLayout이 falsy값이면 대체 함수로 page매개변수를 받는다. */
