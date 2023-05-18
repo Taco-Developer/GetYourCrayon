@@ -65,12 +65,8 @@ public class GameServiceImpl implements GameService{
                 // 게임 방 설정 변경
                 status = "success";
 
-                room.setRoomStatus(RoomStatus.Playing);
-                room.setGameCnt(room.getGameCnt() + 1);
-                room.setGameCategory(gameRequestDto.getGameCategory());
-                room.setNowRound(1);
-                room.setCorrectUser(-1L);
-                roomRepository.save(room);
+
+
 
 
                 // 방에 참여하고 있는 유저를 불러와서 점수를 0점으로 만든다.
@@ -96,8 +92,15 @@ public class GameServiceImpl implements GameService{
                 ThemeCategory themeCategory = themeCategories[random.nextInt(themeCategories.length)];
                 List<String> keywords = themeService.getThemeKeyword(themeCategory);
                 message = keywords.get(1) + keywords.get(0);
-                String translateScript = webClientService.papagoPost(message);
-                //             game 모드가 AI라면,,,
+
+                room.setRoomStatus(RoomStatus.Playing);
+                room.setGameCnt(room.getGameCnt() + 1);
+                room.setGameCategory(gameRequestDto.getGameCategory());
+                room.setNowRound(1);
+                room.setCorrectUser(-1L);
+                room.setAnswer(keywords.get(1));
+                roomRepository.save(room);
+
 
                 responseGameDto.setTheme(themeCategory);
                 responseGameDto.setCorrect(keywords.get(1));
@@ -105,6 +108,7 @@ public class GameServiceImpl implements GameService{
 
                 switch(gameRequestDto.getGameCategory()) {
                     case AiPainting:
+                        String translateScript = webClientService.papagoPost(message);
                         List<Object> dalEResponse = webClientService.AiPost(translateScript);
 
                         Long i = 0L;
@@ -214,9 +218,6 @@ public class GameServiceImpl implements GameService{
             } else {
                 message = "다음 라운드 정보";
                 status = "success";
-                roomHash.setCorrectUser(-1L);
-
-                roomRepository.save(roomHash);
 
                 ThemeCategory[] themeCategories = ThemeCategory.values();
                 ThemeCategory themeCategory = themeCategories[random.nextInt(themeCategories.length)];
@@ -228,6 +229,9 @@ public class GameServiceImpl implements GameService{
                 responseGameDto.setTheme(themeCategory);
                 responseGameDto.setCorrect(keywords.get(1));
 
+                roomHash.setCorrectUser(-1L);
+                roomHash.setAnswer(keywords.get(1));
+                roomRepository.save(roomHash);
 
                 switch (roomHash.getGameCategory()) {
                     case AiPainting:

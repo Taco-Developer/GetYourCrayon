@@ -23,6 +23,8 @@ public class RoomHash {
 
     private int gameCnt;
 
+    private String answer;
+
     private int nowRound;
 
     private int maxRound;
