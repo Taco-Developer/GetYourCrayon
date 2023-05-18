@@ -39,7 +39,7 @@ export default function GameResult({ socket }: { socket: WebSocket }) {
 
       const { userList, urlList } = data;
       dispatch(setGameUsers(userList));
-      setUrlList(urlList);
+      if (urlList) setUrlList(urlList);
     };
 
     listenEvent(socket, messageHandler);
