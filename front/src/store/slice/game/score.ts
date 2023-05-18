@@ -23,8 +23,15 @@ const scoreSlice = createSlice({
     setWinnerScore(state, action: PayloadAction<number>) {
       state.winnerScore = action.payload;
     },
+
+    /** 한 번에 등록 */
+    setAllScore(state, action: PayloadAction<number[]>) {
+      state.defaultScore = action.payload[0];
+      state.winnerScore = action.payload[1];
+    },
   },
 });
 
-export const { setDefaultScore, setWinnerScore } = scoreSlice.actions;
+export const { setDefaultScore, setWinnerScore, setAllScore } =
+  scoreSlice.actions;
 export default scoreSlice.reducer;

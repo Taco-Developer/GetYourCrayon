@@ -11,10 +11,31 @@ import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
 import { addInGameChat } from '@/store/slice/game/inGameChatDatasSlice';
 import { listenEvent, removeEvent } from '@/socket/socketEvent';
 import { changeTime } from '@/store/slice/game/leftTimeSlice';
-import { addInputedAnswers } from '@/store/slice/game/answersSlice';
-import { setTotalRound, setWinner } from '@/store/slice/game/gameRoundSlice';
+import {
+  addInputedAnswers,
+  addSavedAnswers,
+} from '@/store/slice/game/answersSlice';
+import {
+  setTotalRound,
+  setWinner,
+  startRound,
+} from '@/store/slice/game/gameRoundSlice';
 import { setGameUsers } from '@/store/slice/game/gameUsersSlice';
-import { openIsScoreCheckModalOpened } from '@/store/slice/game/gameDatasSlice';
+import {
+  addAiImages,
+  openIsScoreCheckModalOpened,
+  savePrompt,
+  setImageAndPrompt,
+  setSelectedUserIdx,
+} from '@/store/slice/game/gameDatasSlice';
+import {
+  setAllScore,
+  setDefaultScore,
+  setWinnerScore,
+} from '@/store/slice/game/score';
+import { saveTheme } from '@/store/slice/game/gameThemeSlice';
+import { sendMessage } from '@/socket/messageSend';
+import { getCookie } from 'cookies-next';
 
 export default function InGameRoom({
   game,
@@ -25,7 +46,9 @@ export default function InGameRoom({
 }) {
   const {
     answers: { savedAnswers, inputedAnswers },
-    roomInfo: { maxRound },
+    roomInfo: { maxRound, adminUserIdx },
+    userInfo: { userIdx },
+    gameRound: { now },
   } = useAppSelector((state) => state);
   const dispatch = useAppDispatch();
 
@@ -49,12 +72,14 @@ export default function InGameRoom({
         ) {
           dispatch(addInputedAnswers(content));
         }
+        return;
       }
 
       // 시간
       if (data.type === 'timeStart') {
         const { message } = data;
         dispatch(changeTime(message));
+        return;
       }
 
       // 라운드 종료
@@ -65,6 +90,31 @@ export default function InGameRoom({
         dispatch(setWinner(winnerUserIdx));
         dispatch(setGameUsers(userList));
         dispatch(openIsScoreCheckModalOpened());
+        return;
+      }
+
+      if (data.type === 'gameDto') {
+        const {
+          correct,
+          message,
+          theme,
+          urlList,
+          winnerScore,
+          defualtScore,
+          userList,
+          selectedUserIdx,
+        } = data;
+        console.log(data);
+        dispatch(setAllScore([defualtScore, winnerScore]));
+        dispatch(
+          setImageAndPrompt({ images: urlList as string[], prompt: message }),
+        );
+        dispatch(setSelectedUserIdx(selectedUserIdx));
+        dispatch(setGameUsers(userList));
+        dispatch(addSavedAnswers(correct));
+        dispatch(saveTheme(theme));
+        dispatch(startRound());
+        sendMessage(socket, 'timeStart');
       }
     };
 
@@ -76,6 +126,21 @@ export default function InGameRoom({
       removeEvent(socket, messageHandler);
     };
   }, [dispatch, socket, inputedAnswers, savedAnswers]);
+
+  // 시작
+  useEffect(() => {
+    if (userIdx !== adminUserIdx) return;
+    const accesstoken = getCookie('accesstoken');
+    let type;
+    if (now === 1) {
+      type = 'gameStart';
+    } else {
+      type = 'nextRound';
+    }
+    sendMessage(socket, type, {
+      authorization: accesstoken,
+    });
+  }, [socket, now, userIdx, adminUserIdx]);
 
   return (
     <>

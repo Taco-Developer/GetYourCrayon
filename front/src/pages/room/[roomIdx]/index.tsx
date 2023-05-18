@@ -18,6 +18,7 @@ import { setLogin } from '@/store/slice/loginSlice';
 import { setUser } from '@/store/slice/userSlice';
 import { changeStatus } from '@/store/slice/game/roomStatusSlice';
 import { listenEvent, removeEvent } from '@/socket/socketEvent';
+import { resetRound } from '@/store/slice/game/gameRoundSlice';
 
 export default function Room({
   roomIdx,
@@ -61,6 +62,7 @@ export default function Room({
     const gameAlertHandler = (event: MessageEvent) => {
       const data = JSON.parse(event.data);
       if (data.type !== 'gameAlert') return;
+      if (data.status === 'gameEnd') dispatch(resetRound());
       dispatch(changeStatus(data.status));
     };
 
@@ -69,7 +71,7 @@ export default function Room({
     return () => {
       removeEvent(socket, gameAlertHandler);
     };
-  }, [socket]);
+  }, [socket, dispatch]);
 
   switch (roomStatus) {
     case 'ready':
