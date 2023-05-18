@@ -163,6 +163,7 @@ export default function AiPaintingGuess({ socket }: { socket: WebSocket }) {
               placeholder="그림에 해당하는 제시어를 입력해주세요."
               value={answerInputValue}
               onChange={answerInputChangeHandler}
+              autoFocus
             />
             <Margin type={MarginType.width} size={16} />
             <Button px={4} py={2} rounded="lg" color="bg-blue-300">
