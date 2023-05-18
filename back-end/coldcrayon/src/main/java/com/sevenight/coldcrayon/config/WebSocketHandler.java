@@ -168,10 +168,12 @@ public class WebSocketHandler extends TextWebSocketHandler {
         Optional<RoomHash> roomHashOptional = roomRepository.findById(roomId);
 
         // userIn:유저가 들어올 때 userData: (유저Id, 기본점수)
+        log.error("");
         log.error("#############################################################");
         log.error("message.toString() : "+message.toString());
         log.error("type : " + type);
         log.error("#############################################################");
+        log.error("");
 
         if (type.equals("userIn")) {
             if(roomHashOptional.isPresent()){
@@ -191,7 +193,9 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 if(userDto.getUserIdx().equals(roomHash.getAdminUserIdx())){
                     joinRoomResponse = roomService.firstRoom(roomId);
                 } else {
+                    log.error("user가 join으로 참여했습니다.");
                     joinRoomResponse = roomService.joinRoom(userDto, roomId);
+                    log.error(joinRoomResponse.toString());
                 }
 
                 String jsonResponse = objectMapper.writeValueAsString(joinRoomResponse);    // 방에 접속한 유저 목록
