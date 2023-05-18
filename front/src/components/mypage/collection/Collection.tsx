@@ -10,28 +10,59 @@ export default function Collection() {
         <div className=" text-2xl lg:text-4xl text-[#e759c6] m-4">
           SuperRare
         </div>
-        <div className="grid grid-cols-7">
-          {mypageInfo.gacha[0].superRare.map((data, i) => {
-            return <CollectionCard data={data} key={i} />;
-          })}
+
+        <div
+          className={`${
+            mypageInfo.gacha[0].superRare.length === 0 ? '' : 'grid grid-cols-7'
+          }`}
+        >
+          {mypageInfo.gacha[0].superRare.length === 0 ? (
+            <div className="h-colle-img w-full flex justify-center items-start">
+              현재 뽑은 슈퍼레어가 없습니다.
+            </div>
+          ) : (
+            mypageInfo.gacha[0].superRare.map((data, i) => {
+              return <CollectionCard data={data} key={i} />;
+            })
+          )}
         </div>
       </div>
       <hr />
       <div>
         <div className=" text-2xl lg:text-4xl text-[#60e364] m-4">Rare</div>
-        <div className="grid grid-cols-7">
-          {mypageInfo.gacha[0].rare.map((data, i) => {
-            return <CollectionCard data={data} key={i} />;
-          })}
+        <div
+          className={`${
+            mypageInfo.gacha[0].rare.length === 0 ? '' : 'grid grid-cols-7'
+          }`}
+        >
+          {mypageInfo.gacha[0].rare.length === 0 ? (
+            <div className="h-colle-img w-full flex justify-center items-start">
+              현재 뽑은 레어가 없습니다.
+            </div>
+          ) : (
+            mypageInfo.gacha[0].rare.map((data, i) => {
+              return <CollectionCard data={data} key={i} />;
+            })
+          )}
         </div>
       </div>
       <hr />
       <div>
         <div className=" text-2xl lg:text-4xl m-4">Normal</div>
-        <div className="grid grid-cols-7">
-          {mypageInfo.gacha[0].normal.map((data, i) => {
-            return <CollectionCard data={data} key={i} />;
-          })}
+        <div
+          className={`${
+            mypageInfo.gacha[0].normal.length === 0 ? '' : 'grid grid-cols-7'
+          }`}
+        >
+          {mypageInfo.gacha[0].normal.length === 0 ? (
+            <div className="h-colle-img w-full flex justify-center items-start">
+              현재 뽑은 노멀이 없습니다.
+            </div>
+          ) : (
+            mypageInfo.gacha[0].normal.map((data, i) => {
+              return <CollectionCard data={data} key={i} />;
+            })
+          )}
         </div>
       </div>
     </CollectionDiv>
