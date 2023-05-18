@@ -17,8 +17,13 @@ const inGameChatDatasSlice = createSlice({
     addInGameChat(state, action: PayloadAction<InGameChatDataType>) {
       state.push(action.payload);
     },
+
+    /** 채팅 리셋 */
+    resetInGameChat(state) {
+      return [];
+    },
   },
 });
 
-export const { addInGameChat } = inGameChatDatasSlice.actions;
+export const { addInGameChat, resetInGameChat } = inGameChatDatasSlice.actions;
 export default inGameChatDatasSlice.reducer;
