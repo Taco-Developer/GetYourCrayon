@@ -305,10 +305,24 @@ public class GameServiceImpl implements GameService{
                 Optional<UserHash> optionalUserHash = userHashRepository.findById(Long.parseLong(user.toString()));
                 if (optionalUserHash.isPresent()) {
                     UserHash userHash = optionalUserHash.get();
+                    System.err.println("유저 포인트 : " + userHash.getUserPoint());
+                    System.err.println("유저 포인트 : " + userHash.getUserPoint());
+                    System.err.println("유저 포인트 : " + userHash.getUserPoint());
+                    System.err.println("유저 포인트 : " + userHash.getUserPoint());
+                    System.err.println("유저 포인트 : " + userHash.getUserPoint());
+
+
                     userHash.setUserPoint(userHash.getUserScore() + userHash.getUserPoint());
+
+                    System.err.println("유저 포인트 : " + userHash.getUserPoint());
+                    System.err.println("유저 포인트 : " + userHash.getUserPoint());
+                    System.err.println("유저 포인트 : " + userHash.getUserPoint());
+                    System.err.println("유저 포인트 : " + userHash.getUserPoint());
+                    System.err.println("유저 포인트 : " + userHash.getUserPoint());
                     userHashResponseDtoList.add(UserHashResponseDto.of(userHash));
 
                     userHash.setUserScore(0);
+
                     userHashRepository.save(userHash);
                 }
             }
