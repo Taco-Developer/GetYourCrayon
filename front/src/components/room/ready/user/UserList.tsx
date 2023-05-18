@@ -1,11 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import tw from 'tailwind-styled-components';
 import Image from 'next/image';
 import UserDrop from './UserDrop';
-import { gameAPI } from '@/api/api';
 import { useAppSelector } from '@/store/thunkhook';
-import { getCookie } from 'cookies-next';
-import { listenEvent, removeEvent } from '@/socket/socketEvent';
 
 export interface UserData {
   roomIdx: string | null;
@@ -23,25 +20,6 @@ interface ReadyPropsType {
 
 export default function UserList({ userList, socket }: ReadyPropsType) {
   const { roomInfo } = useAppSelector((state) => state);
-  const [roomMax, setRoomMax] = useState<string>('');
-
-  // useEffect(() => {
-  //   if (socket) {
-  //     const token = getCookie('accesstoken');
-
-  //     const modeChangeHandler = (event: MessageEvent) => {
-  //       const data = JSON.parse(event.data);
-  //       if (data.type !== 'roomUserCnt') return;
-  //       console.log(data);
-  //     };
-
-  //     listenEvent(socket, modeChangeHandler);
-
-  //     return () => {
-  //       removeEvent(socket, modeChangeHandler);
-  //     };
-  //   }
-  // }, [socket]);
 
   console.log(roomInfo);
 

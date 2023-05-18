@@ -113,8 +113,8 @@ export default function Ready({ socket, setSocket }: RoomPropsType) {
           <PickContent>
             {choice === 1 ? (
               <SettingDiv>
-                <ModeChoice />
-                <Setting />
+                <ModeChoice socket={socket} />
+                <Setting socket={socket} />
               </SettingDiv>
             ) : (
               <Chat socket={socket} messageList={messageList} />
