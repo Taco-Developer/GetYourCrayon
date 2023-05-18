@@ -159,7 +159,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
         Map<String, Object> joinRoomResponse;
 
-        this.initailizeRoomInfo(roomId);
         if (type.equals("userIn")) {
             String authorization = jsonMessage.get("authorization");
             UserDto userDto = authService.selectOneMember(HeaderUtil.getAccessTokenString(authorization));
