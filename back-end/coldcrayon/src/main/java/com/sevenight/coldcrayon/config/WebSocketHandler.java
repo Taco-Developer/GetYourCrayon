@@ -65,7 +65,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
     }
 
     // flag 변수
-    public volatile boolean gameOnGoing = false;
 
     // roomTitle을 가져와야 할까요??
 
@@ -163,14 +162,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
             String authorization = jsonMessage.get("authorization");
             UserDto userDto = authService.selectOneMember(HeaderUtil.getAccessTokenString(authorization));
             // 닉네임, 소켓 아이디을 터미너스에서 확인할 수 있도록 설정: 5/16 DG
-            log.info("접속하는 유저의 닉네임: {}, 소켓 아이디(roomId): {}", userDto.getUserNickname(), roomId);
 
-            UserInfo userInfo = userInfoMap.computeIfAbsent(session.getId(), key -> new UserInfo());
-
-            userInfo.setNickname(userDto.getUserNickname());
-            userInfo.setScore(0);
-            userInfo.setToken(authorization);
-            if(userDto.getUserIdx().equals(roomInfoMap.get("adminUserIdx"))){
+            if(userDto.getUserIdx().equals(roomInfoMap.get("adminUserIdx").toString())){
                 joinRoomResponse = roomService.firstRoom(roomId);
             } else {
                 joinRoomResponse = roomService.joinRoom(userDto, roomId);
@@ -349,7 +342,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
         }
         // 라운드 종료  ------- type 지정 필요 -------   // 수민: 임시로 내가 설정해서 사용하도록 함
         else if (type.equals("roundOver")) {
-            gameOnGoing = false;        // 시간 감소 로직 중지
 
             ScheduledFuture<?> scheduledFuture = timers.get(roomId);
             scheduledFuture.cancel(false);
