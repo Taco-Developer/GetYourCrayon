@@ -27,6 +27,10 @@ export default function UserDrop({ socket }: UserListProps) {
     }
   };
 
+  useEffect(() => {
+    setMemberCnt(`${roomInfo.roomMax}명`);
+  }, [roomInfo.roomMax]);
+
   const cntOptions = [
     { label: '3명', value: 3 },
     { label: '4명', value: 4 },
@@ -44,10 +48,11 @@ export default function UserDrop({ socket }: UserListProps) {
           Option={cntOption}
         />
       ) : (
-        <div>{memberCnt}</div>
+        <OuterDiv>{memberCnt}</OuterDiv>
       )}
     </OutDiv>
   );
 }
 
 const OutDiv = tw.div`w-80 h-10 font-bold text-xl xl:text-3xl flex items-center justify-start border-white border-2 rounded-xl`;
+const OuterDiv = tw.div`mx-10 font-bold text-xl xl:text-3xl`;
