@@ -366,7 +366,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
             }
         }
         else if (type.equals("roomUserCnt")) {
-
+            log.error("roomUserCnt : " + "여기 들어옴");
             // 여기를 로직에 추가한다.
             String roomCnt = jsonMessage.get("roomCnt");
             int num = roomService.changeRoomOption(type, roomCnt, roomId);
@@ -384,7 +384,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
             }
         }
         else if (type.equals("gameMode")) {
-
+            log.error("gameMode : " + "여기 들어옴");
             // 여기를 로직에 추가한다.
             String gameMode = jsonMessage.get("gameMode");
             roomService.changeRoomOption(type, gameMode, roomId);
@@ -396,7 +396,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
             }
         }
         else if (type.equals("gameTurn")) {
-
+            log.error("roomUserCnt : " + "여기 들어옴");
             // 여기를 로직에 추가한다.
             String gameTurn = jsonMessage.get("gameTurn");
             roomService.changeRoomOption(type, gameTurn, roomId);
