@@ -203,9 +203,12 @@ public class WebSocketHandler extends TextWebSocketHandler {
                     RoomHash roomHash = roomHashOptional.get();
 
                     String answer = jsonMessage.get("content");
-                    if(answer.equals(roomHash.getCorrect()) && !roomHash.getCorrectUser().equals(-1L)){
+                    log.debug("answer : " + answer);
+                    log.debug("roomHash.getCorrect() : " + roomHash.getCorrect());
+                    if(answer.equals(roomHash.getCorrect()) && roomHash.getCorrectUser().equals(-1L)){
                         Long userIdx = Long.parseLong(jsonMessage.get("userIdx"));
                         roomHash.setCorrectUser(userIdx);
+                        roomRepository.save(roomHash);
                     }
                 }
             }
