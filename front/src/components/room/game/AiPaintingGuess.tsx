@@ -1,6 +1,5 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { getCookie } from 'cookies-next';
 
 import tw from 'tailwind-styled-components';
 
@@ -11,26 +10,17 @@ import EndRoundDialog from './dialogs/EndRoundDialog';
 import Margin, { MarginType } from '@/components/ui/Margin';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-
 import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
-import { addAiImages, savePrompt } from '@/store/slice/game/gameDatasSlice';
-import { saveTheme } from '@/store/slice/game/gameThemeSlice';
-import { addSavedAnswers } from '@/store/slice/game/answersSlice';
-import { listenEvent, removeEvent } from '@/socket/socketEvent';
 import { sendMessage } from '@/socket/messageSend';
-import { endRound, startRound } from '@/store/slice/game/gameRoundSlice';
+import { endRound } from '@/store/slice/game/gameRoundSlice';
 import Loading from '@/components/ui/Loading';
-import { setDefaultScore, setWinnerScore } from '@/store/slice/game/score';
-import { setGameUsers } from '@/store/slice/game/gameUsersSlice';
 
 export default function AiPaintingGuess({ socket }: { socket: WebSocket }) {
   const {
     leftTime,
-    gameRound: { now },
     answers: { savedAnswers, inputedAnswers },
     gameDatas: { aiImages },
     userInfo: { userIdx, userNickname },
-    roomInfo: { adminUserIdx },
   } = useAppSelector((state) => state);
   const dispatch = useAppDispatch();
 
@@ -61,6 +51,7 @@ export default function AiPaintingGuess({ socket }: { socket: WebSocket }) {
     if (savedAnswers.length === 0) return;
     if (savedAnswers.length === inputedAnswers.length) {
       sendMessage(socket, 'roundOver');
+      setAnswerInputValue('');
       dispatch(endRound());
     }
   }, [savedAnswers, inputedAnswers, dispatch, socket]);
@@ -69,6 +60,7 @@ export default function AiPaintingGuess({ socket }: { socket: WebSocket }) {
   useEffect(() => {
     if (leftTime === 0) {
       sendMessage(socket, 'roundOver');
+      setAnswerInputValue('');
       dispatch(endRound());
     }
   }, [leftTime, dispatch, socket]);
