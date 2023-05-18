@@ -68,7 +68,8 @@ export default function Solving({
     };
     console.log(chatInputValue);
     sendMessage(socket, 'chat', chatInputValue);
-    setAnswerInputValue('');
+    console.log('제출');
+    setAnswerInputValue(() => '');
   };
 
   // 정답 입력
@@ -401,7 +402,7 @@ export default function Solving({
         <GameCenter>
           <PaintingInfo>
             <p>
-              현재{' '}
+              현재
               {
                 gameUsers.filter((user) => user.userIdx === selectedUserIdx)[0]
                   .userNickname
