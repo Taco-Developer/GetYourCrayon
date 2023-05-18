@@ -86,7 +86,6 @@ export default function Room({
 
 export const getServerSideProps: GetServerSideProps =
   wrapper.getServerSideProps((store) => async (context: any) => {
-    const { roomInfo } = useAppSelector((state) => state);
     const { req, res } = context;
     let refreshtoken = getCookie('refreshtoken', { req, res });
     let accesstoken = getCookie('accesstoken', { req, res });
@@ -103,14 +102,6 @@ export const getServerSideProps: GetServerSideProps =
       const res = re.data;
       store.dispatch(setLogin({ isLogin: true }));
       store.dispatch(setUser(res));
-      if (roomInfo.roomMax === roomInfo.roomNow) {
-        return {
-          props: {
-            message: 'max',
-            roomIdx: '',
-          },
-        };
-      }
       return {
         props: {
           message: 'Login',
