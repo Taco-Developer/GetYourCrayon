@@ -94,6 +94,7 @@ export default function InGameRoom({
         return;
       }
 
+      // 게임 시작하면 받는 정보
       if (data.type === 'gameDto') {
         const {
           correct,
@@ -116,6 +117,7 @@ export default function InGameRoom({
         dispatch(saveTheme(theme));
         dispatch(startRound());
         sendMessage(socket, 'timeStart');
+        return;
       }
     };
 
