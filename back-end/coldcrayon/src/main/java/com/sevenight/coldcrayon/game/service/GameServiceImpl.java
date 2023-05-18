@@ -169,9 +169,6 @@ public class GameServiceImpl implements GameService{
 
                     if(!roomHash.getCorrectUser().equals(0L)){
                         userHash.setUserScore(userHash.getUserScore() + 3);
-
-                        log.debug(roomHash.getCorrectUser().toString());
-
                         if(userHash.getUserIdx().equals(roomHash.getCorrectUser())){
                             userHash.setUserScore(userHash.getUserScore() + 3);
                             responseRoundDto.setWinnerUserIdx(userHash.getUserIdx());
