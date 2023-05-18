@@ -17,6 +17,7 @@ import { setUser } from '@/store/slice/userSlice';
 import { changeStatus } from '@/store/slice/game/roomStatusSlice';
 import { listenEvent, removeEvent } from '@/socket/socketEvent';
 import { resetRound } from '@/store/slice/game/gameRoundSlice';
+import Loading from '@/components/ui/Loading';
 
 export default function Room({
   roomIdx,
@@ -79,7 +80,7 @@ export default function Room({
     case 'gameEnd':
       return <GameResult socket={socket as WebSocket} />;
     default:
-      return <div>Something wrong!!!</div>;
+      return <Loading />;
   }
 }
 
