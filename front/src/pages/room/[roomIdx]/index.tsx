@@ -71,7 +71,7 @@ export default function Room({
     return () => {
       removeEvent(socket, gameAlertHandler);
     };
-  }, [socket]);
+  }, [socket, dispatch]);
 
   switch (roomStatus) {
     case 'ready':
