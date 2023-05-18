@@ -115,6 +115,7 @@ export default function Gacha() {
           disabled={isButtonDisabled}
           className="hover:scale-125"
           onClick={() => {
+            setIsButtonDisabled(true);
             const getTens = async () => {
               try {
                 const gacha = await gatchaAPI.tenGacha();

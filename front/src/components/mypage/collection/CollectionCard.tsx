@@ -42,7 +42,7 @@ export default function CollectionCard({
             priority
             fill
             sizes="100%"
-            quality={25}
+            quality={10}
             placeholder="blur"
             blurDataURL="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
           />
