@@ -22,6 +22,7 @@ export default function EndRoundDialog({ socket }: { socket: WebSocket }) {
     gameDatas: { isScoreCheckModalOpened, prompt },
     gameUsers,
     userInfo: { userIdx },
+    roomInfo: { adminUserIdx },
   } = useAppSelector((state) => state);
   const dispatch = useAppDispatch();
 
@@ -39,13 +40,23 @@ export default function EndRoundDialog({ socket }: { socket: WebSocket }) {
         dispatch(goNextRound());
         return;
       }
-      sendMessage(socket, 'gameAlert', { status: 'gameEnd' });
+      if (userIdx === adminUserIdx) {
+        sendMessage(socket, 'gameAlert', { status: 'gameEnd' });
+      }
     }, 1000);
 
     return () => {
       clearTimeout(timer);
     };
-  }, [dispatch, now, total, isScoreCheckModalOpened, socket]);
+  }, [
+    dispatch,
+    now,
+    total,
+    isScoreCheckModalOpened,
+    socket,
+    adminUserIdx,
+    userIdx,
+  ]);
 
   return (
     <Dialog open={isScoreCheckModalOpened} maxWidth="xs" fullWidth>
