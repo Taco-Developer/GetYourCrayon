@@ -22,13 +22,7 @@ const CardContentNoPadding = styled(CardContent)(`
   }
 `);
 
-export default function CollectionCard({
-  data,
-  key,
-}: {
-  data: PropsTypes;
-  key: number;
-}) {
+export default function CollectionCard({ data }: { data: PropsTypes }) {
   return (
     <ColleCard
       className="flex flex-col items-center relative"
