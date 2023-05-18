@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
 import tw from 'tailwind-styled-components';
 import { useAppSelector } from '@/store/thunkhook';
+import { sendMessage } from '@/socket/messageSend';
 
-export default function ModeChoice() {
+interface ReadyProps {
+  socket: WebSocket | null;
+}
+
+export default function ModeChoice({ socket }: ReadyProps) {
   const { roomInfo, userInfo } = useAppSelector((state) => state);
-  const [btnAdmin, setBtnAdmin] = useState<boolean>(true);
 
   const [choiceMode, setChoiceMode] = useState<number>(0);
   const gameList: string[] = [
@@ -14,10 +18,19 @@ export default function ModeChoice() {
     '리버스캐치마인드',
     '이어그리기',
   ];
+  const socketSend: string[] = [
+    'AiPainting',
+    'Lier',
+    'CatchMind',
+    'ReverseCatchMind',
+    'RelayPainting',
+  ];
 
   const pickMode = (i: number) => {
-    if (userInfo.userIdx === roomInfo.adminUserIdx) {
+    if (socket !== null && userInfo.userIdx === roomInfo.adminUserIdx) {
       setChoiceMode(i);
+      const sendMode = socketSend[i];
+      sendMessage(socket, 'gameMode', { gameMode: sendMode });
     }
   };
 
