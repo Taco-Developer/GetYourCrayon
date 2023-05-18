@@ -10,7 +10,7 @@ import java.io.InputStream;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ImgDto {
-    InputStream img;
+    String img;
 
     String roomIdx;
 }
