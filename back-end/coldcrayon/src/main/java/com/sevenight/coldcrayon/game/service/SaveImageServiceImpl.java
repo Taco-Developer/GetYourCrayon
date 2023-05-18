@@ -42,7 +42,7 @@ public class SaveImageServiceImpl {
         if (!file.exists()) {
             file.mkdirs(); // 디렉토리가 없으면 해당 경로의 모든 디렉토리를 생성합니다.
         }
-
+        System.err.println("여기까진 온다는 건가");
         byte[] decodedBytes = Base64.getDecoder().decode(base64Data);
 
         FileOutputStream outputStream = new FileOutputStream(destinationPath + "/" +idx + ".png");
