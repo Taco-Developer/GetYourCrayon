@@ -58,6 +58,7 @@ module.exports = {
         'effect-gif': '20vw',
         'gacha-result': '50vh',
         'colle-img': '7vw',
+        'carou-size': '60vh',
       },
       width: {
         'profile-img': '17vw',
