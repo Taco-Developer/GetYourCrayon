@@ -38,16 +38,12 @@ export const gameAPI = {
   getAiImages: () => api.get(`/game/reversecatch`),
   /** Canvas 이미지 보내기 */
   postCanvasImage: (formData: FormData) => {
-    const requestInfo = {
-      url: `${BASE_URL}/game/saveImg`,
-      method: 'POST',
+    return axios.post(`${BASE_URL}game/saveImg`, formData, {
       headers: {
         Authorization: getCookie('accesstoken'),
         'Content-Type': 'multipart/form-data',
       },
-      body: formData,
-    };
-    return axios(requestInfo);
+    });
   },
 };
 
