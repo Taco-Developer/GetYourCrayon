@@ -9,6 +9,7 @@ import com.sevenight.coldcrayon.auth.service.AuthService;
 import com.sevenight.coldcrayon.game.dto.*;
 import com.sevenight.coldcrayon.game.entity.GameCategory;
 import com.sevenight.coldcrayon.game.service.GameService;
+import com.sevenight.coldcrayon.game.service.SaveImageServiceImpl;
 import com.sevenight.coldcrayon.room.dto.RoomDto;
 import com.sevenight.coldcrayon.room.dto.RoomResponseDto;
 import com.sevenight.coldcrayon.room.dto.UserHashResponseDto;
@@ -63,15 +64,18 @@ public class WebSocketHandler extends TextWebSocketHandler {
     private final GameService gameService;
     private final AuthService authService;
     private final RoomRepository roomRepository;
+    private final SaveImageServiceImpl saveImageService;
 
 
-    public WebSocketHandler(WebSocketCustomService webSocketCustomService, RoomService roomService, UserService userService, GameService gameService, AuthService authService, RoomRepository roomRepository) {
+    public WebSocketHandler(WebSocketCustomService webSocketCustomService, RoomService roomService, UserService userService, GameService gameService,
+                            AuthService authService, RoomRepository roomRepository, SaveImageServiceImpl saveImageService) {
         this.authService = authService;
         this.roomService = roomService;
         this.webSocketCustomService = webSocketCustomService;
         this.userService = userService;
         this.gameService = gameService;
         this.roomRepository = roomRepository;
+        this.saveImageService = saveImageService;
     }
 
     // flag 변수
@@ -401,6 +405,15 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 if (s.isOpen()) {
                     s.sendMessage(new TextMessage(jsonResponse));
                 }
+            }
+        }
+        else if(type.equals("saveImg")){
+            if(roomHashOptional.isPresent()){
+                RoomHash roomHash = roomHashOptional.get();
+
+                String destinationPath = roomHash.getRoomIdx() + roomHash.getGameCnt() + roomHash.getNowRound();
+                String imgData = jsonMessage.get("img");
+                saveImageService.saveCatchMind(imgData, destinationPath,1L);
             }
         }
 
