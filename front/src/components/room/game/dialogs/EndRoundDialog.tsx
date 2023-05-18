@@ -15,6 +15,7 @@ import { resetTheme } from '@/store/slice/game/gameThemeSlice';
 import { sendMessage } from '@/socket/messageSend';
 import { changeRole } from '@/store/slice/game/userRoleSlice';
 import { resetTime } from '@/store/slice/game/leftTimeSlice';
+import { resetInGameChat } from '@/store/slice/game/inGameChatDatasSlice';
 
 export default function EndRoundDialog({ socket }: { socket: WebSocket }) {
   const {
@@ -34,6 +35,7 @@ export default function EndRoundDialog({ socket }: { socket: WebSocket }) {
       dispatch(resetAnswer());
       dispatch(resetGameDatas());
       dispatch(resetTheme());
+      dispatch(resetInGameChat());
       dispatch(setWinner(0));
       dispatch(closeIsScoreCheckModalOpened());
       dispatch(changeRole(''));
