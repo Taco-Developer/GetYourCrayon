@@ -34,7 +34,9 @@ export default function Room({
 
   const dispatch = useAppDispatch();
   useEffect(() => {
-    if (message === 'notLogin') {
+    if (message === 'getOut') {
+      router.push('/');
+    } else if (message === 'notLogin') {
       console.log('로그인해라');
       router.push('/');
     }
@@ -82,20 +84,6 @@ export default function Room({
 export const getServerSideProps: GetServerSideProps =
   wrapper.getServerSideProps((store) => async (context: any) => {
     const { req, res } = context;
-    const getRoomInfo = async () => {
-      await gameAPI
-        .findRoom(context.params?.roomIdx)
-        .then((request) => {
-          console.log(request.data);
-          if (request.data.roomMax === request.data.roomNow) {
-            router.push('/');
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    };
-    getRoomInfo();
     let refreshtoken = getCookie('refreshtoken', { req, res });
     let accesstoken = getCookie('accesstoken', { req, res });
     const api = axios.create({
@@ -107,16 +95,28 @@ export const getServerSideProps: GetServerSideProps =
       },
     });
     try {
-      const re = await api.get(`/member/myinfo`);
-      const res = re.data;
-      store.dispatch(setLogin({ isLogin: true }));
-      store.dispatch(setUser(res));
-      return {
-        props: {
-          message: 'Login',
-          roomIdx: context.params?.roomIdx || 'noRoom',
-        },
-      };
+      const one = await api.get(`/room/${context.params?.roomIdx}`);
+      const two = one.data;
+      console.log('==========>', two);
+      if (two.roomMax === two.roomNow) {
+        return {
+          props: {
+            message: 'getOut',
+            roomIdx: '',
+          },
+        };
+      } else {
+        const re = await api.get(`/member/myinfo`);
+        const res = re.data;
+        store.dispatch(setLogin({ isLogin: true }));
+        store.dispatch(setUser(res));
+        return {
+          props: {
+            message: 'Login',
+            roomIdx: context.params?.roomIdx || 'noRoom',
+          },
+        };
+      }
     } catch (e) {
       console.log(e);
       return {
