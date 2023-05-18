@@ -30,6 +30,7 @@ export default function Room({
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const roomStatus = useAppSelector((state) => state.roomStatus);
   const { gameCategory } = useAppSelector((state) => state.roomInfo);
+  const { roomInfo } = useAppSelector((state) => state);
 
   const dispatch = useAppDispatch();
   useEffect(() => {
@@ -42,6 +43,10 @@ export default function Room({
   useEffect(() => {
     if (!socket) {
       dispatch(setRoomIdx({ roomIdx }));
+      if (roomInfo.roomMax < roomInfo.roomNow) {
+        console.log('방빼');
+        router.push('/');
+      }
     }
   }, [dispatch, socket, roomIdx]);
 
