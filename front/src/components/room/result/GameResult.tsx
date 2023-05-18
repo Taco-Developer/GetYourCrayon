@@ -58,7 +58,7 @@ export default function GameResult({ socket }: { socket: WebSocket }) {
 
     const timer = setInterval(() => {
       setUrlKey((prevKey) => prevKey + 1);
-    }, 1500);
+    }, 1000);
 
     return () => {
       clearInterval(timer);
