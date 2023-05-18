@@ -38,7 +38,6 @@ function App({ Component, pageProps }: AppPropsWithLayoutType) {
     <>
       <Head>
         <title>개추크레용</title>
-        <link rel="icon" href="/favicon.ico" />
       </Head>
       <Provider store={store}>
         {getLayout(
