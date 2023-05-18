@@ -67,16 +67,16 @@ public class GameController {
     }
 
     @PostMapping("/saveImg")
-    public void saveImg(@RequestHeader String Authorization, @RequestBody ImgDto imgDto) throws IOException {
+    public void saveImg(@RequestHeader String Authorization, @RequestParam("img") String img, @RequestParam("roomIdx") String roomIdx) throws IOException {
 
-        Optional<RoomHash> roomHashOptional = roomRepository.findById(imgDto.getRoomIdx());
+        Optional<RoomHash> roomHashOptional = roomRepository.findById(roomIdx);
 
         if(roomHashOptional.isPresent()) {
             RoomHash roomHash = roomHashOptional.get();
-            String destinationPath = roomHash.getRoomIdx() + roomHash.getGameCnt() + roomHash.getNowRound();
+            String destinationPath = roomHash.getRoomIdx()+"/" + roomHash.getGameCnt() +"/"+ roomHash.getNowRound();
 
             // public void saveCatchMind(byte[] base64Data, String destinationPath, Long idx) throws IOException
-            saveImageService.saveCatchMind(imgDto.getImg(), destinationPath, 1L);
+            saveImageService.saveCatchMind(img, destinationPath, 1L);
         }
 
     }
