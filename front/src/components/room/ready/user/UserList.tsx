@@ -20,31 +20,17 @@ interface ReadyPropsType {
 }
 
 export default function UserList({ userList, socket }: ReadyPropsType) {
-  const [userCnt, setUserCnt] = useState<number>(0);
-  const [userMaxCnt, setUserMaxCnt] = useState<number>(6);
   const { roomIdx } = useAppSelector((state) => state.roomIdx);
+  const { roomInfo } = useAppSelector((state) => state);
 
-  const roomInfo = async (idx: string) => {
-    await gameAPI
-      .findRoom(idx)
-      .then((request) => console.log(request.data))
-      .catch((err) => console.log(err));
-  };
-
-  useEffect(() => {
-    setUserCnt(userList.length);
-  }, [userList]);
+  console.log(roomInfo);
 
   return (
     <UserBody>
-      <TitleDiv
-        onClick={() => {
-          roomInfo(roomIdx!);
-        }}
-      >
-        플레이어 {userCnt}/{userMaxCnt}
+      <TitleDiv>
+        플레이어 {roomInfo.roomNow}/{roomInfo.roomMax}
       </TitleDiv>
-      <UserDrop setUserMaxCnt={setUserMaxCnt} socket={socket} />
+      <UserDrop socket={socket} />
       <ListDiv>
         {userList.map((user, i) => (
           <UserDiv key={i}>

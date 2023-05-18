@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
+import { useAppSelector } from '@/store/thunkhook';
 
 import tw from 'tailwind-styled-components';
 

@@ -5,11 +5,10 @@ import Dropdown from '../../../ui/Dropdown';
 import { sendMessage } from '@/socket/messageSend';
 
 interface UserListProps {
-  setUserMaxCnt: React.Dispatch<React.SetStateAction<number>>;
   socket: WebSocket | null;
 }
 
-export default function UserDrop({ setUserMaxCnt, socket }: UserListProps) {
+export default function UserDrop({ socket }: UserListProps) {
   const [cntOption, setCntOption] = useState<{
     label: string;
     value: string | number;
@@ -19,9 +18,9 @@ export default function UserDrop({ setUserMaxCnt, socket }: UserListProps) {
     value: string | number;
   }) => {
     setCntOption(option);
-    if (typeof option.value === 'number') {
-      let cnt = option.value;
-      setUserMaxCnt(cnt);
+    if (socket !== null && typeof option.value === 'number') {
+      const cnt = option.value;
+      sendMessage(socket, 'roomUserCnt', { coomCnt: cnt });
     }
   };
 

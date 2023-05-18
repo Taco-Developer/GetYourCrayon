@@ -21,13 +21,6 @@ interface MessageType {
   message: string;
 }
 
-interface UserInType {
-  roomData: {
-    roomInfo: {};
-    userList: {};
-  };
-}
-
 export default function Ready({ socket, setSocket }: RoomPropsType) {
   const dispatch = useAppDispatch();
   const { roomInfo } = useAppSelector((state) => state);
