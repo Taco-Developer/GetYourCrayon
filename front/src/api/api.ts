@@ -45,7 +45,7 @@ export const gameAPI = {
         Authorization: getCookie('accesstoken'),
         'Content-Type': 'multipart/form-data',
       },
-      data: formData,
+      body: formData,
     };
     return axios(requestInfo);
   },
