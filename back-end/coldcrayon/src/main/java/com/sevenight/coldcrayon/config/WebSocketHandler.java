@@ -65,8 +65,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
     }
 
     // flag 변수
+    public volatile boolean gameOnGoing = false;
 
-    // roomTitle을 가져와야 할까요??
 
     public Map<String, Object> initailizeRoomInfo(String roomIdx) {
         Optional<RoomHash> roomHashOptional = roomRepository.findById(roomIdx);
@@ -162,8 +162,14 @@ public class WebSocketHandler extends TextWebSocketHandler {
             String authorization = jsonMessage.get("authorization");
             UserDto userDto = authService.selectOneMember(HeaderUtil.getAccessTokenString(authorization));
             // 닉네임, 소켓 아이디을 터미너스에서 확인할 수 있도록 설정: 5/16 DG
+            log.info("접속하는 유저의 닉네임: {}, 소켓 아이디(roomId): {}", userDto.getUserNickname(), roomId);
 
-            if(userDto.getUserIdx().equals(roomInfoMap.get("adminUserIdx").toString())){
+            UserInfo userInfo = userInfoMap.computeIfAbsent(session.getId(), key -> new UserInfo());
+
+            userInfo.setNickname(userDto.getUserNickname());
+            userInfo.setScore(0);
+            userInfo.setToken(authorization);
+            if(userDto.getUserIdx().equals(roomInfoMap.get("adminUserIdx"))){
                 joinRoomResponse = roomService.firstRoom(roomId);
             } else {
                 joinRoomResponse = roomService.joinRoom(userDto, roomId);
@@ -171,7 +177,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
             // 세션에 기록: 입장하려는 유저 인스턴스 생성
 
             // 방 입장 로직 수행
-                // 수민 로직 추가 예정: 타입을 ReponseDto로 정상일 때 ResponseDto 정보, 오류일 때 state를 포함한 정보
+            // 수민 로직 추가 예정: 타입을 ReponseDto로 정상일 때 ResponseDto 정보, 오류일 때 state를 포함한 정보
 
             String jsonResponse = objectMapper.writeValueAsString(joinRoomResponse);    // 방에 접속한 유저 목록
 
@@ -342,6 +348,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         }
         // 라운드 종료  ------- type 지정 필요 -------   // 수민: 임시로 내가 설정해서 사용하도록 함
         else if (type.equals("roundOver")) {
+            gameOnGoing = false;        // 시간 감소 로직 중지
 
             ScheduledFuture<?> scheduledFuture = timers.get(roomId);
             scheduledFuture.cancel(false);
@@ -450,7 +457,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         String path = session.getUri().getPath();
         return path.substring(path.lastIndexOf('/') + 1);
     }
-    
+
     @Getter
     @Setter
     private class UserInfo {
