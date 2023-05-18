@@ -5,6 +5,7 @@ import { useAppSelector } from '@/store/thunkhook';
 import Image from 'next/image';
 import { memberAPI } from '@/api/api';
 import Link from 'next/link';
+import { setCookie } from 'cookies-next';
 
 interface isClickType {
   isClick: boolean;
@@ -56,10 +57,15 @@ const MyProfile = ({ isClick, setIsClick }: isClickType) => {
           className="pb-4  active:relative active:top-0.5"
           onClick={() => {
             const logout = async () => {
-              await memberAPI
-                .logout()
-                .then((request) => console.log(request))
-                .catch((e) => console.log(e));
+              try {
+                await memberAPI.logout();
+                //쿠키초기화
+                setCookie('accesstoken', '');
+              } catch (e) {
+                console.log(e);
+              } finally {
+                location.href = '/';
+              }
             };
             logout();
           }}
