@@ -1,12 +1,28 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import Drawing from './roles/Drawing';
 import Solving from './roles/Solving';
-import { useAppSelector } from '@/store/thunkhook';
+import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
 import Loading from '@/components/ui/Loading';
+import { changeRole } from '@/store/slice/game/userRoleSlice';
 
 export default function CatchMinde({ socket }: { socket: WebSocket }) {
-  const { userRole } = useAppSelector((state) => state);
+  const {
+    userRole,
+    gameDatas: { selectedUserIdx },
+    userInfo: { userIdx },
+  } = useAppSelector((state) => state);
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    let role;
+    if (selectedUserIdx === userIdx) {
+      role = 'drawing';
+    } else {
+      role = 'solving';
+    }
+    dispatch(changeRole(role));
+  }, [dispatch, selectedUserIdx, userIdx]);
 
   switch (userRole) {
     case 'drawing':
