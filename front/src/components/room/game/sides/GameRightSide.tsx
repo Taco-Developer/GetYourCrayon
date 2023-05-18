@@ -21,6 +21,7 @@ export default function GameRightSide({
   const {
     leftTime,
     inGameChatDatas,
+    roomInfo: { gameCategory },
     userInfo: { userIdx, userNickname },
   } = useAppSelector((state) => state);
 
@@ -81,7 +82,7 @@ export default function GameRightSide({
           </Button>
         </ChatForm>
       </InGameChat>
-      {isPainting && (
+      {isPainting && gameCategory === 'Lier' && (
         <>
           <Margin type={MarginType.height} size={16} />
           <Button
