@@ -6,12 +6,23 @@ import Margin, { MarginType } from '@/components/ui/Margin';
 import { useAppSelector } from '@/store/thunkhook';
 
 export default function GameCenter({ children }: { children: ReactNode }) {
-  const { gameTheme } = useAppSelector((state) => state);
+  const {
+    gameTheme,
+    answers: { savedAnswers },
+    roomInfo: { gameCategory },
+    gameDatas: { selectedUserIdx },
+    userInfo: { userIdx },
+  } = useAppSelector((state) => state);
 
   return (
     <MainContainer>
       <MainHeader>
-        <Category>주제: {gameTheme.selectedTheme}</Category>
+        <Category>
+          <span>주제: {gameTheme.selectedTheme}</span>
+          {gameCategory === 'CatchMind' && userIdx === selectedUserIdx && (
+            <span> / 제시어: {savedAnswers[0]}</span>
+          )}
+        </Category>
       </MainHeader>
       <Margin type={MarginType.height} size={16} />
       {children}

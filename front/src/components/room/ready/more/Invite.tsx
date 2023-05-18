@@ -57,7 +57,7 @@ export default function Invite({ copyAction, createAction }: ReadyProps) {
     if (userInfo.userIdx === roomInfo.adminUserIdx) {
       setBtnAdmin(false);
     }
-  }, [roomInfo.adminUserIdx]);
+  }, [roomInfo.adminUserIdx, userInfo.userIdx]);
 
   /** 유저가 생성한 방 */
   const { roomIdx } = useAppSelector((state) => state.roomIdx);

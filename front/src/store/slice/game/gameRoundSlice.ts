@@ -9,7 +9,7 @@ export interface GameRoundType {
 
 const initialState: GameRoundType = {
   now: 1,
-  total: 4,
+  total: 100,
   isRoundStarted: false,
   winnerIdx: 0,
 };
@@ -41,9 +41,19 @@ const gameRoundSlice = createSlice({
     setWinner(state, action: PayloadAction<number>) {
       state.winnerIdx = action.payload;
     },
+
+    resetRound(state) {
+      state.now = 1;
+    },
   },
 });
 
-export const { goNextRound, endRound, setTotalRound, startRound, setWinner } =
-  gameRoundSlice.actions;
+export const {
+  goNextRound,
+  endRound,
+  setTotalRound,
+  startRound,
+  setWinner,
+  resetRound,
+} = gameRoundSlice.actions;
 export default gameRoundSlice.reducer;

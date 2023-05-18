@@ -42,7 +42,7 @@ export default function Dropdown({
     if (userInfo.userIdx === roomInfo.adminUserIdx) {
       setBtnAdmin(false);
     }
-  }, [roomInfo.adminUserIdx]);
+  }, [roomInfo.adminUserIdx, userInfo.userIdx]);
 
   return (
     <DropdownContainer onMouseLeave={closeDropdown}>
