@@ -31,7 +31,7 @@ public class SaveImageServiceImpl {
         return HomeUrl + destinationPath + "/" +idx + ".jpg";
     }
     // destinationPath == roomIdx + gameNumber + roundNumber;
-    public void saveCatchMind(InputStream base64Data, String destinationPath, Long idx) throws IOException {
+    public void saveCatchMind(String base64Data, String destinationPath, Long idx) throws IOException {
 
         String prefix = "/getchacrayon/image/history/";
         destinationPath = prefix + destinationPath;
@@ -41,15 +41,16 @@ public class SaveImageServiceImpl {
             file.mkdirs(); // 디렉토리가 없으면 해당 경로의 모든 디렉토리를 생성합니다.
         }
         System.err.println("여기까진 온다는 건가");
-//        byte[] decodedBytes = Base64.getDecoder().decode(base64Data);
+        byte[] decodedBytes = Base64.getDecoder().decode(base64Data.replace("data:image/png;base64",""));
 
         FileOutputStream outputStream = new FileOutputStream(destinationPath + "/" +idx + ".png");
+        outputStream.write(decodedBytes);
 
-        byte[] buffer = new byte[4096];
-        int bytesRead;
-        while ((bytesRead = base64Data.read(buffer)) != -1) {
-            outputStream.write(buffer, 0, bytesRead);
-        }
+//        byte[] buffer = new byte[4096];
+//        int bytesRead;
+//        while ((bytesRead = base64Data.read(buffer)) != -1) {
+//            outputStream.write(buffer, 0, bytesRead);
+//        }
         outputStream.close();
         outputStream.close();
 //        return HomeUrl + destinationPath + "/" +idx + ".png";
