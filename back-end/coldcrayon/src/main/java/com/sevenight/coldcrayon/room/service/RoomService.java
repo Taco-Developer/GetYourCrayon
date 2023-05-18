@@ -25,7 +25,7 @@ public interface RoomService {
 
     List<UserHash> getUserList(String roomIdx);
 
-    Map<String, Object> firstRoom(UserDto userDto, String roomIdx);
+    Map<String, Object> firstRoom(String roomIdx);
 
     // 게임 정답을 가장 먼저 맞힌 사람정보를 들고 온다.
     void CorrectUser(String roomIdx, Long userIdx);

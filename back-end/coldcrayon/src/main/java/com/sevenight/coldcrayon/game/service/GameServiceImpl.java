@@ -210,6 +210,7 @@ public class GameServiceImpl implements GameService{
                 message = "다음 라운드 정보";
                 status = "success";
                 roomHash.setCorrectUser(-1L);
+
                 roomRepository.save(roomHash);
 
                 ThemeCategory[] themeCategories = ThemeCategory.values();
@@ -296,6 +297,7 @@ public class GameServiceImpl implements GameService{
 
             gameEndDto.setMessage("게임 끝");
             gameEndDto.setStatus("success");
+
             roomHash.setRoomStatus(RoomStatus.Ready);
             roomRepository.save(roomHash);
 
