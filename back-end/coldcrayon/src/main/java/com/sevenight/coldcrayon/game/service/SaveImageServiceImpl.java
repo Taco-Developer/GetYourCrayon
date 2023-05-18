@@ -4,10 +4,13 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
-       
+import java.sql.Blob;
+import java.util.Base64;
+
 @Service
 public class SaveImageServiceImpl {
 
@@ -17,8 +20,6 @@ public class SaveImageServiceImpl {
     public String downloadImage(String imageUrl, String destinationPath, Long idx) throws IOException {
         String prefix = "/getchacrayon/image/history/";
         destinationPath = prefix + destinationPath;
-        System.err.println(imageUrl);
-        System.err.println(destinationPath);
 
         File file = new File(destinationPath);
         if (!file.exists()) {
@@ -31,4 +32,23 @@ public class SaveImageServiceImpl {
         outputStream.close();
         return HomeUrl + destinationPath + "/" +idx + ".jpg";
     }
+    // destinationPath == roomIdx + gameNumber + roundNumber;
+    public void saveCatchMind(String base64Data, String destinationPath, Long idx) throws IOException {
+
+        String prefix = "/getchacrayon/image/history/";
+        destinationPath = prefix + destinationPath;
+        File file = new File(destinationPath);
+
+        if (!file.exists()) {
+            file.mkdirs(); // 디렉토리가 없으면 해당 경로의 모든 디렉토리를 생성합니다.
+        }
+
+        byte[] decodedBytes = Base64.getDecoder().decode(base64Data);
+
+        FileOutputStream outputStream = new FileOutputStream(destinationPath + "/" +idx + ".png");
+        outputStream.write(decodedBytes);
+        outputStream.close();
+//        return HomeUrl + destinationPath + "/" +idx + ".png";
+    }
+
 }
