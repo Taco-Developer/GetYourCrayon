@@ -25,5 +25,5 @@ const inGameChatDatasSlice = createSlice({
   },
 });
 
-export const { addInGameChat } = inGameChatDatasSlice.actions;
+export const { addInGameChat, resetInGameChat } = inGameChatDatasSlice.actions;
 export default inGameChatDatasSlice.reducer;
