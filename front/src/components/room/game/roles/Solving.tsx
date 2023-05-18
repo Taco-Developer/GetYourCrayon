@@ -243,7 +243,6 @@ export default function Solving({
   useEffect(() => {
     const messageHandler = (event: MessageEvent) => {
       const data = JSON.parse(event.data);
-      console.log(data);
       if (data.type !== 'draw') return;
       switch (data.action) {
         // 비율 저장
