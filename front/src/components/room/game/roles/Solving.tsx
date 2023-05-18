@@ -426,6 +426,7 @@ export default function Solving({
               type="text"
               placeholder="그림에 해당하는 제시어를 입력해주세요."
               autoFocus
+              value={answerInputValue}
               onChange={answerChangeHandler}
             />
             <Margin type={MarginType.width} size={16} />

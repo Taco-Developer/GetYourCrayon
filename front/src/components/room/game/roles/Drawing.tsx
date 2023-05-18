@@ -29,6 +29,7 @@ export default function Drawing({ socket }: { socket: WebSocket }) {
     answers: { savedAnswers, inputedAnswers },
     userInfo: { userIdx },
     roomInfo: { adminUserIdx },
+    gameRound: { isRoundStarted },
   } = useAppSelector((state) => state);
   const dispatch = useAppDispatch();
 
@@ -248,13 +249,17 @@ export default function Drawing({ socket }: { socket: WebSocket }) {
 
   // 정답 비교
   useEffect(() => {
-    if (savedAnswers.length === 0) return;
+    if (savedAnswers.length === 0 || !isRoundStarted) return;
     if (savedAnswers.length === inputedAnswers.length) {
+      const canvas = canvasRef.current;
+      const dataUrl = canvas?.toDataURL();
+      sendMessage(socket, 'saveImg', { img: dataUrl });
       clearCanvas();
       if (userIdx === adminUserIdx) sendMessage(socket, 'roundOver');
       dispatch(endRound());
     }
   }, [
+    isRoundStarted,
     savedAnswers,
     inputedAnswers,
     dispatch,
@@ -267,12 +272,23 @@ export default function Drawing({ socket }: { socket: WebSocket }) {
 
   // 시간 초과
   useEffect(() => {
-    if (leftTime === 0) {
-      clearCanvas();
-      if (userIdx === adminUserIdx) sendMessage(socket, 'roundOver');
-      dispatch(endRound());
-    }
-  }, [leftTime, dispatch, socket, ctx, clearCanvas, userIdx, adminUserIdx]);
+    if (leftTime > 0 || !isRoundStarted) return;
+    const canvas = canvasRef.current;
+    const dataUrl = canvas?.toDataURL();
+    sendMessage(socket, 'saveImg', { img: dataUrl });
+    clearCanvas();
+    if (userIdx === adminUserIdx) sendMessage(socket, 'roundOver');
+    dispatch(endRound());
+  }, [
+    leftTime,
+    dispatch,
+    socket,
+    ctx,
+    clearCanvas,
+    userIdx,
+    adminUserIdx,
+    isRoundStarted,
+  ]);
 
   return (
     <>
