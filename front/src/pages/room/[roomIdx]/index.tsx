@@ -97,7 +97,6 @@ export const getServerSideProps: GetServerSideProps =
     try {
       const one = await api.get(`/room/${context.params?.roomIdx}`);
       const two = one.data;
-      console.log('==========>', two);
       if (two.roomMax === two.roomNow) {
         return {
           props: {
