@@ -8,8 +8,9 @@ import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
 import {
   closeIsScoreCheckModalOpened,
   resetAiImages,
+  resetGameDatas,
 } from '@/store/slice/game/gameDatasSlice';
-import { goNextRound } from '@/store/slice/game/gameRoundSlice';
+import { goNextRound, setWinner } from '@/store/slice/game/gameRoundSlice';
 import { resetAnswer } from '@/store/slice/game/answersSlice';
 import { resetTheme } from '@/store/slice/game/gameThemeSlice';
 import { sendMessage } from '@/socket/messageSend';
@@ -29,8 +30,9 @@ export default function EndRoundDialog({ socket }: { socket: WebSocket }) {
 
     const timer = setTimeout(() => {
       dispatch(resetAnswer());
-      dispatch(resetAiImages());
+      dispatch(resetGameDatas());
       dispatch(resetTheme());
+      dispatch(setWinner(0));
       dispatch(closeIsScoreCheckModalOpened());
       if (now < total) {
         dispatch(goNextRound());

@@ -1,6 +1,5 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { getCookie } from 'cookies-next';
 
 import tw from 'tailwind-styled-components';
 
@@ -11,26 +10,17 @@ import EndRoundDialog from './dialogs/EndRoundDialog';
 import Margin, { MarginType } from '@/components/ui/Margin';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-
 import { useAppDispatch, useAppSelector } from '@/store/thunkhook';
-import { addAiImages, savePrompt } from '@/store/slice/game/gameDatasSlice';
-import { saveTheme } from '@/store/slice/game/gameThemeSlice';
-import { addSavedAnswers } from '@/store/slice/game/answersSlice';
-import { listenEvent, removeEvent } from '@/socket/socketEvent';
 import { sendMessage } from '@/socket/messageSend';
-import { endRound, startRound } from '@/store/slice/game/gameRoundSlice';
+import { endRound } from '@/store/slice/game/gameRoundSlice';
 import Loading from '@/components/ui/Loading';
-import { setDefaultScore, setWinnerScore } from '@/store/slice/game/score';
-import { setGameUsers } from '@/store/slice/game/gameUsersSlice';
 
 export default function AiPaintingGuess({ socket }: { socket: WebSocket }) {
   const {
     leftTime,
-    gameRound: { now },
     answers: { savedAnswers, inputedAnswers },
     gameDatas: { aiImages },
     userInfo: { userIdx, userNickname },
-    roomInfo: { adminUserIdx },
   } = useAppSelector((state) => state);
   const dispatch = useAppDispatch();
 
@@ -60,69 +50,20 @@ export default function AiPaintingGuess({ socket }: { socket: WebSocket }) {
   useEffect(() => {
     if (savedAnswers.length === 0) return;
     if (savedAnswers.length === inputedAnswers.length) {
-      console.log('정답!!!');
       sendMessage(socket, 'roundOver');
+      setAnswerInputValue('');
       dispatch(endRound());
     }
   }, [savedAnswers, inputedAnswers, dispatch, socket]);
 
   // 시간 초과
   useEffect(() => {
-    console.log('남은 시간: ', leftTime);
     if (leftTime === 0) {
       sendMessage(socket, 'roundOver');
+      setAnswerInputValue('');
       dispatch(endRound());
     }
   }, [leftTime, dispatch, socket]);
-
-  // socket 통신
-  useEffect(() => {
-    const messageHandler = (event: MessageEvent) => {
-      const data = JSON.parse(event.data);
-      if (data.type !== 'gameDto') return;
-      console.log(data);
-      const {
-        correct,
-        message,
-        theme,
-        urlList,
-        winnerScore,
-        defualtScore,
-        userList,
-      } = data;
-      dispatch(setWinnerScore(winnerScore));
-      dispatch(setDefaultScore(defualtScore));
-      dispatch(addAiImages(urlList));
-      dispatch(setGameUsers(userList));
-      dispatch(addSavedAnswers(correct));
-      dispatch(saveTheme(theme));
-      dispatch(savePrompt(message));
-      dispatch(startRound());
-      sendMessage(socket, 'timeStart');
-    };
-
-    listenEvent(socket, messageHandler);
-
-    return () => {
-      removeEvent(socket, messageHandler);
-    };
-  }, [socket, dispatch]);
-
-  // 시작
-  useEffect(() => {
-    if (userIdx !== adminUserIdx) return;
-    if (now === 1) {
-      console.log('최초');
-      sendMessage(socket, 'gameStart', {
-        authorization: getCookie('accesstoken'),
-      });
-    } else {
-      console.log('다음');
-      sendMessage(socket, 'nextRound', {
-        authorization: getCookie('accesstoken'),
-      });
-    }
-  }, [socket, now, userIdx, adminUserIdx]);
 
   if (aiImages.length === 0) {
     return <Loading />;

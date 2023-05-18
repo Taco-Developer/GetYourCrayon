@@ -4,12 +4,14 @@ export interface GameDatasType {
   aiImages: string[];
   isScoreCheckModalOpened: boolean;
   prompt: string;
+  selectedUserIdx: number;
 }
 
 const initialState: GameDatasType = {
   aiImages: [],
   isScoreCheckModalOpened: false,
   prompt: '',
+  selectedUserIdx: 0,
 };
 
 const gameDatasSlice = createSlice({
@@ -44,6 +46,27 @@ const gameDatasSlice = createSlice({
     resetPrompt(state) {
       state.prompt = '';
     },
+
+    /** 이미지와 프롬포트 등록 */
+    setImageAndPrompt(
+      state,
+      action: PayloadAction<{ images: string[]; prompt: string }>,
+    ) {
+      state.aiImages = action.payload.images;
+      state.prompt = action.payload.prompt;
+    },
+
+    /** 선택된 유저(그리기) */
+    setSelectedUserIdx(state, action: PayloadAction<number>) {
+      state.selectedUserIdx = action.payload;
+    },
+
+    /** 저장된 데이터 초기화 (모달 제외) */
+    resetGameDatas(state) {
+      state.aiImages = [];
+      state.prompt = '';
+      state.selectedUserIdx = 0;
+    },
   },
 });
 
@@ -54,5 +77,8 @@ export const {
   resetAiImages,
   resetPrompt,
   savePrompt,
+  setImageAndPrompt,
+  setSelectedUserIdx,
+  resetGameDatas,
 } = gameDatasSlice.actions;
 export default gameDatasSlice.reducer;
