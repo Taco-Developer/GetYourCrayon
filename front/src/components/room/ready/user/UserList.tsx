@@ -25,23 +25,23 @@ export default function UserList({ userList, socket }: ReadyPropsType) {
   const { roomInfo } = useAppSelector((state) => state);
   const [roomMax, setRoomMax] = useState<string>('');
 
-  useEffect(() => {
-    if (socket) {
-      const token = getCookie('accesstoken');
+  // useEffect(() => {
+  //   if (socket) {
+  //     const token = getCookie('accesstoken');
 
-      const modeChangeHandler = (event: MessageEvent) => {
-        const data = JSON.parse(event.data);
-        if (data.type !== 'roomUserCnt') return;
-        console.log(data);
-      };
+  //     const modeChangeHandler = (event: MessageEvent) => {
+  //       const data = JSON.parse(event.data);
+  //       if (data.type !== 'roomUserCnt') return;
+  //       console.log(data);
+  //     };
 
-      listenEvent(socket, modeChangeHandler);
+  //     listenEvent(socket, modeChangeHandler);
 
-      return () => {
-        removeEvent(socket, modeChangeHandler);
-      };
-    }
-  }, [socket]);
+  //     return () => {
+  //       removeEvent(socket, modeChangeHandler);
+  //     };
+  //   }
+  // }, [socket]);
 
   console.log(roomInfo);
 
