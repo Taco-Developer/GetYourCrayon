@@ -23,7 +23,11 @@ export default function UserDrop({ socket }: UserListProps) {
     value: string | number;
   }) => {
     setCntOption(option);
-    if (socket !== null && typeof option.value === 'number') {
+    if (
+      socket !== null &&
+      typeof option.value === 'number' &&
+      roomInfo.adminUserIdx === userInfo.userIdx
+    ) {
       const cnt = option.value;
       sendMessage(socket, 'roomUserCnt', { roomCnt: cnt });
     }

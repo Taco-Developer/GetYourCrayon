@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { getCookie } from 'cookies-next';
-import { useRouter } from 'next/router';
+import router, { useRouter } from 'next/router';
 
 import axios from 'axios';
-
+import { gameAPI } from '@/api/api';
 import Ready from '@/components/room/ready/Ready';
 import InGameRoom from '@/components/room/game/InGameRoom';
 import GameResult from '@/components/room/result/GameResult';
@@ -34,7 +34,9 @@ export default function Room({
 
   const dispatch = useAppDispatch();
   useEffect(() => {
-    if (message === 'notLogin') {
+    if (message === 'getOut') {
+      router.push('/');
+    } else if (message === 'notLogin') {
       console.log('로그인해라');
       router.push('/');
     }
@@ -49,16 +51,6 @@ export default function Room({
       }
     }
   }, [dispatch, socket, roomIdx, roomInfo.roomMax, roomInfo.roomNow, router]);
-
-  // useEffect(() => {
-  //   if (!socket) return;
-  //   console.log('게임 입장 되어있음');
-  //   return () => {
-  //     console.log('게임 나가짐');
-  //     gameAPI.outRoom();
-  //     socket.close();
-  //   };
-  // }, [socket]);
 
   useEffect(() => {
     if (!socket) return;
@@ -103,16 +95,27 @@ export const getServerSideProps: GetServerSideProps =
       },
     });
     try {
-      const re = await api.get(`/member/myinfo`);
-      const res = re.data;
-      store.dispatch(setLogin({ isLogin: true }));
-      store.dispatch(setUser(res));
-      return {
-        props: {
-          message: 'Login',
-          roomIdx: context.params?.roomIdx || 'noRoom',
-        },
-      };
+      const one = await api.get(`/room/${context.params?.roomIdx}`);
+      const two = one.data;
+      if (two.roomMax === two.roomNow) {
+        return {
+          props: {
+            message: 'getOut',
+            roomIdx: '',
+          },
+        };
+      } else {
+        const re = await api.get(`/member/myinfo`);
+        const res = re.data;
+        store.dispatch(setLogin({ isLogin: true }));
+        store.dispatch(setUser(res));
+        return {
+          props: {
+            message: 'Login',
+            roomIdx: context.params?.roomIdx || 'noRoom',
+          },
+        };
+      }
     } catch (e) {
       console.log(e);
       return {

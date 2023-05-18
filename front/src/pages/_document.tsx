@@ -8,6 +8,7 @@ export default function Document() {
           httpEquiv="Content-Security-Policy"
           content="upgrade-insecure-requests"
         />
+        <link rel="icon" href="/favicon.ico?v=2" />
       </Head>
       <body id="scroll">
         <Main />

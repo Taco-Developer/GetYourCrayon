@@ -6,6 +6,7 @@ import wrapper from '@/store';
 import { Provider } from 'react-redux';
 import tw from 'tailwind-styled-components';
 import { useEffect, useState } from 'react';
+import Head from 'next/head';
 
 /** 기본 Nextpage 타입에 추가로 getLayout 타입지정 */
 export type NextPageWithLayout = NextPage & {
@@ -34,13 +35,18 @@ function App({ Component, pageProps }: AppPropsWithLayoutType) {
     setBgtheme(bgThe);
   }, []);
   return (
-    <Provider store={store}>
-      {getLayout(
-        <Container className={bgTheme}>
-          <Component {...props} />
-        </Container>,
-      )}
-    </Provider>
+    <>
+      <Head>
+        <title>개추크레용</title>
+      </Head>
+      <Provider store={store}>
+        {getLayout(
+          <Container className={bgTheme}>
+            <Component {...props} />
+          </Container>,
+        )}
+      </Provider>
+    </>
   );
 }
 
