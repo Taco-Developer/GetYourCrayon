@@ -80,6 +80,7 @@ export default function Ready({ socket, setSocket }: RoomPropsType) {
           message: `${userNickname}님이 입장하셨습니다 :)`,
           status: 'chatting',
         });
+        sendMessage(socket, 'roomUserCnt', { coomCnt: '6' });
       };
 
       return () => {
