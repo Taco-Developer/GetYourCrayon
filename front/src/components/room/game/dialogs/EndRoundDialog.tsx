@@ -47,7 +47,7 @@ export default function EndRoundDialog({ socket }: { socket: WebSocket }) {
       if (userIdx === adminUserIdx) {
         sendMessage(socket, 'gameAlert', { status: 'gameEnd' });
       }
-    }, 1000);
+    }, 1500);
 
     return () => {
       clearTimeout(timer);
