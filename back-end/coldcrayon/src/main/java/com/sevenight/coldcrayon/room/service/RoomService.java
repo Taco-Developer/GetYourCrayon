@@ -1,9 +1,7 @@
 package com.sevenight.coldcrayon.room.service;
 
 import com.sevenight.coldcrayon.auth.dto.UserDto;
-import com.sevenight.coldcrayon.room.dto.RoomDto;
 import com.sevenight.coldcrayon.room.dto.RoomResponseDto;
-import com.sevenight.coldcrayon.room.dto.UserHashResponseDto;
 import com.sevenight.coldcrayon.room.entity.UserHash;
 
 import java.util.List;
