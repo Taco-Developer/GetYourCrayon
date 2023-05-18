@@ -30,7 +30,7 @@ export default function MainCarousel() {
       >
         <SwiperSlide>
           <div className="flex items-center justify-center">
-            <div className="relative h-96 w-full">
+            <div className="relative h-carou-size w-full">
               <Image
                 src="/images/carr6.png"
                 alt="no_img"
@@ -49,7 +49,7 @@ export default function MainCarousel() {
 
         <SwiperSlide>
           <div className="flex items-center justify-center">
-            <div className="relative h-96 w-full">
+            <div className="relative h-carou-size w-full">
               <Image
                 src="/images/carr5.png"
                 alt="no_img"
@@ -67,7 +67,7 @@ export default function MainCarousel() {
         <SwiperSlide>
           <div className="flex items-center justify-center">
             {' '}
-            <div className="relative h-96 w-full">
+            <div className="relative h-carou-size w-full">
               <Image
                 src="/images/carr3.png"
                 alt="no_img"
@@ -84,7 +84,7 @@ export default function MainCarousel() {
         </SwiperSlide>
         <SwiperSlide>
           <div className="flex items-center justify-center">
-            <div className="relative h-96 w-full">
+            <div className="relative h-carou-size w-full">
               <Image
                 src="/images/carr1.png"
                 alt="no_img"
