@@ -30,6 +30,7 @@ import { setAllScore } from '@/store/slice/game/score';
 import { saveTheme } from '@/store/slice/game/gameThemeSlice';
 import { sendMessage } from '@/socket/messageSend';
 import { getCookie } from 'cookies-next';
+import Head from 'next/head';
 
 export default function InGameRoom({
   game,
@@ -146,6 +147,9 @@ export default function InGameRoom({
 
   return (
     <>
+      <Head>
+        <title>{game}</title>
+      </Head>
       <Container>
         {game === 'Lier' && <Lier socket={socket} />}
         {game === 'AiPainting' && <AiPaintingGuess socket={socket} />}
