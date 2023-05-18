@@ -164,6 +164,11 @@ public class WebSocketHandler extends TextWebSocketHandler {
         Optional<RoomHash> roomHashOptional = roomRepository.findById(roomId);
 
         // userIn:유저가 들어올 때 userData: (유저Id, 기본점수)
+        log.error("#############################################################");
+        log.error("message.toString() : "+message.toString());
+        log.error("type : " + type);
+        log.error("#############################################################");
+
         if (type.equals("userIn")) {
             if(roomHashOptional.isPresent()){
                 RoomHash roomHash = roomHashOptional.get();
