@@ -73,7 +73,7 @@ public class GameController {
 
         if(roomHashOptional.isPresent()) {
             RoomHash roomHash = roomHashOptional.get();
-            String destinationPath = roomHash.getRoomIdx() + roomHash.getGameCnt() + roomHash.getNowRound();
+            String destinationPath = roomHash.getRoomIdx()+"/" + roomHash.getGameCnt() +"/"+ roomHash.getNowRound();
 
             // public void saveCatchMind(byte[] base64Data, String destinationPath, Long idx) throws IOException
             saveImageService.saveCatchMind(img, destinationPath, 1L);
