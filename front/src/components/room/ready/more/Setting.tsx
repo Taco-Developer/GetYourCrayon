@@ -1,14 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import tw from 'tailwind-styled-components';
 import Dropdown from '../../../ui/Dropdown';
-
 import { sendMessage } from '@/socket/messageSend';
+import { useAppSelector } from '@/store/thunkhook';
 
 interface ReadyProps {
   socket: WebSocket | null;
 }
 
 export default function Setting({ socket }: ReadyProps) {
+  const { roomInfo, userInfo } = useAppSelector((state) => state);
+  const [nowTime, setNowTime] = useState<string>('보통');
+  const [nowTurn, setNowTurn] = useState<string>('4');
   const [timeOption, setTimeOption] = useState<{
     label: string;
     value: string | number;
@@ -33,6 +36,15 @@ export default function Setting({ socket }: ReadyProps) {
     { label: '5', value: 5 },
   ];
 
+  // Time
+  // useEffect(() => {
+  //   setNowTurn(`${roomInfo.maxRound}`);
+  // }, [roomInfo.maxRound]);
+
+  useEffect(() => {
+    setNowTurn(`${roomInfo.maxRound}`);
+  }, [roomInfo.maxRound]);
+
   const timeOptionChange = (option: {
     label: string;
     value: string | number;
@@ -56,23 +68,31 @@ export default function Setting({ socket }: ReadyProps) {
       <SelectDiv>
         시간
         <DropDiv>
-          <Dropdown
-            base={timeOptions[1]}
-            options={timeOptions}
-            onChange={timeOptionChange}
-            Option={timeOption}
-          />
+          {roomInfo.adminUserIdx === userInfo.userIdx ? (
+            <Dropdown
+              base={timeOptions[1]}
+              options={timeOptions}
+              onChange={timeOptionChange}
+              Option={timeOption}
+            />
+          ) : (
+            <div>{nowTime}</div>
+          )}
         </DropDiv>
       </SelectDiv>
       <SelectDiv>
         턴
         <DropDiv>
-          <Dropdown
-            base={turnOptions[2]}
-            options={turnOptions}
-            onChange={turnOptionChange}
-            Option={turnOption}
-          />
+          {roomInfo.adminUserIdx === userInfo.userIdx ? (
+            <Dropdown
+              base={turnOptions[3]}
+              options={turnOptions}
+              onChange={turnOptionChange}
+              Option={turnOption}
+            />
+          ) : (
+            <div>{nowTurn}</div>
+          )}
         </DropDiv>
       </SelectDiv>
     </OutDiv>

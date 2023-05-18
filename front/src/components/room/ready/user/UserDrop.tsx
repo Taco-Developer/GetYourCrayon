@@ -27,16 +27,16 @@ export default function UserDrop({ socket }: UserListProps) {
     }
   };
 
-  useEffect(() => {
-    setMemberCnt(`${roomInfo.roomMax}명`);
-  }, [roomInfo.roomMax]);
-
   const cntOptions = [
     { label: '3명', value: 3 },
     { label: '4명', value: 4 },
     { label: '5명', value: 5 },
     { label: '6명', value: 6 },
   ];
+
+  useEffect(() => {
+    setMemberCnt(`${roomInfo.roomMax}명`);
+  }, [roomInfo]);
 
   return (
     <OutDiv>
