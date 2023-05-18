@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import tw from 'tailwind-styled-components';
 import Dropdown from '../../../ui/Dropdown';
-
 import { sendMessage } from '@/socket/messageSend';
-import { setRoomInfo } from '@/store/slice/game/gameRoomInfo';
-import { listenEvent, removeEvent } from '@/socket/socketEvent';
+import { useAppSelector } from '@/store/thunkhook';
 
 interface UserListProps {
   socket: WebSocket | null;
 }
 
 export default function UserDrop({ socket }: UserListProps) {
+  const { roomInfo, userInfo } = useAppSelector((state) => state);
+  const [memberCnt, setMemberCnt] = useState<string>('6명');
   const [cntOption, setCntOption] = useState<{
     label: string;
     value: string | number;
@@ -36,12 +36,16 @@ export default function UserDrop({ socket }: UserListProps) {
 
   return (
     <OutDiv>
-      <Dropdown
-        base={cntOptions[3]}
-        options={cntOptions}
-        onChange={cntOptionChange}
-        Option={cntOption}
-      />
+      {roomInfo.adminUserIdx === userInfo.userIdx ? (
+        <Dropdown
+          base={cntOptions[3]}
+          options={cntOptions}
+          onChange={cntOptionChange}
+          Option={cntOption}
+        />
+      ) : (
+        <div>{memberCnt}</div>
+      )}
     </OutDiv>
   );
 }

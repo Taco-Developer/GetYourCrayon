@@ -4,8 +4,6 @@ import { useRouter } from 'next/router';
 
 import axios from 'axios';
 
-import { gameAPI } from '@/api/api';
-
 import Ready from '@/components/room/ready/Ready';
 import InGameRoom from '@/components/room/game/InGameRoom';
 import GameResult from '@/components/room/result/GameResult';
