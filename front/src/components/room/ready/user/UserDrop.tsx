@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import tw from 'tailwind-styled-components';
 import Dropdown from '../../../ui/Dropdown';
+import Swal from 'sweetalert2';
 import { sendMessage } from '@/socket/messageSend';
 import { useAppSelector } from '@/store/thunkhook';
 
@@ -9,6 +10,7 @@ interface UserListProps {
 }
 
 export default function UserDrop({ socket }: UserListProps) {
+  const Swal = require('sweetalert2');
   const { roomInfo, userInfo } = useAppSelector((state) => state);
   const [memberCnt, setMemberCnt] = useState<string>('6명');
   const [cntOption, setCntOption] = useState<{
