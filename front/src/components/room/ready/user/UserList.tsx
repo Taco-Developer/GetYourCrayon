@@ -4,6 +4,8 @@ import Image from 'next/image';
 import UserDrop from './UserDrop';
 import { gameAPI } from '@/api/api';
 import { useAppSelector } from '@/store/thunkhook';
+import { getCookie } from 'cookies-next';
+import { listenEvent, removeEvent } from '@/socket/socketEvent';
 
 export interface UserData {
   roomIdx: string | null;
@@ -16,34 +18,39 @@ export interface UserData {
 
 interface ReadyPropsType {
   userList: UserData[];
+  socket: WebSocket | null;
 }
 
-export default function UserList({ userList }: ReadyPropsType) {
-  const [userCnt, setUserCnt] = useState<number>(0);
-  const [userMaxCnt, setUserMaxCnt] = useState<number>(6);
-  const { roomIdx } = useAppSelector((state) => state.roomIdx);
+export default function UserList({ userList, socket }: ReadyPropsType) {
+  const { roomInfo } = useAppSelector((state) => state);
+  const [roomMax, setRoomMax] = useState<string>('');
 
-  const roomInfo = async (idx: string) => {
-    await gameAPI
-      .findRoom(idx)
-      .then((request) => console.log(request.data))
-      .catch((err) => console.log(err));
-  };
+  // useEffect(() => {
+  //   if (socket) {
+  //     const token = getCookie('accesstoken');
 
-  useEffect(() => {
-    setUserCnt(userList.length);
-  }, [userList]);
+  //     const modeChangeHandler = (event: MessageEvent) => {
+  //       const data = JSON.parse(event.data);
+  //       if (data.type !== 'roomUserCnt') return;
+  //       console.log(data);
+  //     };
+
+  //     listenEvent(socket, modeChangeHandler);
+
+  //     return () => {
+  //       removeEvent(socket, modeChangeHandler);
+  //     };
+  //   }
+  // }, [socket]);
+
+  console.log(roomInfo);
 
   return (
     <UserBody>
-      <TitleDiv
-        onClick={() => {
-          roomInfo(roomIdx!);
-        }}
-      >
-        플레이어 {userCnt}/{userMaxCnt}
+      <TitleDiv>
+        플레이어 {roomInfo.roomNow}/{roomInfo.roomMax}
       </TitleDiv>
-      <UserDrop setUserMaxCnt={setUserMaxCnt} />
+      <UserDrop socket={socket} />
       <ListDiv>
         {userList.map((user, i) => (
           <UserDiv key={i}>

@@ -21,13 +21,6 @@ interface MessageType {
   message: string;
 }
 
-interface UserInType {
-  roomData: {
-    roomInfo: {};
-    userList: {};
-  };
-}
-
 export default function Ready({ socket, setSocket }: RoomPropsType) {
   const dispatch = useAppDispatch();
   const { roomInfo } = useAppSelector((state) => state);
@@ -87,11 +80,7 @@ export default function Ready({ socket, setSocket }: RoomPropsType) {
           message: `${userNickname}님이 입장하셨습니다 :)`,
           status: 'chatting',
         });
-      };
-
-      return () => {
-        removeEvent(socket, messageHandler);
-        removeEvent(socket, roomInHandler);
+        sendMessage(socket, 'roomUserCnt', { roomCnt: '6' });
       };
     }
   }, [userNickname, socket, dispatch]);
@@ -99,7 +88,7 @@ export default function Ready({ socket, setSocket }: RoomPropsType) {
   return (
     <RoomBody>
       <UserDiv>
-        <UserList userList={userList} />
+        <UserList userList={userList} socket={socket} />
       </UserDiv>
       <MoreDiv>
         <PickDiv>
