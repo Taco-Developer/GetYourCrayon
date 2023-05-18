@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,6 +28,7 @@ import java.util.*;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+
 public class GameServiceImpl implements GameService{
 
 
@@ -287,6 +289,7 @@ public class GameServiceImpl implements GameService{
         return responseGameDto;
     }
 
+    @Transactional
     public GameEndDto endGame(String roomIdx) {
 
         GameEndDto gameEndDto = new GameEndDto();
@@ -313,6 +316,7 @@ public class GameServiceImpl implements GameService{
                     if(optionalUser.isPresent()){
                         User userEntity = optionalUser.get();
                         userEntity.setUserPoint(userEntity.getUserPoint() + userHash.getUserScore());
+                        userRepository.save(userEntity);
                     }
 
                     userHashResponseDtoList.add(UserHashResponseDto.of(userHash));
