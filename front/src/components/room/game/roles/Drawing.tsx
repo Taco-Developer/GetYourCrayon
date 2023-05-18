@@ -14,6 +14,7 @@ import {
 import { sendMessage } from '@/socket/messageSend';
 import CanvasOptions from './drawing/CanvasOptions';
 import EndRoundDialog from '../dialogs/EndRoundDialog';
+import { endRound } from '@/store/slice/game/gameRoundSlice';
 
 export default function Drawing({ socket }: { socket: WebSocket }) {
   const {
@@ -23,7 +24,12 @@ export default function Drawing({ socket }: { socket: WebSocket }) {
     INIT_BG_COLOR,
     selectedTool,
   } = useAppSelector((state) => state.draw);
-  const { isRoundStarted } = useAppSelector((state) => state.gameRound);
+  const {
+    leftTime,
+    answers: { savedAnswers, inputedAnswers },
+    userInfo: { userIdx },
+    roomInfo: { adminUserIdx },
+  } = useAppSelector((state) => state);
   const dispatch = useAppDispatch();
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -240,11 +246,33 @@ export default function Drawing({ socket }: { socket: WebSocket }) {
     sendMessage(socket, 'draw', { action: 'changeTool', selectedTool });
   }, [selectedTool, ctx, paletteColor, canvasBgColor, socket]);
 
+  // 정답 비교
   useEffect(() => {
-    if (isRoundStarted && ctx) {
+    if (savedAnswers.length === 0) return;
+    if (savedAnswers.length === inputedAnswers.length) {
       clearCanvas();
+      if (userIdx === adminUserIdx) sendMessage(socket, 'roundOver');
+      dispatch(endRound());
     }
-  }, [isRoundStarted, clearCanvas, ctx]);
+  }, [
+    savedAnswers,
+    inputedAnswers,
+    dispatch,
+    socket,
+    ctx,
+    clearCanvas,
+    userIdx,
+    adminUserIdx,
+  ]);
+
+  // 시간 초과
+  useEffect(() => {
+    if (leftTime === 0) {
+      clearCanvas();
+      if (userIdx === adminUserIdx) sendMessage(socket, 'roundOver');
+      dispatch(endRound());
+    }
+  }, [leftTime, dispatch, socket, ctx, clearCanvas, userIdx, adminUserIdx]);
 
   return (
     <>
