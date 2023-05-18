@@ -193,9 +193,11 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
             if(status.equals("answer")){
                 String answer = jsonMessage.get("content");
-                Long userIdx = Long.parseLong(jsonMessage.get("userIdx"));
-                String roomIdx = (String) roomInfoMap.get("roomIdx");
-                roomService.CorrectUser(roomIdx, answer ,userIdx);
+                if(answer.equals(gameInfoMap.get("correct"))){
+                    Long userIdx = Long.parseLong(jsonMessage.get("userIdx"));
+                    String roomIdx = (String) roomInfoMap.get("roomIdx");
+                    roomService.CorrectUser(roomIdx, userIdx);
+                }
             }
             for (WebSocketSession s : sessions) {
                 if (s.isOpen()) {
@@ -304,6 +306,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
             // 현재 설정된 게임 타입을 받아와서 case 구분
             String authorization = jsonMessage.get("authorization");
 
+
+            // userDto, gameRequestDto(roomIdx, gameCategory, maxRound) 필요
             UserDto userDto = authService.selectOneMember(HeaderUtil.getAccessTokenString(authorization));
 
             GameRequestDto gameRequestDto = GameRequestDto.builder()

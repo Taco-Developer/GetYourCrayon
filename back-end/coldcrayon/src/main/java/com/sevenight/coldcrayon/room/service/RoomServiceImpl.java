@@ -76,11 +76,13 @@ public class RoomServiceImpl implements RoomService{
         return RoomResponseDto.of(roomHashOptional, "fail", "요청하신 방의 정보가 없습니다.");
     }
 
-    public void CorrectUser(String roomIdx,String answer, Long userIdx){
+    public void CorrectUser(String roomIdx, Long userIdx){
         Optional<RoomHash> roomHashOptional = roomRepository.findById(roomIdx);
         if(roomHashOptional.isPresent()){
             RoomHash roomHash = roomHashOptional.get();
-            if (answer.equals(roomHash.getAnswer()) && roomHash.getCorrectUser().equals(-1L)){
+            log.debug("roomHash.getCorrectUser() : " + roomHash.getCorrectUser().toString());
+            log.debug("userIdx : " + userIdx.toString());
+            if (roomHash.getCorrectUser().equals(-1L)){
                 roomHash.setCorrectUser(userIdx);
                 roomRepository.save(roomHash);
             }
