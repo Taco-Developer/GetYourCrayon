@@ -1,15 +1,17 @@
-import React, { useState } from 'react';
-import Painting from './roles/Painting';
+import React from 'react';
+
+import Drawing from './roles/Drawing';
 import Solving from './roles/Solving';
+import { useAppSelector } from '@/store/thunkhook';
 
-export default function RelayPainting() {
-  const [role, setRole] = useState('solving');
+export default function RelayPainting({ socket }: { socket: WebSocket }) {
+  const { userRole } = useAppSelector((state) => state);
 
-  switch (role) {
-    case 'painting':
-      return <Painting />;
+  switch (userRole) {
+    case 'drawing':
+      return <Drawing socket={socket} />;
     case 'solving':
-      return <Solving isReverseGame={false} />;
+      return <Solving isReverseGame={false} socket={socket} />;
     default:
       return <div>Something wrong!!!</div>;
   }
