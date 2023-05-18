@@ -13,10 +13,13 @@ import com.sevenight.coldcrayon.room.repository.UserHashRepository;
 import com.sevenight.coldcrayon.theme.entity.ThemeCategory;
 import com.sevenight.coldcrayon.theme.service.ThemeService;
 
+import com.sevenight.coldcrayon.user.entity.User;
+import com.sevenight.coldcrayon.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,6 +28,7 @@ import java.util.*;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+
 public class GameServiceImpl implements GameService{
 
 
@@ -35,6 +39,7 @@ public class GameServiceImpl implements GameService{
     private final ThemeService themeService;
     private final WebClientServiceImpl webClientService;
     private final SaveImageServiceImpl saveImageService;
+    private final UserRepository userRepository;
 
     @Value("${java.file.homeUrl}")
     String HomeUrl;
@@ -284,6 +289,7 @@ public class GameServiceImpl implements GameService{
         return responseGameDto;
     }
 
+    @Transactional
     public GameEndDto endGame(String roomIdx) {
 
         GameEndDto gameEndDto = new GameEndDto();
@@ -305,9 +311,15 @@ public class GameServiceImpl implements GameService{
                 Optional<UserHash> optionalUserHash = userHashRepository.findById(Long.parseLong(user.toString()));
                 if (optionalUserHash.isPresent()) {
                     UserHash userHash = optionalUserHash.get();
-                    userHash.setUserPoint(userHash.getUserScore() + userHash.getUserPoint());
-                    userHashResponseDtoList.add(UserHashResponseDto.of(userHash));
 
+                    Optional<User> optionalUser = userRepository.findByUserIdx(userHash.getUserIdx());
+                    if(optionalUser.isPresent()){
+                        User userEntity = optionalUser.get();
+                        userEntity.setUserPoint(userEntity.getUserPoint() + userHash.getUserScore());
+                        userRepository.save(userEntity);
+                    }
+
+                    userHashResponseDtoList.add(UserHashResponseDto.of(userHash));
                     userHash.setUserScore(0);
                     userHashRepository.save(userHash);
                 }
