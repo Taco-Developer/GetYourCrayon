@@ -15,6 +15,7 @@ import { sendMessage } from '@/socket/messageSend';
 import CanvasOptions from './drawing/CanvasOptions';
 import EndRoundDialog from '../dialogs/EndRoundDialog';
 import { endRound } from '@/store/slice/game/gameRoundSlice';
+import { gameAPI } from '@/api/api';
 
 export default function Drawing({ socket }: { socket: WebSocket }) {
   const {
@@ -28,7 +29,7 @@ export default function Drawing({ socket }: { socket: WebSocket }) {
     leftTime,
     answers: { savedAnswers, inputedAnswers },
     userInfo: { userIdx },
-    roomInfo: { adminUserIdx },
+    roomInfo: { adminUserIdx, roomIdx },
     gameRound: { isRoundStarted },
   } = useAppSelector((state) => state);
   const dispatch = useAppDispatch();
@@ -250,15 +251,24 @@ export default function Drawing({ socket }: { socket: WebSocket }) {
   // 정답 비교
   useEffect(() => {
     if (savedAnswers.length === 0 || !isRoundStarted) return;
-    if (savedAnswers.length === inputedAnswers.length) {
-      const canvas = canvasRef.current;
-      const dataUrl = canvas?.toDataURL();
-      sendMessage(socket, 'saveImg', { img: dataUrl });
+    if (savedAnswers.length !== inputedAnswers.length) return;
+    const endDrawing = async () => {
+      // const canvas = canvasRef.current!;
+      // canvas.toBlob(async (blob) => {
+      // const formData = new FormData();
+      // formData.append('img', blob!);
+      // formData.append('roomIdx', roomIdx);
+      // await gameAPI.postCanvasImage(formData);
+      // await gameAPI.postCanvasImage({ roomIdx, img: blob! });
+      // });
       clearCanvas();
       if (userIdx === adminUserIdx) sendMessage(socket, 'roundOver');
       dispatch(endRound());
-    }
+    };
+
+    endDrawing();
   }, [
+    roomIdx,
     isRoundStarted,
     savedAnswers,
     inputedAnswers,
@@ -273,13 +283,21 @@ export default function Drawing({ socket }: { socket: WebSocket }) {
   // 시간 초과
   useEffect(() => {
     if (leftTime > 0 || !isRoundStarted) return;
-    const canvas = canvasRef.current;
-    const dataUrl = canvas?.toDataURL();
-    sendMessage(socket, 'saveImg', { img: dataUrl });
-    clearCanvas();
-    if (userIdx === adminUserIdx) sendMessage(socket, 'roundOver');
-    dispatch(endRound());
+    const endDrawing = async () => {
+      // const canvas = canvasRef.current!;
+      // canvas.toBlob(async (blob) => {
+      // const formData = new FormData();
+      // formData.append('img', blob!);
+      // formData.append('roomIdx', roomIdx);
+      //   await gameAPI.postCanvasImage({ roomIdx, img: blob! });
+      // });
+      clearCanvas();
+      if (userIdx === adminUserIdx) sendMessage(socket, 'roundOver');
+      dispatch(endRound());
+    };
+    endDrawing();
   }, [
+    roomIdx,
     leftTime,
     dispatch,
     socket,

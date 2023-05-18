@@ -36,6 +36,9 @@ export const gameAPI = {
   outRoom: () => api.post(`/room/out`),
   /**AI 이미지가져오기 */
   getAiImages: () => api.get(`/game/reversecatch`),
+  /** Canvas 이미지 보내기 */
+  postCanvasImage: (formData: { roomIdx: string; img: Blob }) =>
+    api.post('/game/saveImg', formData),
 };
 
 export const memberAPI = {

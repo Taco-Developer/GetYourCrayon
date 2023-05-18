@@ -43,13 +43,14 @@ export default function Ready({ socket, setSocket }: RoomPropsType) {
   };
 
   useEffect(() => {
+    if (socket) return;
     if (roomIdx !== null) {
       const newSocket = new WebSocket(
         `wss://getyourcrayon.co.kr/api/${roomIdx}`,
       );
       setSocket(newSocket);
     }
-  }, [roomIdx, setSocket]);
+  }, [roomIdx, setSocket, socket]);
 
   useEffect(() => {
     if (socket) {
