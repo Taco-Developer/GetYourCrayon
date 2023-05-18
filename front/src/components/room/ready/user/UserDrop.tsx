@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import tw from 'tailwind-styled-components';
 import Dropdown from '../../../ui/Dropdown';
 
@@ -18,13 +18,6 @@ export default function UserDrop({ socket }: UserListProps) {
     value: string | number;
   }>();
 
-  const roomInHandler = (event: MessageEvent) => {
-    const data = JSON.parse(event.data);
-    if (data.type !== 'userIn') return;
-    dispatch(setRoomInfo(data.roomInfo));
-    console.log(data);
-  };
-
   const cntOptionChange = (option: {
     label: string;
     value: string | number;
@@ -33,9 +26,25 @@ export default function UserDrop({ socket }: UserListProps) {
     if (socket !== null && typeof option.value === 'number') {
       const cnt = option.value;
       sendMessage(socket, 'roomUserCnt', { roomCnt: cnt });
-      listenEvent(socket, roomInHandler);
     }
   };
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const roomInHandler = (event: MessageEvent) => {
+      const data = JSON.parse(event.data);
+      if (data.type !== 'userIn') return;
+      dispatch(setRoomInfo(data.roomInfo));
+      console.log(data);
+    };
+
+    listenEvent(socket, roomInHandler);
+
+    return () => {
+      removeEvent(socket, roomInHandler);
+    };
+  }, [socket]);
 
   const cntOptions = [
     { label: '3명', value: 3 },
