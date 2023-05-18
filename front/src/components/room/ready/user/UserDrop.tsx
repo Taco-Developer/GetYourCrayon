@@ -20,7 +20,7 @@ export default function UserDrop({ socket }: UserListProps) {
     setCntOption(option);
     if (socket !== null && typeof option.value === 'number') {
       const cnt = option.value;
-      sendMessage(socket, 'roomUserCnt', { coomCnt: cnt });
+      sendMessage(socket, 'roomUserCnt', { roomCnt: cnt });
     }
   };
 
