@@ -153,7 +153,6 @@ export default function GameResult({ socket }: { socket: WebSocket }) {
               rounded="2xl"
               className="text-xl"
               onClick={() => {
-                dispatch(resetRound());
                 sendMessage(socket, 'gameAlert', { status: 'gameStart' });
               }}
             >
