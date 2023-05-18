@@ -25,9 +25,26 @@ export default function MainCarousel() {
         loop={true}
         effect="fade"
         fadeEffect={{ crossFade: true }}
-        autoplay={{ delay: 2000, disableOnInteraction: false }}
+        autoplay={{ delay: 3000, disableOnInteraction: false }}
         modules={[Navigation, Pagination, EffectFade, Mousewheel, Autoplay]}
       >
+        <SwiperSlide>
+          <div className="flex items-center justify-center">
+            <div className="relative h-carou-size w-full">
+              <Image
+                src="/images/caro8.png"
+                alt="no_img"
+                priority
+                fill
+                sizes="100%"
+              />
+            </div>
+            <div className="absolute top-4 left-2 text-xl lg:text-3xl bg-gray-100 bg-opacity-70 ">
+              <div>친구들과 같이 게임을 해보아요</div>
+              <div>다양한 모드로 재미있게!</div>
+            </div>
+          </div>
+        </SwiperSlide>
         <SwiperSlide>
           <div className="flex items-center justify-center">
             <div className="relative h-carou-size w-full">
@@ -39,14 +56,29 @@ export default function MainCarousel() {
                 sizes="100%"
               />
             </div>
-            <div className="absolute top-4 left-2 text-xl lg:text-3xl bg-gray-100 bg-opacity-40 ">
-              <div>친구들과 같이 게임을 해보아요</div>
+            <div className="absolute top-4 left-2 text-xl lg:text-3xl bg-gray-100 bg-opacity-70 ">
               <div>어떤단어를 가지고 </div>
               <div>이 이미지를 만들었을까요?</div>
             </div>
           </div>
         </SwiperSlide>
-
+        <SwiperSlide>
+          <div className="flex items-center justify-center">
+            <div className="relative h-carou-size w-full">
+              <Image
+                src="/images/caro7.png"
+                alt="no_img"
+                priority
+                fill
+                sizes="100%"
+              />
+            </div>
+            <div className="absolute top-4 left-2 text-xl lg:text-3xl bg-gray-100 bg-opacity-70 ">
+              <div>친구가 그리는 그림을 보고</div>
+              <div>정답을 맞춰보아요!</div>
+            </div>
+          </div>
+        </SwiperSlide>
         <SwiperSlide>
           <div className="flex items-center justify-center">
             <div className="relative h-carou-size w-full">
@@ -58,7 +90,7 @@ export default function MainCarousel() {
                 sizes="100%"
               />
             </div>
-            <div className="absolute top-4 left-2 text-xl lg:text-3xl bg-gray-100 bg-opacity-60">
+            <div className="absolute top-4 left-2 text-xl lg:text-3xl bg-gray-100 bg-opacity-70">
               <div>게임을 통해 얻은 포인트로</div>
               <div>뽑기를 해보세요!</div>
             </div>
@@ -76,7 +108,7 @@ export default function MainCarousel() {
                 sizes="100%"
               />
             </div>
-            <div className="absolute top-4 left-2 text-xl lg:text-3xl bg-gray-100 bg-opacity-60 ">
+            <div className="absolute top-4 left-2 text-xl lg:text-3xl bg-gray-100 bg-opacity-70 ">
               <div>나만의 컬렉션을 완성해요</div>
               <div>프로필 이미지로 설정해보세요!</div>
             </div>
@@ -93,7 +125,7 @@ export default function MainCarousel() {
                 sizes="100%"
               />
             </div>
-            <div className="absolute top-4 left-2 text-xl lg:text-3xl bg-gray-100 bg-opacity-60 ">
+            <div className="absolute top-4 left-2 text-xl lg:text-3xl bg-gray-100 bg-opacity-70 ">
               <div>시간에 따라 바뀌는 3가지 배경</div>
             </div>
           </div>
