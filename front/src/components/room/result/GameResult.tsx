@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 
 import Image from 'next/image';
 
@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/Button';
 import { sendMessage } from '@/socket/messageSend';
 import { setGameUsers } from '@/store/slice/game/gameUsersSlice';
 import { listenEvent, removeEvent } from '@/socket/socketEvent';
+import { resetRound } from '@/store/slice/game/gameRoundSlice';
 
 interface UrlListType {
   [key: number]: string[];
@@ -24,6 +25,7 @@ export default function GameResult({ socket }: { socket: WebSocket }) {
   const [urlList, setUrlList] = useState<UrlListType>();
   const [urlKey, setUrlKey] = useState(0);
   const [showDatas, setShowDatas] = useState<string[][]>([]);
+  const resultRef = useRef<HTMLDivElement>(null);
 
   // socket 이벤트 등록 및 전송
   useEffect(() => {
@@ -68,6 +70,10 @@ export default function GameResult({ socket }: { socket: WebSocket }) {
     setShowDatas((prev) => [...prev, urlList[urlKey]]);
   }, [urlList, urlKey]);
 
+  useEffect(() => {
+    resultRef.current?.scrollIntoView({ behavior: 'auto', block: 'end' });
+  }, [showDatas]);
+
   return (
     <Container>
       <main className="flex-auto flex gap-6 overflow-hidden">
@@ -98,18 +104,30 @@ export default function GameResult({ socket }: { socket: WebSocket }) {
           </UserList>
         </LeftSection>
         <RightSection>
-          <div className="h-full rounded-xl bg-[#5AAEFC] px-8 py-6">
+          <div className="h-full rounded-xl bg-[#5AAEFC] px-8 py-6 overflow-hidden flex flex-col">
             <h2 className="text-2xl">게임 결과</h2>
             <Margin type={MarginType.height} size={24} />
-            <ul className="h-full flex flex-col gap-6 overflow-y-auto">
+            <ul className="flex-auto w-full flex flex-col gap-8 overflow-y-auto scrollbar-bu">
               {showDatas.map((url, idx) => (
-                <li key={idx} className="">
-                  <div>{url[0]}</div>
-                  <div>{url[1]}</div>
-                  <div>{url[2]}</div>
-                  <div>{url[3]}</div>
+                <li key={idx} className="w-full">
+                  <h3 className="text-xl">{idx + 1} 라운드</h3>
+                  <Margin type={MarginType.height} size={16} />
+                  <div className="w-full grid grid-cols-2 grid-rows-2 gap-4">
+                    {[0, 1, 2, 3].map((idx) => (
+                      <div key={idx} className="w-4/5 h-[200px] relative">
+                        <Image
+                          src={url[idx]}
+                          alt="AI 제작 이미지"
+                          fill
+                          sizes="100%"
+                          priority
+                        />
+                      </div>
+                    ))}
+                  </div>
                 </li>
               ))}
+              <div ref={resultRef} />
             </ul>
             <div></div>
           </div>
@@ -121,6 +139,7 @@ export default function GameResult({ socket }: { socket: WebSocket }) {
               color="bg-[#5AAEFC]"
               className="text-xl text-white"
               onClick={() => {
+                dispatch(resetRound());
                 sendMessage(socket, 'gameAlert', { status: 'ready' });
               }}
             >
