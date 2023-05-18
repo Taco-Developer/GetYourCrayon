@@ -82,6 +82,11 @@ export default function Ready({ socket, setSocket }: RoomPropsType) {
         });
         sendMessage(socket, 'roomUserCnt', { roomCnt: '6' });
       };
+
+      return () => {
+        removeEvent(socket, roomInHandler);
+        removeEvent(socket, messageHandler);
+      };
     }
   }, [userNickname, socket, dispatch]);
 
