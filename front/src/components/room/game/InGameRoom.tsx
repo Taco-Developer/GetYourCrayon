@@ -22,17 +22,11 @@ import {
 } from '@/store/slice/game/gameRoundSlice';
 import { setGameUsers } from '@/store/slice/game/gameUsersSlice';
 import {
-  addAiImages,
   openIsScoreCheckModalOpened,
-  savePrompt,
   setImageAndPrompt,
   setSelectedUserIdx,
 } from '@/store/slice/game/gameDatasSlice';
-import {
-  setAllScore,
-  setDefaultScore,
-  setWinnerScore,
-} from '@/store/slice/game/score';
+import { setAllScore } from '@/store/slice/game/score';
 import { saveTheme } from '@/store/slice/game/gameThemeSlice';
 import { sendMessage } from '@/socket/messageSend';
 import { getCookie } from 'cookies-next';
@@ -116,7 +110,7 @@ export default function InGameRoom({
         dispatch(addSavedAnswers(correct));
         dispatch(saveTheme(theme));
         dispatch(startRound());
-        sendMessage(socket, 'timeStart');
+        if (userIdx === adminUserIdx) sendMessage(socket, 'timeStart');
         return;
       }
     };
@@ -128,7 +122,7 @@ export default function InGameRoom({
     return () => {
       removeEvent(socket, messageHandler);
     };
-  }, [dispatch, socket, inputedAnswers, savedAnswers]);
+  }, [dispatch, socket, inputedAnswers, savedAnswers, userIdx, adminUserIdx]);
 
   // 시작
   useEffect(() => {
