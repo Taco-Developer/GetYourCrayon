@@ -281,10 +281,13 @@ public class RoomServiceImpl implements RoomService{
     }
 
     public int changeRoomOption(String type, String option, String roomIdx) {
+
+        log.error("**************************** 여기는 changeRoomOption 입니다.");
+
         Optional<RoomHash> optionalRoomHash = roomRepository.findById(roomIdx);
         if (optionalRoomHash.isPresent()) {
             RoomHash roomHash = optionalRoomHash.get();
-            System.err.println(roomHash);
+            System.err.println("옵션 변경 전 방 정보입니다. : " + roomHash.toString());
 
             if (type.equals("roomUserCnt")) {
                 if (roomHash.getRoomNow() > Integer.parseInt(option)) {
@@ -303,6 +306,14 @@ public class RoomServiceImpl implements RoomService{
                 System.err.println("faefafaefawf 넣음 : " + option);
             }
             roomRepository.save(roomHash);
+
+            Optional<RoomHash> optionalRoomHash2 = roomRepository.findById(roomIdx);
+            if (optionalRoomHash2.isPresent()) {
+                RoomHash roomHash2 = optionalRoomHash.get();
+                log.error("옵션 변경 흐 방 정보입니다. : " + roomHash.toString());
+            }
+
+            log.error("**************************** 이상입니다.");
         }
         return 1;
     }
