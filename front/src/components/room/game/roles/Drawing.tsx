@@ -13,6 +13,7 @@ import {
 } from '@/store/slice/game/drawSlice';
 import { sendMessage } from '@/socket/messageSend';
 import CanvasOptions from './drawing/CanvasOptions';
+import EndRoundDialog from '../dialogs/EndRoundDialog';
 
 const BRUSH_WIDTH_LIST = [
   [4, 'bg-black rounded-full w-[4px] h-[4px]'],
@@ -65,14 +66,14 @@ export default function Drawing({ socket }: { socket: WebSocket }) {
           ),
         ]);
       }
-      sendMessage(socket, 'startDraw');
+      sendMessage(socket, 'draw', { action: 'startDraw' });
       // 터치 위치 이동
       if (event.type === 'touchstart') {
         const { offsetX, offsetY } = getTouchPosition(
           event as React.TouchEvent,
         );
         ctx?.moveTo(offsetX, offsetY);
-        sendMessage(socket, 'move', { offsetX, offsetY });
+        sendMessage(socket, 'draw', { action: 'move', offsetX, offsetY });
       }
       return;
     }
@@ -84,7 +85,7 @@ export default function Drawing({ socket }: { socket: WebSocket }) {
       ctx.beginPath();
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       dispatch(changeBgColor(paletteColor));
-      sendMessage(socket, 'fill');
+      sendMessage(socket, 'draw', { action: 'fill' });
     }
   };
 
@@ -92,7 +93,7 @@ export default function Drawing({ socket }: { socket: WebSocket }) {
   const cancelDrawing = () => {
     setIsDrawing(false);
     ctx?.closePath();
-    sendMessage(socket, 'cancelDraw');
+    sendMessage(socket, 'draw', { action: 'cancelDraw' });
   };
 
   // 마우스 이동 or 그리기
@@ -114,11 +115,11 @@ export default function Drawing({ socket }: { socket: WebSocket }) {
     if (isDrawing) {
       ctx?.lineTo(offsetX, offsetY);
       ctx?.stroke();
-      sendMessage(socket, 'drawMove', { offsetX, offsetY });
+      sendMessage(socket, 'draw', { action: 'drawMove', offsetX, offsetY });
       return;
     }
     ctx?.moveTo(offsetX, offsetY);
-    sendMessage(socket, 'move', { offsetX, offsetY });
+    sendMessage(socket, 'draw', { action: 'move', offsetX, offsetY });
   };
 
   // 캔버스 초기화
@@ -149,12 +150,12 @@ export default function Drawing({ socket }: { socket: WebSocket }) {
         const result = prev;
         const popedImage = result.pop()!;
         ctx?.putImageData(popedImage, 0, 0);
-        sendMessage(socket, 'goPrev');
+        sendMessage(socket, 'draw', { action: 'goPrev' });
         return result;
       }
 
       clearCanvas();
-      sendMessage(socket, 'clearCanvas');
+      sendMessage(socket, 'draw', { action: 'clearCanvas' });
       return [];
     });
   };
@@ -174,7 +175,7 @@ export default function Drawing({ socket }: { socket: WebSocket }) {
       const result = next;
       const popedImage = result.pop()!;
       ctx?.putImageData(popedImage, 0, 0);
-      sendMessage(socket, 'goNext');
+      sendMessage(socket, 'draw', { action: 'goNext' });
       return result;
     });
   };
@@ -189,7 +190,7 @@ export default function Drawing({ socket }: { socket: WebSocket }) {
     );
     setPrevArray((prev) => [...prev, currentImageData]);
     clearCanvas();
-    sendMessage(socket, 'goTrashBin');
+    sendMessage(socket, 'draw', { action: 'goTrashBin' });
   };
 
   // 캔버스 초기 설정
@@ -208,14 +209,17 @@ export default function Drawing({ socket }: { socket: WebSocket }) {
     context!.scale(dpr, dpr);
     setCtx(context);
 
-    sendMessage(socket, 'saveRatio', { width, height });
+    sendMessage(socket, 'draw', { action: 'saveRatio', width, height });
   }, [canvasRef, socket]);
 
   // 붓 너비 변경
   useEffect(() => {
     if (!ctx) return;
     ctx.lineWidth = brushWidth;
-    sendMessage(socket, 'changeBrushWidth', { width: brushWidth });
+    sendMessage(socket, 'draw', {
+      action: 'changeBrushWidth',
+      width: brushWidth,
+    });
   }, [ctx, brushWidth, socket]);
 
   // 색 변경
@@ -223,7 +227,7 @@ export default function Drawing({ socket }: { socket: WebSocket }) {
     if (!ctx) return;
     ctx.strokeStyle = paletteColor;
     ctx.fillStyle = paletteColor;
-    sendMessage(socket, 'changeColor', { paletteColor });
+    sendMessage(socket, 'draw', { action: 'changeColor', paletteColor });
   }, [ctx, paletteColor, socket]);
 
   // 도구 변경
@@ -240,11 +244,12 @@ export default function Drawing({ socket }: { socket: WebSocket }) {
         ctx.fillStyle = paletteColor;
         break;
     }
-    sendMessage(socket, 'changeTool', { selectedTool });
+    sendMessage(socket, 'draw', { action: 'changeTool', selectedTool });
   }, [selectedTool, ctx, paletteColor, canvasBgColor, socket]);
 
   return (
     <>
+      <EndRoundDialog socket={socket} />
       <GameLeftSide
         isPainting={true}
         paletteColor={paletteColor}

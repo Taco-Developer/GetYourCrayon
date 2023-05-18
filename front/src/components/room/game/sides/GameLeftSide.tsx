@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import tw from 'tailwind-styled-components';
 
@@ -30,17 +30,6 @@ export default function GameLeftSide({
     ['#0C134F', 'bg-[#0C134F]'],
     ['#AA77FF', 'bg-[#AA77FF]'],
   ];
-
-  const [isMicMuted, setIsMicMuted] = useState(false);
-  const [isVolumeMuted, setIsVolumeMuted] = useState(false);
-
-  const micOptionClickHandler = () => {
-    setIsMicMuted((prev) => !prev);
-  };
-
-  const volumeOptionClickHandler = () => {
-    setIsVolumeMuted((prev) => !prev);
-  };
 
   return (
     <SideDisplay isLeft={true}>
@@ -130,8 +119,8 @@ const MemberItem = tw.div`
 `;
 
 const Profile = tw.div`
-  w-5
-  h-5
+  max-w-[32px]
+  max-h-[32px]
   rounded-full
   overflow-hidden
 
