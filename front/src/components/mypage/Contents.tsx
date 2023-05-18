@@ -6,7 +6,7 @@ import { useState } from 'react';
 
 /** 가챠, 컬렉션 컴포넌트 */
 export default function Contents() {
-  const [typeCheck, setTypeCheck] = useState([true, false]);
+  const [typeCheck, setTypeCheck] = useState([false, true]);
 
   return (
     <ContentsDiv className="overflow-hidden">

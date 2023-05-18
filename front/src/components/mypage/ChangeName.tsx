@@ -80,6 +80,8 @@ export default function ChangeName() {
       return '공백은 사용할 수 없습니다.';
     } else if (text.length > 8) {
       return '글자수가 초과되었습니다.';
+    } else {
+      return false;
     }
   };
 
@@ -124,30 +126,35 @@ export default function ChangeName() {
                 error={Validation() ? true : false}
                 helperText={Validation() ? Validation() : ''}
                 inputProps={{
-                  maxLength: 12,
+                  maxLength: 9,
                   style: { fontFamily: 'CookieRun' },
                 }}
               />
               <div
                 className={`${
-                  text.length > 10 ? 'text-apple-red' : 'text-apple-green '
+                  (Validation() ? true : false)
+                    ? 'text-apple-red'
+                    : 'text-apple-green '
                 } text-base`}
               >
-                {text.length}/10
+                {text.length}/8
               </div>
             </div>
 
             <Button
-              px={6}
+              px={8}
               py={2}
               rounded="lg"
-              color="bg-main-green"
+              color={`${
+                (Validation() ? true : false)
+                  ? 'bg-apple-red'
+                  : 'bg-apple-green'
+              }`}
               onClick={() => {
                 const changed = async () => {
                   await memberAPI
                     .changeName(text)
                     .then((request) => {
-                      console.log('성공');
                       memberAPI
                         .getUserInfo()
                         .then((request) => {
