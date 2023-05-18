@@ -3,7 +3,6 @@ import tw from 'tailwind-styled-components';
 import Dropdown from '../../../ui/Dropdown';
 
 import { sendMessage } from '@/socket/messageSend';
-import { useAppDispatch } from '@/store/thunkhook';
 import { setRoomInfo } from '@/store/slice/game/gameRoomInfo';
 import { listenEvent, removeEvent } from '@/socket/socketEvent';
 
@@ -12,7 +11,6 @@ interface UserListProps {
 }
 
 export default function UserDrop({ socket }: UserListProps) {
-  const dispatch = useAppDispatch();
   const [cntOption, setCntOption] = useState<{
     label: string;
     value: string | number;
@@ -28,23 +26,6 @@ export default function UserDrop({ socket }: UserListProps) {
       sendMessage(socket, 'roomUserCnt', { roomCnt: cnt });
     }
   };
-
-  useEffect(() => {
-    if (!socket) return;
-
-    const roomInHandler = (event: MessageEvent) => {
-      const data = JSON.parse(event.data);
-      if (data.type !== 'userIn') return;
-      dispatch(setRoomInfo(data.roomInfo));
-      console.log(data);
-    };
-
-    listenEvent(socket, roomInHandler);
-
-    return () => {
-      removeEvent(socket, roomInHandler);
-    };
-  }, [socket]);
 
   const cntOptions = [
     { label: '3명', value: 3 },
