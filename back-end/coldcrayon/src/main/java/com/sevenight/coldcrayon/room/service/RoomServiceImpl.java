@@ -137,7 +137,7 @@ public class RoomServiceImpl implements RoomService{
         return joinRoomResponse;
     }
 
-    public Map<String, Object> firstRoom(UserDto userDto, String roomIdx){
+    public Map<String, Object> firstRoom(String roomIdx){
         Map<String, Object> joinRoomResponse = new HashMap<>();
         List<UserHash> userHashList = new ArrayList<>();
 
