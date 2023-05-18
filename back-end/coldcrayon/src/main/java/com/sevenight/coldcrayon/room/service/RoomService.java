@@ -26,7 +26,7 @@ public interface RoomService {
     Map<String, Object> firstRoom(String roomIdx);
 
     // 게임 정답을 가장 먼저 맞힌 사람정보를 들고 온다.
-    void CorrectUser(String roomIdx,String answer, Long userIdx);
+    void CorrectUser(String roomIdx, Long userIdx);
 
     int changeRoomOption(String type, String option, String roomIdx);
 
