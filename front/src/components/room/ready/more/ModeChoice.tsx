@@ -11,17 +11,11 @@ export default function ModeChoice({ socket }: ReadyProps) {
   const { roomInfo, userInfo } = useAppSelector((state) => state);
 
   const [choiceMode, setChoiceMode] = useState<number>();
-  const gameList: string[] = [
-    'AI',
-    '라이어',
-    '캐치마인드',
-    '리버스캐치마인드',
-    '이어그리기',
-  ];
+  const gameList: string[] = ['AI', '캐치마인드'];
   const socketSend: string[] = [
     'AiPainting',
-    'Lier',
     'CatchMind',
+    'Lier',
     'ReverseCatchMind',
     'RelayPainting',
   ];
@@ -37,9 +31,9 @@ export default function ModeChoice({ socket }: ReadyProps) {
   useEffect(() => {
     if (roomInfo.gameCategory === 'AiPainting') {
       setChoiceMode(0);
-    } else if (roomInfo.gameCategory === 'Lier') {
-      setChoiceMode(1);
     } else if (roomInfo.gameCategory === 'CatchMind') {
+      setChoiceMode(1);
+    } else if (roomInfo.gameCategory === 'Lier') {
       setChoiceMode(2);
     } else if (roomInfo.gameCategory === 'ReverseCatchMind') {
       setChoiceMode(3);
@@ -52,19 +46,26 @@ export default function ModeChoice({ socket }: ReadyProps) {
     <OutDiv>
       {gameList.map((gameMode: string, i: number) => {
         let w: string = '';
-        if (choiceMode === i) {
-          w = 'w-40';
+        let t: string = '';
+        if (i === 0 && choiceMode === i) {
+          w = 'bg-AI-mode bg-cover w-40 w-60';
+          t = 'bg-white bg-opacity-60 text-7xl';
+        } else if (i === 1 && choiceMode === i) {
+          w = 'bg-CatchMind bg-cover w-60';
+          t = 'bg-white bg-opacity-60 text-7xl';
+        } else if (choiceMode === i) {
+          w = 'w-60 text-4xl';
         }
         return (
-          <CardBtn
+          <CardPick
             key={i}
             className={w}
             onClick={() => {
               pickMode(i);
             }}
           >
-            {gameMode}
-          </CardBtn>
+            <TextPick className={t}>{gameMode}</TextPick>
+          </CardPick>
         );
       })}
     </OutDiv>
@@ -72,4 +73,5 @@ export default function ModeChoice({ socket }: ReadyProps) {
 }
 
 const OutDiv = tw.div`w-full h-60 m-3  flex flex-row items-center justify-between`;
-const CardBtn = tw.div`w-20 h-full bg-white bg-opacity-50 rounded-2xl m-1 flex items-center justify-center`;
+const CardPick = tw.div`w-40 h-full bg-white bg-opacity-50 text-5xl rounded-2xl m-1 flex items-center justify-center`;
+const TextPick = tw.div``;

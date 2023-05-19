@@ -22,6 +22,9 @@ module.exports = {
         'even-ing': "url('/images/bgevening.gif')",
         'night-ing': "url('/images/bgnight.gif')",
         'gacha-bg': "url('/images/gachabgimg.png')",
+        'construction-bg': "url('/images/construction.png')",
+        'AI-mode': "url('/images/AImode.png')",
+        CatchMind: "url('/images/Catch_mode.png')",
       },
       spacing: {
         10: '10%',
