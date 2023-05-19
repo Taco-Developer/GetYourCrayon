@@ -89,7 +89,13 @@ export default function Login({ open, setOpen }: LoginPropsType) {
                 location.href = KAKAO_URL;
               }}
             >
-              <Image src="/images/kakao.png" alt="no_img" fill sizes="100%" />
+              <Image
+                src="/images/kakao.png"
+                alt="카카오 로그인"
+                priority
+                fill
+                sizes="100%"
+              />
             </ImageDiv>
           </LoginDiv>
         </DialogContent>
@@ -105,9 +111,10 @@ const LoginDiv = tw.div`
   text-4xl
   w-full
   h-full
+  overflow-hidden
   `;
 const ImageDiv = tw.div`
-  h-16
-  w-72
+  h-kakao-size
+  w-kakao-size
   relative
 `;
