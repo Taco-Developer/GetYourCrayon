@@ -30,7 +30,6 @@ export default function Chat({ socket, messageList }: ChatPropsType) {
         message: currentMessage,
         status: 'chatting',
       };
-      // console.log(sendSocket);
       sendMessage(socket, 'chat', sendSocket);
       setCurrentMessage('');
     }

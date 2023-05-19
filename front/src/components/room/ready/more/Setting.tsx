@@ -36,11 +36,6 @@ export default function Setting({ socket }: ReadyProps) {
     { label: '5', value: 5 },
   ];
 
-  // Time
-  // useEffect(() => {
-  //   setNowTurn(`${roomInfo.maxRound}`);
-  // }, [roomInfo.maxRound]);
-
   useEffect(() => {
     setNowTurn(`${roomInfo.maxRound}`);
   }, [roomInfo.maxRound]);
@@ -58,7 +53,6 @@ export default function Setting({ socket }: ReadyProps) {
     setTurnOption(option);
     if (socket !== null) {
       const sendSocket = option.value;
-      console.log(sendSocket);
       sendMessage(socket, 'gameTurn', { gameTurn: sendSocket });
     }
   };
