@@ -43,7 +43,6 @@ export default function GameLeftSide({
             className="row-span-2 col-span-3 w-full h-full"
             value={paletteColor}
             onChange={(event) => {
-              console.log(event.target.value);
               changeColor!(event.target.value);
             }}
           />
