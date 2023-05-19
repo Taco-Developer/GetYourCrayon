@@ -32,7 +32,7 @@ public class ThemeServiceImpl implements ThemeService {
         keywordList.add(suffix);
         keywordList.add(themeKeyword);
 
-        System.err.println(themeKeyword + suffix);
+        System.err.println("getThemeKeyword : " + themeKeyword + suffix);
         return keywordList;
     }
 }

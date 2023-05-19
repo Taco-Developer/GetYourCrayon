@@ -73,7 +73,6 @@ public class GameServiceImpl implements GameService{
                     Optional<UserHash> userHashOptional = userHashRepository.findById(Long.parseLong(userIdx.toString()));
                     if(userHashOptional.isPresent()){
                         UserHash userHash = userHashOptional.get();
-                        System.err.println(userHash);
                         userHash.setUserScore(0);
                         userHashRepository.save(userHash);
                         userHashResponseDtoList.add(UserHashResponseDto.of(userHash));
@@ -88,7 +87,7 @@ public class GameServiceImpl implements GameService{
                 ThemeCategory themeCategory = themeCategories[random.nextInt(themeCategories.length)];
                 List<String> keywords = themeService.getThemeKeyword(themeCategory);
                 message = keywords.get(1) + keywords.get(0);
-                String translateScript = webClientService.papagoPost(message);
+
                 //             game 모드가 AI라면,,,
 
                 room.setRoomStatus(RoomStatus.Playing);
@@ -105,6 +104,7 @@ public class GameServiceImpl implements GameService{
 
                 switch(gameRequestDto.getGameCategory()) {
                     case AiPainting:
+                        String translateScript = webClientService.papagoPost(message);
                         List<Object> dalEResponse = webClientService.AiPost(translateScript);
 
                         Long i = 0L;
@@ -114,8 +114,6 @@ public class GameServiceImpl implements GameService{
                             String url = urlMap.get("url");
 
                             String destination = room.getRoomIdx() + "/" + room.getGameCnt() + "/" + room.getNowRound();
-                            System.err.println(url);
-                            System.err.println(destination);
                             String dest = saveImageService.downloadImage(url, destination, ++i);
                             dests.add(dest);
                         }
@@ -131,7 +129,7 @@ public class GameServiceImpl implements GameService{
                     case ReverseCatchMind:
                         break;
                     default:
-                        System.err.println("게임 모드 없어~~~~~~~~~~~~~~~~");
+                        log.debug("게임 모드 없어~~~~~~~~~~~~~~~~");
                         return null;
                 }
 
@@ -239,8 +237,6 @@ public class GameServiceImpl implements GameService{
                             String url = urlMap.get("url");
 
                             String destination = roomHash.getRoomIdx() + "/" + roomHash.getGameCnt() + "/" + roomHash.getNowRound();
-                            System.err.println(url);
-                            System.err.println(destination);
                             String dest = saveImageService.downloadImage(url, destination, ++i);
                             dests.add(dest);
                         }
@@ -256,7 +252,7 @@ public class GameServiceImpl implements GameService{
                     case ReverseCatchMind:
                         break;
                     default:
-                        System.err.println("게임 모드 없어~~~~~~~~~~~~~~~~");
+                        log.debug("게임 모드 없어~~~~~~~~~~~~~~~~");
                         return null;
 
                 }
@@ -333,19 +329,14 @@ public class GameServiceImpl implements GameService{
             File subDirs[] = dir.listFiles();
             String[] dirNames = dir.list();
 
-            System.err.println("topDir" + topDir);
-            System.err.println("Arrays.toString(subDirs) : " + Arrays.toString(subDirs));
-            System.err.println("Arrays.toString(dirNames) : " + Arrays.toString(dirNames));
 
             for (int i = 0; i < subDirs.length; i++) {
                 File files[] = subDirs[i].listFiles();
-                System.err.println("Arrays.toString(files) : " + Arrays.toString(files));
                 List<String> urlList = new ArrayList<>();
                 for (File file : files) {
                     urlList.add(HomeUrl+file.getPath());
                 }
                 urlMap.put(Integer.parseInt(dirNames[i]), urlList);
-                System.err.println(urlMap.toString());
             }
             gameEndDto.setUrlList(urlMap);
             gameEndDto.setUserList(userHashResponseDtoList);
