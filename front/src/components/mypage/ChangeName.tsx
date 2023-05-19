@@ -158,7 +158,6 @@ export default function ChangeName() {
                       memberAPI
                         .getUserInfo()
                         .then((request) => {
-                          console.log(request.data);
                           dispatch(setMypage(request.data.body));
                           ClickClose();
                         })

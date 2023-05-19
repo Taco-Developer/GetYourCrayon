@@ -80,7 +80,6 @@ export const getServerSideProps: GetServerSideProps =
 export default function Home({ message }: { message: string }) {
   const [open, setOpen] = useState(false);
   useEffect(() => {
-    console.log(message);
     if (message === 'notLogin') {
       setOpen(true);
     }
@@ -88,7 +87,6 @@ export default function Home({ message }: { message: string }) {
   //리덕스에 초기값넣어주기.
   // dispatch(setUser(res));
   const { userInfo } = useAppSelector((state) => state);
-  console.log(userInfo);
   return (
     <MainContainer>
       <Margin type={MarginType.height} size={150} />
