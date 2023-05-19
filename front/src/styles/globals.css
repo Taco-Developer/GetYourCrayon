@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 /* 404 Font */
 @font-face {
   font-family: 'ErrFont';
