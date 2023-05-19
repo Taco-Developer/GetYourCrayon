@@ -107,7 +107,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         int initialDelay = 1;
         int period = 1;
 //        int roundTime = (int) roomInfoMap.get("roundTime");
-        int roundTime = 20;
+        int roundTime = 59;
 
         //예약한 작업을 실행할 주체
         ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
