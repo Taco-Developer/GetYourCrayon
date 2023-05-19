@@ -14,12 +14,11 @@ export interface UserData {
 }
 
 interface ReadyPropsType {
-  userList: UserData[];
   socket: WebSocket | null;
 }
 
-export default function UserList({ userList, socket }: ReadyPropsType) {
-  const { roomInfo } = useAppSelector((state) => state);
+export default function UserList({ socket }: ReadyPropsType) {
+  const { roomInfo, gameUsers } = useAppSelector((state) => state);
 
   console.log(roomInfo);
 
@@ -30,7 +29,7 @@ export default function UserList({ userList, socket }: ReadyPropsType) {
       </TitleDiv>
       <UserDrop socket={socket} />
       <ListDiv>
-        {userList.map((user, i) => (
+        {gameUsers.map((user, i) => (
           <UserDiv key={i}>
             <Profile>
               <Image
