@@ -114,20 +114,38 @@ export default function GameResult({ socket }: { socket: WebSocket }) {
                   <h3 className="text-xl">{idx + 1} 라운드</h3>
                   <Margin type={MarginType.height} size={16} />
                   <div className="w-full grid grid-cols-2 grid-rows-2 gap-4">
-                    {[0, 1, 2, 3].map((idx) => (
-                      <div
-                        key={idx}
-                        className="w-4/5 h-[200px] relative rounded-lg"
-                      >
-                        <Image
-                          src={url[idx]}
-                          alt="AI 제작 이미지"
-                          fill
-                          sizes="100%"
-                          priority
-                        />
-                      </div>
-                    ))}
+                    {url &&
+                      url.length === 4 &&
+                      url.map((img, idx) => (
+                        <div
+                          key={idx}
+                          className="w-4/5 h-[200px] relative rounded-lg"
+                        >
+                          <Image
+                            src={img}
+                            alt="AI 제작 이미지"
+                            fill
+                            sizes="100%"
+                            priority
+                          />
+                        </div>
+                      ))}
+                    {url &&
+                      url.length === 1 &&
+                      url.map((img, idx) => (
+                        <div
+                          key={idx}
+                          className="col-span-2 row-span-2 h-[400px] relative rounded-lg"
+                        >
+                          <Image
+                            src={img}
+                            alt="AI 제작 이미지"
+                            fill
+                            sizes="100%"
+                            priority
+                          />
+                        </div>
+                      ))}
                   </div>
                 </li>
               ))}

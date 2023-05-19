@@ -208,6 +208,9 @@ export default function Drawing({ socket }: { socket: WebSocket }) {
 
     const context = canvas.getContext('2d', { willReadFrequently: true });
     context!.scale(dpr, dpr);
+    context!.fillStyle = '#ffffff';
+    context?.fillRect(0, 0, width, height);
+    context!.fillStyle = '#000000';
     setCtx(context);
 
     sendMessage(socket, 'draw', { action: 'saveRatio', width, height });
@@ -252,15 +255,19 @@ export default function Drawing({ socket }: { socket: WebSocket }) {
   useEffect(() => {
     if (savedAnswers.length === 0 || !isRoundStarted) return;
     if (savedAnswers.length !== inputedAnswers.length) return;
-    const canvas = canvasRef.current;
-    const dataUrl = canvas?.toDataURL()!;
-    const formData = new FormData();
-    formData.append('roomIdx', roomIdx);
-    formData.append('img', dataUrl);
-    gameAPI.postCanvasImage(formData);
-    clearCanvas();
-    if (userIdx === adminUserIdx) sendMessage(socket, 'roundOver');
-    dispatch(endRound());
+    const saveDrawImage = async () => {
+      const canvas = canvasRef.current;
+      const dataUrl = canvas?.toDataURL()!;
+      const formData = new FormData();
+      formData.append('roomIdx', roomIdx);
+      formData.append('img', dataUrl);
+      await gameAPI.postCanvasImage(formData);
+      clearCanvas();
+      if (userIdx === adminUserIdx) sendMessage(socket, 'roundOver');
+      dispatch(endRound());
+    };
+
+    saveDrawImage();
   }, [
     roomIdx,
     isRoundStarted,
@@ -276,15 +283,19 @@ export default function Drawing({ socket }: { socket: WebSocket }) {
   // 시간 초과
   useEffect(() => {
     if (leftTime > 0 || !isRoundStarted) return;
-    const canvas = canvasRef.current;
-    const dataUrl = canvas?.toDataURL()!;
-    const formData = new FormData();
-    formData.append('roomIdx', roomIdx);
-    formData.append('img', dataUrl);
-    gameAPI.postCanvasImage(formData);
-    clearCanvas();
-    if (userIdx === adminUserIdx) sendMessage(socket, 'roundOver');
-    dispatch(endRound());
+    const saveDrawImage = async () => {
+      const canvas = canvasRef.current;
+      const dataUrl = canvas?.toDataURL()!;
+      const formData = new FormData();
+      formData.append('roomIdx', roomIdx);
+      formData.append('img', dataUrl);
+      await gameAPI.postCanvasImage(formData);
+      clearCanvas();
+      if (userIdx === adminUserIdx) sendMessage(socket, 'roundOver');
+      dispatch(endRound());
+    };
+
+    saveDrawImage();
   }, [
     roomIdx,
     leftTime,

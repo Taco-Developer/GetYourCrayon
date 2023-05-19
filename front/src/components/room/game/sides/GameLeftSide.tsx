@@ -119,8 +119,8 @@ const MemberItem = tw.div`
 `;
 
 const Profile = tw.div`
-  max-w-[32px]
-  max-h-[32px]
+  w-[32px]
+  h-[32px]
   rounded-full
   overflow-hidden
 
