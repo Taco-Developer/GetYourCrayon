@@ -11,13 +11,7 @@ export default function ModeChoice({ socket }: ReadyProps) {
   const { roomInfo, userInfo } = useAppSelector((state) => state);
 
   const [choiceMode, setChoiceMode] = useState<number>();
-  const gameList: string[] = [
-    'AI',
-    '캐치마인드',
-    '라이어 (준비중)',
-    '리버스캐치마인드 (준비중)',
-    '이어그리기 (준비중)',
-  ];
+  const gameList: string[] = ['AI', '캐치마인드'];
   const socketSend: string[] = [
     'AiPainting',
     'CatchMind',
@@ -52,12 +46,15 @@ export default function ModeChoice({ socket }: ReadyProps) {
     <OutDiv>
       {gameList.map((gameMode: string, i: number) => {
         let w: string = '';
-        if (i !== 0 && i !== 1 && choiceMode === i) {
-          w = 'bg-construction-bg bg-cover w-40 bg-opacity-100 text-yellow-500';
-        } else if (i !== 0 && i !== 1) {
-          w = 'bg-construction-bg bg-cover bg-opacity-100 text-yellow-500';
+        let t: string = '';
+        if (i === 0 && choiceMode === i) {
+          w = 'bg-AI-mode bg-cover w-40 w-60';
+          t = 'bg-white bg-opacity-60 text-7xl';
+        } else if (i === 1 && choiceMode === i) {
+          w = 'bg-CatchMind bg-cover w-60';
+          t = 'bg-white bg-opacity-60 text-7xl';
         } else if (choiceMode === i) {
-          w = 'w-40';
+          w = 'w-60 text-4xl';
         }
         return (
           <CardPick
@@ -67,7 +64,7 @@ export default function ModeChoice({ socket }: ReadyProps) {
               pickMode(i);
             }}
           >
-            <>{gameMode}</>
+            <TextPick className={t}>{gameMode}</TextPick>
           </CardPick>
         );
       })}
@@ -76,4 +73,5 @@ export default function ModeChoice({ socket }: ReadyProps) {
 }
 
 const OutDiv = tw.div`w-full h-60 m-3  flex flex-row items-center justify-between`;
-const CardPick = tw.div`w-20 h-full bg-white bg-opacity-50 text-2xl rounded-2xl m-1 flex items-center justify-center`;
+const CardPick = tw.div`w-40 h-full bg-white bg-opacity-50 text-5xl rounded-2xl m-1 flex items-center justify-center`;
+const TextPick = tw.div``;
