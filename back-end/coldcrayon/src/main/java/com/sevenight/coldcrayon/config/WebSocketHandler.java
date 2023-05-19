@@ -131,7 +131,9 @@ public class WebSocketHandler extends TextWebSocketHandler {
                         }
                     } catch (IOException e) {
                         // 예외 처리
-                        System.out.println("e = " + e);
+                        log.error("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+                        log.error("e = " + e);
+                        log.error("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
                     }
                     time--;
                 } else {
@@ -185,7 +187,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         // userIn:유저가 들어올 때 userData: (유저Id, 기본점수)
 
         if (type.equals("userIn")) {
-            if(roomHashOptional.isPresent()){
+            if (roomHashOptional.isPresent()) {
                 RoomHash roomHash = roomHashOptional.get();
 
                 String authorization = jsonMessage.get("authorization");
@@ -198,7 +200,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
 //                userInfo.setScore(0);
 //                userInfo.setToken(authorization);
 
-                if(userDto.getUserIdx().equals(roomHash.getAdminUserIdx())){
+                if (userDto.getUserIdx().equals(roomHash.getAdminUserIdx())) {
                     joinRoomResponse = roomService.firstRoom(roomId);
                 } else {
                     log.error("user가 join으로 참여했습니다.");
@@ -219,14 +221,14 @@ public class WebSocketHandler extends TextWebSocketHandler {
             String status = jsonMessage.get("status");
             log.error(jsonMessage.toString());
 
-            if(status.equals("answer")){
-                if(roomHashOptional.isPresent()) {
+            if (status.equals("answer")) {
+                if (roomHashOptional.isPresent()) {
                     RoomHash roomHash = roomHashOptional.get();
 
                     String answer = jsonMessage.get("content");
                     log.debug("answer : " + answer);
                     log.debug("roomHash.getCorrect() : " + roomHash.getCorrect());
-                    if(answer.equals(roomHash.getCorrect()) && roomHash.getCorrectUser().equals(-1L)){
+                    if (answer.equals(roomHash.getCorrect()) && roomHash.getCorrectUser().equals(-1L)) {
                         Long userIdx = Long.parseLong(jsonMessage.get("userIdx"));
                         roomHash.setCorrectUser(userIdx);
                         roomRepository.save(roomHash);
@@ -244,13 +246,12 @@ public class WebSocketHandler extends TextWebSocketHandler {
                     s.sendMessage(message);
                 }
             }
-        }
-        else if (type.equals("roomUserCnt")) {
+        } else if (type.equals("roomUserCnt")) {
             log.error("roomUserCnt : " + "여기 들어옴");
             // 여기를 로직에 추가한다.
             String roomCnt = jsonMessage.get("roomCnt");
             int num = roomService.changeRoomOption(type, roomCnt, roomId);
-            if(num!=0){
+            if (num != 0) {
                 joinRoomResponse = roomService.firstRoom(roomId);
 
                 String jsonResponse = objectMapper.writeValueAsString(joinRoomResponse);
@@ -261,8 +262,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                     }
                 }
             }
-        }
-        else if (type.equals("gameMode")) {
+        } else if (type.equals("gameMode")) {
             log.error("gameMode : " + "여기 들어옴");
             // 여기를 로직에 추가한다.
             String gameMode = jsonMessage.get("gameMode");
@@ -277,8 +277,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                     s.sendMessage(new TextMessage(jsonResponse));       // room, userList 전달
                 }
             }
-        }
-        else if (type.equals("gameTurn")) {
+        } else if (type.equals("gameTurn")) {
             log.error("roomUserCnt : " + "여기 들어옴");
             // 여기를 로직에 추가한다.
             String gameTurn = jsonMessage.get("gameTurn");
@@ -311,6 +310,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
 //                    s.sendMessage(new TextMessage(jsonResponse));
 //                }
 //            }
+            log.debug("여기까지");
         }
         // 게임 시간 설정
 //        else if (type.equals("roundTime")) {
@@ -318,6 +318,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
 //            roomInfoMap.put("roundTime", Integer.parseInt(changedRoundTime));
 //        }
+
 
         // 게임 알림
         else if (type.equals("gameAlert")) {
