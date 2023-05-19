@@ -44,15 +44,15 @@ public class WebSocketHandler extends TextWebSocketHandler {
     // ConcurrentHashMap: 여러 스레드가 동시에 접근해도 안전하게 동작
     private final Map<String, List<WebSocketSession>> sessionsMap = new ConcurrentHashMap<>();
 
-    private final LinkedHashMap<String, UserInfo> userInfoMap = new LinkedHashMap<>();      // session.id, userInfo
-    private Map<Long, Integer> userScoreMap = new ConcurrentHashMap<>();
+//    private final LinkedHashMap<String, UserInfo> userInfoMap = new LinkedHashMap<>();      // session.id, userInfo
+//    private Map<Long, Integer> userScoreMap = new ConcurrentHashMap<>();
 
 
-    // 방정보를 담을 Map타입으로 하나 만들어서 해당 정보로 공유하자
-    private Map<String, Object> roomInfoMap = new ConcurrentHashMap<>();
+//    // 방정보를 담을 Map타입으로 하나 만들어서 해당 정보로 공유하자
+//    private Map<String, Object> roomInfoMap = new ConcurrentHashMap<>();
 
-    // 게임 정보를 담을 Map타입으로 하나 만들어서 해당 정보로 공유하자
-    private Map<String, String> gameInfoMap = new ConcurrentHashMap<>();
+//    // 게임 정보를 담을 Map타입으로 하나 만들어서 해당 정보로 공유하자
+//    private Map<String, String> gameInfoMap = new ConcurrentHashMap<>();
 
     // 타이머
     private Map<String, ScheduledFuture<?>> timers = new ConcurrentHashMap<>();
@@ -83,30 +83,30 @@ public class WebSocketHandler extends TextWebSocketHandler {
     }
 
     // flag 변수
-    private boolean flag = false;   // 웹 소켓이 생성되기 전: false, 한 번 생성되고 난 후: true
-    public volatile boolean gameOnGoing = false;
+//    private boolean flag = false;   // 웹 소켓이 생성되기 전: false, 한 번 생성되고 난 후: true
+//    public volatile boolean gameOnGoing = false;
 
     // roomTitle을 가져와야 할까요??
-    public void initailizeRoomInfo(String roomIdx) {
-        RoomResponseDto room = roomService.getRoom(roomIdx);
-        roomInfoMap.put("roomIdx", roomIdx);
-        roomInfoMap.put("roundTime", 20);
-        roomInfoMap.put("roomNow", room.getRoomNow());
-        roomInfoMap.put("roomMax", room.getRoomMax());
-        roomInfoMap.put("maxRound", room.getMaxRound());
-        roomInfoMap.put("gameCategory", room.getGameCategory());
-        roomInfoMap.put("roomStatus", room.getRoomStatus());
-        roomInfoMap.put("adminUserIdx", room.getAdminUserIdx());
-        roomInfoMap.put("nowRound", room.getNowRound());
-        roomInfoMap.put("roomTurn", 0);
-    }
+//    public void initailizeRoomInfo(String roomIdx) {
+//        RoomResponseDto room = roomService.getRoom(roomIdx);
+//        roomInfoMap.put("roomIdx", roomIdx);
+//        roomInfoMap.put("roundTime", 20);
+//        roomInfoMap.put("roomNow", room.getRoomNow());
+//        roomInfoMap.put("roomMax", room.getRoomMax());
+//        roomInfoMap.put("maxRound", room.getMaxRound());
+//        roomInfoMap.put("gameCategory", room.getGameCategory());
+//        roomInfoMap.put("roomStatus", room.getRoomStatus());
+//        roomInfoMap.put("adminUserIdx", room.getAdminUserIdx());
+//        roomInfoMap.put("nowRound", room.getNowRound());
+//        roomInfoMap.put("roomTurn", 0);
+//    }
 
     public void timer(List<WebSocketSession> sessions, String roomIdx){
 
         int initialDelay = 1;
         int period = 1;
 //        int roundTime = (int) roomInfoMap.get("roundTime");
-        int roundTime = 7;
+        int roundTime = 20;
 
         //예약한 작업을 실행할 주체
         ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
@@ -153,7 +153,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         log.info(session.getId());
 
         // 소켓에 정보 저장
-        initailizeRoomInfo(roomId);
+//        initailizeRoomInfo(roomId);
     }
 
     @Override
@@ -191,13 +191,12 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 String authorization = jsonMessage.get("authorization");
                 UserDto userDto = authService.selectOneMember(HeaderUtil.getAccessTokenString(authorization));
                 // 닉네임, 소켓 아이디을 터미너스에서 확인할 수 있도록 설정: 5/16 DG
-                log.info("접속하는 유저의 닉네임: {}, 소켓 아이디(roomId): {}", userDto.getUserNickname(), roomId);
-
-                UserInfo userInfo = userInfoMap.computeIfAbsent(session.getId(), key -> new UserInfo());
-
-                userInfo.setNickname(userDto.getUserNickname());
-                userInfo.setScore(0);
-                userInfo.setToken(authorization);
+//                log.info("접속하는 유저의 닉네임: {}, 소켓 아이디(roomId): {}", userDto.getUserNickname(), roomId);
+//
+//                UserInfo userInfo = userInfoMap.computeIfAbsent(session.getId(), key -> new UserInfo());
+//                userInfo.setNickname(userDto.getUserNickname());
+//                userInfo.setScore(0);
+//                userInfo.setToken(authorization);
 
                 if(userDto.getUserIdx().equals(roomHash.getAdminUserIdx())){
                     joinRoomResponse = roomService.firstRoom(roomId);
@@ -299,28 +298,26 @@ public class WebSocketHandler extends TextWebSocketHandler {
         // gameTime
         else if (type.equals("gameTime")) {
 
-            int roundTime = (int) roomInfoMap.get("roundTime");
+//            int roundTime = (int) roomInfoMap.get("roundTime");
 
-            Map<String, Object> response = new HashMap<>();
-            response.put("type", "gameTime");
-            response.put("roundTime", roundTime);
+//            Map<String, Object> response = new HashMap<>();
+//            response.put("type", "gameTime");
+//            response.put("roundTime", roundTime);
 
-            String jsonResponse = objectMapper.writeValueAsString(response);
+//            String jsonResponse = objectMapper.writeValueAsString(response);
 
-            for (WebSocketSession s : sessions) {
-                if (s.isOpen()) {
-                    s.sendMessage(new TextMessage(jsonResponse));
-                }
-            }
+//            for (WebSocketSession s : sessions) {
+//                if (s.isOpen()) {
+//                    s.sendMessage(new TextMessage(jsonResponse));
+//                }
+//            }
         }
-
-
         // 게임 시간 설정
-        else if (type.equals("roundTime")) {
-            String changedRoundTime = jsonMessage.get("changedRoundTime");
+//        else if (type.equals("roundTime")) {
+//            String changedRoundTime = jsonMessage.get("changedRoundTime");
 
-            roomInfoMap.put("roundTime", Integer.parseInt(changedRoundTime));
-        }
+//            roomInfoMap.put("roundTime", Integer.parseInt(changedRoundTime));
+//        }
 
         // 게임 알림
         else if (type.equals("gameAlert")) {
@@ -381,8 +378,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
         }
         // 라운드 종료  ------- type 지정 필요 -------   // 수민: 임시로 내가 설정해서 사용하도록 함
         else if (type.equals("roundOver")) {
-//            gameOnGoing = false;        // 시간 감소 로직 중지
-
             ScheduledFuture<?> scheduledFuture = timers.get(roomId);
             scheduledFuture.cancel(false);
 
@@ -395,13 +390,13 @@ public class WebSocketHandler extends TextWebSocketHandler {
             String json = objectMapper.writeValueAsString(responseRoundDto);
 
             // 세션에 기록
-            List<UserHashResponseDto> userList = responseRoundDto.getUserList();
-            for (UserHashResponseDto userHashResponseDto : userList) {
-                Long userIdx1 = userHashResponseDto.getUserIdx();
-                int userScore = userHashResponseDto.getUserScore();
+//            List<UserHashResponseDto> userList = responseRoundDto.getUserList();
+//            for (UserHashResponseDto userHashResponseDto : userList) {
+//                Long userIdx1 = userHashResponseDto.getUserIdx();
+//                int userScore = userHashResponseDto.getUserScore();
 
-                userScoreMap.put(userIdx1, userScore);
-            }
+//                userScoreMap.put(userIdx1, userScore);
+//            }
 
             for (WebSocketSession s : sessions) {
                 if (s.isOpen()) {
@@ -420,47 +415,38 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 }
             }
         }
-        else if(type.equals("saveImg")){
-            if(roomHashOptional.isPresent()){
-                RoomHash roomHash = roomHashOptional.get();
 
-                String destinationPath = roomHash.getRoomIdx() + roomHash.getGameCnt() + roomHash.getNowRound();
-//                String imgData = jsonMessage.get("img");
-//                saveImageService.saveCatchMind(imgData, destinationPath,1L);
-            }
-        }
 
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         String roomId = extractRoomId(session);
-        UserInfo userInfo = userInfoMap.get(session.getId());   // 세션의 Id로 유저 정보를 가져옴
-        log.info("userInfo: {}", userInfo);
+//        UserInfo userInfo = userInfoMap.get(session.getId());   // 세션의 Id로 유저 정보를 가져옴
+//        log.info("userInfo: {}", userInfo);
 
         /// 5/17: DG
         // 나가기 실행 시 (나가기 방식 말고)
 
 
-        log.info("userInfoMap: {}", userInfoMap);
-        log.info("userInfoMap.get(session.getId()): {}", userInfoMap.get(session.getId()));
-        Long userIdx = userInfoMap.get(session.getId()).userIdx;
-        log.info("userIdx: {}", userIdx);
+//        log.info("userInfoMap: {}", userInfoMap);
+//        log.info("userInfoMap.get(session.getId()): {}", userInfoMap.get(session.getId()));
+//        Long userIdx = userInfoMap.get(session.getId()).userIdx;
+//        log.info("userIdx: {}", userIdx);
 
 
-        UserDto userDtoByUserIdx = webSocketCustomService.getUserDtoByUserIdx(userIdx);
-        roomService.outRoom(userDtoByUserIdx);
+//        UserDto userDtoByUserIdx = webSocketCustomService.getUserDtoByUserIdx(userIdx);
+//        roomService.outRoom(userDtoByUserIdx);
 
-        String userNickname = userInfo.getNickname();   // userInfo에서 닉네임 가져오기 -> 나간 사람 표시
-        log.info("userNickname: {}", userNickname);
-        String userToken = userInfo.getToken();     // userInfo에서 토큰 값 가져오기
-        log.info("userToken: {}", userToken);
-        UserDto user = authService.findUser(userToken);     // 토큰으로 유저 Dto 가져오기
-        log.info("user: {}", user);
+//        String userNickname = userInfo.getNickname();   // userInfo에서 닉네임 가져오기 -> 나간 사람 표시
+//        log.info("userNickname: {}", userNickname);
+//        String userToken = userInfo.getToken();     // userInfo에서 토큰 값 가져오기
+//        log.info("userToken: {}", userToken);
+//        UserDto user = authService.findUser(userToken);     // 토큰으로 유저 Dto 가져오기
+//        log.info("user: {}", user);
 
-        RoomResponseDto roomResponseDto = roomService.outRoom(user);// user가 DB에서 제거될 수 있도록 처리
-        log.info("roomResponseDto: {}", roomResponseDto);
-
+//        RoomResponseDto roomResponseDto = roomService.outRoom(user);// user가 DB에서 제거될 수 있도록 처리
+//        log.info("roomResponseDto: {}", roomResponseDto);
 
         List<WebSocketSession> sessions = sessionsMap.getOrDefault(roomId, Collections.emptyList());
 
@@ -480,7 +466,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 jsonMessage.put("type", "chat");
                 jsonMessage.put("author", "admin");
                 jsonMessage.put("status", "chatting");
-                jsonMessage.put("message", userNickname+ "님이 나갔습니다");
+//                jsonMessage.put("message", userNickname+ "님이 나갔습니다");
                 String json = objectMapper.writeValueAsString(jsonMessage);
 
                 // WebSocket 메시지로 전송
