@@ -10,6 +10,7 @@ import { setRoomInfo } from '@/store/slice/game/gameRoomInfo';
 import { getCookie } from 'cookies-next';
 import { sendMessage } from '@/socket/messageSend';
 import { listenEvent, removeEvent } from '@/socket/socketEvent';
+import { setGameUsers } from '@/store/slice/game/gameUsersSlice';
 
 interface RoomPropsType {
   socket: WebSocket | null;
@@ -33,8 +34,6 @@ export default function Ready({ socket, setSocket }: RoomPropsType) {
   const [choice, setChoice] = useState<number>(2);
   /** 게시물 번호 */
   const [boardId, setBoardId] = useState<number | null>(null);
-  /** 방에 유저 목록 */
-  const [userList, setUserList] = useState<UserData[]>([]);
 
   const closeSocket = () => {
     if (socket) {
@@ -60,7 +59,7 @@ export default function Ready({ socket, setSocket }: RoomPropsType) {
       const roomInHandler = (event: MessageEvent) => {
         const data = JSON.parse(event.data);
         if (data.type !== 'userIn') return;
-        setUserList(data.userList);
+        dispatch(setGameUsers(data.userList));
         dispatch(setRoomInfo(data.roomInfo));
         console.log(data);
       };
@@ -93,7 +92,7 @@ export default function Ready({ socket, setSocket }: RoomPropsType) {
   return (
     <RoomBody>
       <UserDiv>
-        <UserList userList={userList} socket={socket} />
+        <UserList socket={socket} />
       </UserDiv>
       <MoreDiv>
         <PickDiv>
