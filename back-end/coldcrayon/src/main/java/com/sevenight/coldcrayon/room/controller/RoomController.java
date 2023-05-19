@@ -53,7 +53,7 @@ public class RoomController {
     @PostMapping("/out")
     public RoomResponseDto outRoom(@RequestHeader String Authorization){
          UserDto user = authService.selectOneMember(HeaderUtil.getAccessTokenString(Authorization));
-        return roomService.outRoom(user);
+        return roomService.outRoomUser(user);
     }
 
     @PatchMapping("/change-admin")
