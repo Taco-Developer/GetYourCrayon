@@ -27,12 +27,10 @@ export default function Navbar({ children }: NavbarPropsType) {
   const navbarPath = useSelector((state: RootState) => state.navbarPath);
   const { roomIdx } = useAppSelector((state) => state.roomIdx);
   const dispatch = useDispatch<AppDispatch>();
-  console.log(isLogin);
   const enterRoom = async () => {
     await gameAPI
       .createRoom()
       .then((request) => {
-        console.log(request.data);
         dispatch(setRoomIdx({ roomIdx: request.data.roomIdx }));
         router.push(`/room/${request.data.roomIdx}`);
       })

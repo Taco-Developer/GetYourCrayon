@@ -57,7 +57,6 @@ export async function getServerSideProps({ req, res }: any) {
 
 export default function Board({ res }: { res: BoardPaginationType }) {
   const [boardData, setBoardData] = useState(res);
-  console.log(res);
   return (
     <Container>
       <div className="text-xl md:text-2xl lg:text-3xl text-center mb-4 ">
