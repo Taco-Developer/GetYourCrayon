@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+/* 404 Font */
+@font-face {
+  font-family: 'ErrFont';
+  font-weight: 100;
+  src : url('../../public/fonts/error404.otf') format('opentype');
+}
+
 /* SUIT Font */
 @font-face {
   font-family: 'SUIT';
@@ -75,9 +82,129 @@
 :root {
   --suit-font: 'SUIT';
   --cookie-font: 'CookieRun';
+  --error-font : 'ErrFont';
 }
 
 body {
   font-family: var(--cookie-font);
   zoom:1;
 }
+
+#scroll::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes glitter {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+#glitter-animation {
+  animation: glitter 1s infinite;
+}
+
+.swiper {
+  width : 77%
+}
+
+.swiper .swiper-pagination-bullet {
+  background-color: #000;
+  margin: 0 10px !important;
+}
+
+.swal2-container {
+  z-index: 20000 !important;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 15px;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+ul.pagination li {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  border: 1px solid #e2e2e2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1rem;
+}
+
+ul.pagination li:first-child{
+  border-radius: 5px 0 0 5px;
+}
+
+ul.pagination li:last-child{
+  border-radius: 0 5px 5px 0;
+}
+
+ul.pagination li a {
+  text-decoration: none;
+  color: #337ab7;
+  font-size: 1rem;
+}
+
+ul.pagination li.active a {
+  color: white;
+}
+
+ul.pagination li.active {
+  background-color: #337ab7;
+}
+
+ul.pagination li a:hover,
+ul.pagination li a.active {
+  color: blue;
+}
+
+.page-selection {
+  width: 48px;
+  height: 30px;
+  color: #337ab7;
+}
+
+.treasure-box {
+  
+  animation: shake 2s infinite;
+}
+
+@keyframes shake {
+  0% { transform: rotate(0deg); }
+  10% { transform: rotate(-5deg); }
+  20% { transform: rotate(5deg); }
+  30% { transform: rotate(-5deg); }
+  40% { transform: rotate(5deg); }
+  50% { transform: rotate(-2.5deg); }
+  60% { transform: rotate(2.5deg); }
+  70% { transform: rotate(-2.5deg); }
+  80% { transform: rotate(2.5deg); }
+  90% { transform: rotate(-1deg); }
+  100% { transform: rotate(0deg); }
+}
+
+
+
+.swiper-button-prev,
+.swiper-button-next {
+  background-color: #fff;
+  opacity: 0.7;
+  padding: 35px 20px;
+  border-radius: 20px;
+  color: black !important;
+}
+
+.swiper-button-prev:after,
+.swiper-button-next:after {
+  font-size: 3rem !important;
+  font-weight: 600 !important;
+}
+

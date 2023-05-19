@@ -1,25 +1,30 @@
-import Margin from '@/components/ui/Margin';
-import Image from 'next/image';
 import { ReactNode } from 'react';
 
 import tw from 'tailwind-styled-components';
 
+import Margin, { MarginType } from '@/components/ui/Margin';
+import { useAppSelector } from '@/store/thunkhook';
+
 export default function GameCenter({ children }: { children: ReactNode }) {
+  const {
+    gameTheme,
+    answers: { savedAnswers },
+    roomInfo: { gameCategory },
+    gameDatas: { selectedUserIdx },
+    userInfo: { userIdx },
+  } = useAppSelector((state) => state);
+
   return (
     <MainContainer>
       <MainHeader>
-        <ImageBox>
-          <Image
-            src="/images/logo.png"
-            alt="브랜드 로고"
-            fill
-            sizes="100%"
-            priority
-          />
-        </ImageBox>
-        <Category>주제: </Category>
+        <Category>
+          <span>주제: {gameTheme.selectedTheme}</span>
+          {gameCategory === 'CatchMind' && userIdx === selectedUserIdx && (
+            <span> / 제시어: {savedAnswers[0]}</span>
+          )}
+        </Category>
       </MainHeader>
-      <Margin type="height" size={16} />
+      <Margin type={MarginType.height} size={16} />
       {children}
     </MainContainer>
   );
@@ -36,21 +41,8 @@ const MainContainer = tw.div`
 
 const MainHeader = tw.header`
   w-full
-
-  relative
-`;
-
-const ImageBox = tw.div`
-  w-20
-  h-20
-
-  mx-auto
-
-  relative
 `;
 
 const Category = tw.div`
-  absolute
-
-  bottom-0 right-0
+  text-2xl
 `;

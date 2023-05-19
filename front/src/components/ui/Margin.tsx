@@ -1,10 +1,20 @@
 import React from 'react';
-import tw from 'tailwind-styled-components';
 
-export default function Margin({ type, size }: { type: string; size: number }) {
+export enum MarginType {
+  height,
+  width,
+}
+
+export default function Margin({
+  type,
+  size,
+}: {
+  type: MarginType;
+  size: number;
+}) {
   const style: React.CSSProperties =
-    type === 'height'
-      ? { height: size }
+    type === MarginType.height
+      ? { height: size, display: 'block' }
       : { width: size, display: 'inline-block' };
-  return <div style={style}></div>;
+  return <span style={style}></span>;
 }
