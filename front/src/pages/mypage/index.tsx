@@ -73,7 +73,6 @@ export const getServerSideProps: GetServerSideProps =
 export default function MyPage({ message }: { message: string }) {
   const [open, setOpen] = useState(false);
   useEffect(() => {
-    console.log(message);
     if (message === 'notLogin') {
       setOpen(true);
     }
