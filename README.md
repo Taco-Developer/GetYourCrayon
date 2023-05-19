@@ -136,7 +136,7 @@
 
 [Figma Link](https://www.figma.com/file/4LzYD3L6NChuTpZ41B8lOW/FINAL?type=design&node-id=0-1)
 
-![](READMEassets/2023-05-15-11-02-35-image.png)
+![](imgs/%EC%99%80%EC%9D%B4%EC%96%B4%ED%94%84%EB%A0%88%EC%9E%84.png)
 
 ### **기능 명세서**
 
@@ -160,7 +160,7 @@
 
 [ERD Link](https://www.erdcloud.com/d/7FgkNmKggnrqCM2FX)
 
-![](READMEassets/2023-05-15-11-17-09-image.png)
+![](imgs/ERD.png)
 
 ### **아키텍처**
 
