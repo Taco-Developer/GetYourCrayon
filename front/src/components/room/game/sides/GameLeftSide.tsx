@@ -1,67 +1,85 @@
 import React from 'react';
-import Image from 'next/image';
 
 import tw from 'tailwind-styled-components';
 
 import SideDisplay from './SideDisplay';
-import Margin from '@/components/ui/Margin';
+import Margin, { MarginType } from '@/components/ui/Margin';
+import { useAppSelector } from '@/store/thunkhook';
+import Image from 'next/image';
 
-export default function GameLeftSide({ isPainting }: { isPainting: boolean }) {
+export default function GameLeftSide({
+  isPainting,
+  paletteColor,
+  changeColor,
+}: {
+  isPainting: boolean;
+  paletteColor?: string;
+  changeColor?: (color: string) => void;
+}) {
+  const { gameRound, gameUsers } = useAppSelector((state) => state);
+
+  const colors = [
+    ['#000000', 'bg-[#000000]'],
+    ['#D21312', 'bg-[#D21312]'],
+    ['#562B08', 'bg-[#562B08]'],
+    ['#D89216', 'bg-[#D89216]'],
+    ['#F9D276', 'bg-[#F9D276]'],
+    ['#A7D129', 'bg-[#A7D129]'],
+    ['#EA0599', 'bg-[#EA0599]'],
+    ['#00FFF5', 'bg-[#00FFF5]'],
+    ['#0C134F', 'bg-[#0C134F]'],
+    ['#AA77FF', 'bg-[#AA77FF]'],
+  ];
+
   return (
     <SideDisplay isLeft={true}>
-      <h2 className="text-2xl">1 / 5</h2>
-      <Margin type="height" size={16} />
+      <h2 className="text-2xl">
+        {gameRound.now} / {gameRound.total}
+      </h2>
+      {isPainting && (
+        <ColorPalettes>
+          <input
+            type="color"
+            className="row-span-2 col-span-3 w-full h-full"
+            value={paletteColor}
+            onChange={(event) => {
+              changeColor!(event.target.value);
+            }}
+          />
+          {colors.map((color) => (
+            <div
+              key={color[0]}
+              className={color[1]}
+              onClick={() => {
+                changeColor!(color[0]);
+              }}
+            />
+          ))}
+        </ColorPalettes>
+      )}
       <Members>
         <h2>참가자 목록</h2>
-        <Margin type="height" size={16} />
+        <Margin type={MarginType.height} size={16} />
         <MemberList>
-          {[1, 2, 3, 4, 5, 6].map((id) => {
+          {gameUsers.map(({ userIdx, userNickname, userProfile }) => {
             return (
-              <MemberItem key={id}>
-                <Profile />
-                <Margin type="width" size={8} />
-                {`참가자 ${id}`}
-                <MemberStatus>
+              <MemberItem key={userIdx}>
+                <Profile>
                   <Image
-                    src={
-                      id === 1 ? '/icons/mic_mute.png' : '/icons/sound_mute.png'
-                    }
-                    alt="mic mute"
-                    width={16}
-                    height={16}
+                    src={userProfile}
+                    alt="프로필"
+                    fill
+                    priority
+                    sizes="100%"
                   />
-                </MemberStatus>
+                </Profile>
+                <span className="truncate flex-auto">{userNickname}</span>
               </MemberItem>
             );
           })}
         </MemberList>
       </Members>
-      {isPainting && (
-        <>
-          <Margin type="height" size={16} />
-          <div>색 수정</div>
-          <Margin type="height" size={16} />
-        </>
-      )}
-      <Margin type="height" size={16} />
-      <SoundSetting>
-        <div className="bg-white p-2 rounded-full">
-          <Image
-            src="/icons/mic_mute.png"
-            alt="mic mute"
-            width={16}
-            height={16}
-          />
-        </div>
-        <div className="bg-white p-2 rounded-full">
-          <Image
-            src="/icons/sound_mute.png"
-            alt="sound mute"
-            width={16}
-            height={16}
-          />
-        </div>
-      </SoundSetting>
+      {!isPainting && <div></div>}
     </SideDisplay>
   );
 }
@@ -71,7 +89,7 @@ const Members = tw.div`
   bg-[#88CDFF]
   rounded-lg
 
-  p-4
+  p-2
 
   flex
   flex-col
@@ -85,29 +103,33 @@ const MemberList = tw.div`
   rounded-lg
   text-sm
 
-  px-4
-  py-4
+  p-2
 
   flex
   flex-col
-  gap-2
+  gap-4
 `;
 
 const MemberItem = tw.div`
   flex
+  justify-between
+  gap-2
   items-center
 `;
 
 const Profile = tw.div`
-  w-4
-  h-4
+  w-[32px]
+  h-[32px]
   rounded-full
+  overflow-hidden
 
-  bg-white
+  flex-none
+
+  relative
 `;
 
 const MemberStatus = tw.div`
-  flex-auto
+  flex-none
 
   flex
   justify-end
@@ -118,9 +140,24 @@ const SoundSetting = tw.div`
   bg-[#88CDFF]
   rounded-lg
 
-  p-4
+  p-2
 
   flex
   justify-around
   items-center
+`;
+
+const ColorPalettes = tw.div`
+  flex-auto  
+  w-full
+
+  p-4
+
+  bg-white
+  rounded-lg
+
+  grid
+  grid-rows-5
+  grid-cols-3
+  gap-2
 `;
