@@ -56,7 +56,6 @@ export default function InGameRoom({
       const data = JSON.parse(message.data);
       // 채팅
       if (data.type === 'chat') {
-        console.log('chatting', data);
         const { content, status, user, userIdx } = data;
         dispatch(addInGameChat({ content, status, user, userIdx }));
 
@@ -73,7 +72,6 @@ export default function InGameRoom({
 
       // 시간
       if (data.type === 'timeStart') {
-        console.log('InGameRoom Time', data);
         const { message } = data;
         dispatch(changeTime(message));
         return;
@@ -82,7 +80,6 @@ export default function InGameRoom({
       // 라운드 종료
       if (data.type === 'roundOver') {
         const { winnerUserIdx, userList } = data;
-        console.log('라운드 종료', data);
         dispatch(setWinner(winnerUserIdx));
         dispatch(setGameUsers(userList));
         dispatch(openIsScoreCheckModalOpened());
@@ -91,7 +88,6 @@ export default function InGameRoom({
 
       // 게임 시작하면 받는 정보
       if (data.type === 'gameDto') {
-        console.log('gameDto', data);
         const {
           correct,
           message,
@@ -102,10 +98,6 @@ export default function InGameRoom({
           userList,
           selectedUserIdx,
         } = data;
-        if (userIdx === adminUserIdx) {
-          console.log('타임스타트 보냄');
-          sendMessage(socket, 'timeStart');
-        }
         dispatch(setAllScore([defualtScore, winnerScore]));
         dispatch(
           setImageAndPrompt({ images: urlList as string[], prompt: message }),
@@ -134,10 +126,8 @@ export default function InGameRoom({
     const accesstoken = getCookie('accesstoken');
     let type;
     if (now === 1) {
-      console.log('게임 시작');
       type = 'gameStart';
     } else {
-      console.log('다음 라운드');
       type = 'nextRound';
     }
     sendMessage(socket, type, {
