@@ -164,7 +164,7 @@ public class RoomServiceImpl implements RoomService{
 
     }
     // 방에서 나가기
-    public RoomResponseDto outRoom(UserDto userDto){
+    public RoomResponseDto outRoomUser(UserDto userDto){
         // 방 정보 가지고 오기
         Optional<UserHash> userHash = userHashRepository.findById(userDto.getUserIdx());
         Optional<RoomHash> optionalRoomHash;

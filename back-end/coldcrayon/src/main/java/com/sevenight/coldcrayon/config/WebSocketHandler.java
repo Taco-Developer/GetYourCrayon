@@ -43,6 +43,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class WebSocketHandler extends TextWebSocketHandler {
     // ConcurrentHashMap: 여러 스레드가 동시에 접근해도 안전하게 동작
     private final Map<String, List<WebSocketSession>> sessionsMap = new ConcurrentHashMap<>();
+    private final LinkedHashMap<String, UserInfo> userInfoMap = new LinkedHashMap<>();      // session.id, userInfo
 
 //    private final LinkedHashMap<String, UserInfo> userInfoMap = new LinkedHashMap<>();      // session.id, userInfo
 //    private Map<Long, Integer> userScoreMap = new ConcurrentHashMap<>();
@@ -191,6 +192,9 @@ public class WebSocketHandler extends TextWebSocketHandler {
 //                userInfo.setNickname(userDto.getUserNickname());
 //                userInfo.setScore(0);
 //                userInfo.setToken(authorization);
+
+                UserInfo userInfo = new UserInfo(userDto.getUserNickname(), authorization);
+                userInfoMap.put(session.getId(), userInfo);
 
                 if (userDto.getUserIdx().equals(roomHash.getAdminUserIdx())) {
                     joinRoomResponse = roomService.firstRoom(roomId);
@@ -419,11 +423,12 @@ public class WebSocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         String roomId = extractRoomId(session);
-//        UserInfo userInfo = userInfoMap.get(session.getId());   // 세션의 Id로 유저 정보를 가져옴
-//        log.info("userInfo: {}", userInfo);
+        UserInfo userInfo = userInfoMap.get(session.getId());   // 세션의 Id로 유저 정보를 가져옴
 
-        /// 5/17: DG
-        // 나가기 실행 시 (나가기 방식 말고)
+        UserDto userDto = authService.selectOneMember(HeaderUtil.getAccessTokenString(userInfo.token));
+        String userNickname = userDto.getUserNickname();
+        roomService.outRoomUser(userDto);
+//        log.info("userInfo: {}", userInfo);
 
 
 //        log.info("userInfoMap: {}", userInfoMap);
@@ -463,7 +468,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 jsonMessage.put("type", "chat");
                 jsonMessage.put("author", "admin");
                 jsonMessage.put("status", "chatting");
-//                jsonMessage.put("message", userNickname+ "님이 나갔습니다");
+                jsonMessage.put("message", userNickname+ "님이 나갔습니다");
                 String json = objectMapper.writeValueAsString(jsonMessage);
 
                 // WebSocket 메시지로 전송
@@ -483,16 +488,12 @@ public class WebSocketHandler extends TextWebSocketHandler {
     @Setter
     private class UserInfo {
         private String nickname;
-        private int score;
         private String token;
-        private Long userIdx;
 
         public UserInfo() {};
-        public UserInfo(String nickname, int score, String token, Long userIdx) {
+        public UserInfo(String nickname, String token) {
             this.nickname = nickname;
-            this.score = score;
             this.token = token;
-            this.userIdx = userIdx;
         }
     }
 

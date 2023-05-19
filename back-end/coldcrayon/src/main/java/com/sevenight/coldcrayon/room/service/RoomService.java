@@ -17,7 +17,7 @@ public interface RoomService {
 
     Map<String, Object> joinRoom(UserDto userDto, String roomIdx);
 
-    RoomResponseDto outRoom(UserDto userDto);
+    RoomResponseDto outRoomUser(UserDto userDto);
 
     RoomResponseDto changeAdminUser(UserDto user, String roomIdx, Long toUserIdx);
 
