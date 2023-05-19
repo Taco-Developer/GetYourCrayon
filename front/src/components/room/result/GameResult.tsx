@@ -35,8 +35,6 @@ export default function GameResult({ socket }: { socket: WebSocket }) {
       const data = JSON.parse(event.data);
       if (data.type !== 'gameOver') return;
 
-      console.log(data);
-
       const { userList, urlList } = data;
       dispatch(setGameUsers(userList));
       if (urlList) setUrlList(urlList);

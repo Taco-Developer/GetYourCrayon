@@ -67,9 +67,7 @@ export default function Solving({
       content: answer,
       userIdx,
     };
-    console.log(chatInputValue);
     sendMessage(socket, 'chat', chatInputValue);
-    console.log('제출');
     setAnswerInputValue('');
   };
 
