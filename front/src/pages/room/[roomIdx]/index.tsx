@@ -37,7 +37,6 @@ export default function Room({
     if (message === 'getOut') {
       router.push('/');
     } else if (message === 'notLogin') {
-      console.log('로그인해라');
       router.push('/');
     }
   });
@@ -46,7 +45,6 @@ export default function Room({
     if (!socket) {
       dispatch(setRoomIdx({ roomIdx }));
       if (roomInfo.roomMax < roomInfo.roomNow) {
-        console.log('방빼');
         router.push('/');
       }
     }
