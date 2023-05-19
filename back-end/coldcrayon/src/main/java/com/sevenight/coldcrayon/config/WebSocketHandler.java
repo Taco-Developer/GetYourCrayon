@@ -167,14 +167,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
         ObjectMapper objectMapper = new ObjectMapper();
         // 메시지 내용을 JSON으로 파싱하여 Map 형태로 변환
 
-        log.error("");
-        log.error("*************************************************************");
-        log.error("1단계");
-        log.error(message.toString());
-        log.error("2단계");
-        log.error(message.getPayload().toString());
-        log.error("*************************************************************");
-        log.error("");
 
         Map<String, String> jsonMessage = objectMapper.readValue(message.getPayload(), new TypeReference<Map<String, String>>() {
         });
