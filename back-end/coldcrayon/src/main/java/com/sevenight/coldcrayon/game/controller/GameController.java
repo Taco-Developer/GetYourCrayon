@@ -77,6 +77,9 @@ public class GameController {
 
             // public void saveCatchMind(byte[] base64Data, String destinationPath, Long idx) throws IOException
             saveImageService.saveCatchMind(img, destinationPath, 1L);
+        } else {
+            log.error("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+            log.error("roomIdx : " + roomIdx);
         }
 
     }
