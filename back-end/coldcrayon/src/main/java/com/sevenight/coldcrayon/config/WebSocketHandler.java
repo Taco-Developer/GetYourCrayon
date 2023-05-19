@@ -473,6 +473,10 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
                 // WebSocket 메시지로 전송
                 s.sendMessage(new TextMessage(json));
+
+                Map<String, Object> joinRoomResponse = roomService.firstRoom(roomId);
+                String jsonResponse = objectMapper.writeValueAsString(joinRoomResponse);
+                s.sendMessage(new TextMessage(jsonResponse));
             }
         }
 
