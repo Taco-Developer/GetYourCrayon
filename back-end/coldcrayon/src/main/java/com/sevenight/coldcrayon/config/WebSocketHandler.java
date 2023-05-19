@@ -379,9 +379,12 @@ public class WebSocketHandler extends TextWebSocketHandler {
         }
         // 라운드 종료  ------- type 지정 필요 -------   // 수민: 임시로 내가 설정해서 사용하도록 함
         else if (type.equals("roundOver")) {
+            log.error("$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#");
             ScheduledFuture<?> scheduledFuture = timers.get(roomId);
             scheduledFuture.cancel(false);
             timers.remove(roomId);
+            log.error("roomId :  roomId : roomId : " + roomId);
+            log.error("$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#");
 
             RequestRoundDto requestRoundDto = RequestRoundDto.builder()
                     .roomIdx(roomId)
