@@ -380,6 +380,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         else if (type.equals("roundOver")) {
             ScheduledFuture<?> scheduledFuture = timers.get(roomId);
             scheduledFuture.cancel(false);
+            timers.remove(roomId);
 
             RequestRoundDto requestRoundDto = RequestRoundDto.builder()
                     .roomIdx(roomId)
