@@ -95,6 +95,7 @@ export default function Gacha() {
                 gachaEffect();
               } catch (e) {
                 console.log(e);
+                alert('포인트가 부족합니다');
               } finally {
                 setTimeout(() => {
                   setIsButtonDisabled(false);
@@ -128,6 +129,7 @@ export default function Gacha() {
                 gachaEffect();
               } catch (e) {
                 console.log(e);
+                alert('포인트가 부족합니다');
               } finally {
                 setTimeout(() => {
                   setIsButtonDisabled(false);
