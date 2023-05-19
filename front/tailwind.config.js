@@ -59,6 +59,7 @@ module.exports = {
         'gacha-result': '50vh',
         'colle-img': '7vw',
         'carou-size': '60vh',
+        'kakao-size': '9vh',
       },
       width: {
         'profile-img': '17vw',
@@ -67,6 +68,7 @@ module.exports = {
         'effect-gif': '20vw',
         'gacha-result': '65vw',
         'colle-img': '7vw',
+        'kakao-size': '17vw',
       },
       zIndex: {
         100: 100,
