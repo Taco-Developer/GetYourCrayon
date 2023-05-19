@@ -26,14 +26,14 @@ export default function ReadyBtn({
   const dispatch = useAppDispatch();
   const { roomInfo, userInfo } = useAppSelector((state) => state);
   const { roomIdx } = useAppSelector((state) => state.roomIdx);
-  console.log(`접속유저: ${userInfo.userIdx} / 방장: ${roomInfo.adminUserIdx}`);
+
   const [btnAdmin, setBtnAdmin] = useState<boolean>(true);
 
   /** 게임방 나가기 api */
   const gameOut = async () => {
     await gameAPI
       .outRoom()
-      .then((request) => console.log(request.data))
+      .then()
       .catch((err) => console.log(err));
     dispatch(setRoomIdx({ roomIdx: null }));
   };
@@ -59,10 +59,7 @@ export default function ReadyBtn({
     } else {
       await boardAPI
         .updateBoard(boardId)
-        .then((request) => {
-          console.log(request);
-          console.log(`${boardId}번글 업데이트`);
-        })
+        .then((request) => {})
         .catch((err) => console.log(err));
     }
   };

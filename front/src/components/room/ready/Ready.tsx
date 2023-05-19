@@ -61,7 +61,6 @@ export default function Ready({ socket, setSocket }: RoomPropsType) {
         if (data.type !== 'userIn') return;
         dispatch(setGameUsers(data.userList));
         dispatch(setRoomInfo(data.roomInfo));
-        console.log(data);
       };
 
       const messageHandler = (event: MessageEvent) => {

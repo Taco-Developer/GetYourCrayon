@@ -20,8 +20,6 @@ interface ReadyPropsType {
 export default function UserList({ socket }: ReadyPropsType) {
   const { roomInfo, gameUsers } = useAppSelector((state) => state);
 
-  console.log(roomInfo);
-
   return (
     <UserBody>
       <TitleDiv>

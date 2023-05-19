@@ -18,33 +18,6 @@ export interface UserInfoType {
   userProfile: string;
 }
 
-// export async function getServerSideProps(context: any) {
-//   const { req, res } = context;
-//   //로컬에서 테스트할시엔 setCookie 이용해서 refreshtoken과 accesstoken을 넣어줘야합니다.
-//   let refr = getCookie('refreshtoken', { req, res });
-//   let cookie = getCookie('accesstoken', { req, res });
-//   cookie = cookie ? cookie : '123';
-//   const api = axios.create({
-//     baseURL: process.env.NEXT_PUBLIC_API_URL,
-//     headers: {
-//       Authorization: cookie,
-//       'Content-Type': 'application/json',
-//       // Cookie: `refreshtoken=` + refr,
-//     },
-//   });
-//   try {
-//     const re = await api.get(`/member/myinfo`);
-//     const res: UserInfoType = re.data;
-//     return { props: { res } };
-//   } catch (e) {
-//     const serializedData = JSON.stringify(e);
-//     console.log(e);
-//     return { props: { e: serializedData } };
-//   } finally {
-//     api.defaults.headers.Cookie = '';
-//   }
-// }
-
 export const getServerSideProps: GetServerSideProps =
   wrapper.getServerSideProps((store) => async (context: any) => {
     const { req, res } = context;
@@ -64,14 +37,12 @@ export const getServerSideProps: GetServerSideProps =
       const res: UserInfoType = re.data;
       store.dispatch(setUser(res));
       store.dispatch(setLogin({ isLogin: true }));
-      // return { props: { res } };
       return { props: { message: 'Login' } };
     } catch (e) {
       const serializedData = JSON.stringify(e);
       console.log(e);
       store.dispatch(setLogin({ isLogin: false }));
       return { props: { message: 'notLogin' } };
-      // return { props: { e: serializedData } };
     } finally {
       api.defaults.headers.Cookie = '';
     }
@@ -85,7 +56,6 @@ export default function Home({ message }: { message: string }) {
     }
   }, [message]);
   //리덕스에 초기값넣어주기.
-  // dispatch(setUser(res));
   const { userInfo } = useAppSelector((state) => state);
   return (
     <MainContainer>

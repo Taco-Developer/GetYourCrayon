@@ -62,7 +62,6 @@ export default function Dropdown({
               key={option.value}
               onClick={() => {
                 handleItemClick(option);
-                // console.log(option.value);
               }}
             >
               {option.label}
