@@ -217,7 +217,7 @@ public class GameServiceImpl implements GameService{
                 ThemeCategory themeCategory = themeCategories[random.nextInt(themeCategories.length)];
                 List<String> keywords = themeService.getThemeKeyword(themeCategory);
                 message = keywords.get(1) + keywords.get(0);
-                String translateScript = webClientService.papagoPost(message);
+
                 //             game 모드가 AI라면,,,
 
                 roomHash.setCorrect(keywords.get(1));
@@ -228,6 +228,7 @@ public class GameServiceImpl implements GameService{
 
                 switch (roomHash.getGameCategory()) {
                     case AiPainting:
+                        String translateScript = webClientService.papagoPost(message);
                         List<Object> dalEResponse = webClientService.AiPost(translateScript);
 
                         Long i = 0L;
