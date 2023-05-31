@@ -10,6 +10,7 @@ import com.sevenight.coldcrayon.room.repository.RoomRepository;
 import com.sevenight.coldcrayon.room.service.RoomService;
 import com.sevenight.coldcrayon.user.entity.User;
 import com.sevenight.coldcrayon.user.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -18,10 +19,10 @@ import java.util.Optional;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class WebSocketCustomService {
 
     private GameRepository gameRepository;
-//    private JoinListRepository joinListRepository;
     private RoomRepository roomRepository;
     private UserRepository userRepository;
     private RoomService roomService;
@@ -83,5 +84,23 @@ public class WebSocketCustomService {
 //            UserDto.of(user)
 //        }
 //
+    public UserDto getUserDtoByUserIdx(Long userIdx) {
+        log.info("userIdx: {}", userIdx);
+        Optional<User> byUserIdx = userRepository.findByUserIdx(userIdx);
+        log.info("byUserIdx: {}", byUserIdx);
+        if (byUserIdx.isEmpty()) {
+            log.info("byUserIdx가 비어있습니다");
+            return null;
+        } else {
+            UserDto userDto = UserDto.builder()
+                    .userNickname(byUserIdx.get().getUserNickname())
+                    .userProfile(byUserIdx.get().getUserProfile())
+                    .userEmail(byUserIdx.get().getUserEmail())
+                    .userPoint(byUserIdx.get().getUserPoint())
+                    .userIdx(byUserIdx.get().getUserIdx())
+                    .build();
+            return userDto;
+        }
+    }
 }
 
