@@ -3,17 +3,25 @@ package com.sevenight.coldcrayon.game.controller;
 import com.sevenight.coldcrayon.auth.dto.UserDto;
 import com.sevenight.coldcrayon.auth.service.AuthService;
 import com.sevenight.coldcrayon.game.dto.GameRequestDto;
+import com.sevenight.coldcrayon.game.dto.ImgDto;
+import com.sevenight.coldcrayon.game.dto.RequestRoundDto;
+import com.sevenight.coldcrayon.game.dto.ResponseRoundDto;
 import com.sevenight.coldcrayon.game.service.GameService;
 import com.sevenight.coldcrayon.game.service.SaveImageServiceImpl;
 import com.sevenight.coldcrayon.game.service.WebClientServiceImpl;
+import com.sevenight.coldcrayon.room.entity.RoomHash;
+import com.sevenight.coldcrayon.room.repository.RoomRepository;
 import com.sevenight.coldcrayon.theme.entity.ThemeCategory;
 import com.sevenight.coldcrayon.util.HeaderUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -25,6 +33,7 @@ public class GameController {
     final AuthService authService;
     final WebClientServiceImpl webClientService;
     final SaveImageServiceImpl saveImageService;
+    final RoomRepository roomRepository;
 
     @PostMapping("/start")
     public ResponseEntity<?> gameStart(@RequestHeader String Authorization, @RequestBody GameRequestDto gameRequestDto) throws IOException {
@@ -36,25 +45,44 @@ public class GameController {
     }
 
 
-    @PostMapping("startRound")
-    public ResponseEntity<String> getKeyword(@RequestHeader String Authorization, @RequestBody ThemeCategory theme){
+    @PostMapping("/nextRound")
+    public ResponseEntity<?> getKeyword(@RequestHeader String Authorization, @RequestBody RequestRoundDto requestRoundDto) throws IOException {
         UserDto user = authService.selectOneMember(HeaderUtil.getAccessTokenString(Authorization));
-
-        return null;
+        return ResponseEntity.ok().body(gameService.nextRound(requestRoundDto));
     }
 
 
 
     @PostMapping("/end-round")
-    public ResponseEntity<?> endRound(){
-        return null;
+    public ResponseEntity<ResponseRoundDto> endRound(@RequestHeader String Authorization, @RequestBody RequestRoundDto requestRoundDto){
+        ResponseRoundDto responseRoundDto = gameService.endRound(requestRoundDto);
+
+        return ResponseEntity.ok().body(responseRoundDto);
     }
+
 
     @PostMapping("/end-game")
     public ResponseEntity<?> endGame(){
         return null;
     }
 
+    @PostMapping("/saveImg")
+    public void saveImg(@RequestHeader String Authorization, @RequestParam("img") String img, @RequestParam("roomIdx") String roomIdx) throws IOException {
+
+        Optional<RoomHash> roomHashOptional = roomRepository.findById(roomIdx);
+
+        if(roomHashOptional.isPresent()) {
+            RoomHash roomHash = roomHashOptional.get();
+            String destinationPath = roomHash.getRoomIdx()+"/" + roomHash.getGameCnt() +"/"+ roomHash.getNowRound();
+
+            // public void saveCatchMind(byte[] base64Data, String destinationPath, Long idx) throws IOException
+            saveImageService.saveCatchMind(img, destinationPath, 1L);
+        } else {
+            log.error("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+            log.error("roomIdx : " + roomIdx);
+        }
+
+    }
 
     @PostMapping("/settle")
     public ResponseEntity<int[]> settle(@RequestBody String roomIdx){
