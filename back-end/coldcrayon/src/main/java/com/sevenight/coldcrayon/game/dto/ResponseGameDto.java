@@ -1,5 +1,6 @@
 package com.sevenight.coldcrayon.game.dto;
 
+import com.sevenight.coldcrayon.room.dto.UserHashResponseDto;
 import com.sevenight.coldcrayon.theme.entity.ThemeCategory;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,7 +22,11 @@ public class ResponseGameDto {
 
     String correct;
 
-    List<Object> userList;
+    List<UserHashResponseDto> userList;
+
+    int defualtScore = 3;
+
+    int winnerScore = 3;
 
     Long selectedUserIdx;
 

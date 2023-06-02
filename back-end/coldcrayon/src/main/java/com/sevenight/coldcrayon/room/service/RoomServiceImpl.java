@@ -42,10 +42,10 @@ public class RoomServiceImpl implements RoomService{
 
             RoomHash roomHash = RoomHash.builder()
                     .roomIdx(roomIdx)
-                    .gameCategory(GameCategory.AI)
+                    .gameCategory(GameCategory.AiPainting)
                     .gameCnt(0)
                     .nowRound(0)
-                    .maxRound(0)
+                    .maxRound(4)
                     .roomStatus(RoomStatus.Ready)
                     .roomMax(6)
                     .roomNow(1)
@@ -76,43 +76,95 @@ public class RoomServiceImpl implements RoomService{
         return RoomResponseDto.of(roomHashOptional, "fail", "요청하신 방의 정보가 없습니다.");
     }
 
+    public void CorrectUser(String roomIdx, Long userIdx){
+        Optional<RoomHash> roomHashOptional = roomRepository.findById(roomIdx);
+        if(roomHashOptional.isPresent()){
+            RoomHash roomHash = roomHashOptional.get();
+            log.debug("roomHash.getCorrectUser() : " + roomHash.getCorrectUser().toString());
+            log.debug("userIdx : " + userIdx.toString());
+            if (roomHash.getCorrectUser().equals(-1L)){
+                roomHash.setCorrectUser(userIdx);
+                roomRepository.save(roomHash);
+            }
+        }
+    }
+
     // 방에 참여하기
-    public RoomResponseDto joinRoom(UserDto userDto, String roomIdx){
+    public Map<String, Object> joinRoom(UserDto userDto, String roomIdx){
+
+        Map<String, Object> joinRoomResponse = new HashMap<>();
+        List<UserHash> userHashList = new ArrayList<>();
 
         Optional<RoomHash> optionalRoomHash = roomRepository.findById(roomIdx);
         String status = "fail";
         String message;
         if(optionalRoomHash.isEmpty()){
             message = "조회하신 방이 없습니다.";
-            return null;
-        }
-
-        RoomHash roomHash = optionalRoomHash.get();
-        if(roomHash.getRoomStatus().equals(RoomStatus.Playing)){
-            message = "게임중인 방에는 입장할 수 없습니다.";
-
-        } else if(roomHash.getRoomMax() == roomHash.getRoomNow()){
-            message = "방이 가득 찼습니다.";
-
-        } else if(userHashRepository.findById(userDto.getUserIdx()).isPresent()){
-            message = "다른 방에 참여중인 유저입니다.";
-
         } else {
-            status = "success";
-            message = "방의 정보 입니다.";
-            UserHash userHash = UserHash.createUserHash(userDto, roomIdx);
-            roomHash.setRoomNow(roomHash.getRoomNow()+1);
+            RoomHash roomHash = optionalRoomHash.get();
+            if(roomHash.getRoomStatus().equals(RoomStatus.Playing)){
+                message = "게임중인 방에는 입장할 수 없습니다.";
 
-            userHashRepository.save(userHash);
-            joinListService.createJoinList(roomIdx, userDto.getUserIdx());
-            roomRepository.save(roomHash);
+            } else if(roomHash.getRoomMax() == roomHash.getRoomNow()){
+                message = "방이 가득 찼습니다.";
+
+            } else if(userHashRepository.findById(userDto.getUserIdx()).isPresent()){
+                message = "다른 방에 참여중인 유저입니다.";
+
+            } else {
+                status = "success";
+                message = "방의 정보 입니다.";
+                UserHash userHash = UserHash.createUserHash(userDto, roomIdx);
+                roomHash.setRoomNow(roomHash.getRoomNow()+1);
+
+                userHashRepository.save(userHash);
+                joinListService.createJoinList(roomIdx, userDto.getUserIdx());
+                roomRepository.save(roomHash);
+            }
+            userHashList = this.getUserList(roomIdx);
         }
+        RoomResponseDto roomResponseDto = RoomResponseDto.of(optionalRoomHash, status, message);
 
-        return RoomResponseDto.of(optionalRoomHash, status, message);
+//        Map<String, Object> roomData = new HashMap();
+//        roomData.put("roomInfo",roomResponseDto);
+//        roomData.put("userList",userHashList);
+//        joinRoomResponse.put("roomData",roomData);
+
+        joinRoomResponse.put("type", "userIn");
+        joinRoomResponse.put("userList", userHashList);
+        joinRoomResponse.put("roomInfo",roomResponseDto);
+
+        return joinRoomResponse;
     }
 
+    public Map<String, Object> firstRoom(String roomIdx){
+        Map<String, Object> joinRoomResponse = new HashMap<>();
+        List<UserHash> userHashList = new ArrayList<>();
+
+        Optional<RoomHash> optionalRoomHash = roomRepository.findById(roomIdx);
+        String status = "fail";
+        String message;
+        if(optionalRoomHash.isEmpty()){
+            message = "조회하신 방이 없습니다.";
+        } else {
+
+            RoomHash roomHash = optionalRoomHash.get();
+            status = "success";
+            message = "방의 정보 입니다.";
+            userHashList = this.getUserList(roomIdx);
+        }
+
+        RoomResponseDto roomResponseDto = RoomResponseDto.of(optionalRoomHash, status, message);
+
+        joinRoomResponse.put("type", "userIn");
+        joinRoomResponse.put("userList", userHashList);
+        joinRoomResponse.put("roomInfo",roomResponseDto);
+
+        return joinRoomResponse;
+
+    }
     // 방에서 나가기
-    public RoomResponseDto outRoom(UserDto userDto){
+    public RoomResponseDto outRoomUser(UserDto userDto){
         // 방 정보 가지고 오기
         Optional<UserHash> userHash = userHashRepository.findById(userDto.getUserIdx());
         Optional<RoomHash> optionalRoomHash;
@@ -227,6 +279,45 @@ public class RoomServiceImpl implements RoomService{
 
         return RoomResponseDto.of(optionalRoomHash, status, message);
     }
+
+    public int changeRoomOption(String type, String option, String roomIdx) {
+
+        log.error("**************************** 여기는 changeRoomOption 입니다.");
+
+        Optional<RoomHash> optionalRoomHash = roomRepository.findById(roomIdx);
+        if (optionalRoomHash.isPresent()) {
+            RoomHash roomHash = optionalRoomHash.get();
+            System.err.println("옵션 변경 전 방 정보입니다. : " + roomHash.toString());
+
+            if (type.equals("roomUserCnt")) {
+                if (roomHash.getRoomNow() > Integer.parseInt(option)) {
+                    System.err.println("roomUserCnt 못 넣음 : " + option);
+                    return 0;
+                } else {
+                    roomHash.setRoomMax(Integer.parseInt(option));
+                    System.err.println("roomUserCnt 넣음 : " + option);
+                }
+
+            } else if (type.equals("gameMode")) {
+                roomHash.setGameCategory(GameCategory.valueOf(option));
+                System.err.println("gameMode 넣음 : " + option);
+            } else {
+                roomHash.setMaxRound(Integer.parseInt(option));
+                System.err.println("faefafaefawf 넣음 : " + option);
+            }
+            roomRepository.save(roomHash);
+
+//            Optional<RoomHash> optionalRoomHash2 = roomRepository.findById(roomIdx);
+//            if (optionalRoomHash2.isPresent()) {
+//                RoomHash roomHash2 = optionalRoomHash.get();
+//                log.error("옵션 변경 흐 방 정보입니다. : " + roomHash.toString());
+//            }
+//
+//            log.error("**************************** 이상입니다.");
+        }
+        return 1;
+    }
+
 
     // 참여 인원 조회하기
     public List<UserHash> getUserList(String roomIdx){
