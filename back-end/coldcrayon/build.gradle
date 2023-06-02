@@ -1,0 +1,94 @@
+buildscript {
+	ext {
+		queryDslVersion = "5.0.0"
+	}
+}
+
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '2.7.10'
+	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+	// querydsl 추가
+	id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
+}
+
+group = 'com.seventnight'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	// starter-web
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	// JPA
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+//	// MongoDB
+//	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+	// Redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	// MariaDB
+	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+	// SQL 파라미터 확인
+	implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.6.1'
+	// Lombok
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	// dev-tools 및 기타등등
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	// swager 관련 설정
+	implementation 'io.springfox:springfox-boot-starter:3.0.0'
+	implementation 'io.springfox:springfox-swagger-ui:3.0.0'
+	// querydsl 추가
+	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
+	annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}"
+	// JWT Dependency
+	implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
+	// Configuring the Annotation Processor
+	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+	// OAuth2
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+	// Security
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	testImplementation 'org.springframework.security:spring-security-test'
+	// S3
+	implementation "com.amazonaws:aws-java-sdk-s3:1.12.281"
+	// WebSocket
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	// WebClient (AI 사진 요청)
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-webflux'
+
+	// Apache Commons IO (사진 저장)
+	implementation 'commons-io:commons-io:2.11.0'
+
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+// querydsl 세팅 시작
+def querydslDir = "$buildDir/generated/querydsl"
+querydsl {
+	jpa = true
+	querydslSourcesDir = querydslDir
+}
+sourceSets {
+	main.java.srcDir querydslDir
+}
+configurations {
+	querydsl.extendsFrom compileClasspath
+}
+compileQuerydsl {
+	options.annotationProcessorPath = configurations.querydsl
+}
+// querydsl 세팅 끝
