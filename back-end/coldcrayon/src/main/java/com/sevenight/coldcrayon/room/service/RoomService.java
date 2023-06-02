@@ -15,9 +15,9 @@ public interface RoomService {
 
     Map<String, Object> saveRoom(UserDto userDto);
 
-    RoomResponseDto joinRoom(UserDto userDto, String roomIdx);
+    Map<String, Object> joinRoom(UserDto userDto, String roomIdx);
 
-    RoomResponseDto outRoom(UserDto userDto);
+    RoomResponseDto outRoomUser(UserDto userDto);
 
     RoomResponseDto changeAdminUser(UserDto user, String roomIdx, Long toUserIdx);
 
@@ -25,8 +25,12 @@ public interface RoomService {
 
     List<UserHash> getUserList(String roomIdx);
 
-    // 3-3 유저 차단
-//    String banUser(String roomIdx, String adminUserIdx, String banUserIdx);
+    Map<String, Object> firstRoom(String roomIdx);
+
+    // 게임 정답을 가장 먼저 맞힌 사람정보를 들고 온다.
+    void CorrectUser(String roomIdx, Long userIdx);
+
+    int changeRoomOption(String type, String option, String roomIdx);
 
 
 }
