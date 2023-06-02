@@ -36,10 +36,10 @@ public class RoomController {
     }
 
     @PostMapping("/join")
-    public ResponseEntity<RoomResponseDto> joinRoom(@RequestHeader String Authorization, @RequestBody RoomRequestDto roomRequestDto){
-         UserDto user = authService.selectOneMember(HeaderUtil.getAccessTokenString(Authorization));
+    public ResponseEntity<?> joinRoom(@RequestHeader String Authorization, @RequestBody RoomRequestDto roomRequestDto){
+        UserDto user = authService.selectOneMember(HeaderUtil.getAccessTokenString(Authorization));
 
-        RoomResponseDto roomResponseDto = roomService.joinRoom(user, roomRequestDto.getRoomIdx());
+        Map<String, Object> roomResponseDto = roomService.joinRoom(user, roomRequestDto.getRoomIdx());
 
         return ResponseEntity.status(HttpStatus.OK).body(roomResponseDto);
     }
@@ -53,7 +53,7 @@ public class RoomController {
     @PostMapping("/out")
     public RoomResponseDto outRoom(@RequestHeader String Authorization){
          UserDto user = authService.selectOneMember(HeaderUtil.getAccessTokenString(Authorization));
-        return roomService.outRoom(user);
+        return roomService.outRoomUser(user);
     }
 
     @PatchMapping("/change-admin")
